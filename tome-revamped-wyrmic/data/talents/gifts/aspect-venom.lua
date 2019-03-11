@@ -19,6 +19,19 @@ newTalent{
 	 },
    },
    points = 5,
+   on_learn = function(self, t)
+      if self.rek_wyrmic_dragon_damage == nil then
+	 self.rek_wyrmic_dragon_damage = {
+	    name="Nature",
+	    nameDrake=(DamageType:get(DamageType.NATURE).text_color or "").."Venom Drake#LAST#",
+	    nameStatus="Poisoned",
+	    damtype=DamageType.NATURE,
+	    status=DamageType.REK_WYRMIC_VENM,
+	    talent=self.T_REK_WYRMIC_VENM
+	 }
+      end
+   end,
+   on_unlearn = function(self, t) onUnLearnAspect(self) end,
    mode = "sustained",
    cooldown = 10,
    tactical = { BUFF = 2 },
@@ -175,6 +188,8 @@ newTalent{
    name = "Toxic Shock", short_name = "REK_WYRMIC_VENM_SHOCK",
    type = {"wild-gift/wyrm-venom", 3},
    require = gifts_req_high2,
+   points = 5,
+   mode = "passive",
    getPercent = function(self, t)
       return 200 - math.min(150, self:combatTalentScale(t, 50, 125))
    end,
@@ -184,7 +199,7 @@ newTalent{
 
    callbackOnDealDamage = function(self, t, val, target, dead, death_note)
       if target:hasEffect(self.EFF_DEADLY_POISON) then
-	 target:setEffect(target.EFF_REK_WYRMIC_TOXIC_WATCH, {src=self, power=t.getDuration(self, t), threshold=t.getPercent(self, t) * 0.01})
+	 target:setEffect(target.EFF_REK_WYRMIC_TOXIC_WATCH, 10, {src=self, power=t.getDuration(self, t), threshold=t.getPercent(self, t) * 0.01})
       end
    end,
    
@@ -203,6 +218,7 @@ newTalent{
    name = "Penetrating Venom", short_name = "REK_WYRMIC_VENM_BYPASS",
    type = {"wild-gift/wyrm-venom", 4},
    require = gifts_req_high3,
+   points = 5,
    mode = "passive",
    getReduction = function(self, t)
       return self:combatTalentScale(t, 25, 50)

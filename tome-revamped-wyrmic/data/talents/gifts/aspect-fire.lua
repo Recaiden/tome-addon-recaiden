@@ -19,6 +19,20 @@ newTalent{
 	 },
    },
    points = 5,
+   on_learn = function(self, t)
+      if self.rek_wyrmic_dragon_damage == nil then
+	 self.rek_wyrmic_dragon_damage = {
+	    name="Fire",
+	    nameStatus="Flameshocked",
+	    nameDrake=(DamageType:get(DamageType.FIRE).text_color or "").."Fire Drake#LAST#",
+	    damtype=DamageType.FIRE,
+	    status=DamageType.REK_WYRMIC_FIRE,
+	    talent=self.T_REK_WYRMIC_FIRE
+	 }
+      end
+   end,
+   on_unlearn = function(self, t) onUnLearnAspect(self) end,
+   
    cooldown = function(self, t)
       return math.floor(self:combatTalentLimit(t, 3, 18, 6))
    end,
@@ -179,7 +193,6 @@ newTalent{
    activate = function(self, t)
       game:playSoundNear(self, "talents/fire")
       local ret = {name = self.name:capitalize().."'s "..t.name}
-      self:talentTemporaryValue(ret, "movement_speed", t.getSpeed(self, t))
       ret.last_life = self.life
 
       if core.shader.active(4) then

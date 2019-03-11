@@ -7,14 +7,14 @@ local Map = require "engine.Map"
 local Level = require "engine.Level"
 newEffect{
    name = "REK_LIGHTNING_SPEED", image = "talents/lightning_speed.png",
-   desc = "Lightning Speed",
-   long_desc = function(self, eff) return ("Turn into pure lightning, moving %d%% faster. It also increases your lightning resistance by 100%% and your physical resistance by 30%%."):format(eff.power) end,
+   desc = "Racing Wings",
+   long_desc = function(self, eff) return ("Soar through the air, moving %d%% faster. It also increases your physical resistance by 30%%."):format(eff.power) end,
    type = "physical",
-   subtype = { lightning=true, speed=true },
+   subtype = { speed=true },
    status = "beneficial",
    parameters = {},
-   on_gain = function(self, err) return "#Target# turns into lightning!.", "+Lightning Speed" end,
-   on_lose = function(self, err) return "#Target# is back to normal.", "-Lightning Speed" end,
+   on_gain = function(self, err) return "#Target# takes wing!.", "+Racing Speed" end,
+   on_lose = function(self, err) return "#Target# lands.", "-Racing Speed" end,
    get_fractional_percent = function(self, eff)
       local d = game.turn - eff.start_turn
       return util.bound(360 - d / eff.possible_end_turns * 360, 0, 360)
@@ -22,24 +22,376 @@ newEffect{
    activate = function(self, eff)
       eff.start_turn = game.turn
       eff.possible_end_turns = 10 * (eff.dur+1)
-      eff.tmpid = self:addTemporaryValue("lightning_speed", 1)
       eff.moveid = self:addTemporaryValue("movement_speed", eff.power/100)
       eff.resistsid = self:addTemporaryValue("resists", {
-						[DamageType.PHYSICAL]=30,
-						[DamageType.LIGHTNING]=100,
-      })
-      eff.capresistsid = self:addTemporaryValue("resists_cap", {
-						   [DamageType.LIGHTNING]=100,
+						[DamageType.PHYSICAL]=30
       })
       if self.ai_state then eff.aiid = self:addTemporaryValue("ai_state", {no_talents=1}) end -- Make AI not use talents while using it
-      eff.particle = self:addParticles(Particles.new("bolt_lightning", 1))
+      if core.shader.active(4) then
+	 -- exceptions till I can properly add it to the particle generator
+	 local vistype = DamageType.PHYSICAL
+	 local source = self.rek_wyrmic_dragon_damage
+	 if source then
+	    vistype = source.damtype
+	 end
+	 local part_wings = "sandwings"
+	 if vistype == DamageType.PHYSICAL then
+	    part_wings = "sandwings"
+	 elseif vistype == DamageType.NATURE then
+	    part_wings = "poisonwings"
+	 elseif vistype == DamageType.DARKNESS then
+	    part_wings = "darkwings"
+	 elseif vistype == DamageType.BLIGHT then
+	    part_wings = "sickwings"
+	 elseif vistype == DamageType.COLD then
+	    part_wings = "icewings"
+	 elseif vistype == DamageType.LIGHTNING then
+	    part_wings = "lightningwings"
+	 elseif vistype == DamageType.ACID then
+	    part_wings = "acidwings"
+	 end
+	 
+	 local bx, by = self:attachementSpot("back", true)
+	 eff.particle = self:addParticles(Particles.new("shader_wings", 1, {img=part_wings, infinite=1, x=bx, y=by}))
+      end
    end,
    deactivate = function(self, eff)
-      self:removeParticles(eff.particle)
-      self:removeTemporaryValue("lightning_speed", eff.tmpid)
+      if eff.particle then
+	 self:removeParticles(eff.particle)
+      end
+      --self:removeTemporaryValue("lightning_speed", eff.tmpid)
       self:removeTemporaryValue("resists", eff.resistsid)
       self:removeTemporaryValue("resists_cap", eff.capresistsid)
       if eff.aiid then self:removeTemporaryValue("ai_state", eff.aiid) end
       self:removeTemporaryValue("movement_speed", eff.moveid)
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_BREATH_RECOVERY", image = "talents/wyrmic_guile.png",
+   desc = "Deep Breath",
+   long_desc = function(self, eff) return ("You are quickly recovering your breath"):format(eff.power) end,
+   type = "other",
+   subtype = { miscellaneous=true },
+   status = "beneficial",
+   parameters = {},
+   activate = function(self, eff)
+   end,
+   deactivate = function(self, eff)
+   end,
+   on_timeout = function(self, eff)
+      if not self:attr("no_talents_cooldown") then
+	 for tid, _ in pairs(self.talents_cd) do
+	    if tid == self.T_REK_WYRMIC_ELEMENT_BREATH then
+	       local t = self:getTalentFromId(tid)
+	       if t and not t.fixed_cooldown then
+		  self.talents_cd[tid] = self.talents_cd[tid] - 1
+	       end
+	    end
+	 end
+      end
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_EMBERS", image = "talents/fiery_hands.png",
+   desc = "Draconic Strikes",
+   long_desc = function(self, eff) return ("Your weapons are enveloped in natural elemental energy, adding %d damage to your attacks."):format(eff.power) end,
+   type = "physical",
+   subtype = { fire=true },
+   status = "beneficial",
+   parameters = {power=10},
+   activate = function(self, eff)
+      local damtype = DamageType.REK_WYRMIC_NULL
+      local source = self.rek_wyrmic_dragon_damage
+      if source then
+	 damtype = source.damtype
+      end
+      eff.onhit = self:addTemporaryValue("melee_project", {[damtype] = eff.power})
+   end,
+   deactivate = function(self, eff)
+      	self:removeTemporaryValue("melee_project", eff.onhit)
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_NO_STATIC", image = "talents/static_field.png",
+   desc = "Grounded",
+   long_desc = function(self, eff) return ("You are electrically balanced and cannot take Static damage."):format(eff.power) end,
+   type = "other",
+   subtype = { lightning=true },
+   status = "beneficial",
+   parameters = {power=1},
+   activate = function(self, eff)
+   end,
+   deactivate = function(self, eff)
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_SLOW_MOVE",
+   desc = "Dissolution", image = "talents/slow.png",
+   long_desc = function(self, eff) return ("Movement speed is reduced by %d%%."):format(eff.power*100) end,
+   type = "physical",
+   subtype = { nature=true },
+   status = "detrimental",
+   parameters = {power = 1},
+   on_gain = function(self, err) return nil, "+Slow movement" end,
+   on_lose = function(self, err) return nil, "-Slow movement" end,
+   activate = function(self, eff)
+      eff.speedid = self:addTemporaryValue("movement_speed", -eff.power)
+   end,
+   deactivate = function(self, eff)
+		self:removeTemporaryValue("movement_speed", eff.speedid)
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_CORRODE", image = "talents/blightzone.png",
+   desc = "Corrosion",
+   long_desc = function(self, eff) return ("The target is corroded, reducing their accuracy and physical/spell/mind powers by %d"):format(eff.atk) end,
+   type = "physical",
+   subtype = { acid=true },
+   status = "detrimental",
+   parameters = { atk=5 }, no_ct_effect = true,
+   on_gain = function(self, err) return "#Target# is corroded." end,
+   on_lose = function(self, err) return "#Target# has shook off the effects of their corrosion." end,
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "combat_atk", -eff.atk)
+      self:effectTemporaryValue(eff, "combat_spellpower", -eff.atk)
+      self:effectTemporaryValue(eff, "combat_dam", -eff.atk)
+      self:effectTemporaryValue(eff, "combat_mindpower", -eff.atk)
+      
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_SHATTERED_ICE", image = "talents/rek_wyrmic_cold_shield.png",
+   desc = "Shattered Ice",
+   long_desc = function(self, eff) return ("The target's ice armor is shattered, reducing their damage reduction by %d."):format(eff.power) end,
+   type = "other",
+   subtype = { cold=true },
+   status = "detrimental",
+   parameters = { power=0 }, no_ct_effect = true,
+   on_gain = function(self, err) return "#Target#'s ice armor cracks." end,
+   on_lose = function(self, err) return "#Target#'s ice armor reforms." end,
+   updateEffect = function(self, old_eff, new_eff, e)
+      -- Put this in __tmpvals so stuff like copyEffect doesn't break
+      old_eff.__tmpvals = old_eff.__tmpvals or {}
+      new_eff.__tmpvals = new_eff.__tmpvals or {}
+      if old_eff.__tmpvals.power then
+	 self:removeTemporaryValue("flat_damage_armor", old_eff.__tmpvals.power)
+      end
+      new_eff.__tmpvals.power = self:addTemporaryValue("flat_damage_armor", {all=old_eff.power * -1})
+   end,
+   on_merge = function(self, old_eff, new_eff, e)
+      new_eff.power = math.min(
+	 old_eff.power+5,
+	 self:callTalent(self.T_REK_WYRMIC_COLD_SHIELD, "getArmor") or 0
+      )
+      e.updateEffect(self, old_eff, new_eff, e)
+      return new_eff
+   end,
+   activate = function(self, eff, e)
+      e.updateEffect(self, eff, eff, e)
+   end,
+   deactivate = function(self, eff, e)
+      self:removeTemporaryValue("flat_damage_armor", eff.__tmpvals.power)
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_AVALANCHE", image = "talents/rek_wyrmic_cold_counter.png",
+   desc = "Gathering Avalanche",
+   long_desc = function(self, eff) return ("The target is absorbing attacks to create a mighty avalanche."):format() end,
+   type = "mental",
+   subtype = { cold=true, shield=true },
+   status = "beneficial",
+   parameters = { defend=0.25, absorb=0.50, stored=0 }, no_ct_effect = true,
+   on_gain = function(self, err) return "#Target# gathers ice and snow." end,
+   on_lose = function(self, err) return "#Target#'s unleashes an avalanche." end,
+
+   callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, tmp)
+      local dam_absorb = dam * eff.defend
+      eff.stored = eff.stored + dam_absorb * eff.absorb
+      return {dam=dam-dam_absorb}
+   end,
+
+   callbackOnMeleeHit = function(self, eff, target, dam) 
+      if self:checkHit(self:combatMindpower(), target:combatPhysicalResist(), 0, 95, 5) then
+	 target:setEffect(self.EFF_DISARM, 3, {})
+      end
+   end,
+
+   activate = function(self, eff, e)
+   end,
+   deactivate = function(self, eff, e)
+      self:project({type="ball", radius=6, friendlyfire=false}, self.x, self.y, DamageType.REK_WYRMIC_COLD, eff.stored)
+      game.level.map:particleEmitter(self.x, self.y, 6, "rek_wyrmic_cold_ball", {tx=self.x, ty=self.y, radius=6})
+      game:playSoundNear(self, "talents/tidalwave")
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_DISSOLVE", image = "talents/rek_wyrmic_acid_dissolve.png",
+   desc = "Dissolving",
+   long_desc = function(self, eff) return "The target is taking acid damage and losing one sustain per turn." end,
+   on_gain = function(self, err) return "#Target# is coated in disrupting acid!", "+Dissolve" end,
+   on_lose = function(self, err) return "#Target# has neutralized the acid.", "-Dissolve" end,
+   type = "Physical",
+   subtype = { acid=true },
+   status = "detrimental",
+   parameters = {power=1, apply_power=10},
+   on_timeout = function(self, eff)
+      if self:checkHit(eff.apply_power, self:combatMentalResist(), 0, 95, 5) then
+	 self:removeSustainsFilter(nil, 1)
+      end  
+      
+      DamageType:get(DamageType.ACID).projector(eff.src, self.x, self.y, DamageType.ACID, eff.power)
+
+   end,
+   activate = function(self, eff)
+      if core.shader.allow("adv") then
+	 eff.particle1, eff.particle2 = self:addParticles3D("volumetric", {kind="fast_sphere", twist=2, base_rotation=90, radius=1.4, density=40,  scrollingSpeed=-0.0002, growSpeed=0.004, img="miasma_01_01"})
+      end
+   end,
+   deactivate = function(self, eff)
+      self:removeParticles(eff.particle1)
+      self:removeParticles(eff.particle2)
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_TREMORSENSE", image = "talents/track.png",
+   desc = "Sensing",
+   long_desc = function(self, eff) return "Improves senses, allowing the detection of unseen things." end,
+   type = "physical",
+   subtype = { sense=true },
+   status = "beneficial",
+   parameters = { range=10, actor=1, object=0, trap=0 },
+   activate = function(self, eff)
+      eff.rid = self:addTemporaryValue("detect_range", eff.range)
+      eff.aid = self:addTemporaryValue("detect_actor", eff.actor)
+      self.detect_function = eff.on_detect
+      game.level.map.changed = true
+
+      if self.hotkey and self.isHotkeyBound then
+	 local pos = self:isHotkeyBound("talent", self.T_REK_WYRMIC_SAND_TREMOR)
+	 if pos then
+	    self.hotkey[pos] = {"talent", self.T_REK_WYRMIC_SAND_TREMOR_CHARGE}
+	 end
+      end
+      
+      local ohk = self.hotkey
+      self.hotkey = nil -- Prevent assigning hotkey, we just did
+      self:learnTalent(self.T_REK_WYRMIC_SAND_TREMOR_CHARGE, true, eff.level, {no_unlearn=true})
+      self.hotkey = ohk
+      
+   end,
+   deactivate = function(self, eff)
+      self:removeTemporaryValue("detect_range", eff.rid)
+      self:removeTemporaryValue("detect_actor", eff.aid)
+      self.detect_function = nil
+
+      if self.hotkey and self.isHotkeyBound then
+	 local pos = self:isHotkeyBound("talent", self.T_REK_WYRMIC_SAND_TREMOR_CHARGE)
+	 if pos then
+	    self.hotkey[pos] = {"talent", self.T_REK_WYRMIC_SAND_TREMOR}
+	 end
+      end
+      
+      self:unlearnTalent(self.T_REK_WYRMIC_SAND_TREMOR_CHARGE, eff.level, nil, {no_unlearn=true})      
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_VULNERABILITY_POISON", image = "talents/vulnerability_poison.png",
+   desc = "Poison Vulnerability",
+   long_desc = function(self, eff)
+      return ("The target is afflicted with a destabilizing poison. Nature resistance is reduced by 10%% and poison resistance is reduced by %d%%."):format(eff.power)
+   end,
+   type = "physical",
+   subtype = { poison=true },
+   status = "detrimental",
+   parameters = {power=10, unresistable=true},
+   on_gain = function(self, err) return "#Target# is vulnerable to poison!", "+Poison Vulnerability" end,
+   on_lose = function(self, err) return "#Target# is no longer vulnerable to poison.", "-Poison Vulnerability" end,
+   on_timeout = function(self, eff)
+   end,
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "resists", {nature=-10})
+      if self:attr("poison_immune") then
+	 self:effectTemporaryValue(eff, "poison_immune", -eff.power / 100)
+      end
+   end,
+   deactivate = function(self, eff)
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_TOXIC_SHOCK", image = "talents/rek_wyrmic_venom_shock.png",
+   desc = "Toxic Shock",
+   long_desc = function(self, eff)
+      return ("The target is overwhelmed by poison and highly vulnerable. Damage resistances are reduced by 20%%."):format()
+   end,
+   type = "physical",
+   subtype = { nature=true, stun=true },
+   status = "detrimental",
+   parameters = {unresistable=true},
+   on_gain = function(self, err) return "#Target# is suffering from toxic shock!", "+Vulnerability" end,
+   on_lose = function(self, err) return "#Target# has recovered from the toxin.", "-Vulnerability" end,
+   on_timeout = function(self, eff)
+   end,
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "resists", {all=-20})
+      if self.rank < 4 then
+	 eff.tmpid = self:addTemporaryValue("stunned", 1)
+	 eff.tcdid = self:addTemporaryValue("no_talents_cooldown", 1)
+	 eff.speedid = self:addTemporaryValue("movement_speed", -0.5)
+      end
+   end,
+   deactivate = function(self, eff)
+      if eff.tmpid then
+	 self:removeTemporaryValue("stunned", eff.tmpid)
+	 self:removeTemporaryValue("no_talents_cooldown", eff.tcdid)
+	 self:removeTemporaryValue("movement_speed", eff.speedid)
+      end
+   end,
+}
+
+newEffect{
+   name = "REK_WYRMIC_TOXIC_WATCH", image = "talents/rek_wyrmic_venom_shock.png",
+   desc = "Toxin Accumulation",
+   long_desc = function(self, eff)
+      if self:attr("instakill_immune") then
+	 return ("The target is afflicted with a lethal poison. If their health drops too low relative to the poison level, they will be stunned for %d turns."):format( eff.power)
+      else
+	 return ("The target is afflicted with a lethal poison. If their health drops too low relative to the poison level, they will be instantly killed."):format()
+      end
+   end,
+   type = "other",
+   subtype = { poison=true },
+   status = "detrimental",
+   parameters = {power=2, unresistable=true, threshold=100},
+   on_timeout = function(self, eff) end,
+   activate = function(self, eff) end,
+   deactivate = function(self, eff)end,
+   callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, tmp)
+      local new_life = self.life - dam
+      local poison = 0
+      for eff_id, p in pairs(self.tmp) do
+	 local e = self.tempeffect_def[eff_id]
+	 if e.subtype.poison and e.power then
+	    poison = poison + e.power * e.dur
+	 end
+      end
+      if new_life < eff.threshold * poison then
+	 self:setEffect(self.EFF_REK_WYRMIC_TOXIC_SHOCK, eff.power, {src=eff.src})
+	 if self:canBe("instakill") and self.rank < 3 then
+	    self:die(eff.src)
+	 end
+      end
+      
+      return {dam=dam}
    end,
 }

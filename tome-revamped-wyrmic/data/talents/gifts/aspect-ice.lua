@@ -19,6 +19,20 @@ newTalent{
 	 },
    },
    points = 5,
+   on_learn = function(self, t)
+      if self.rek_wyrmic_dragon_damage == nil then
+	 self.rek_wyrmic_dragon_damage = {
+	    name="Cold",
+	    nameStatus="Frozen",
+	    nameDrake=(DamageType:get(DamageType.COLD).text_color or "").."Cold Drake#LAST#",
+	    damtype=DamageType.COLD,
+	    status=DamageType.REK_WYRMIC_COLD,
+	    talent=self.T_REK_WYRMIC_COLD
+	 }
+      end
+   end,
+   on_unlearn = function(self, t) onUnLearnAspect(self) end,
+   
    mode = "sustained",
    cooldown = 8,
    sustain_equilibrium = 0,
@@ -191,10 +205,17 @@ newTalent{
 
    callbackOnTakeDamage = function(self, t, src, x, y, type, dam, tmp, no_martyr)
       if dam >= t.getArmor(self, t) * 2 then
-	 self:setEffect(self.EFF_REK_WYRMIC_SHATTERED_ICE, 5, {})
+	 -- Only deal damage on the first stack of shattering
+	 local pristine = false
+	 if not self:hasEffect(self.EFF_REK_WYRMIC_SHATTERED_ICE) then
+	    pristine = true
+	 end
+	 self:setEffect(self.EFF_REK_WYRMIC_SHATTERED_ICE, 5, {power=5})
 	 if src then
-	    local x, y = self:getTarget(src)
-	    self:project(src, x, y, DamageType.REK_WYRMIC_COLD, t.getDamage(self, t), nil)
+	    local x, y = src.x, src.y
+	    if pristine then
+	       self:project(src, x, y, DamageType.REK_WYRMIC_COLD, t.getDamage(self, t), nil)
+	    end
 	 end
       end
       return {dam=dam}

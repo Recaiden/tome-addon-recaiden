@@ -3,8 +3,6 @@ newTalent{
    type = {"wild-gift/draconic-combat", 1},
    require = techs_req1,
    points = 5,
-   --equilibrium = 4,
-   --equilibrium = 0,
    cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 10, 7)) end,
    range = 1,
    no_message = true,
@@ -30,6 +28,9 @@ newTalent{
       self:logCombat(target, "#Source# tries to swallow #Target#!")
       local hit = self:attackTarget(target, nil, self:combatTalentWeaponDamage(t, 1.6, 2.5), true)
       if not hit then return true end
+      -- Regain EQ on hit
+      self:incEquilibrium(-5)
+      
       -- Slash armor if in physical aspect
       if self:knowTalent(self.T_REK_WYRMIC_SAND) then
 	 target:setEffect(target.EFF_SUNDER_ARMOUR, 3, {power=self:callTalent(self.T_REK_WYRMIC_SAND, "getPenetration"), apply_power=self:combatPhysicalpower()})
@@ -42,7 +43,6 @@ newTalent{
       if (target:checkHit(self:combatPhysicalpower(), target:combatPhysicalResist(), 0, 95, 15) or target.dead) and (target:canBe("instakill") or target.life * 100 / target.max_life <= 5) then
 	 if not target.dead then target:die(self) end
 	 world:gainAchievement("EAT_BOSSES", self, target)
-	 self:incEquilibrium(-target.level - 5)
 	 self:attr("allow_on_heal", 1)
 	 self:heal(target.level * 2 + 5, target)
 	 if core.shader.active(4) then
@@ -56,8 +56,8 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Attack the target for %d%%  weapon damage.
-		If the attack brings your target below %d%% life or kills it, you can try (#SLATE#Physical vs. Physical#LAST#)to swallow it, killing it automatically and regaining life and equilibrium depending on its level.
+      return ([[Attack the target for %d%%  weapon damage.  This predatory act reinforces your place in nature, regenerating 5 equilibrium if you hit.
+		If the attack brings your target below %d%% life or kills it, you can try (#SLATE#Physical vs. Physical#LAST#)to swallow it, killing it automatically and regaining life depending on its level.
 		The chance to swallow depends on your talent level and the relative size of the target.
 
 Passively raises critical rate (by %d%%).

@@ -20,6 +20,20 @@ newTalent{
    },
    points = 5,
    mode = "passive",
+
+   on_learn = function(self, t)
+      if self.rek_wyrmic_dragon_damage == nil then
+	 self.rek_wyrmic_dragon_damage = {
+	    name="Physical",
+	    nameStatus="Blinded",
+	    nameDrake=(DamageType:get(DamageType.PHYSICAL) or "").text_color.."Sand Drake#LAST#",
+	    damtype=DamageType.PHYSICAL,
+	    status=DamageType.REK_WYRMIC_SAND,
+	    talent=self.T_REK_WYRMIC_SAND
+	 }
+      end
+   end,
+   on_unlearn = function(self, t) onUnLearnAspect(self) end,
    
    -- Get resists for use in Prismatic Blood
    getResists = getAspectResists,
@@ -47,7 +61,6 @@ Sand Damage can inflict Blind (#SLATE#Mindpower vs. Physical#LAST#).
 newTalent{
    name = "Burrow", short_name = "REK_WYRMIC_SAND_BURROW",
    type = {"wild-gift/wyrm-sand", 2},
-   image = "talents/burrow.png",
    require = {
       stat = { wil=function(level) return 22 + (level-1) * 2 end },
       level = function(level) return 10 + (level-1) end,
@@ -96,34 +109,42 @@ newTalent{
 }
 
 newTalent{
-   name = "Tremorsense", short_name = "REK_WYRMIC_SAND_TREMOR_SENSE",
+   name = "Tremorsense", short_name = "REK_WYRMIC_SAND_TREMOR",
    type = {"wild-gift/wyrm-sand", 3},
    require = gifts_req_high2,
    points = 5,
    cooldown = 12,
+   equilibrium = 8,
+   no_energy = true,
    radius = function(self, t) return math.floor(self:combatScale(self:getCun(10, true) * self:getTalentLevel(t), 5, 0, 55, 50)) end,
    getDuration = function(self, t)
       return 1
       --return math.floor(self:combatTalentScale(t, 4, 8))
    end,
+   getDamage = function(self, t)
+      return self:combatTalentWeaponDamage(t, 0.7, 1.9)
+   end,
+   getRange = function(self, t) return math.floor(self:combatTalentScale(t, 4, 10)) end,
    no_npc_use = true,
    action = function(self, t)
       local rad = self:getTalentRadius(t)
       self:setEffect(self.EFF_REK_WYRMIC_TREMORSENSE, t.getDuration(self, t), {
 			range = rad,
 			actor = 1,
+			level = self:getTalentLevelRaw(t)
       })
       return true
    end,
    
    info = function(self, t)
       local range = t.radius(self, t)
-      local damage = 100
-      return ([[Sense foes around you in a radius of %d.  Then, this talent will be replaced with the ability to burrow underground and emerge near an enemy, attacking it for %d%% damage.
+      local dash = t.getRange(self, t)
+      local damage = t.getDamage(self, t)*100
+      return ([[Sense foes around you in a radius of %d.  Then, this talent will be replaced with the ability to burrow underground and emerge near an enemy within range %d, attacking it for %d%% damage.
 
 Activating this talent is instant, but the burrowing attack takes a turn.
 Cunning: Improves detection radius
-Talent Level: Improves range]]):format(range, damage)
+Talent Level: Improves range]]):format(range, dash, damage)
    end,
 }
 
@@ -132,7 +153,6 @@ newTalent{
    type = {"wild-gift/other", 1},
    require = gifts_req_high2,
    points = 5,
-   cooldown = 6,
    range = function(self, t) return math.floor(self:combatTalentScale(t, 4, 10)) end,
    tactical = { CLOSEIN = 2, ATTACK = { PHYSICAL = 0.5 } },
    requires_target = true,
@@ -155,6 +175,10 @@ newTalent{
       if target and target.x and core.fov.distance(self.x, self.y, target.x, target.y) == 1 then
 	 local multiplier = t.getDamage(self, t)
 	 self:attackTarget(target, nil, multiplier, true)
+      end
+
+      if self:hasEffect(self.EFF_REK_WYRMIC_TREMORSENSE) then
+	 self:removeEffect(self.EFF_REK_WYRMIC_TREMORSENSE)
       end
       
       return true
@@ -182,6 +206,11 @@ newTalent{
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.5, 3.2) end,
    
    action = function(self, t)
+      -- Reset
+      if self.talents_cd[self.T_REK_WYRMIC_SAND_TREMOR] then
+	 self.talents_cd[self.T_REK_WYRMIC_SAND_TREMOR] = 0
+      end
+      
       --Attack everyone nearby
       local tg = {type="ball", range=0, selffire=false, radius=self:getTalentRadius(t), talent=t, no_restrict=true}
       self:project(tg, self.x, self.y, function(px, py, tg, self)
@@ -204,7 +233,7 @@ newTalent{
 			    name = "sand wall", image = "terrain/sand/sandwall_5_1.png",
 			    display = '#', color_r=255, color_g=255, color_b=255, back_color=colors.GREY,
 			    desc = "a slowly collapsing wall of sand, raised by an earthquake",
-			    type = "wall", --subtype = "floor",
+			    type = "wall", subtype = "floor",
 			    always_remember = true,
 			    can_pass = {pass_wall=1},
 			    does_block_move = true,
@@ -234,14 +263,10 @@ newTalent{
 			 }
 			 e.tooltip = mod.class.Grid.tooltip
 			 game.level:addEntity(e)
-			 game.level.map(x + i, y + j, Map.TERRAIN, e)
+			 --game.zone:addEntity(game.level, g, "terrain", i, j)
+			 game.level.map(px, py, Map.TERRAIN, e)
 		      end
       end)
-
-      -- Reset Burrow
-      if self.talents_cd[T_REK_WYRMIC_SAND_BURROW] then
-	 self.talents_cd[T_REK_WYRMIC_SAND_BURROW] = 0
-      end
       return true
    end,
    
@@ -252,6 +277,6 @@ newTalent{
 Creatures caught by the quake will be damaged for %d%% weapon damage, and knocked back up to 3 tiles away.
 Empty spaces in the area will be filled with unstable sand walls which collapse after 5 turns.
 
-If you know the Burrow talent, its cooldown will be reset.]]):format(radius, dam * 100)
+If you know the Tremorsense talent, its cooldown will be reset.]]):format(radius, dam * 100)
    end,
 }

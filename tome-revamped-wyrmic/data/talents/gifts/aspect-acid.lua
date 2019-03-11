@@ -19,6 +19,20 @@ newTalent{
 	 },
    },
    points = 5,
+   on_learn = function(self, t)
+      if self.rek_wyrmic_dragon_damage == nil then
+	 self.rek_wyrmic_dragon_damage = {
+	    name="Acid",
+	    nameStatus="Disarmed",
+	    nameDrake=(DamageType:get(DamageType.ACID).text_color or "").."Acid Drake#LAST#",
+	    damtype=DamageType.ACID,
+	    status=DamageType.REK_WYRMIC_ACID,
+	    talent=self.T_REK_WYRMIC_ACID
+	 }
+      end
+   end,
+   on_unlearn = function(self, t) onUnLearnAspect(self) end,
+      
    mode = "passive",
    -- Get resists for use in Prismatic Blood
    getResists = getAspectResists,
@@ -34,7 +48,7 @@ newTalent{
       local corrosion = t.getAtk(self, t)
       return ([[You can take on the power of Acid Wyrms using Prismatic Blood.  You will gain %d%% acid resistance.  
 
-This talent passively improves your Elemental Spray, causing it to corrode affected enemies if Acid Aspect is active, reducing their accuracy and power by %d (#SLATE#Mindpower vs. Physical#LAST#).
+This talent passively improves your Elemental Spray, causing it to corrode affected enemies, reducing their accuracy and power by %d (#SLATE#Mindpower vs. Physical#LAST#).
 
 Acid damage can inflict Disarm (#SLATE#Mindpower vs. Physical#LAST#).
 ]]):format(resist, corrosion)
@@ -123,6 +137,7 @@ newTalent{
    cooldown = 15,
    tactical = { DISABLE = 2, ATTACK = {ACID = 1} },
    range = 7,
+   equilibrium = 10,
    getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 80) end,
    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 6)) end,
    target = function(self, t)
@@ -137,7 +152,7 @@ newTalent{
       local target = game.level.map(x, y, Map.ACTOR)
       if not x or not y or not target then return nil end
       
-      target:setEffect(target.EFF_REK_WYRMIC_DISSOLVE, t.getDuration(self, t), { power=t.getDamage(self, t), apply_power=self:combatMindpower() })
+      target:setEffect(target.EFF_REK_WYRMIC_DISSOLVE, t.getDuration(self, t), { power=t.getDamage(self, t), apply_power=self:combatMindpower(), src=self })
 
       game:playSoundNear(self, "talents/acid")
       
@@ -148,7 +163,7 @@ newTalent{
       local duration = t.getDuration(self, t)
       return ([[Launch a clinging glob of acid at an enemy.  Each turn for the next %d turns, the target will take %d acid damage and may (#SLATE#Mindpower vs. Mental#LAST#) have one of their sustained talents deactivated.
 
-Mindpower: Improves damage]]):format(damDesc(self, DamageType.ACID, damage), duration)
+Mindpower: Improves damage]]):format(duration, damDesc(self, DamageType.ACID, damage))
    end,
    }
 
@@ -156,10 +171,13 @@ newTalent{
    name = "Scour Clean", short_name = "REK_WYRMIC_ACID_SCOUR",
    type = {"wild-gift/wyrm-acid", 4},
    require = gifts_req_high3,
+   points = 5,
+   mode = "passive",
    getNumber = function(self, t) return 1 + math.floor(self:combatTalentScale(t, 1, 5)) end,
    callbackOnActBase = function(self, t)
       local max_nb = t.getNumber(self, t)
-      local dur = t.getCleanseDuration(self, t)
+      local dur = 1
+      local effs = {}
       for eff_id, p in pairs(self.tmp) do
 	 local e = self.tempeffect_def[eff_id]
 	 if e.status == "detrimental" and e.type ~= "other" and not e.subtype["cross tier"] then

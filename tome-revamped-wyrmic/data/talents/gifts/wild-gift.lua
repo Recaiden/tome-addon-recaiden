@@ -193,6 +193,21 @@ function onUnLearnHigherAbility(self)
       self.unused_talents_types = self.unused_talents_types + 1
    end
 end
+
+-- If you unlearn your last level of your last aspect, remove your element.
+function onUnLearnAspect(self)
+   local level = self:getTalentLevelRaw(self.T_REK_WYRMIC_FIRE)
+      + self:getTalentLevelRaw(self.T_REK_WYRMIC_COLD)
+      + self:getTalentLevelRaw(self.T_REK_WYRMIC_ELEC)
+      + self:getTalentLevelRaw(self.T_REK_WYRMIC_SAND)
+      + self:getTalentLevelRaw(self.T_REK_WYRMIC_ACID)
+      + self:getTalentLevelRaw(self.T_REK_WYRMIC_VENM)
+      + self:getTalentLevelRaw(self.T_RAZE)
+      + self:getTalentLevelRaw(self.T_TENTACLED_WINGS)
+   if level == 0 then
+      self.rek_wyrmic_dragon_damage = nil
+   end
+end
    
 if not Talents.talents_types_def["demented/wyrmic"] then
    newTalentType{ allow_random=false, is_spell=true, no_silence=true,

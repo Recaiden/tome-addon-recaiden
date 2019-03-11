@@ -48,7 +48,7 @@ newTalent{
       else
 	 name = "None"
       end
-      return ([[Activate this talent to select your Primary Aspect from among Active Aspects.  Your Primary aspect will be used by Wyrmic talents to determine damage type and status effects.
+      return ([[Activate this talent to select your Primary Aspect.  Your Primary aspect will be used by Wyrmic talents to determine damage type and status effects.
 Currently: %s]]):
 	 format(name)
    end,

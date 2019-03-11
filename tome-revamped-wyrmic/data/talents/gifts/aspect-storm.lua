@@ -19,6 +19,20 @@ newTalent{
 	 },
    },
    points = 5,
+   on_learn = function(self, t)
+      if self.rek_wyrmic_dragon_damage == nil then
+	 self.rek_wyrmic_dragon_damage = {
+	    name="Lightning",
+	    nameStatus="Dazed",
+	    nameDrake=(DamageType:get(DamageType.LIGHTNING).text_color or "").."Storm Drake#LAST#",
+	    damtype=DamageType.LIGHTNING,
+	    status=DamageType.REK_WYRMIC_ELEC,	    
+	    talent=self.T_REK_WYRMIC_ELEC
+	 }
+      end
+   end,
+   on_unlearn = function(self, t) onUnLearnAspect(self) end,
+      
    mode = "passive",
    
    -- Get resists for use in Prismatic Blood
@@ -108,7 +122,8 @@ newTalent{
    name = "Storm Surge", short_name = "REK_WYRMIC_ELEC_CHAIN",
    type = {"wild-gift/wyrm-storm", 3},
    require = gifts_req_high2,
-   mode= "passive",
+   points = 5,
+   mode = "passive",
    getPercent = function(self, t)
       return math.min(100, 40 + 5 * self:getTalentLevel(t))
    end,
@@ -121,7 +136,7 @@ newTalent{
    info = function(self, t)
       local diminish = t.getPercent(self, t)
       local targets = t.getNumChain(self, t)
-      return ([[Your wyrmic lightning attacks leap between enemies with range 5. Each jump, the lightning does %d%% of the previous damage.  It can leap to up to %d enemies and never strikes the same enemy twice.
+      return ([[Your wyrmic lightning attacks leap between enemies with range 5. Each jump, the lightning does %d%% of the previous damage.  It can leap to up to %d enemies and never strikes the same enemy twice.  Secondary targets will not be dazed.
 ]]):format(diminish, targets)
    end,
 }
