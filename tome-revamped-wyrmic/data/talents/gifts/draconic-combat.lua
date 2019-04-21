@@ -80,12 +80,6 @@ newTalent{
    getArmorHardiness = function(self, t)
       return self:combatTalentLimit(t, 30, 10, 22)
    end,
-   getResists = function(self, t) return self:combatTalentScale(t, 4, 15, 0.75, 0, 0, true) end,
-
-   passives = function(self, t, p)
-      self:talentTemporaryValue(p, "resists", {all = t.getResists(self, t)})
-   end,
-   
    activate = function(self, t)
       local ret = 
 	 {
@@ -115,9 +109,8 @@ newTalent{
    info = function(self, t)
       return ([[Your skin forms a coat of scales and your flesh toughens, increasing your Armor Hardiness by %d%%, your Armour by %d.
 
-Passively increeases resistance to all damage by %d%%
 Mindpower: improves Armour.
-]]):format(t.getArmorHardiness(self, t), t.getArmor(self, t), t.getResists(self, t))
+]]):format(t.getArmorHardiness(self, t), t.getArmor(self, t))
    end,
 }
 
@@ -135,12 +128,6 @@ newTalent{
    requires_target = true,
    tactical = { ATTACK = { weapon = 1 } },
    is_melee = true,
-   getPassiveSaves = function(self, t) return self:getTalentLevel(t)*4 end,
-   passives = function(self, t, p)
-      self:talentTemporaryValue(p, "combat_physresist", t.getPassiveSaves(self, t))
-      self:talentTemporaryValue(p, "combat_spellresist", t.getPassiveSaves(self, t))
-      self:talentTemporaryValue(p, "combat_mentalresist", t.getPassiveSaves(self, t))
-   end,
    damagemult = function(self, t) return self:combatTalentWeaponDamage(t, 1.6, 2.3) end,
    target = function(self, t)
       return {type="cone", range=self:getTalentRange(t), selffire=false, radius=self:getTalentRadius(t)}
@@ -179,9 +166,7 @@ newTalent{
 	 nameStatus = source.nameStatus
       end
       return ([[You call upon the mighty claws of the drake and rake the enemies in front of you, doing %d%% weapon damage as %s in a cone of %d, with a 25%% chance that the target will be %s.
-		
-Passively improves all saves by %d
-]]):format(100 * t.damagemult(self, t), name, self:getTalentRadius(t), nameStatus, t.getPassiveSaves(self, t))
+]]):format(100 * t.damagemult(self, t), name, self:getTalentRadius(t), nameStatus)
    end,
 }
 

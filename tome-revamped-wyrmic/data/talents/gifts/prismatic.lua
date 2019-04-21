@@ -24,8 +24,8 @@ newTalent{
 	 self.rek_wyrmic_dragon_damage = aspect
       end
 
-      if self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_GUILE) then
-	 local reduc = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_GUILE, "CDreduce")
+      if self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY) then
+	 local reduc = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY, "CDreduce")
 	 if not self:attr("no_talents_cooldown") then
 	    for tid, _ in pairs(self.talents_cd) do
 	       if tid == self.T_REK_WYRMIC_ELEMENT_BREATH
@@ -48,7 +48,7 @@ newTalent{
       else
 	 name = "None"
       end
-      return ([[Activate this talent to select your Primary Aspect.  Your Primary aspect will be used by Wyrmic talents to determine damage type and status effects.
+      return ([[Activate this talent to select your Aspect.  Your Aspect will be used by Wyrmic talents to determine damage type and status effects.
 Currently: %s]]):
 	 format(name)
    end,
@@ -170,6 +170,7 @@ newTalent{
       if self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY) then
 	 local dam_inc = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY, "getDamageIncrease")
 	 local resists_pen = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY, "getResistPen")
+	 local aspect = self.rek_wyrmic_dragon_damage
 	 self:talentTemporaryValue(p, "inc_damage", {[aspect.damtype] = dam_inc})
 	 self:talentTemporaryValue(p, "resists_pen", {[aspect.damtype] = resists_pen})
       end
@@ -190,7 +191,7 @@ newTalent{
       local speed = t.getPassiveSpeed(self, t)
       local numAspects = t.getNumAspects(self, t)
       local damname = ""
-      local str_info = ([[Through intense concentration you attune yourself to the power of dragons, passively increasing your resistances and adding special effects to your abilities.  This talent allows you to learn up to %d Draconic Aspect talents.
+      local str_info = ([[Through intense concentration you attune yourself to the power of dragons. This talent allows you to learn talents from %d additional elements.
 
 Passively increases Physical, Mental, and Spell attack speeds by %d%%.
 
@@ -216,23 +217,20 @@ newTalent{
    equilibrium = 0,
    mode = "sustained",
    no_energy = true,
-   cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 6, 12, 8)) end,
+   cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 6, 13, 8)) end,
    tactical = { ATTACK = { PHYSICAL = 1, COLD = 1, FIRE = 1, LIGHTNING = 1, ACID = 1, POISON = 1 } },
    getBurstDamage = function(self, t) return self:combatTalentMindDamage(t, 50, 230) end,
-   
+   getCost = function(self, t) return math.floor(self:GetTalentCooldown(self, t)/3) end,
    radius = function(self, t) return math.floor(self:combatTalentScale(t, 1.5, 3.5)) end,
-
    activate = function(self, t)
       return {}
    end,
    deactivate = function(self, t, p)
       return true
    end,
-
-   callbackOnDealDamage = function(self, t, val, target, dead, death_note)    
-      --callbackOnMeleeAttack = function(self, t, target, hitted, crit, weapon, damtype, mult, dam)
+   callbackOnDealDamage = function(self, t, val, target, dead, death_note)
       self:forceUseTalent(self.T_REK_WYRMIC_PRISMATIC_BURST, {ignore_energy=true})
-      self:incEquilibrium(5)
+      self:incEquilibrium(t.getCost(self, t))
       local x, y = target.x, target.y
       if not target or not self:canProject(target, x, y) then return nil end
 
@@ -241,7 +239,7 @@ newTalent{
 	 local aspect = rng.table(aspects)
 	 local nameBall = "rek_wyrmic_"..DamageType:get(aspect.damtype).name.."_ball"
 
-	 local tg = {type="ball", range=10, selffire=false, radius=self:getTalentRadius(t), talent=t}
+	 local tg = {type="ball", range=10, selffire=false, friendlyfire=false, radius=self:getTalentRadius(t), talent=t}
 	 local grids = self:project(tg, x, y, aspect.status,
 				    {
 				       dam=self:mindCrit(t.getBurstDamage(self, t)),
@@ -258,9 +256,10 @@ newTalent{
    info = function(self, t)
       local burstdamage = t.getBurstDamage(self, t)
       local radius = self:getTalentRadius(t)
-      return ([[You charge your weapon with raw, chaotic elemental damage. The next time you damage an enemy, you will unleash a burst of one of your elements at random, dealing %0.2f damage in radius %d, increasing your equilibrium by 5 and deactivating this sustain.
+      local cost = t.getCost(self, t)
+      return ([[You charge your body with raw, chaotic elemental damage. The next time you damage an enemy, you will unleash a burst of one of your elements at random, dealing %0.2f damage in radius %d, increasing your equilibrium by %d and deactivating this sustain.
 		
-Mindpower: Improves damage.]]):format(burstdamage, radius)
+Mindpower: Improves damage.]]):format(burstdamage, radius, cost)
    end,
 }
 
@@ -272,27 +271,20 @@ newTalent{
    require = gifts_req_high3,
    points = 5,
    mode = "passive",
-   resistKnockback = function(self, t) return self:combatTalentLimit(t, 1, .17, .5) end, -- Limit < 100%
-   resistBlindStun = function(self, t) return self:combatTalentLimit(t, 1, .07, .25) end, -- Limit < 100%
-   CDreduce = function(self, t) return math.floor(self:combatTalentLimit(t, 5, 1, 3)) end, -- limit to 5
-   on_learn = function(self, t)
-      self.inc_stats[self.STAT_CUN] = self.inc_stats[self.STAT_CUN] + 2
-   end,
-   on_unlearn = function(self, t)
-      self.inc_stats[self.STAT_CUN] = self.inc_stats[self.STAT_CUN] - 2
-   end,
+   resistKnockback = function(self, t) return self:combatTalentLimit(t, 1, .17, .5) end,
+   resistBlindStun = function(self, t) return self:combatTalentLimit(t, 1, .07, .25) end,
+   getStat = function(self, t) return self:combatTalentScale(t, 1, 12) end,	
    passives = function(self, t, p)
       local cdr = t.CDreduce(self, t)
-      self:talentTemporaryValue(p, "heightened_senses",  5 ) 
       self:talentTemporaryValue(p, "knockback_immune", t.resistKnockback(self, t))
       self:talentTemporaryValue(p, "stun_immune", t.resistBlindStun(self, t))
       self:talentTemporaryValue(p, "blind_immune", t.resistBlindStun(self, t))
-
+      self:talentTemporaryValue(p, "inc_stats", {[self.STAT_STR] = t.getStat(self, t)})
+      self:talentTemporaryValue(p, "inc_stats", {[self.STAT_WIL] = t.getStat(self, t)})
    end,
    info = function(self, t)
-      return ([[You have the mental prowess of a Wyrm.
-		Your Cunning is increased by %d, you gain %d%% knockback resistance, and your blindness and stun resistances are increased by %d%%.
-Whenever you change aspect, the cooldowns of Dragon's Breath and Overwhelm will be reduced by %d.]]):format(2*self:getTalentLevelRaw(t), 100*t.resistKnockback(self, t), 100*t.resistBlindStun(self, t), t.CDreduce(self, t))
+      return ([[You have the might and mettle of a Wyrm.
+		Your Strength and Willpower are increased by %d, you gain %d%% knockback resistance, and your blindness and stun resistances are increased by %d%%.]]):format(2*self:getTalentLevelRaw(t), 100*t.resistKnockback(self, t), 100*t.resistBlindStun(self, t))
    end,
 }
 
@@ -304,11 +296,12 @@ newTalent{
    points = 5,
    mode = "passive",
 
+   CDreduce = function(self, t) return math.floor(self:combatTalentLimit(t, 5, 1, 3)) end,
    getDamageIncrease = function(self, t) return self:combatTalentScale(t, 2.5, 10) end,
-   getResistPen = function(self, t) return self:combatTalentLimit(t, 100, 5, 20) end, -- Limit < 100%
-
+   getResistPen = function(self, t) return self:combatTalentLimit(t, 100, 5, 20) end,
    info = function(self, t)
-      return ([[You have gained the full power of the multihued dragon and become attuned to the draconic elements.  Your primary aspect will also grant you %0.1f%% increased damage and %0.1f%% resistance penetration with its element]])
-	 :format(t.getDamageIncrease(self, t), t.getResistPen(self, t))
+      return ([[You have gained the full power of the multihued dragon and become attuned to the draconic elements.  Your primary aspect will also grant you %0.1f%% increased damage and %0.1f%% resistance penetration with its element.
+Whenever you change aspect, the cooldowns of Dragon's Breath and Overwhelm will be reduced by %d.]])
+	 :format(t.getDamageIncrease(self, t), t.getResistPen(self, t), t.CDreduce(self, t))
   end,
 }

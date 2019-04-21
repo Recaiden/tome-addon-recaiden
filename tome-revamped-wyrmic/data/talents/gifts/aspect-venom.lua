@@ -53,23 +53,11 @@ newTalent{
       end
       if target:canBe("poison") then
 	 local dam = t.getDamageStinger(self,t)
-	 target:setEffect(target.EFF_DEADLY_POISON, t.getDuration(self, t),
+	 target:setEffect(target.EFF_REK_WYRMIC_VENOM, t.getDuration(self, t),
 			  {
-			     src=self, power=dam, max_power=dam*4,
-			     insidious=0,
+			     src=self, power=dam,
 			     crippling=0,
-			     numbing=0,
-			     leeching=0,
-			     volatile=0,
 			     apply_power=self:combatAttack(), no_ct_effect=true})
-	 if self.vile_poisons then
-	    for tid, val in pairs(self.vile_poisons) do -- apply any special procs
-	       local tal = self:getTalentFromId(tid)
-	       if tal and tal.proc then
-		  tal.proc(self, tal, target, weapon)
-	       end
-	    end
-	 end
       end
    end,
    
@@ -105,9 +93,11 @@ newTalent{
       local dam = t.getDamageStinger(self, t)
       return ([[You can take on the power of Venom Wyrms using Prismatic Blood.  You will gain %d%% nature resistance. 
 
-While sustained, you coat your weapons and ammo in venom, giving them a %d%% chance to expose enemies to deadly poison (%d damage over %d turns (#SLATE#Accuracy vs. Physical#LAST#), stacking up to 4 times).  The chance is reduced by 75%% if you have a shield, 50%% if you are wielding 2 weapons.
+While sustained, you coat your weapons and ammo in venom, giving them a %d%% chance to expose enemies to a deadly poison (%d damage over %d turns (#SLATE#Accuracy vs. Physical#LAST#), stacking up to 5 times).  The chance is reduced to 75%% if you have a shield, 50%% if you are wielding 2 weapons.
 
-Venom is Nature damage that can inflict Crippling Poison (#SLATE#Mindpower vs. Physical#LAST#).  It deals 50%% of the listed damage up-front, and 75%% as a poison over the next three turns.
+Venom is Nature damage that can inflict Crippling Poison (#SLATE#Mindpower vs. Physical#LAST#).  
+Venom deals 25%% bonus damage. 
+60%% of Venom damage is applied as a poison over the next three turns.
 
 Cunning: Improves on-hit poison damage
 ]]):format(resist, t.getChance(self,t), t.getDuration(self, t), dam)
@@ -177,7 +167,7 @@ Mindpower: Improves poison intensification
       if not hasHigherAbility(self) then
 	 return desc..[[
 
-#YELLOW#Learning this talent will unlock the higher aspect abilities in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
+#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
       else
 	 return desc
       end 
@@ -198,8 +188,8 @@ newTalent{
    end,
 
    callbackOnDealDamage = function(self, t, val, target, dead, death_note)
-      if target:hasEffect(self.EFF_DEADLY_POISON) then
-	 target:setEffect(target.EFF_REK_WYRMIC_TOXIC_WATCH, 10, {src=self, power=t.getDuration(self, t), threshold=t.getPercent(self, t) * 0.01})
+      if target:hasEffect(self.EFF_REK_WYRMIC_VENOM) then
+	 target:setEffect(target.EFF_REK_WYRMIC_TOXIC_WATCH, 10, {src=self, length=t.getDuration(self, t), threshold=t.getPercent(self, t) * 0.01})
       end
    end,
    

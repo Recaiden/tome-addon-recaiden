@@ -40,9 +40,10 @@ newTalent{
    getResists = getAspectResists,
    -- Scaly Skin setup
    getDamageOnMeleeHit = function(self, t) return 10 +  self:combatTalentMindDamage(t, 10, 30) end,
+   getAllRes = function(self, t) return self:combatTalentScale(t, 4, 15, 0.75, 0, 0, true) end,
    passives = function(self, t, p)
       local resist = t.getResists(self, t)
-      self:talentTemporaryValue(p, "resists", {[DamageType.COLD] = resist})
+      self:talentTemporaryValue(p, "resists", {[DamageType.COLD] = resist, all = t.getAllRes(self, t)})
       self:talentTemporaryValue(p, "iceblock_pierce", math.floor(4*self:getTalentLevel(t)))
    end,
    activate = function(self, t )
@@ -62,11 +63,11 @@ newTalent{
       local retal = t.getDamageOnMeleeHit(self, t)
       return ([[You can take on the power of Ice Wyrms using Prismatic Blood.  You gain %d%% cold resistance. 
 
-While sustained, this talent protects you with a layer of cold, causing you to deal %0.2f cold damage as retaliation to any enemies that physically strike you.
+While sustained, this talent protects you with a layer of cold, increasing your resistance to damge by %d%% and causing you to deal %0.2f cold damage as retaliation to any enemies that physically strike you.
 
 Ice is Cold damage that can inflict Slow(20%% global, no save) and Freeze (#SLATE#Mindpower vs. Physical#LAST#).
 
-Each point in Ice Wyrm talents lets you pierce through ice blocks, reducing the damage they absorb by a total of %d%%.]]):format(resist, damDesc(self, DamageType.COLD, retal), self:attr("iceblock_pierce") or 0)
+Each point in Ice Wyrm talents lets you pierce through ice blocks, reducing the damage they absorb by a total of %d%%.]]):format(resist, t.getAllRes(self, t), damDesc(self, DamageType.COLD, retal), self:attr("iceblock_pierce") or 0)
    end,
 }
 
@@ -182,7 +183,7 @@ newTalent{
       if not hasHigherAbility(self) then
 	 return desc..[[
 
-#YELLOW#Learning this talent will unlock the higher aspect abilities in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
+#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
       else
 	 return desc
       end 
@@ -204,7 +205,7 @@ newTalent{
    end,
 
    callbackOnTakeDamage = function(self, t, src, x, y, type, dam, tmp, no_martyr)
-      if dam >= t.getArmor(self, t) * 2 then
+      if dam >= t.getArmor(self, t) * 8 then
 	 -- Only deal damage on the first stack of shattering
 	 local pristine = false
 	 if not self:hasEffect(self.EFF_REK_WYRMIC_SHATTERED_ICE) then
@@ -222,7 +223,9 @@ newTalent{
    end,
    
    info = function(self, t)
-      return ([[Coat yourself in plates of ice, providing %d damage reduction against all attacks.  When you take damage greater than twice this amount in a single hit, your armor shatters, dealing %d ice damage to the attacker but reducing your damage reduction for 5 turns.]]):format(t.getArmor(self, t), damDesc(self, DamageType.COLD, t.getDamage(self, t)))
+      return ([[Coat yourself in plates of ice, providing %d damage reduction against all attacks.  When you take damage greater than eight times this amount in a single hit, your armor shatters, dealing %d ice damage to the attacker but reducing your damage reduction for 5 turns.
+
+Mindpower: Improves damage reduction and armor]]):format(t.getArmor(self, t), damDesc(self, DamageType.COLD, t.getDamage(self, t)))
    end,
 }
 

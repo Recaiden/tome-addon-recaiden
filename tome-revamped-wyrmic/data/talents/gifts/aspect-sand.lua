@@ -5,7 +5,7 @@ function getAspectResists(self, t)
 end
 
 newTalent{
-   name = "Sand Aspect", short_name = "REK_WYRMIC_SAND",
+   name = "Rending Strikes", short_name = "REK_WYRMIC_SAND",
    type = {"wild-gift/wyrm-sand", 1},
    require = {
       stat = { wil=function(level) return 10 + (level-1) * 4 end },
@@ -101,7 +101,7 @@ newTalent{
       if not hasHigherAbility(self) then
 	 return desc..[[
 
-#YELLOW#Learning this talent will unlock the higher aspect abilities in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
+#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
       else
 	 return desc
       end 
@@ -153,14 +153,18 @@ newTalent{
    type = {"wild-gift/other", 1},
    require = gifts_req_high2,
    points = 5,
-   range = function(self, t) return math.floor(self:combatTalentScale(t, 4, 10)) end,
+   range = function(self, t)
+      --return math.floor(self:combatTalentScale(t, 4, 10))
+      return self:callTalent(self.T_REK_WYRMIC_SAND_TREMOR, "getRange")
+   end,
    tactical = { CLOSEIN = 2, ATTACK = { PHYSICAL = 0.5 } },
    requires_target = true,
    is_melee = true,
    is_teleport = true,
    target = function(self, t) return {type="hit", pass_terrain = true, range=self:getTalentRange(t)} end,
    getDamage = function(self, t)
-      return self:combatTalentWeaponDamage(t, 0.7, 1.9)
+      return self:callTalent(self.T_REK_WYRMIC_SAND_TREMOR, "getDamage")
+      --return self:combatTalentWeaponDamage(t, 0.7, 1.9)
    end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)
@@ -169,7 +173,7 @@ newTalent{
       
       if not self:teleportRandom(x, y, 0) then game.logSeen(self, "You can't burrow there!") return true end
       
-      game:playSoundNear(self, "talents/teleport")
+      game:playSoundNear(self, "talents/rek_wyrmic_burrowing")
       
       -- Attack ?
       if target and target.x and core.fov.distance(self.x, self.y, target.x, target.y) == 1 then

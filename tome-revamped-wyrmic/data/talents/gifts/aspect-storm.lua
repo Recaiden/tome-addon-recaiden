@@ -5,7 +5,7 @@ function getAspectResists(self, t)
 end
 
 newTalent{
-   name = "Storm Aspect", short_name = "REK_WYRMIC_ELEC",
+   name = "Static Shock", short_name = "REK_WYRMIC_ELEC",
    type = {"wild-gift/wyrm-storm", 1},
    require = {
       stat = { wil=function(level) return 10 + (level-1) * 4 end },
@@ -52,7 +52,7 @@ newTalent{
 
 This talent passively causes your primary element to Electrocute enemies (#SLATE#Mindpower vs. Physical#LAST#) for %d%% of their current life (2/3 as much vs. Elites and Rares, 2/4 as much vs. Uniques or Bosses, and 2/5 as much vs. Elite Bosses and above).  Enemies can only be electrocuted once every 20 turns.
 
-Lightning damage will fluctuate between 60%% and 175%% of the listed damage and can inflict Daze (#SLATE#Mindpower vs. Physical#LAST#).  If the target is already dazed, the chance to reapply daze is greatly increased.
+Storm damage will fluctuate between 60%% and 140%% of the listed damage and can inflict Daze (#SLATE#Mindpower vs. Physical#LAST#).  If the target is already dazed, the chance to reapply daze is greatly increased.
 ]]):format(resist, t.getPercent(self, t))
    end,
 }
@@ -111,7 +111,7 @@ newTalent{
       if not hasHigherAbility(self) then
 	 return desc..[[
 
-#YELLOW#Learning this talent will unlock the higher aspect abilities in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
+#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
       else
 	 return desc
       end 
@@ -125,7 +125,7 @@ newTalent{
    points = 5,
    mode = "passive",
    getPercent = function(self, t)
-      return math.min(100, 40 + 5 * self:getTalentLevel(t))
+      return math.min(50, 10 + self:combatTalentScale(t, 5, 15))
    end,
    getNumChain = function(self, t)
       return math.floor(self:combatTalentLimit(t, 5, 2, 4))
@@ -150,10 +150,8 @@ newTalent{
    cooldown = 15,
    proj_speed = 4, -- This is purely indicative
    tactical = { ATTACK = { LIGHTNING = 2 }, DISABLE = { stun = 2 } },
-   range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6)) end,
+   range = function(self, t) return math.floor(self:combatTalentScale(t, 4, 9)) end,
    requires_target = true,
-   on_learn = function(self, t) self.resists[DamageType.LIGHTNING] = (self.resists[DamageType.LIGHTNING] or 0) + 1 end,
-   on_unlearn = function(self, t) self.resists[DamageType.LIGHTNING] = (self.resists[DamageType.LIGHTNING] or 0) - 1 end,
    getRadius = function(self, t) return math.floor(self:combatTalentScale(t, 2, 4, 0.5, 0, 0, true)) end,
    getStunDuration = function(self, t) return self:combatTalentScale(t, 3, 6, 0.5, 0, 0, true) end,
    action = function(self, t)
@@ -177,11 +175,11 @@ newTalent{
 		   self:getTalentRange(t),
 		   function(self, src)
 		      local DT = require("engine.DamageType")
-		      DT:get(DT.LIGHTNING).projector(src, self.x, self.y, DT.LIGHTNING, self.def.movedam)
+		      DT:get(DT.REK_WYRMIC_ELEC).projector(src, self.x, self.y, DT.REK_WYRMIC_ELEC, self.def.movedam)
 		   end,
 		   function(self, src, target)
 		      local DT = require("engine.DamageType")
-		      src:project({type="ball", radius=self.def.rad, selffire=false, x=self.x, y=self.y}, self.x, self.y, DT.LIGHTNING, self.def.dam)
+		      src:project({type="ball", radius=self.def.rad, selffire=false, x=self.x, y=self.y}, self.x, self.y, DT.REK_WYRMIC_ELEC, self.def.dam)
 		      src:project({type="ball", radius=self.def.rad, selffire=false, x=self.x, y=self.y}, self.x, self.y, DT.MINDKNOCKBACK, self.def.dam)
 		      if target:canBe("stun") then
 			 target:setEffect(target.EFF_STUNNED, self.def.dur, {apply_power=src:combatMindpower()})

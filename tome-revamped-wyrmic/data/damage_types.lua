@@ -72,6 +72,7 @@ rekWyrmicElectrocute = function(self, target)
 			 game.logSeen(target, "%s resists the static field!", target.name:capitalize())
 			 return
 		      end
+		      target:setEffect(self.EFF_REK_WYRMIC_NO_STATIC, 20, {})
 		      game.logSeen(target, "%s is caught in the static field!", target.name:capitalize())
 		      local perc = self:callTalent(self.T_REK_WYRMIC_ELEC, "getPercent")
 		      if target.rank >= 5 then perc = perc / 2.5
@@ -82,7 +83,6 @@ rekWyrmicElectrocute = function(self, target)
 		      local dam = target.life * perc / 100
 		      if target.life - dam < 0 then dam = target.life end
 		      target:takeHit(dam, self)
-		      target:setEffect(self.EFF_REK_WYRMIC_NO_STATIC, 20, {})
 		      
 		      game:delayedLogDamage(self, target, dam, ("#PURPLE#%d STATIC#LAST#"):format(math.ceil(dam)))
 					      end,
@@ -165,13 +165,13 @@ newDamageType{
       state = initState(state)
       if target and not state[target] then
 	 state[target] = true
-	 DamageType:get(DamageType.REK_WYRMIC_FIRE).projector(src, x, y, DamageType.REK_WYRMIC_FIRE, dam.dam, state)
+	 DamageType:get(DamageType.REK_WYRMIC_FIRE).projector(src, x, y, DamageType.REK_WYRMIC_FIRE, {dam=dam.dam, chance=100, perc=80, dur=3}, state)
 	 if target:checkHit(src:combatMindpower(), target:combatPhysicalResist(), 0, 95, 15) and target:canBe("knockback") then
 	    target:knockback(src.x, src.y, dam.dist)
-	    target:crossTierEffect(target.EFF_OFFBALANCE, src:combatMindpowerpower())
+	    target:crossTierEffect(target.EFF_OFFBALANCE, src:combatMindpower())
 	    game.logSeen(target, "%s is knocked back!", target.name:capitalize())
 	 else
-	    game.logSeen(target, "%s resists the punch!", target.name:capitalize())
+	    game.logSeen(target, "%s resists the knockback!", target.name:capitalize())
 	 end
       end
    end,
@@ -230,7 +230,7 @@ newDamageType{
 	 dazed = true
       end
 
-      local realdam = rng.avg(dam.dam*0.6, dam.dam*1.75, 3)
+      local realdam = rng.avg(dam.dam*0.6, dam.dam*1.4, 3)
 
       --chain
       rekWyrmicSurge(src, target, realdam)
@@ -378,11 +378,10 @@ newDamageType{
 	 if not rng.percent(dam.chance) then
 	    dam.fail = 0
 	 end
-	 target:setEffect(target.EFF_DEADLY_POISON, dam.dur,
+	 target:setEffect(target.EFF_REK_WYRMIC_VENOM, dam.dur,
 			  {src=src,
 			   power=(dam.dam * (125 - dam.perc) / 100) / dam.dur,
-			   max_power=(dam.dam * 4 * (125 - dam.perc) / 100) / dam.dur,
-			   insidious=0, crippling=dam.fail, numbing=0, leeching=0, volatile=0,
+			   crippling=dam.fail,
 			   apply_power=src:combatMindpower(1, nil, 0), no_ct_effect=true})
       end
       return realdam

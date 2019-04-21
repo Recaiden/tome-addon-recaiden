@@ -121,7 +121,7 @@ newTalent{
       if not hasHigherAbility(self) then
 	 return desc..[[
 
-#YELLOW#Learning this talent will unlock the higher aspect abilities in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
+#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
       else
 	 return desc
       end 
@@ -138,7 +138,7 @@ newTalent{
    tactical = { DISABLE = 2, ATTACK = {ACID = 1} },
    range = 7,
    equilibrium = 10,
-   getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 80) end,
+   getDamage = function(self, t) return self:combatTalentMindDamage(t, 10, 120) end,
    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 6)) end,
    target = function(self, t)
       return {type="hit", range=self:getTalentRange(t), talent=t}
@@ -154,7 +154,8 @@ newTalent{
       
       target:setEffect(target.EFF_REK_WYRMIC_DISSOLVE, t.getDuration(self, t), { power=t.getDamage(self, t), apply_power=self:combatMindpower(), src=self })
 
-      game:playSoundNear(self, "talents/acid")
+      --game:playSoundNear(self, "talents/acid")
+      game:playSoundNear(self, "talents/rek_wyrmic_dissolution")
       
       return true
    end,

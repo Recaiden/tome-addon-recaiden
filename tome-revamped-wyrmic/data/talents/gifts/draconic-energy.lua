@@ -86,7 +86,7 @@ newTalent{
    random_ego = "attack",
    message = "@Source@ explodes with energy!",
    equilibrium = 8,
-   cooldown = 20,
+   cooldown = 6,
    range = 0,
    radius = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
    getDamage = function(self, t) return self:combatTalentMindDamage(t, 20, 200) end,
@@ -184,11 +184,7 @@ newTalent{
 
       local nameStorm = "rek_wyrmic_"..DamageType:get(vistype).name.."_storm"
 
-      -- Devour if you know Fire Aspect
-      local perc_drain = 0
-      if  self:knowTalent(self.T_REK_WYRMIC_FIRE) then
-	 perc_drain = self:callTalent(self.T_REK_WYRMIC_FIRE, "getDrain")
-      end
+
       
       game.level.map:addEffect(self,
 			       x, y, duration,
@@ -197,7 +193,7 @@ newTalent{
 				dur=3,
 				chance=15,
 				fail=10,
-				drain=perc_drain / 100
+				drain=0
 			       },
 			       radius,
 			       5, nil,

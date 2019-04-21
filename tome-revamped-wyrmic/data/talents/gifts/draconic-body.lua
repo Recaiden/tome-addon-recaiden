@@ -82,11 +82,34 @@ newTalent{
    require = gifts_req3,
    points = 5,
    equilibrium = 5,
-   cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 40, 15)) end,
-   range = 1,
+   cooldown = 16,
    no_energy = true,
-   getCleanseDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6.5)) end,
-   getCleanseNb = function(self, t) return 1 + math.floor(self:combatTalentScale(t, 1, 3)) end,
+   getCleanseDuration = function(self, t)
+      return math.floor(self:combatTalentScale(t, 3, 6.5, "log"))
+   end,
+   getCleanseNb = function(self, t)
+      return 1 + math.floor(self:combatTalentScale(t, 1, 3, "log"))
+   end,
+   getPassiveSaves = function(self, t) return self:getTalentLevel(t)*4 end,
+   passives = function(self, t, p)
+      self:talentTemporaryValue(p, "combat_physresist", t.getPassiveSaves(self, t))
+      self:talentTemporaryValue(p, "combat_spellresist", t.getPassiveSaves(self, t))
+      self:talentTemporaryValue(p, "combat_mentalresist", t.getPassiveSaves(self, t))
+   end,
+   on_pre_use = function(self, t, silent)
+      for eff_id, p in pairs(self.tmp) do
+	 local e = self.tempeffect_def[eff_id]
+	 if e.status == "detrimental"
+	    and e.type ~= "other"
+	    and not e.subtype["cross tier"]
+	 then
+	   return true
+	 end
+      end
+      if not silent then game.logPlayer(self, "You don't have any detrimental effects to remove") end
+      return false
+   end,
+   
    action = function(self, t)
       local effs = {}
       local max_nb = t.getCleanseNb(self, t)
@@ -97,6 +120,11 @@ newTalent{
 	    effs[#effs+1] = eff_id
 	 end
       end
+
+      if #effs < max_nb then
+	 local reduction = math.ceil(t.cooldown * (max_nb - #effs) / max_nb)
+	 game:onTickEnd(function() self:alterTalentCoolingdown(t.id, -reduction) end)
+      end
       
       for i = 1, t.getCleanseNb(self, t) do
 	 if #effs == 0 then break end
@@ -105,7 +133,9 @@ newTalent{
 	 local e2 = self.tmp[eff]
 	 local odur = e2.dur
 	 e2.dur = e2.dur - t.getCleanseDuration(self, t)
-	 if e2.dur <= 0 then self:removeEffect(eff) end
+	 if e2.dur <= 0 then
+	    self:removeEffect(eff)
+	 end
       end
 
       game:playSoundNear(self, "talents/devouringflame")
@@ -115,8 +145,12 @@ newTalent{
    info = function(self, t)
       local duration = t.getCleanseDuration(self, t)
       local number = t.getCleanseNb(self, t)
-      return ([[Your mind is as strong and resilient as the great wyrms.  You reduce the duration of up to %d detrimental effects by %d turns.
-]]):format(number, duration)
+      return ([[Your mind is as strong and resilient as the great wyrms, allowing you to shrug off difficulties that would stop a lesser creature in its tracks.  Reduce the duration of up to %d detrimental effects by %d turns.
+
+If you had fewer than %d detrimental effects, the cooldown is reduced.
+
+Passively improves all saves by %d.
+]]):format(number, duration, number, t.getPassiveSaves(self, t))
    end,
 }
 

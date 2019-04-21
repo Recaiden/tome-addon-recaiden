@@ -54,7 +54,7 @@ newTalent{
       local victims = {}
       for _, c in pairs(util.adjacentCoords(self.x, self.y)) do
 	 local targ = game.level.map(c[1], c[2], engine.Map.ACTOR)
-	 if targ and targ ~= target and self:reactionToward(targ) < 0 then victims[#victims+1] = targ end
+	 if targ and self:reactionToward(targ) < 0 then victims[#victims+1] = targ end
       end
       if #victims > 0 then
 	 self:startTalentCooldown(t)
@@ -70,7 +70,9 @@ newTalent{
 
 When you hit an enemy with a melee attack, you immediately follow up, making another attack against a random adjacent enemy doing %d%% damage as Flame.  This can only happen once every %d turns.
 
-Flame damage can inflict stun (#SLATE#Mindpower vs. Physical#LAST#).  It deals 80%% of the listed damage up-front, and 30%% as a burn over the next few turns.
+Flame damage can inflict stun (#SLATE#Mindpower vs. Physical#LAST#).  
+Flame does 10%% bonus damage. 
+25%% of Flame damage is applied as a burn over the next few turns.
 ]]):format(resist, damage, cooldown)
    end,
 }
@@ -121,7 +123,7 @@ newTalent{
       if not hasHigherAbility(self) then
 	 return desc..[[
 
-#YELLOW#Learning this talent will unlock the higher aspect abilities in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
+#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
       else
 	 return desc
       end 
@@ -129,7 +131,7 @@ newTalent{
 }
 
 newTalent{
-   name = "Inferno Core", short_name = "REK_WYRMIC_FIRE_KNOCKBACK",
+   name = "Renewing Inferno", short_name = "REK_WYRMIC_FIRE_KNOCKBACK",
    type = {"wild-gift/wyrm-fire", 3},
    require = gifts_req_high2,
    points = 5,
@@ -143,14 +145,35 @@ newTalent{
       return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, talent=t}
    end,
    getDamage = function(self, t) return self:combatTalentMindDamage(t, 28, 180) end,
+   getEqGain = function(self, t) return math.floor(self:combatTalentScale(t, 10, 28, 0.75)) end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)
-      local grids = self:project(tg, self.x, self.y, DamageType.REK_WYRMIC_FIRE_KNOCKBACK, {dist=3, dam=self:spellCrit(t.getDamage(self, t))})
+      local grids = self:project(tg, self.x, self.y, DamageType.REK_WYRMIC_FIRE_KNOCKBACK, {dist=3, dam=self:mindCrit(t.getDamage(self, t))})
       game.level.map:particleEmitter(self.x, self.y, tg.radius, "ball_fire", {radius=tg.radius})
       game:playSoundNear(self, "talents/fire")
 
       local ember_cd = self.talents_cd["T_REK_WYRMIC_FIRE"]
       if ember_cd then self.talents_cd["T_REK_WYRMIC_FIRE"] = 0 end
+
+      local tg = {type="ball", nolock=true, range=0, radius = 10, friendlyfire=true}
+      local burncount = 0
+      self:project(tg, self.x, self.y, function(px, py)
+		      local target = game.level.map(px, py, engine.Map.ACTOR)
+		      if not target then return end
+		      local burns = {}
+		      for eff_id, p in pairs(target.tmp) do
+			 local e = target.tempeffect_def[eff_id]
+			 if e.subtype.fire and p.power and e.status == "detrimental" then
+			    burns[#burns+1] = {id=eff_id, params=p}
+			    burncount = burncount + 1
+			 end
+		      end
+		      for i, d in ipairs(burns) do
+			 target:removeEffect(d.id)
+		      end
+      end)
+
+      self:incEquilibrium(-1 * t.getEqGain(self, t)*(2-0.5^burncount))
       
       return true
    end,
@@ -158,9 +181,12 @@ newTalent{
    info = function(self, t)
       local damage = t.getDamage(self, t)
       local radius = self:getTalentRadius(t)
-      return ([[Erupt with a waves of flames with a radius of %d, knocking back (#SLATE#Mindpower vs. Physical#LAST#) any targets caught inside and burning them for %0.2f flame damage.
+      local eq = t.getEqGain(self, t)
+      return ([[Erupt with a waves of flames with a radius of %d, knocking back and stunning (#SLATE#Mindpower vs. Physical#LAST#) any targets caught inside and burning them for %0.2f flame damage.
 
-Using this talent resets the cooldown of Flickering Embers.]]):format(radius, damDesc(self, DamageType.FIRE, damage))
+Then, recover between %d and %d equilibrium, increased for each burning creature within 10 spaces.
+
+Using this talent resets the cooldown of Flickering Embers.]]):format(radius, damDesc(self, DamageType.FIRE, damage), eq, eq*2)
    end,
 }
 
@@ -212,7 +238,7 @@ newTalent{
       local threshold = t.getLifePercent(self, t)
       local turn = t.getTurn(self, t)
       return ([[The Fire Wyrm is driven into a frenzy by violence and danger.
-		At the start of each turn in which you have lost at least %d life (20%% of your maximum life) since your last turn, you will gain %d%% of a turn and Flickering Embers will recharge immediately.]]):
+		At the start of each turn in which you have lost at least %d%% of your maximum life since your last turn, you will gain %d%% of a turn and Flickering Embers will recharge immediately.]]):
 	 format(threshold, turn)
    end,
 }

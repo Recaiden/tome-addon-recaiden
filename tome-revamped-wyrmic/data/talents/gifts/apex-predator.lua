@@ -6,16 +6,15 @@ newTalent{
    range = 3,
    mode = "passive",
    getChance = function(self, t)
-      return self:combatLimit(self:getTalentLevel(t)^.5, 100, 7, 1, 15.65, 2.23)
+      return self:combatLimit(self:getTalentLevel(t)^.5, 100, 5, 1, 12.65, 2.23)
    end, -- Limit < 100%
    callbackOnActBase = function(self, t)
-      -- all gloom effects are handled here
       local grids = core.fov.circle_grids(self.x, self.y, self:getTalentRange(t), true)
       for x, yy in pairs(grids) do
 	 for y, _ in pairs(grids[x]) do
 	    local target = game.level.map(x, y, Map.ACTOR)
 	    if target and self:reactionToward(target) < 0 then
-	       if self:getTalentLevel(t) > 0 and rng.percent(t.getChance(self, t)) and target:checkHit(self:combatMindpower(), target:combatMentalResist(), 5, 95, 15) then
+	       if self:getTalentLevel(t) > 0 and rng.percent(t.getChance(self, t)) and target:checkHit(self:combatMindpower(), target:combatPhysicalResist(), 5, 95, 15) then
 		  -- stun
 		  if target:canBe("stun") and not target:hasEffect(target.EFF_STUNNED) then
 		     target:setEffect(target.EFF_STUNNED, 3, {})
@@ -27,7 +26,7 @@ newTalent{
    end,
    
    info = function(self, t)
-      return ([[Your image strikes fear into the heart of your enemies.  Each turn, those caught within radius 3 have a %d%% chance to be stunned (#SLATE#Mindpower vs. Mental#LAST#) for 3 turns.]]):
+      return ([[Your image strikes fear into the heart of your enemies, and they dare not approach.  Each turn, those caught within radius 3 have a %d%% chance to be stunned (#SLATE#Mindpower vs. Physical#LAST#) for 3 turns.]]):
 	 format(t.getChance(self, t))
    end,
 }
@@ -43,8 +42,8 @@ newTalent{
    on_learn = function(self, t)
       -- Reinitializing body will smash any existing gems in the slots, so unequip
       local gem = self:getInven("REK_WYRMIC_GEM") and self:getInven("REK_WYRMIC_GEM")[1] or false 
-      if gem then
-	 self:doTakeoff("REK_WYRMIC_GEM", 1, gem, false, self)
+      if gem and self:getTalentLevel(t) < 6 then
+	 return true
       end
       
       if self.body then
@@ -55,7 +54,10 @@ newTalent{
 	 self.body = { REK_WYRMIC_GEM = 1 }
       end
       
-      if self:getTalentLevel(t) >= 6 then	 
+      if self:getTalentLevel(t) >= 6 then
+	 if gem then
+	    self:doTakeoff("REK_WYRMIC_GEM", 1, gem, false, self)
+	 end
 	 if self.body then
 	    self.body.REK_WYRMIC_GEM = 2
 	 else
@@ -69,7 +71,7 @@ newTalent{
    callbackOnWear = function(self, t, o, fBypass)
       local allowed = true
       if o.type ~= "gem" then return end
-      if not self:knowTalent(self.T_REK_WYRMIC_HOARD_SIS) then
+      if not self:knowTalent(self.T_REK_WYRMIC_PREDATOR_GEM) then
 	 game.logPlayer(self, "Must know the Jeweled Hide talent")
 	 allowed = false
       end 
@@ -77,7 +79,7 @@ newTalent{
 	 game.logPlayer(self, "Impossible to use this gem")
 	 allowed = false
       end
-      if o.material_level > math.floor(self:getTalentLevel(self.T_REK_WYRMIC_HOARD_SIS)) then
+      if o.material_level > math.floor(self:getTalentLevel(self.T_REK_WYRMIC_PREDATOR_GEM)) then
 	 game.logPlayer(self, "Jeweled Hide talent too low for this gem")
 	 allowed = false
       end
@@ -98,10 +100,10 @@ newTalent{
    
    info = function(self, t)
       return ([[As the dragons plate their underbellies with coats of crystal, so do you imbue yourself with the power of gems.
-
 You can equip a gem (up to tier %d), activating its powers.
-At talent level 6, you can equip a second gem. 
-Warning: Ranking up this talent will unequip any currently equipped gems]]):format(math.floor(math.min(5,self:getTalentLevel(t))))
+
+At talent level 6, you can equip a second gem.
+Warning: Ranking up to talent level 6 will unequip any currently equipped gems]]):format(math.floor(math.min(5,self:getTalentLevel(t))))
    end,
 }
 
@@ -136,7 +138,7 @@ newTalent{
 		      resist_check=self.combatMentalResist,
       })
       game.level.map:particleEmitter(self.x, self.y, self:getTalentRadius(t), "shout", {additive=true, life=10, size=3, distorion_factor=0.5, radius=self:getTalentRadius(t), nb_circles=8, rm=0.8, rM=1, gm=0, gM=0, bm=0.1, bM=0.2, am=0.4, aM=0.6})
-
+      game:playSoundNear(self, "talents/rek_wyrmic_roar")
       return true
    end,
    info = function(self, t)
@@ -154,23 +156,43 @@ newTalent{
    require = gifts_req4,
    mode = "passive",
    points = 5,
-   getThreshold = function(self,t)
-      return math.min(self:combatTalentScale(t, 10, 50), 50)
-   end, -- Limit 50%
-   
+   getDurationBoost = function(self, t) return 1 end,
+   getSufferChance = function(self, t) return self:combatTalentLimit(t, 50, 5, 20) end,
    callbackOnDealDamage = function(self, t, val, target, dead, death_note)
-      if target.life < target.max_life * t.getThreshold(self, t) / 100 then
-	 return val*1.2
+      if dead then return val end
+      
+      local nb = 0
+      local effs = {}
+      for eff_id, p in pairs(target.tmp) do
+	 local e = target.tempeffect_def[eff_id]
+	 if (e.subtype.stun or e.subtype.blind or e.subtype.pin or e.subtype.disarm  or e.subtype.confusion) then
+	    nb = nb + 1
+	    effs[#effs+1] = eff_id
+	 end
+      end
+      
+      if nb > 0 then
+	 --Increase duration
+	 if not self.turn_procs.rek_wyrmic_sense_weakness then
+	    local chance = t.getSufferChance(self,t)
+	    local boost = t.getDurationBoost(self, t)
+	    if rng.percent(chance) then
+	       self.turn_procs.rek_wyrmic_sense_weakness = true
+	        local eff = rng.tableRemove(effs)
+		local e2 = target.tmp[eff]
+		e2.dur = e2.dur + boost
+	    end
+	 end
       end
       return val
    end,
    
    info = function(self, t)
-      local thresh = t.getThreshold(self, t)
-      return ([[You capitalize on the weakness in your injured foes to finish them off.  You deal 20%% more damage to foes with less than %d%% life remaining.]]):format(thresh)
+      local boost = t.getDurationBoost(self, t)
+      local chance = t.getSufferChance(self,t)
+      return ([[Once your prey has shown any vulnerability, it's as good as dead.  When you damage an enemy with a disabling condition, (Stun, Frozen, Daze, Blind, Disarm, Pin, Confused), you have a %d%% chance to increase the duration of one of their disabling conditions by %d (no more than once per turn).]]):format(chance, boost)
    end,
 }
-
 
 -- newTalent{
 --    name = "Terrorize", short_name = "REK_WYRMIC_PREDATOR_TRACK",
@@ -197,75 +219,5 @@ newTalent{
 --       local thresh = t.getThreshold(self, t)
 --       local fail = t.getFailChance(self, t)
 --       return ([[Your deadly strikes inspire utter terror in your foes. Any damage you do that deals more than %d%% of the target's maximum life terrifies them for 3 turns, giving them a %d%% chance each turn to fail to take action.]]):format(thresh, fail)
---    end,
--- }
-
-
--- newTalent{
---    name = "Trace", short_name = "REK_WYRMIC_PREDATOR_TRACK",
---    type = {"wild-gift/apex-predator", 4},
---    require = gifts_req_4,
---    random_ego = "utility",
---    cooldown = 20,
---    radius = function(self, t) return math.floor(self:combatScale(self:getCun(10, true) * self:getTalentLevel(t), 5, 0, 55, 50)) end,
---    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 4, 8)) end,
---    no_npc_use = true,
---    no_break_stealth = true,
---    action = function(self, t)
---       local rad = self:getTalentRadius(t)
---       self:setEffect(self.EFF_SENSE, t.getDuration(self, t), {
--- 			range = rad,
--- 			actor = 1,
---       })
---       return true
---    end,
---    info = function(self, t)
---       local rad = self:getTalentRadius(t)
---       return ([[Sense foes around you in a radius of %d for %d turns.
--- 		The radius will increase with your Cunning.]]):format(rad, t.getDuration(self, t))
---    end,
--- }
-
-
-
--- newTalent{
---    name = "Hypervigilance", short_name = "REK_WYRMIC_PREDATOR_SENSES",
---    type = {"wild-gift/apex-predator", 1},
---    points = 5,
---    no_energy = true,
---    range = 10,
---    requires_target = true,
---    equilibrium = 3,
---    cooldown = 20,
---    target = function(self, t) return {type="hit", pass_terrain = true, range=self:getTalentRange(t)} end,
---    sense = function(self, t) return math.floor(self:combatTalentScale(t, 5, 9)) end,
---    seePower = function(self, t) return math.max(0, self:combatScale(self:getCun(15, true)*self:getTalentLevel(t), 10, 1, 100, 75, 0.25)) end,
---    trapDetect = function(self, t) return math.max(0, self:combatScale(self:getTalentLevel(t) * self:getCun(25, true), 10, 3.75, 75, 125, 0.25)) end, -- same as HS
---    callbackOnStatChange = function(self, t, stat, v)
---       if stat == self.STAT_CUN then
--- 	 self:updateTalentPassives(t)
---       end
---    end,
---    passives = function(self, t, p)
---       self:talentTemporaryValue(p, "see_invisible", t.seePower(self, t))
---       self:talentTemporaryValue(p, "see_stealth", t.seePower(self, t))
---       self:talentTemporaryValue(p, "see_traps", t.trapDetect(self, t))
---    end,
-
---    action = function(self, t)
---       local tg = self:getTalentTarget(t)
---       local x, y, target = self:getTarget(tg)
---       if not target or not self:canProject(tg, x, y) then return nil end
-      
---       self:project(tg, x, y, engine.DamageType.BREAK_STEALTH, {power=t.seePower(self, t), turns=10})
---       return true
---    end,
-   
---    autolearn_talent = "T_DISARM_TRAP",
---    info = function(self, t)
---       return ([[You notice the slightest traces of your prey, giving you the ability to detect traps (+%d detect 'power').
--- You can focus your attention on an enemy, reducing their stealth power and invisibility by %d for 10 turns.
--- 		The detection abilities improve with Cunning.]]):
--- 	 format(t.trapDetect(self, t), t.seePower(self,t))
 --    end,
 -- }
