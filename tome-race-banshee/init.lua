@@ -1,7 +1,7 @@
-long_name = "Playable Banshee Race"
+long_name = "Race: Banshee"
 short_name = "race-banshee"
 for_module = "tome"
-version = {1,4,8}
+version = {1,5,0}
 addon_version = {1, 0, 0}
 weight = 27601
 author = { 'Recaiden' }

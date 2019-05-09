@@ -127,7 +127,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[Disperse yourself into a ghostly, insubstantial form for 3 turns.  While in this ghostly form, you can walk through walls and do not need to breathe. 
-For the first turn, you will move %d%% faster.  The speed boost will improve with your Dexterity.
+During your first three steps, you will move %d%% faster.  The speed boost will improve with your Dexterity.
 If you are inside a wall when the effect ends, you will move to the nearest open space.]]):format(t.speedBoost(self,t))
    end,
 }

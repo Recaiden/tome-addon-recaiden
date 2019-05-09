@@ -6,7 +6,6 @@ local Chat = require "engine.Chat"
 local Map = require "engine.Map"
 local Level = require "engine.Level"
 
-
 newEffect{
    name = "REK_BANSHEE_GHOSTLY", image = "talents/rek_banshee_ghost.png",
    desc = "Ghostly Form",
@@ -14,7 +13,7 @@ newEffect{
    type = "magical",
    subtype = { darkness=true },
    status = "beneficial",
-   parameters = { power = 100 },
+   parameters = { power = 100, steps = 3 },
    activate = function(self, eff)
       eff.pass = self:addTemporaryValue("can_pass", {pass_wall=70})
       eff.moveid = self:addTemporaryValue("movement_speed", eff.power / 100)
@@ -27,9 +26,15 @@ newEffect{
       end
       self:effectTemporaryValue(eff, "no_breath", 1)
    end,
-   on_timeout = function(self, eff)
-      self:removeTemporaryValue("movement_speed", eff.moveid)
-      eff.moveid = nil
+   callbackOnMove = function(self, eff, moved, force, ox, oy, x, y)
+      if not moved then return end
+      if ox == x and oy == y then return end
+      eff.steps = eff.steps - 1
+      if eff.steps <= 0 and eff.moveid then
+	 self:removeTemporaryValue("movement_speed", eff.moveid)
+	 eff.moveid = nil
+	 eff.power = 0
+      end
    end,
    deactivate = function(self, eff)
       self:removeTemporaryValue("can_pass", eff.pass)
