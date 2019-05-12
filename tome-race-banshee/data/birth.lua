@@ -3,8 +3,9 @@ newBirthDescriptor {
   name = 'Banshee',
 --  locked = function()
 --     return profile.mod.allow_build.undead_banshee
---  end,	
-  locked_desc = "Wronged and forgotten, silent no longer-",
+  --  end,
+  locked = function() return profile.mod.allow_build.undead end,
+  locked_desc = "Tower's lord, master of all, free the dead with master's fall",
   desc = {
      "Banshees are vengeful undead spirits with terrifying voices, thought to be harbingers of death.",
      "They have access to #GOLD#special undead talents#WHITE# and a wide range of undead abilities:",
@@ -45,7 +46,7 @@ newBirthDescriptor {
      moddable_tile = "human_#sex#",
      moddable_tile_base = "base_banshee_01.png",
      starting_zone = "kidnapper-hideout",
-     starting_level = 2, starting_level_force_down = true,
+     starting_level = 3, starting_level_force_down = true,
      starting_quest = "start-banshee",
      starting_intro = "banshee",
     } 

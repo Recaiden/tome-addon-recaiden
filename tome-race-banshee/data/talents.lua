@@ -7,13 +7,13 @@ undeads_req1 = {
 	level = function(level) return 0 + (level-1)  end,
 }
 undeads_req2 = {
-	level = function(level) return 4 + (level-1)  end,
-}
-undeads_req3 = {
 	level = function(level) return 8 + (level-1)  end,
 }
+undeads_req3 = {
+	level = function(level) return 16 + (level-1)  end,
+}
 undeads_req4 = {
-	level = function(level) return 12 + (level-1)  end,
+	level = function(level) return 24 + (level-1)  end,
 }
 
 newTalent{

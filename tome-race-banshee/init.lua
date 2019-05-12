@@ -13,7 +13,7 @@ Cut away healing.
 
 Banshees begin in a small starting zone of their own.
 
-Banshees begin unlocked]]
+Banshees are unlocked if you have unlocked any other undead.]]
 tags = {'undead', 'banshee', 'race', 'ghost', 'recaiden'} -- tags MUST immediately follow description
 
 hooks = true
