@@ -45,10 +45,11 @@ newTalent{
       local x, y = self:getTarget(tg)
       if not x or not y then return nil end
       self:project(tg, x, y, DamageType.REK_BANSHEE_WAIL, {dur=5, dam=t.getConfuse(self, t)}, {type="manathrust"})
+      game:playSoundNear(self, "talents/rek_banshee_scream")
       return true
    end,
    info = function(self, t)
-      return ([[Let out a maddening shriek, which attempts (#SLATE#Highest Power vs. Mental#LAST#) to silence and confuse (%d%% confuse power) the target creature for 5 turns.
+      return ([[Let out a maddening shriek, which attempts (#SLATE#Highest Power vs. Mental#LAST#) to confuse (%d%% confuse power) the target creature for 5 turns.
 The confusion improves with your willpower.
 
 Passively improves your undead body and vengeful spirit, increasing Dexterity and Willpower by %d.]]):format(t.getConfuse(self, t), t.statBonus(self, t))
@@ -123,6 +124,7 @@ newTalent{
    speedBoost = function(self, t) return self:combatStatScale("dex", 100, 200) end,
    action = function(self, t)
       self:setEffect(self.EFF_REK_BANSHEE_GHOSTLY, 3, {power=t.speedBoost(self, t)})
+      game:playSoundNear(self, "talents/rek_banshee_ghostly")
       return true
    end,
    info = function(self, t)

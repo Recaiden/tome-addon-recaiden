@@ -37,11 +37,11 @@ newDamageType{
 	 else
 	    game.logSeen(target, "%s resists the confusion!", target.name:capitalize())
 	 end
-	 if target:canBe("silence") then
-	    target:setEffect(target.EFF_SILENCED, dam.dur, {apply_power=power, min_dur=1}, true)
-	 else
-	    game.logSeen(target, "%s resists the silence!", target.name:capitalize())
-	 end
+	 -- if target:canBe("silence") then
+	 --    target:setEffect(target.EFF_SILENCED, dam.dur, {apply_power=power, min_dur=1}, true)
+	 -- else
+	 --    game.logSeen(target, "%s resists the silence!", target.name:capitalize())
+	 -- end
 	 -- Extra stack of curse
 	 if src:knowTalent(src.T_REK_BANSHEE_CURSE) then
 	    local t2 = src:getTalentFromId(src.T_REK_BANSHEE_CURSE)

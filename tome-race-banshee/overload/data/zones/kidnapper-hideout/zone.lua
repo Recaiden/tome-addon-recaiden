@@ -24,6 +24,7 @@ return {
       },
       actor = {
 	 class = "mod.class.generator.actor.Random",nb_npc = {5, 7},
+	 randelite = 0,
 	 guardian = "REK_BANSHEE_RINGLEADER", guardian_level = 1,
       },
       trap = { class = "engine.generator.trap.Random", nb_trap = {0, 0}, },
@@ -34,10 +35,15 @@ return {
 	    width = 20, height=20,
 	    generator = { map = {
 			     up = "UP_WILDERNESS",
+			     down = "OLD_FLOOR",
+	    }, },
+	 },
+	 [2] = {
+	    generator = { map = {
+			     down = "OLD_FLOOR",
 	    }, },
 	 },
 	 [3] = {
-	    no_level_connectivity = true,
 	    generator =  {
 	       map = {
 		  down = "REK_DECO_FLOOR_BANSHEE_GRAVE",
@@ -62,6 +68,7 @@ return {
 		  class = "mod.class.generator.actor.OnSpots",
 		  nb_npc = {20, 30},
 		  filters = { {max_ood=2}, },
+		  randelite = 0,
 		  nb_spots = 2, on_spot_chance = 35,
 	       },
 	       object = {
