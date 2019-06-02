@@ -27,7 +27,7 @@ newBirthDescriptor{
       ["celestial/combat"]={true, 0.3},
 
       --advanced talents
-      --["cursed/crimson-templar"]={false, 0.3},
+      ["cursed/crimson-templar"]={false, 0.3},
       ["celestial/black-sun"]={false, 0.3},
       ["cursed/suffering-shadows"]={false, 0.3},
 

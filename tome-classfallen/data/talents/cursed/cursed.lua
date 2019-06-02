@@ -114,11 +114,6 @@ if not Talents.talents_types_def["cursed/other"] then
    newTalentType{ allow_random=false, type="cursed/other", name = "Cursed", description = "Hate-powered abilities that don't belong anywhere else." }
 end
 
--- if not Talents.talents_types_def["cursed/crimson-templar"] then
---    newTalentType{ allow_random=true, type="cursed/crimson-templar", name = "Crimson Templar", description = "Hateful combat techniques using sword and shield. Let the rivers run red." }
---    load("/data-classfallen/talents/cursed/crimson-templar.lua")
--- end
-
 if not Talents.talents_types_def["cursed/bloodstained"] then
    newTalentType{ allow_random=true, type="cursed/bloodstained", name = "Bloodstained", description = "You, like your weapons, are tainted forever." }
    load("/data-classfallen/talents/cursed/bloodstained.lua")
@@ -134,6 +129,7 @@ if not Talents.talents_types_def["cursed/self-hatred"] then
    load("/data-classfallen/talents/cursed/self-hatred.lua")
 end
 
-
-
---on_pre_use = function(self, t, silent) if not self:hasTwoHandedWeapon() then if not silent then game.logPlayer(self, "You require a two handed weapon to use this talent.") end return false end return true end,
+if not Talents.talents_types_def["cursed/crimson-templar"] then
+   newTalentType{ allow_random=true, type="cursed/crimson-templar", name = "Crimson Templar", description = "Blood is power. Let the rivers run red." }
+   load("/data-classfallen/talents/cursed/crimson-templar.lua")
+end

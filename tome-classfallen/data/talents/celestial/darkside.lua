@@ -118,7 +118,7 @@ newTalent{
 newTalent{
    name = "Final Sunbeam", short_name = "FLN_DARKSIDE_SUNSET",
    type = {"celestial/darkside", 4},
-   require = cursed_str_req4,
+   require = divi_req4,
    points = 5,
    cooldown = 20,
    range = 0,
@@ -147,6 +147,7 @@ newTalent{
       
       self:addParticles(Particles.new("meleestorm", 2, {radius=t.radius(self, t), img="spinningwinds_black"}))
       if not self:attr("zero_resource_cost") and not self:attr("force_talent_ignore_ressources") then self:incPositive(-1 * self:getPositive()) end
+      self:setEffect(self.EFF_FLN_NO_LIGHT, 5)
       return true
    end,
    info = function(self, t)
@@ -155,7 +156,7 @@ newTalent{
       return ([[Put all of your physical and magical might into one devastating attack.
 Strike all adjacent enemies for %d%% damage and daze them (using your highest power) for 3 turns.
 
-Using this talent consumes all of your Positive Energy.
+Using this talent consumes all of your Positive Energy and prevents you from generating positive energy for 5 turns.
 Every point of positive energy increases the damage by %.2f%%.
 Every 10 points of positive energy increase the radius by 1 (up to 10).]]):format(damage, mult)
    end,

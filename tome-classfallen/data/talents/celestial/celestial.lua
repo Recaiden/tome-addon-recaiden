@@ -50,6 +50,23 @@ divi_req_high5 = {
 	stat = { mag=function(level) return 54 + (level-1) * 2 end },
 	level = function(level) return 26 + (level-1)  end,
 }
+str_req_high1 = {
+	stat = { str=function(level) return 22 + (level-1) * 2 end },
+	level = function(level) return 10 + (level-1)  end,
+}
+str_req_high2 = {
+	stat = { str=function(level) return 30 + (level-1) * 2 end },
+	level = function(level) return 14 + (level-1)  end,
+}
+str_req_high3 = {
+	stat = { str=function(level) return 38 + (level-1) * 2 end },
+	level = function(level) return 18 + (level-1)  end,
+}
+str_req_high4 = {
+	stat = { str=function(level) return 46 + (level-1) * 2 end },
+	level = function(level) return 22 + (level-1)  end,
+}
+
 
 if not Talents.talents_types_def["celestial/dirges"] then
    newTalentType{ allow_random=false, no_silence=true, is_spell=true, type="celestial/dirges", name = "Dirges", description = "The songs the Fallen sing." }

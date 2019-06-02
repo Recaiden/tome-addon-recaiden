@@ -168,3 +168,20 @@ newEffect{
       self:removeTemporaryValue("life_regen", eff.healid)
    end,
 }
+
+newEffect{
+   name = "FLN_NO_LIGHT", image = "talents/fln_darkside_sunset.png",
+   desc = "Lights Out",
+   long_desc = function(self, eff) return ("The target is cut off from the sun"):format() end,
+   type = "other",
+   subtype = { magic=true },
+   status = "detrimental",
+   parameters = { unresistable=true },
+   callbackOnActBase = function(self, t)
+      self:incPositive(-1 * self:getPositive())
+   end,   
+   activate = function(self, eff)
+   end,
+   deactivate = function(self, eff)
+   end,
+}

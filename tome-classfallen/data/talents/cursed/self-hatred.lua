@@ -109,7 +109,7 @@ Immediately upon activation and every turn while this talent is active, your det
 This bonus cooldown occurs even if your talents would not normally cool down (such as while stunned).
 This strength comes at a cost: you lose %d%% of your maximum life every turn.
 
-#{italic}#If you're lucky, this will take everything you've got#{normal}#]]):format(price)
+#{italic}#If you're lucky, this will take everything you've got.#{normal}#]]):format(price)
    end,
 }
 

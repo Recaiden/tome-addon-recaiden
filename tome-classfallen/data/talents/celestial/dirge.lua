@@ -194,7 +194,7 @@ newTalent{
 newTalent{
    name = "Dirge Acolyte", short_name = "FLN_DIRGE_ACOLYTE",
    type = {"celestial/dirge", 1},
-   require = cursed_wil_req1,
+   require = divi_req1,
    points = 5,
    mode = "passive",
    no_unlearn_last = true,
@@ -237,7 +237,7 @@ newTalent{
 newTalent{
    name = "Dirge Intoner", short_name = "FLN_DIRGE_INTONER",
    type = {"celestial/dirge", 2},
-   require = cursed_wil_req2,
+   require = divi_req2,
    points = 5,
    no_energy = true,
    cooldown = 15,
@@ -260,7 +260,7 @@ Level: increases damage.]]):format(damage, nostun)
 newTalent{
    name = "Dirge Adept", short_name = "FLN_DIRGE_ADEPT",
    type = {"celestial/dirge", 3},
-   require = cursed_wil_req3,
+   require = divi_req3,
    points = 5,
    mode = "passive",
    info = function(self, t)
@@ -271,7 +271,7 @@ newTalent{
 newTalent{
    name = "Dirge Nihilist", short_name = "FLN_DIRGE_NIHILIST",
    type = {"celestial/dirge", 4},
-   require = cursed_wil_req4,
+   require = divi_req4,
    points = 5,
    mode = "passive",
    getArmor = function(self, t) return self:combatTalentSpellDamage(t, 2, 40) end,
