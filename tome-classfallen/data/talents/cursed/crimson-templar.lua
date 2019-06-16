@@ -59,13 +59,52 @@ newTalent{
    type = {"cursed/crimson-templar", 4},
    require = cursed_wil_req_high2,
    points = 5,
-   mode = "passive",
-   info = function(self, t)
-      return ([[In progress...
+   cooldown = 20,
+   tactical = { DEFEND = 1, DISABLE = {SLOW = 1} },
+   range = 0,
+   getPrice = function(self, t) return 5 end,
+   getStrength = function(self, t) return self:combatTalentMindDamage(t, 4, 30) end,
+   getDuration = function(self, t) return math.min(10, math.floor(self:combatTalentScale(t, 4, 8))) end,
+   radius = function(self, t) return math.min(5, math.floor(self:combatTalentScale(t, 2.5, 4.5))) end,
+   target = function(self, t) -- for AI only
+      return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false}
+   end,
 
-   On-kill, mark the ground with a ring
-   Ring provides (+) and health regen and slows enemies
-   Activate to spend a bit of your life to do the same.]]):format()
+   makeSigil = function(self, t, x, y)
+      -- Add a lasting map effect
+      game.level.map:addEffect(self,
+			       x, y, self:mindCrit(t.getDuration(self, t)),
+			       DamageType.FLN_TEMPLAR_SIGIL, self:mindCrit(t.getStrength(self, t)),
+			       self:getTalentRadius(t),
+			       5, nil,
+			       MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, oversize=0, img="darkness_celestial_circle", radius=self:getTalentRadius(t)}}, color_br=255, color_bg=48, color_bb=48, effect_shader="shader_images/darkness_effect.png"},
+			       nil, true --self:spellFriendlyFire(true)
+      )
+   end,
+   
+   action = function(self, t)
+      self:takeHit(self.max_life * t.getPrice(self, t) / 100, self, {special_death_msg="sacrificed themself"})
+      t.makeSigil(self, t, self.x, self.y)
+      game:playSoundNear(self, "talents/arcane")
+      return true
+   end,
+
+   callbackOnKill = function(self, t, src, death_note)
+      t.makeSigil(self, t, src.x, src.y)
+   end
+   
+   info = function(self, t)
+      local rad = self:getTalentRadius(t)
+      local burn = t.getStrength(self, t)
+      local cost = t.getPrice(self, t)
+      return ([[When you kill an enemy, their death forms a cursed magical pattern on the ground. This creates a circle of radius %d which blinds enemies (#SLATE#Mindpower vs. Magical#LAST#) and deals %d light damage while giving you %d positive energy per turn.
+
+You can activate this talent to draw the pattern in your own blood, creating it underneat you at the cost of %d%% of your maximum life.
+
+Mindpower: Improves damage
+Mental Critical: Improves damage
+Mental Critical: Improves duration
+]]):format(rad, damDesc(self, DamageType.LIGHT, burn), cost)
    end,
 }
 
@@ -166,7 +205,7 @@ newTalent{
       local extension = t.getExtension(self, t)
       local sleep = t.getSleepPower(self, t)
       return ([[Draw out the wounds of nearby enemies, healing yourself and putting them into a merciful sleep.
-		Enemies within range have their bleed effects removed.  You are healed for %d%% of the remaining damage (minimum %d per target).  Enemies fall asleep for %d turns longer than they would have bled, rendering them unable to act. Every %d points of damage the target suffers will reduce the sleep duration by one turn.
+		Enemies within range have their bleed effects removed.  You are healed for %d%% of the remaining damage (minimum %d per target).  Enemies fall asleep for %d turns longer than they would have bled, rendering them unable to act. Every %d points of damage the target suffers will reduce their sleep duration by one turn.
 
 When Sleep ends, the target will benefit from Insomnia for a number of turns equal to the amount of time it was asleep (up to ten turns max), granting it 50%% sleep immunity for the duration Insomnia effect.]]):format(conversion, minimum, extension, sleep)
    end,

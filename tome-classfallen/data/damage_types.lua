@@ -48,3 +48,19 @@ newDamageType{
       DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
    end,
 }
+
+newDamageType{
+   name = "solar blood", type = "FLN_TEMPLAR_SIGIL",
+   projector = function(src, x, y, type, dam, state)
+      state = initState(state)
+      useImplicitCrit(src, state)
+      local target = game.level.map(x, y, Map.ACTOR)
+      if target then
+	 if target == src then
+	    target:setEffect(target.EFF_BLAZING_LIGHT, 1, {power = 2, no_ct_effect=true})
+	 else
+	    target:setEffect(target.EFF_FLN_BLINDING_LIGHT, 1, {power= dam, apply_power=src:combatMindpower(), no_ct_effect=true})
+	 end
+      end
+   end,
+}

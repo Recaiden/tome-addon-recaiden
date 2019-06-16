@@ -5,7 +5,12 @@ newTalent{
    points = 5,
    mode = "passive",
    info = function(self, t)
-      return ([[In progress...]]):format()
+      return ([[There are many aspects to your suffering, and each casts a shadow over you.
+At level 1, one of your shadows will become a Shadow of Remorse, which can blast enemies with Starfall (X%% chance, at range 2-6)
+At level 2, another of your shadows will become a Shadow of Pain, which can drain enemy statistics with Outmaneuver.
+At level 3, another of your shadows will become a Shadow of Guilt, which casts a Gloom around itself.
+At level 4, (if you have one), another of your shadows will become a Shadow of Obsession, which disrupts enemy actions with Beckon.
+In progress...]]):format()
    end,
 }
 

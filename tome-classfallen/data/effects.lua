@@ -185,3 +185,33 @@ newEffect{
    deactivate = function(self, eff)
    end,
 }
+
+
+newEffect{
+   name = "FLN_BLINDING_LIGHT", image = "talents/fln_templar_sigil.png",
+   desc = "Blinding Light",
+   long_desc = function(self, eff) return ("The target is unable to see anything and burns for %0.2f light damage per turn."):format(eff.dam) end,
+   type = "magical",
+   subtype = { bane=true, blind=true },
+   status = "detrimental",
+   parameters = { dam=10},
+   on_gain = function(self, err) return "#Target# loses sight!", "+Blind" end,
+   on_lose = function(self, err) return "#Target# recovers sight.", "-Blind" end,
+   on_timeout = function(self, eff)
+      DamageType:get(DamageType.LIGHT).projector(eff.src, self.x, self.y, DamageType.LIGHT, eff.dam)
+   end,
+   activate = function(self, eff)
+      eff.tmpid = self:addTemporaryValue("blind", 1)
+      if game.level then
+	 self:resetCanSeeCache()
+	 if self.player then for uid, e in pairs(game.level.entities) do if e.x then game.level.map:updateMap(e.x, e.y) end end game.level.map.changed = true end
+      end
+   end,
+   deactivate = function(self, eff)
+      self:removeTemporaryValue("blind", eff.tmpid)
+      if game.level then
+	 self:resetCanSeeCache()
+	 if self.player then for uid, e in pairs(game.level.entities) do if e.x then game.level.map:updateMap(e.x, e.y) end end game.level.map.changed = true end
+      end
+   end,
+}
