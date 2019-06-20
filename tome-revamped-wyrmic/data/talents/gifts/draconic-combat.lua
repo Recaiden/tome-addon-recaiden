@@ -80,37 +80,60 @@ newTalent{
    getArmorHardiness = function(self, t)
       return self:combatTalentLimit(t, 30, 10, 22)
    end,
+   getLightArmorHardiness = function(self, t)
+      return self:combatTalentLimit(t, 20, 5, 17)
+   end,
    activate = function(self, t)
+      local hardi = t.getArmorHardiness(self, t)
+
+      if not self:hasHeavyArmor() then
+	 hardi = hardi + t.getLightArmorHardiness(self, t)
+      end
+      
       local ret = 
 	 {
-	    hardiness = self:addTemporaryValue("combat_armor_hardiness", t.getArmorHardiness(self, t)),
+	    hardiness = self:addTemporaryValue("combat_armor_hardiness", hardi),
 	    armor = self:addTemporaryValue("combat_armor", t.getArmor(self, t)),
 	 }
       
       return ret
    end,
+
+   updateHardiness = function(self, t) -- Turn it off and on again
+      self:forceUseTalent(self.T_REK_WYRMIC_COMBAT_SCALES,
+			  {
+			     ignore_energy=true,
+			     ignore_ressources=true,
+			     silent=true,
+			     ignore_cd=true
+			  }
+      )
+      self:forceUseTalent(self.T_REK_WYRMIC_COMBAT_SCALES,
+			  {
+			     ignore_energy=true,
+			     ignore_ressources=true,
+			     silent=true,
+			     ignore_cd=true
+			  }
+      )
+   end,
+
+   callbackOnWear = function(self, t, o, bypass_set) t.updateHardiness(self, t) end,
+   callbackOnTakeoff = function(self, t, o, bypass_set) t.updateHardiness(self, t) end,
+   
    deactivate = function(self, t, p)
       self:removeTemporaryValue("combat_armor_hardiness", p.hardiness)
       self:removeTemporaryValue("combat_armor", p.armor)
-      if p.onhit then
-	 self:removeTemporaryValue("on_melee_hit", p.onhit)
-      end
+      
       return true
-   end,
-
-   -- Force reactivation if you may have changed aspects, to update retaliation
-   callbackOnTalentPost = function(self, t, ab)
-      if ab.id == self.T_REK_WYRMIC_COLOR_PRIMARY or ab.id == self.T_REK_WYRMIC_MULTICOLOR then
-	 self:forceUseTalent(self.T_REK_WYRMIC_COMBAT_SCALES, {ignore_energy=true, ignore_cooldown=true})
-	 self:forceUseTalent(self.T_REK_WYRMIC_COMBAT_SCALES, {ignore_energy=true, ignore_cooldown=true})
-      end
    end,
    
    info = function(self, t)
       return ([[Your skin forms a coat of scales and your flesh toughens, increasing your Armor Hardiness by %d%%, your Armour by %d.
+If you're wearing leather armor or lighter, your armor hardiness is increased by an additional %d%%.
 
 Mindpower: improves Armour.
-]]):format(t.getArmorHardiness(self, t), t.getArmor(self, t))
+]]):format(t.getArmorHardiness(self, t), t.getArmor(self, t), t.getLightArmorHardiness(self, t))
    end,
 }
 

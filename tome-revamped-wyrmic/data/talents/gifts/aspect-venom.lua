@@ -100,7 +100,7 @@ Venom deals 25%% bonus damage.
 60%% of Venom damage is applied as a poison over the next three turns.
 
 Cunning: Improves on-hit poison damage
-]]):format(resist, t.getChance(self,t), t.getDuration(self, t), dam)
+]]):format(resist, t.getChance(self,t), damDesc(self, DamageType.NATURE, dam), t.getDuration(self, t))
    end,
 }
 

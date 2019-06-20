@@ -220,7 +220,7 @@ newTalent{
    cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 6, 13, 8)) end,
    tactical = { ATTACK = { PHYSICAL = 1, COLD = 1, FIRE = 1, LIGHTNING = 1, ACID = 1, POISON = 1 } },
    getBurstDamage = function(self, t) return self:combatTalentMindDamage(t, 50, 230) end,
-   getCost = function(self, t) return math.floor(self:GetTalentCooldown(self, t)/3) end,
+   getCost = function(self, t) return math.floor(t.cooldown(self, t)/3) end,
    radius = function(self, t) return math.floor(self:combatTalentScale(t, 1.5, 3.5)) end,
    activate = function(self, t)
       return {}
@@ -275,7 +275,6 @@ newTalent{
    resistBlindStun = function(self, t) return self:combatTalentLimit(t, 1, .07, .25) end,
    getStat = function(self, t) return self:combatTalentScale(t, 1, 12) end,	
    passives = function(self, t, p)
-      local cdr = t.CDreduce(self, t)
       self:talentTemporaryValue(p, "knockback_immune", t.resistKnockback(self, t))
       self:talentTemporaryValue(p, "stun_immune", t.resistBlindStun(self, t))
       self:talentTemporaryValue(p, "blind_immune", t.resistBlindStun(self, t))
