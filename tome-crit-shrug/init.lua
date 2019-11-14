@@ -1,0 +1,13 @@
+long_name = "Shrug Off Critical Hits"
+short_name = "crit-shrug"
+for_module = "tome"
+version = {1,6,0}
+addon_version = {0,2,0}
+weight = 4
+tags = {'critical', 'tooltip', 'resilience of the doomed', 'heavy armor', 'indiscernable anatomy'}
+author = {"Recaiden"}
+description = [[Make talents that claim to reduce damage from crits actually reduce damage from crits]]
+overload = false
+superload = true
+hooks = true
+data = true
