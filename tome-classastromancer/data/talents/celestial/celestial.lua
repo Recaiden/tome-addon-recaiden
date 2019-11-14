@@ -169,7 +169,7 @@ function setupSummonStar(self, m, x, y, no_control)
    
    if self:knowTalent(self.T_BLIGHTED_SUMMONING)
    then
-      --m:incIncStat("mag", self:getMag())
+      m:incIncStat("mag", self:getMag())
       m:incVim(m:getMaxVim())
    end
    

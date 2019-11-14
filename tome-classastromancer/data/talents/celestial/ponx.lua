@@ -152,6 +152,21 @@ newTalent{
 	 ai_target = {actor=target},
 	 resolvers.sustains_at_birth(),
       }
+      local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
+      if augment then
+	 if augment.ultimate then
+	    m[#m+1] = resolvers.talents{
+	       [self.T_HURRICANE]=self:getTalentLevelRaw(t),
+	       [self.T_SHOCK]=self:getTalentLevelRaw(t)
+	    }
+	    m.name = "Ultimate "..m.name
+	    m.image = "npc/elemental_air_ultimate_gwelgoroth_short.png"
+	 else
+	    m[#m+1] = resolvers.talents{ [self.T_SHOCK]=self:getTalentLevelRaw(t) }
+	    m.name = "Greater "..m.name
+	    m.image = "npc/elemental_air_greater_gwelgoroth_short.png"
+	 end	 
+      end
       
       setupSummonStar(self, m, x, y)
       game:playSoundNear(self, "talents/lightning")
@@ -202,7 +217,7 @@ newTalent{
 			 affected[actor] = true
 			 first = actor
 			 
-			 self:project({type="ball", selffire=false, x=dx, y=dy, radius=10, range=0}, dx, dy, function(bx, by)
+			 self:project({type="ball", selffire=true, x=dx, y=dy, radius=10, range=0}, dx, dy, function(bx, by)
 			       local actor = game.level.map(bx, by, Map.ACTOR)
 			       if actor and not affected[actor] then
 				  affected[actor] = true
@@ -224,7 +239,7 @@ newTalent{
       
       local sx, sy = self.x, self.y
       for i, actor in ipairs(targets) do
-	 local tgr = {type="beam", range=self:getTalentRange(t), selffire=false, talent=t, x=sx, y=sy}
+	 local tgr = {type="beam", range=self:getTalentRange(t), selffire=true, talent=t, x=sx, y=sy}
 	 local dam = self:spellCrit(t.getDamage(self, t))
 	 self:project(tgr, actor.x, actor.y, DamageType.GOOD_LIGHTNING, {dam=rng.avg(rng.avg(dam / 3, dam, 3), dam, 5)})
 	 
@@ -243,7 +258,7 @@ newTalent{
       local damage = t.getDamage(self, t)
       local targets = t.getTargetCount(self, t)
       return ([[Invokes a forking beam of lightning doing %0.2f to %0.2f damage and forking to another target.  Allies are instead healed for this amount.
-		It can hit up to %d targets up to 10 grids apart, and will never hit the same one twice; nor will it hit the caster.
+		It can hit up to %d targets up to 10 grids apart, and will never hit the same one twice.
 		The damage will increase with your Spellpower.]]):
 	 format(damDesc(self, DamageType.LIGHTNING, damage / 3),
 		damDesc(self, DamageType.LIGHTNING, damage),

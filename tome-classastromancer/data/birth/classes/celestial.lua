@@ -4,8 +4,9 @@ newBirthDescriptor{
    locked = function() return profile.mod.allow_build.divine end,
    locked_desc = "....",
    desc = {
-      "Celestial mages that use the power of the wandering stars to call forth elementals.",
-      "...",
+      "Astromancers hail from the Gates of Morning, the last bastion of the free people in the Far East.",
+      "Their way of life is well represented by their motto 'Though we stand in darknest places, the stars still shine to guide us.  Across the horizons we seek our peoples' future.'",
+"The Celestial spellcasters use the power of the wandering stars to call forth elementals to fight beside them",
       "They use: Magic and Cunning.",
       "#GOLD#Stat modifiers:",
       "#LIGHT_BLUE# * +0 Strength, +0 Dexterity, +0 Constitution",
@@ -29,13 +30,12 @@ newBirthDescriptor{
       ["celestial/chants"]={true, 0.3},
       ["celestial/paeans"]={true, 0.3},
       ["celestial/light"]={false, 0.1},
-      ["spell/staff-combat"]={true, 0.3},
       ["cunning/survival"]={false, 0.1},
       --["celestial/astronomy"]={false, 0.3},
    },
    birth_example_particles = "darkness_shield",
    talents = {
-      --more starting talents go here
+      [ActorTalents.T_CHANT_ACOLYTE] = 1,
       [ActorTalents.T_HEALING_LIGHT] = 1,
       [ActorTalents.T_WANDER_SUMMON_LIGHTNING] = 1,
       [ActorTalents.T_WANDER_SUMMON_FIRE] = 1,
@@ -49,7 +49,6 @@ newBirthDescriptor{
 			    {type="weapon", subtype="staff", name="elm staff", autoreq=true, ego_chance=-1000},
 			    {type="armor", subtype="cloth", name="linen robe", autoreq=true, ego_chance=-1000}
       },
-      resolvers.inscription("RUNE:_MANASURGE", {cooldown=25, dur=10, mana=620}),
    },
 }
 

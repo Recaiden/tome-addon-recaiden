@@ -75,7 +75,6 @@ newEffect{
       e.updateEffect(self, eff, eff, e)
    end,
    callbackOnChangeLevel = function(self, eff, what, zone, level)
-      -- No cheesing orb stacks
       if what == "leave" then self:removeEffect(eff) end
    end,
    deactivate = function(self, eff, e)
@@ -104,18 +103,6 @@ newEffect{
 	 self:removeTemporaryValue("resists",old_eff.__tmpvals.luxresid)
       end
       new_eff.__tmpvals.luxresid = self:addTemporaryValue("resists",{all=new_eff.stacks*3})
-   end,
-   useOrb = function(self, eff, amt)
-      local amt = amt or eff.stacks
-      local def = self.tempeffect_def[eff.effect_id]
-      
-      eff.stacks = eff.stacks - amt
-      if eff.stacks <= 0 then
-	 self:removeEffect(self.EFF_WANDER_LUXAM)
-	 return
-      end
-      
-      def.updateEffect(self, eff, eff, def)
    end,
    on_merge = function(self, old_eff, new_eff, e)
       new_eff.stacks = util.bound(old_eff.stacks + 1, 1, new_eff.max_stacks)
@@ -152,18 +139,6 @@ newEffect{
 	 self:removeTemporaryValue("healing_factor", old_eff.__tmpvals.ponxmodid)
       end
       new_eff.__tmpvals.ponxmodid = self:addTemporaryValue("healing_factor", new_eff.stacks*.15)
-   end,
-   useOrb = function(self, eff, amt)
-      local amt = amt or eff.stacks
-      local def = self.tempeffect_def[eff.effect_id]
-      
-      eff.stacks = eff.stacks - amt
-      if eff.stacks <= 0 then
-	 self:removeEffect(self.EFF_WANDER_PONX)
-	 return
-      end
-      
-      def.updateEffect(self, eff, eff, def)
    end,
    on_merge = function(self, old_eff, new_eff, e)
       new_eff.stacks = util.bound(old_eff.stacks + 1, 1, new_eff.max_stacks)
@@ -297,6 +272,123 @@ newEffect{
    on_lose = function(self, err)
       return nil, true
    end,
+   activate = function(self, eff)
+   end,
+   deactivate = function(self, eff)
+      if eff.particle then
+	 self:removeParticles(eff.particle)
+      end
+   end,
+}
+
+newEffect{
+   name = "WANDER_METEOR_STORM", image = "talents/wander_meteor_storm.png",
+   desc = "Meteor Rain",
+   long_desc = function(self, eff) return ("The target is summoning meteors"):format() end,
+   type = "magical",
+   subtype = { fire=true },
+   status = "beneficial",
+   parameters = { power=100, range=4, radius=1 },
+
+   callbackOnActBase = function(self, eff)
+      local rad = eff.radius
+      local meteor = function(src, x, y, dam)
+	 game.level.map:particleEmitter(x, y, 10, "meteor", {x=x, y=y}).on_remove = function(self)
+	    local x, y = self.args.x, self.args.y
+	    game.level.map:particleEmitter(x, y, 10, "starfall", {radius=rad})
+	    src:project({type="ball", radius=rad, selffire=false, friendlyfire=false}, x, y, engine.DamageType.METEOR, dam)
+	    game:getPlayer(true):attr("meteoric_crash", 1)
+										    end
+      end
+      
+      --Collect possible targets
+      local list = {}
+      --Near the player
+      self:project({type="ball", radius=eff.range}, self.x, self.y, function(px, py)
+	    local actor = game.level.map(px, py, Map.ACTOR)
+	    if actor and self:reactionToward(actor) < 0 then list[#list+1] = actor end  
+      end)
+
+      --Near summons
+      local apply = function(a)
+	 a:project({type="ball", radius=eff.range}, a.x, a.y,
+	    function(px, py)
+	       local actor = game.level.map(px, py, Map.ACTOR)
+	       if actor and self:reactionToward(actor) < 0 then
+		  list[#list+1] = actor
+	       end
+	 end)
+      end
+      if game.party and game.party:hasMember(self) then
+	 for act, def in pairs(game.party.members) do
+	    if act.summoner and act.summoner == self and act.type == "elemental" then
+	       apply(act)
+	    end
+	 end
+      else
+	 for uid, act in pairs(game.level.entities) do
+	    if act.summoner and act.summoner == self and act.type == "elemental" then
+	       apply(act)
+	    end
+	 end
+      end
+
+      -- determine damage for this turn
+      local dam = 0
+      if #list > 0 then
+	 dam = self:spellCrit(eff.power)
+      end
+
+      -- Hit a random enemy
+      local nb = 0
+      while #list > 0 and nb < 1 do
+	 local a = rng.tableRemove(list)			
+	 meteor(self, util.bound(a.x + rng.range(-1,1), 0, game.level.map.w-1), util.bound(a.y + rng.range(-1,1), 0, game.level.map.h-1), dam)
+
+	 -- Void summons hook
+	 if self:knowTalent(self.T_WANDER_METEOR_VOID_SUMMONS) then
+	    local tal_vs = self:getTalentFromId(self.T_WANDER_METEOR_VOID_SUMMONS)
+	    if rng.percent(tal_vs.getChance(self, tal_vs)) then
+	       if rng.percent(50) then
+		  tal_vs.callLosgoroth(self, tal_vs, a.x, a.y, a)
+	       else
+		  tal_vs.callManaworm(self, tal_vs, a.x, a.y, a)
+	       end
+	    end
+	 end
+	 
+	 nb = nb + 1
+      end   
+   end,
+
+   
+   on_merge = function(self, old_eff, new_eff)
+      return old_eff
+   end,
+   on_gain = function(self, err)
+      return nil, true
+   end,
+   on_lose = function(self, err)
+      return nil, true
+   end,
+   activate = function(self, eff)
+   end,
+   deactivate = function(self, eff)
+      if eff.particle then
+	 self:removeParticles(eff.particle)
+      end
+   end,
+}
+
+
+newEffect{
+   name = "WANDER_UNITY_CONVERGENCE", image = "talents/wander_cycle_boost.png",
+   desc = "Planetary Convergence",
+   long_desc = function(self, eff) return ("The target is preparing to summon a mighty elemental"):format() end,
+   type = "magical",
+   subtype = { arcane=true },
+   status = "beneficial",
+   parameters = { ultimate=false },
    activate = function(self, eff)
    end,
    deactivate = function(self, eff)

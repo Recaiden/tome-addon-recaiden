@@ -1,22 +1,3 @@
--- ToME - Tales of Maj'Eyal
--- Copyright (C) 2009, 2010, 2011, 2012 Nicolas Casalini
---
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
---
--- Nicolas Casalini "DarkGod"
--- darkgod@te4.org
-
 local Object = require "mod.class.Object"
 
 newTalent{
@@ -31,7 +12,7 @@ newTalent{
    range = 5,
    requires_target = true,
    is_summon = true,
-   tactical = { ATTACK = { FIRE = 2 } },
+   tactical = { ATTACK = { TEMPORAL = 2 } },
    
    on_pre_use = function(self, t, silent)
       if not self:canBe("summon") and not silent then game.logPlayer(self, "You cannot summon; you are suppressed!") return end
@@ -93,8 +74,8 @@ newTalent{
 	 movement_speed = 1.0,
 	 
 	 combat_armor = 0, combat_def = 20,
-	 combat = { dam=1, atk=1, damtype=DamageType.FIRE },
-	 on_melee_hit = { [DamageType.FIRE] = resolvers.mbonus(20, 10), },
+	 combat = { dam=1, atk=1, damtype=DamageType.TEMPORAL },
+	 on_melee_hit = { [DamageType.TEMPORAL] = resolvers.mbonus(20, 10), },
 	 
 	 resolvers.talents{
 	    [self.T_DUST_TO_DUST]=self:getTalentLevelRaw(t),
@@ -230,7 +211,8 @@ newTalent{
    end,
    info = function(self, t)
       local duration = t.getDuration(self, t)
-      return ([[Perform an inverted summoning to banish a target into the timestream.  They will be removed from time for %d turns.]]):format(duration)
+      return ([[Perform an inverted summoning to banish a target into the timestream.  They will be removed from time (#SLATE#Spellpower vs. Spell#LAST#) for %d turns, unable to act or be affected by anything.
+Paradox: Affects duration]]):format(duration)
    end,
 }
 
@@ -278,7 +260,9 @@ newTalent{
    end,
    info = function(self, t)
       local ticks = math.min(1000, t.getTicks(self, t)) / 10
-      return ([[Diffuse your temporal energy across your allies, giving each of your summons %d%% of a turn (up to 1 turn each)]]):
+      return ([[Diffuse your temporal energy across your allies, giving each of your summons %d%% of a turn.
+This has no cooldown.
+Paradox: Affects turn gain.]]):
 	 format(ticks)
    end,
 }
@@ -299,9 +283,7 @@ newTalent{
       local chance = self:paradoxFailChance()
       local anom_type = "normal"
       if rng.percent(chance) then
-      -- if major anomaly, deactivate
-      -- if minor anomaly, carry on
-	 -- if no anomaly, double cooldown rate
+	 -- if minor anomaly, carry on
 	 if self:getModifiedParadox() >= 600 then
 	    anom_type = "major"
 	 end
@@ -311,9 +293,10 @@ newTalent{
       end
 
       if anom_type == "major" then
+	 -- if major anomaly, deactivate
 	 self:forceUseTalent(self.T_WANDER_TIME_COOLDOWN, {ignore_energy=true})
-	 --t.deactivate(self, t)1
       else
+	 -- if no anomaly, double cooldown rate
 	 if not self:attr("no_talents_cooldown") then
 	    for tid, _ in pairs(self.talents_cd) do
 	       local t = self:getTalentFromId(tid)

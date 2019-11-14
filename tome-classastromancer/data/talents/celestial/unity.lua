@@ -1,22 +1,3 @@
--- ToME - Tales of Maj'Eyal
--- Copyright (C) 2009, 2010, 2011, 2012 Nicolas Casalini
---
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
---
--- Nicolas Casalini "DarkGod"
--- darkgod@te4.org
-
 local Object = require "mod.class.Object"
 require "math"
 
@@ -118,39 +99,48 @@ newTalent{
    points = 5,
    no_energy = true,
    cooldown = 10,
-
+   getDuration = function(self, t)
+      return self:combatTalentScale(t, 1, 4)
+   end,
    on_pre_use = function(self, t, silent)
       if not self:hasEffect(self.EFF_WANDER_KOLAL)
 	 or not self:hasEffect(self.EFF_WANDER_LUXAM)
 	 or not self:hasEffect(self.EFF_WANDER_PONX)
       then
-	 if not silent then game.logPlayer(self, "You require at least one of each planetary charge.") end
+	 if not silent then game.logPlayer(self, "You require all three planetary charges.") end
 	 return false
       end
       return true
    end,
-
-   getDuration = function(self, t)
-      return self:combatTalentScale(t, 5, 10, 1)
-      --return 10
-   end,
-
    action = function(self, t)
-      local chargeFlame = self:hasEffect(self.EFF_WANDER_KOLAL).stacks
-      local chargeCold = self:hasEffect(self.EFF_WANDER_LUXAM).stacks
-      local chargeWind = self:hasEffect(self.EFF_WANDER_PONX).stacks
+      local chargeFlame = self:hasEffect(self.EFF_WANDER_KOLAL)
+      local chargeCold = self:hasEffect(self.EFF_WANDER_LUXAM)
+      local chargeWind = self:hasEffect(self.EFF_WANDER_PONX)
+      local ultimate = false
+      if chargeFlame.stacks >= 5
+	 and chargeCold.stacks >= 5
+	 and chargeWind.stacks >= 5
+      then
+	 ultimate = true
+      end
 
-      self:setEffect(self.EFF_WANDER_UNITY_OVERCHARGE, t.getDuration(self, t),
-		     {stacks_kolal = chargeFlame,
-		      stacks_luxam = chargeCold,
-		      stacks_ponx = chargeWind})
+      self:setEffect(self.EFF_WANDER_UNITY_CONVERGENCE, t.getDuration(self, t), {ultimate=ultimate})
+      
       self:removeEffect(self.EFF_WANDER_KOLAL)
       self:removeEffect(self.EFF_WANDER_LUXAM)
-      self:removeEffect(self.EFF_WANDER_PONX)	    
+      self:removeEffect(self.EFF_WANDER_PONX)
    end,
 
     info = function(self, t)
-       return ([[Consume all stacks of planetary charge for a sudden burst of power lasting %d turns.  Kolal gives movement speed, Luxam regeneration, and Ponx on-hit damage.]]):format(t.getDuration(self, t))
+       return ([[When the worlds align, great power flows through the void.  Consume your planetary charges to make your next summon (within %d turns) call a Greater Elemental, which has an additional talent.
+Greater Gwelgoroth: Shocks and dazes enemies
+Greater Shivgoroth: Freezes enemies in place
+Greater Faeros: Launches bolts of fire when it attacks
+
+If you have at least 5 of each charge, you will call Ultimate Elementals, which have another additional talent.
+Ultimate Gwelgoroth: Forms hurricanes
+Ultimate Shivgoroth: Surrounded by an ice storm
+Ultimate Faeros: Continually launches fire at nearby enemies]]):format(t.getDuration(self, t))
    end,
 }
 
@@ -162,25 +152,8 @@ newTalent{
    mode = "passive",
    
    info = function(self, t)
-      return ([[Perfect your summoning techniques, increasing the duration of your summons.
-Each rank greatly improves the casting speed of your summongs, allowing you to summon mlutiple elementals in one turn.
+      return ([[Perfect your summoning techniques, increasing the speed of your summons.
+Each rank greatly improves the casting speed of your summons, allowing you to summon multiple elementals in one turn.
 The bonuses are reflected in the description of each summon spell.]])
    end,
 }
-
-
-
--- newTalent{
--- 	name = "Quick Recovery",
--- 	type = {"technique/combat-techniques-passive", 1},
--- 	require = techs_strdex_req1,
--- 	mode = "passive",
--- 	points = 5,
--- 	getStamRecover = function(self, t) return self:combatTalentScale(t, 0.6, 2.5, 0.75) end,
--- 	passives = function(self, t, p)
--- 		self:talentTemporaryValue(p, "stamina_regen", t.getStamRecover(self, t))
--- 	end,
--- 	info = function(self, t)
--- 		return ([[Your combat focus allows you to regenerate stamina faster (+%0.1f stamina/turn).]]):format(t.getStamRecover(self, t))
--- 	end,
--- }

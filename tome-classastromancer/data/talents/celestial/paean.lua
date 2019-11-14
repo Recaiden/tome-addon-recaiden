@@ -72,7 +72,13 @@ newTalent{
       --resPen upgrade
       if self:knowTalent(self.T_WANDER_PAEAN_PENETRATION) then
 	 local t2 = self:getTalentFromId(self.T_WANDER_PAEAN_PENETRATION)
-	 self:talentTemporaryValue(ret, "resists_pen", {[DamageType.FIRE] = t2.getResistPenalty(self, t2)})
+	 self:talentTemporaryValue(ret, "resists_pen",
+				   {
+				      [DamageType.COLD] = t2.getResistPenalty(self, t2),
+				      [DamageType.FIRE] = t2.getResistPenalty(self, t2),
+				      [DamageType.LIGHTNING] = t2.getResistPenalty(self, t2)
+				   }
+	 )
       end
       
       return ret
@@ -98,7 +104,7 @@ newTalent{
    require = divi_req1,
    points = 5,
    cooldown = 12,
-   sustain_positive = 20,
+   sustain_negative = 20,
    no_energy = true,
    dont_provide_pool = true,
    tactical = { BUFF = 2 },
@@ -128,7 +134,13 @@ newTalent{
       --resPen upgrade
       if self:knowTalent(self.T_WANDER_PAEAN_PENETRATION) then
 	 local t2 = self:getTalentFromId(self.T_WANDER_PAEAN_PENETRATION)
-	 self:talentTemporaryValue(ret, "resists_pen", {[DamageType.COLD] = t2.getResistPenalty(self, t2)})
+	 self:talentTemporaryValue(ret, "resists_pen",
+				   {
+				      [DamageType.COLD] = t2.getResistPenalty(self, t2),
+				      [DamageType.FIRE] = t2.getResistPenalty(self, t2),
+				      [DamageType.LIGHTNING] = t2.getResistPenalty(self, t2)
+				   }
+	 )
       end
       
       return ret
@@ -172,7 +184,7 @@ newTalent{
    require = divi_req1,
    points = 5,
    cooldown = 12,
-   sustain_positive = 20,
+   sustain_negative = 20,
    dont_provide_pool = true,
    tactical = { BUFF = 2 },
    no_energy = true,
@@ -204,7 +216,13 @@ newTalent{
       --resPen upgrade
       if self:knowTalent(self.T_WANDER_PAEAN_PENETRATION) then
 	 local t2 = self:getTalentFromId(self.T_WANDER_PAEAN_PENETRATION)
-	 self:talentTemporaryValue(ret, "resists_pen", {[DamageType.LIGHTNING] = t2.getResistPenalty(self, t2)})
+	 self:talentTemporaryValue(ret, "resists_pen",
+				   {
+				      [DamageType.COLD] = t2.getResistPenalty(self, t2),
+				      [DamageType.FIRE] = t2.getResistPenalty(self, t2),
+				      [DamageType.LIGHTNING] = t2.getResistPenalty(self, t2)
+				   }
+	 )
       end
       
       return ret
@@ -215,7 +233,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[You chant the glory of the Sun, increasing your negative life threshold by %d.
+      return ([[You sing a paean to Ponx, increasing your negative life threshold by %d.
 	You may only have one Paean active at once.
 	The effects will increase with your Spellpower.]]):
 	 format(t.getDieat(self, t))
@@ -224,9 +242,8 @@ newTalent{
 
 newTalent{
    name = "Paean Acolyte", short_name = "WANDER_PAEAN_PLANET",
-
    type = {"celestial/paeans", 1},
-   require = divi_req1,
+   require = spells_req1,
    points = 5,
    mode = "passive",
    on_learn = function(self, t)
@@ -253,7 +270,7 @@ newTalent{
 	    local t3 = self:getTalentFromId(self.T_WANDER_PAEAN_PONX)
 	    ret = ([[You have learned to sing the praises of the Spheres, in the form of three defensive Paeans.
 			Paean of Volcanic Fire: Reduces all damage that comes from nearby enemies (4 or fewer spaces) by %d%%
-			Paean of Glacial Ice: Reduces the bonus damage critical hits do to you by %d percentage points.
+			Paean of Glacial Ice: Reduces chance to be critically hit by %d%%
 			Paean of Cleansing Wind: Increases your negative health threshold by %d.
 			You may only have one Paean active at a time.]]):
 	       format(t1.getDamageChange(self, t1), t2.getResists(self, t2), t3.getDieat(self, t3))
@@ -268,7 +285,7 @@ newTalent{
 newTalent{
    name = "Paean Orator", short_name = "WANDER_PAEAN_FIRESHIELD",
    type = {"celestial/paeans", 2},
-   require = divi_req2,
+   require = spells_req2,
    points = 5,
    mode = "passive",
    getDamageOnMeleeHit = function(self, t) return self:combatTalentSpellDamage(t, 5, 50) end,
@@ -282,10 +299,10 @@ newTalent{
 newTalent{
    name = "Paean Adept", short_name = "WANDER_PAEAN_PLANET2",
    type = {"celestial/paeans", 3},
-   require = divi_req3,
+   require = spells_req3,
    points = 5,
    mode = "passive",
-   getAffinity = function(self, t) return self:combatTalentLimit(t, 100, 10, 50) end, -- Limit < 100%
+   getAffinity = function(self, t) return self:combatTalentLimit(t, 100, 10, 35) end, -- Limit < 100%
    getAcc = function(self, t) return self:combatTalentScale(t, 20, 50, 0.75) end,
    getShield = function(self, t) return 7 + self:combatSpellpower(0.056) * self:combatTalentScale(t, 1, 4)  end,
    getSaves = function(self, t) return self:getTalentLevel(t)*3.5 end,
@@ -301,11 +318,11 @@ newTalent{
 newTalent{
    name = "Paean Maelstrom", short_name = "WANDER_PAEAN_PENETRATION",
    type = {"celestial/paeans", 4},
-   require = divi_req4,
+   require = spells_req4,
    points = 5,
    mode = "passive",
-   getBonusRegen = function(self, t) return self:combatTalentScale(t, 1.0, 3.0) end,
-   getResistPenalty = function(self, t) return self:combatTalentLimit(t, 100, 17, 50) end,
+   getBonusRegen = function(self, t) return 1 end,
+   getResistPenalty = function(self, t) return self:combatTalentLimit(t, 100, 15, 40) end,
 
    callbackOnTalentPost = function(self, t, ab)
       if not ab.type[1]:find("^celestial/") then return end
@@ -315,7 +332,6 @@ newTalent{
    
    info = function(self, t)
       return ([[Your passion for singing the praises of the spheres reaches its zenith.
-		Your Paeans now increases your damage penetration with their assicated elemnt by %d%% and cause you to gain %d additional negative energy when you cast a celetial spell.
-		These values scale with your Spellpower.]]):format(t.getResistPenalty(self, t), t.getBonusRegen(self, t))
+		Your Paeans now increases your damage penetration with fire, cold, and lightning by %d%% and cause you to gain %d additional negative energy when you cast a celestial spell.]]):format(t.getResistPenalty(self, t), t.getBonusRegen(self, t))
    end,
 }

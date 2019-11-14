@@ -151,7 +151,21 @@ newTalent{
 	 summon_time = t.summonTime(self, t),
 	 ai_target = {actor=target}
       }
-      
+      local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
+      if augment then
+	 if augment.ultimate then
+	    m[#m+1] = resolvers.talents{
+	       [self.T_ICE_STORM]=self:getTalentLevelRaw(t),
+	       [self.T_COLD_FLAMES]=self:getTalentLevelRaw(t)
+	    }
+	    m.name = "Ultimate "..m.name
+	    m.image = "npc/elemental_ice_ultimate_shivgoroth_short.png"
+	 else
+	    m[#m+1] = resolvers.talents{ [self.T_COLD_FLAMES]=self:getTalentLevelRaw(t) }
+	    m.name = "Greater "..m.name
+	    m.image = "npc/elemental_ice_greater_shivgoroth_short.png"
+	 end	 
+      end
       
       setupSummonStar(self, m, x, y)
       game:playSoundNear(self, "talents/lightning")
@@ -273,7 +287,7 @@ newTalent{
       local stunduration = t.getStunDuration(self, t)
       local radius = self:getTalentRadius(t)
       local movespeed = t.getMovementSpeedChange(self, t) * 100
-      return ([[Freezes the ground in a cone of radius %d. Any enemies caught in the area will immediately suffer %0.2f cold damage and be pinned for %d turns.  When moving over the ice, you skate at %d%% increased movement speed.
+      return ([[Freezes the ground in a cone of radius %d. Any enemies caught in the area will immediately suffer %0.2f cold damage and be pinned while the ice lasts (for %d turns).  When moving over the ice, you skate at %d%% increased movement speed.
 The damage will increase with your Spellpower.]]):
 	 format(radius, damDesc(self, DamageType.COLD, damage), stunduration, movespeed)
    end,

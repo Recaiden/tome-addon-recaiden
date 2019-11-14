@@ -1,23 +1,41 @@
--- ToME - Tales of Maj'Eyal
--- Copyright (C) 2009, 2010, 2011, 2012 Nicolas Casalini
---
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
---
--- Nicolas Casalini "DarkGod"
--- darkgod@te4.org
-
 local Object = require "mod.class.Object"
+
+newTalent{
+   name = "Flame Bolts", short_name = "WANDER_ELEMENTAL_FIRE_BOLT",
+   type = {"spell/other",1},
+   points = 5,
+   range = 5,
+   radius = 5,
+   proj_speed = 7,
+   mode = "passive",
+   target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t} end,
+   getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 50) end,
+   callbackOnMeleeAttack = function(self, t, _, hitted)
+      if not hitted then return end
+      
+      local tg = self:getTalentTarget(t)
+      local tgts = {}
+      local grids = self:project(tg, self.x, self.y, function(px, py)
+				    local actor = game.level.map(px, py, Map.ACTOR)
+				    if actor and self:reactionToward(actor) < 0 then
+				       tgts[#tgts+1] = actor
+				    end
+      end)
+      
+      local nb = 1+math.ceil(self:getTalentLevel(t)/3)
+      while nb > 0 and #tgts > 0 do
+	 local actor = rng.tableRemove(tgts)
+	 local tg2 = {type="bolt", range=self:getTalentRange(t), talent=t, display={particle="bolt_fire", trail="firetrail"}}
+	 self:projectile(tg2, actor.x, actor.y, DamageType.FIRE, self:spellCrit(t.getDamage(self, t)), {type="flame"})
+      end
+   end,
+   info = function(self, t)
+      local damage = t.getDamage(self, t)
+      return ([[Hurls up to %d flame bolts dealing %0.2f fire damage to foes in sight when you hit in melee.
+		The damage will increase with your Spellpower.]]):
+	 format(1+math.ceil(self:getTalentLevel(t) / 3), damDesc(self, DamageType.FIRE, damage))
+   end,
+}
 
 newTalent{
    name = "Summon: Faeros", short_name = "WANDER_SUMMON_FIRE",
@@ -74,6 +92,8 @@ newTalent{
 	 game.logPlayer(self, "Not enough space to summon!")
 	 return
       end
+
+      local image = "npc/elemental_fire_faeros.png"
       
       local NPC = require "mod.class.NPC"
       local m = NPC.new{
@@ -89,6 +109,7 @@ newTalent{
 	 level_range = {self.level, self.level}, exp_worth = 0,
 	 
 	 max_life = resolvers.rngavg(5,10),
+	 max_mana = 1000,
 	 life_rating = 8,
 	 infravision = 10,
 	 movement_speed = 2.0,
@@ -107,7 +128,21 @@ newTalent{
 	 ai_target = {actor=target},
 	 resolvers.sustains_at_birth(),
       }
-      
+      local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
+      if augment then
+	 if augment.ultimate then
+	    m[#m+1] = resolvers.talents{
+	       [self.T_BODY_OF_FIRE]=self:getTalentLevelRaw(t),
+	       [self.T_WANDER_ELEMENTAL_FIRE_BOLT]=self:getTalentLevelRaw(t)
+	    }
+	    m.name = "Ultimate "..m.name
+	    m.image = "npc/elemental_fire_ultimate_faeros_short.png"
+	 else
+	    m[#m+1] = resolvers.talents{ [self.T_WANDER_ELEMENTAL_FIRE_BOLT]=self:getTalentLevelRaw(t) }
+	    m.name = "Greater "..m.name
+	    m.image = "npc/elemental_fire_greater_faeros.png"
+	 end	 
+      end
       
       setupSummonStar(self, m, x, y)
       game:playSoundNear(self, "talents/fireflash")
@@ -147,7 +182,7 @@ newTalent{
       return {type="beam", range=self:getTalentRange(t), friendlyfire=false, talent=t}
    end,
    getDamage = function(self, t)
-      return self:combatTalentSpellDamage(t, 30, 300)
+      return self:combatTalentSpellDamage(t, 40, 400)
    end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)
@@ -173,7 +208,7 @@ newTalent{
    end,
    info = function(self, t)
       local damage = t.getDamage(self, t)
-      return ([[Overlay the crushing volcanic rifts of Kolal onto a small strip of land in front of you for %s turns.  Anyone standing on the rift will suffer %d fire and %d physical damage each turn, and be pinned for 3 turns.]])
+      return ([[Overlay the crushing volcanic rifts of Kolal onto a small line of land in front of you for %s turns.  Anyone standing on the rift will suffer %d fire and %d physical damage each turn, and be spellshocked for 3 turns.]])
 	 :format(5, damDesc(self, DamageType.PHYSICAL, damage / 10),
 		damDesc(self, DamageType.FIRE, damage / 10))
    end,
@@ -221,7 +256,7 @@ newTalent{
 	 end
       end
       
-      -- Cross tier effects are always removed and not part of the random game, otherwise it is a huge nerf to wild infusion
+      -- Cross tier effects are always removed
       for i = 1, #force do
 	 local eff = force[i]
 	 if eff[1] == "effect" then
