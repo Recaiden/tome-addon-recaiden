@@ -382,6 +382,7 @@ newDamageType{
 			  {src=src,
 			   power=(dam.dam * (125 - dam.perc) / 100) / dam.dur,
 			   crippling=dam.fail,
+			   criptime=3,
 			   apply_power=src:combatMindpower(1, nil, 0), no_ct_effect=true})
       end
       return realdam
@@ -435,20 +436,35 @@ newDamageType{
 
 -- Blight and chance to disease
 newDamageType{
-   name = "infestation", type = "REK_CORRUPTED_BLOOD", text_color = "#DARK_GREEN#",
+   name = "scourge blight", type = "REK_CORRUPTED_BLOOD", text_color = "#DARK_GREEN#",
    projector = function(src, x, y, type, dam, state)
       state = initState(state)
       useImplicitCrit(src, state)
-      local disease_str = src:combatStatScale("mag", 10, 20)
-      local dur = 3
-      local perc = 25
-      if _G.type(dam) == "table" then dam, dur, perc = dam.dam, dam.dur, (dam.chance or perc) end
-      DamageType:get(DamageType.BLIGHT).projector(src, x, y, DamageType.BLIGHT, dam, state)
-      local target = game.level.map(x, y, Map.ACTOR)
-      if target and target:canBe("disease") and rng.percent(perc) then
-	 local eff = rng.table{{target.EFF_ROTTING_DISEASE, "con"}, {target.EFF_DECREPITUDE_DISEASE, "dex"}, {target.EFF_WEAKNESS_DISEASE, "str"}}
-	 target:setEffect(eff[1], dur or 5, { src = src, [eff[2]] = disease_str, dam = dam/5 })
+      if _G.type(dam) == "number" then
+	 dam = {dam=dam, chance=25, dur=3}
       end
+      
+      local target = game.level.map(x, y, Map.ACTOR)
+
+      --Static Damage
+      if target then
+	 rekWyrmicElectrocute(src, target)
+      end
+
+      local disease_str = src:combatScale(self:combatSpellpower(), 10, 10, 20, 100)
+      local dur = 3
+      
+      local realdam = DamageType:get(DamageType.BLIGHT).projector(src, x, y, DamageType.BLIGHT, dam.dam, state)
+      if target then
+	 if dam.drain and not src:attr("dead") then
+	    src:heal(realdam * dam.drain, target)
+	 end
+	 if target:canBe("disease") and rng.percent(dam.chance) then
+            local eff = rng.table{{target.EFF_ROTTING_DISEASE, "con"}, {target.EFF_DECREPITUDE_DISEASE, "dex"}, {target.EFF_WEAKNESS_DISEASE, "str"}}
+            target:setEffect(eff[1], dur or 5, { src = src, [eff[2]] = disease_str, dam = dam/5 })
+         end
+      end
+      return realdam      
    end,
 }
 

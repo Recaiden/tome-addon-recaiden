@@ -178,7 +178,14 @@ newTalent{
       -- Attack ?
       if target and target.x and core.fov.distance(self.x, self.y, target.x, target.y) == 1 then
 	 local multiplier = t.getDamage(self, t)
-	 self:attackTarget(target, nil, multiplier, true)
+         local shield, shield_combat = self:hasShield()
+         local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
+         if not shield then
+            self:attackTarget(target, nil, multiplier, true)
+         else
+            self:attackTargetWith(target, weapon, nil, damagemultiplier)
+            self:attackTargetWith(target, shield_combat, nil, multiplier)
+         end
       end
 
       if self:hasEffect(self.EFF_REK_WYRMIC_TREMORSENSE) then
@@ -190,7 +197,8 @@ newTalent{
    
    info = function(self, t)
       local multiplier = t.getDamage(self, t)
-      return ([[Burrow underground and emerge near an enemy, attacking it for %d%% damage.]]):format( multiplier * 100 )
+      return ([[Burrow underground and emerge near an enemy, attacking it for %d%% damage.
+               This talent will also attack with your shield, if you have one equipped]]):format( multiplier * 100 )
    end,
 }
 
@@ -278,7 +286,7 @@ newTalent{
       local radius = self:getTalentRadius(t)
       local dam = t.getDamage(self, t)
       return ([[You slam the ground, shaking the area around you in a radius of %d.
-Creatures caught by the quake will be damaged for %d%% weapon damage, and knocked back up to 3 tiles away.
+Creatures caught by the quake will be damaged for %d%% mainhand weapon damage, and knocked back up to 3 tiles away.
 Empty spaces in the area will be filled with unstable sand walls which collapse after 5 turns.
 
 If you know the Tremorsense talent, its cooldown will be reset.]]):format(radius, dam * 100)

@@ -23,9 +23,7 @@ newEffect{
       eff.start_turn = game.turn
       eff.possible_end_turns = 10 * (eff.dur+1)
       eff.moveid = self:addTemporaryValue("movement_speed", eff.power/100)
-      eff.resistsid = self:addTemporaryValue("resists", {
-						[DamageType.ALL]=30
-      })
+      eff.resistsid = self:addTemporaryValue("resists", { all=30 })
       if self.ai_state then eff.aiid = self:addTemporaryValue("ai_state", {no_talents=1}) end -- Make AI not use talents while using it
       if core.shader.active(4) then
 	 -- exceptions till I can properly add it to the particle generator

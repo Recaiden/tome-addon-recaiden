@@ -8,12 +8,12 @@ newTalent{
    no_message = true,
    tactical = { ATTACK = { weapon = 1 }, EQUILIBRIUM = 0.5},
    requires_target = true,
-   no_npc_use = true,
    is_melee = true,
    target = function(self, t) return {type="hit", range=self:getTalentRange(t)} end,
    maxSwallow = function(self, t, target) return -- Limit < 50%
 	 self:combatLimit(self:getTalentLevel(t)*(self.size_category or 3)/(target.size_category or 3), 50, 13, 1, 25, 5)
    end,
+   getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.6, 2.5) end,
    getPassiveCrit = function(self, t) return self:combatTalentScale(t, 2, 10, 0.5) end,
    passives = function(self, t, p)
       self:talentTemporaryValue(p, "combat_physcrit", t.getPassiveCrit(self, t))
@@ -26,10 +26,23 @@ newTalent{
       if not target or not self:canProject(tg, x, y) then return nil end
       
       self:logCombat(target, "#Source# tries to swallow #Target#!")
-      local hit = self:attackTarget(target, nil, self:combatTalentWeaponDamage(t, 1.6, 2.5), true)
+      local shield, shield_combat = self:hasShield()
+      local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
+      local hit = false
+      if not shield then
+         hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
+      else
+         hit = self:attackTargetWith(target, weapon, nil, t.getDamage(self, t))
+         if self:attackTargetWith(target, shield_combat, nil, t.getDamage(self, t)) or hit then hit = true end
+      end
+      
       if not hit then return true end
-      -- Regain EQ on hit
+      -- Regain resources on hit
       self:incEquilibrium(-5)
+
+      if self.knowTalent(self.T_RAZE) then
+         self:incSoul(1)
+      end
       
       -- Slash armor if in physical aspect
       if self:knowTalent(self.T_REK_WYRMIC_SAND) then
@@ -40,7 +53,8 @@ newTalent{
 	 return true
       end
       
-      if (target:checkHit(self:combatPhysicalpower(), target:combatPhysicalResist(), 0, 95, 15) or target.dead) and (target:canBe("instakill") or target.life * 100 / target.max_life <= 5) then
+      if (target:checkHit(self:combatPhysicalpower(), target:combatPhysicalResist(), 0, 95, 15) or target.dead)
+          and (target:canBe("instakill") or target.dead) then
 	 if not target.dead then target:die(self) end
 	 world:gainAchievement("EAT_BOSSES", self, target)
 	 self:attr("allow_on_heal", 1)
@@ -56,13 +70,19 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Attack the target for %d%%  weapon damage.  This predatory act reinforces your place in nature, regenerating 5 equilibrium if you hit.
-		If the attack brings your target below %d%% life or kills it, you can try (#SLATE#Physical vs. Physical#LAST#)to swallow it, killing it automatically and regaining life depending on its level.
-		The chance to swallow depends on your talent level and the relative size of the target.
+      local resourceData = "reinforces your place in nature, lowering your equilibrium by 5"
+      if self.knowTalent(self.T_RAZE) then
+         resouceData = resourceData.." and tears its spirit, granting you 1 soul"
+      end
+      return ([[Savagely bite the target for %d%% weapon damage.  If you hit, this predatory act %s.
+If the attack brings your target below %d%% life, you can try (#SLATE#Physical vs. Physical#LAST#)to swallow it whole, killing it automatically and regaining life depending on its level.
+The chance to swallow depends on the relative size of the target.
+
+This talent will also attack with your shield, if you have one equipped.
 
 Passively raises critical rate (by %d%%).
 ]]):
-	 format(100 * self:combatTalentWeaponDamage(t, 1.6, 2.5), t.maxSwallow(self, t, self), t.getPassiveCrit(self, t))
+	 format(100 * t.getDamage(self, t), resouceData, t.maxSwallow(self, t, self), t.getPassiveCrit(self, t))
    end,
 }
 
@@ -146,7 +166,7 @@ newTalent{
    equilibrium = 3,
    cooldown = 7,
    range = 0,
-   radius = function(self, t) return math.floor(self:combatTalentScale(t, 1, 3)) end,
+   radius = function(self, t) return 3 end,
    direct_hit = true,
    requires_target = true,
    tactical = { ATTACK = { weapon = 1 } },
@@ -168,7 +188,14 @@ newTalent{
 		      local target = game.level.map(px, py, Map.ACTOR)
 		      local damage = t.damagemult(self, t)
 		      if target and target ~= self then
-			 local hit = self:attackTarget(target, damtype, damage, true)
+                         local shield, shield_combat = self:hasShield()
+                         local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
+                         if not shield then
+                            self:attackTarget(target, damtype, damage, true)
+                         else
+                            self:attackTargetWith(target, weapon, damtype, damage)
+                            self:attackTargetWith(target, shield_combat, damtype, damage)
+                         end
 
 			 -- Slash armor if in physical aspect
 			 if hit and self:knowTalent(self.T_REK_WYRMIC_SAND) then
@@ -189,7 +216,7 @@ newTalent{
 	 nameStatus = source.nameStatus
       end
       return ([[You call upon the mighty claws of the drake and rake the enemies in front of you, doing %d%% weapon damage as %s in a cone of %d, with a 25%% chance that the target will be %s.
-]]):format(100 * t.damagemult(self, t), name, self:getTalentRadius(t), nameStatus)
+This talent will also attack with your shield, if you have one equipped.]]):format(100 * t.damagemult(self, t), name, self:getTalentRadius(t), nameStatus)
    end,
 }
 

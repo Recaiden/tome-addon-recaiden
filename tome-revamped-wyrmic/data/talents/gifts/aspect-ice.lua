@@ -1,5 +1,4 @@
 local Object = require "mod.class.Object"
-local NPC = require "mod.class.NPC"
 
 function getAspectResists(self, t)
    return self:combatTalentScale(t, 2, 25)
@@ -130,6 +129,7 @@ newTalent{
 		      local oe = game.level.map(px, py, Map.TERRAIN)
 		      if not oe or oe.special then return end
 		      if not oe or oe:attr("temporary") or game.level.map:checkAllEntities(px, py, "block_move") then return end
+		      local NPC = require "mod.class.NPC"
 		      local wall = NPC.new{
 			 type = "immovable", subtype = "ice",
 			 display = "#", blood_color = colors.BLUE,

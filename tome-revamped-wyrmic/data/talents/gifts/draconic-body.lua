@@ -40,7 +40,7 @@ newTalent{
    
    info = function(self, t)
       local speed = t.getPassiveSpeed(self, t)
-      return ([[Take to the skies with your wings, moving %d%% faster for %d game turns, during which you will have an additional 30%% physical damage resistance.
+      return ([[Take to the skies with your wings, moving %d%% faster for %d game turns, during which you will have an additional 30%% damage resistance.
 		Any actions other than moving will stop this effect.
 		Note: since you will be moving very fast, game turns will pass very slowly.
 		
@@ -49,8 +49,6 @@ Passively increases Movement Speed by %d%%
    end,
 }
 
-
--- Dragon's Heart, gives healmod, more the lower your health is, maybe also small health Regen
 
 newTalent{
    name = "Drakeheart", short_name = "REK_WYRMIC_BODY_HEART",
@@ -154,7 +152,6 @@ Passively improves all saves by %d.
    end,
 }
 
--- Lashing Tail, tries to knock enemies Off-balance with each hit.
 newTalent{
    name = "Lashing Tail", short_name = "REK_WYRMIC_BODY_TAIL",
    type = {"wild-gift/draconic-body", 4},

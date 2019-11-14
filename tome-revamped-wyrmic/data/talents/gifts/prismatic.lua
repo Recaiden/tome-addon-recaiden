@@ -12,31 +12,24 @@ end
 
 --Configuration Tools
 newTalent{
-   name = "Primary Aspect", short_name = "REK_WYRMIC_COLOR_PRIMARY",
+   name = "Change Aspect", short_name = "REK_WYRMIC_COLOR_PRIMARY",
    type = {"wild-gift/other", 1},
    points = 1,
-   cooldown = 10,
+   cooldown = 30,
    no_energy = true,
+   no_npc_use = true,
+   on_pre_use = function(self, t, silent)
+      if self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD) then
+         if not silent then game.logPlayer(self, "You must use prismatic blood instead if you know it.") end
+         return false
+      end 
+   end,
    action = function(self, t)
-      local possibles = table.shallow_copy(self.rek_wyrmic_dragon_type) or {}
+      local possibles =  self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD, "getOptions")
       local aspect = self:talentDialog(Dialog:listPopup("Primary Aspect", "Choose an aspect to bring forth:", possibles, 400, 400, function(item) self:talentDialogReturn(item) end))
       if aspect then
 	 self.rek_wyrmic_dragon_damage = aspect
-      end
-
-      if self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY) then
-	 local reduc = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY, "CDreduce")
-	 if not self:attr("no_talents_cooldown") then
-	    for tid, _ in pairs(self.talents_cd) do
-	       if tid == self.T_REK_WYRMIC_ELEMENT_BREATH
-	       or tid == self.T_REK_WYRMIC_COMBAT_DISSOLVE then
-		  local t = self:getTalentFromId(tid)
-		  if t and not t.fixed_cooldown then
-		     self.talents_cd[tid] = self.talents_cd[tid] - reduc
-		  end
-	       end
-	    end
-	 end
+	 self:updateTalentPassives(t.id)
       end
       
       return true
@@ -48,9 +41,8 @@ newTalent{
       else
 	 name = "None"
       end
-      return ([[Activate this talent to select your Aspect.  Your Aspect will be used by Wyrmic talents to determine damage type and status effects.
-Currently: %s]]):
-	 format(name)
+      return ([[You can activate this talent to change which drake aspect to bring forth, altering the damage type and status effect your abilities inflict.
+Current Aspect: %s]]):format(name)
    end,
 }
 
@@ -160,6 +152,23 @@ newTalent{
       end
       return possibles
    end,
+
+   -- If they have a Weird Element, it should have given them a switch-talent with no stats
+   -- Take it away.
+   on_learn = function(self, t)
+      if self:knowTalent(self.T_REK_WYRMIC_COLOR_PRIMARY) then
+         self:unlearnTalentFull(self.T_REK_WYRMIC_COLOR_PRIMARY)
+      end
+   end
+
+   on_unlearn = function(self, t)
+      if self:getTalentLevel(t) == 0
+      and (self:knowTalent(self.T_TENTACLED_WINGS)
+         or self:knowTalent(self.T_RAZE)) then
+      local nb = self:getTalentLevelRaw(self.T_TENTACLED_WINGS) + self:getTalentLevelRaw(self.T_RAZE)
+      self:learnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY, nb)
+   end
+
    getPassiveSpeed = function(self, t) return (self:combatTalentScale(t, 2, 10, 0.5)/100) end,
    -- Chromatic Fury hook
    passives = function(self, t, p)
@@ -191,7 +200,7 @@ newTalent{
       local speed = t.getPassiveSpeed(self, t)
       local numAspects = t.getNumAspects(self, t)
       local damname = ""
-      local str_info = ([[Through intense concentration you attune yourself to the power of dragons. This talent allows you to learn talents from %d additional elements.
+      local str_info = ([[Through intense concentration you attune yourself to the power of dragons. This talent allows you to learn talents from %d additional elements. (Special unlockable elements do not require this talent).
 
 Passively increases Physical, Mental, and Spell attack speeds by %d%%.
 

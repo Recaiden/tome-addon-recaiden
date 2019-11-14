@@ -58,7 +58,14 @@ newTalent{
       end
       if #victims > 0 then
 	 self:startTalentCooldown(t)
-	 self:attackTarget(rng.table(victims), DamageType.REK_WYRMIC_FIRE, t.getDamage(self, t),  true)
+         local shield, shield_combat = self:hasShield()
+         local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
+         if not shield then
+            self:attackTarget(rng.table(victims), DamageType.REK_WYRMIC_FIRE, t.getDamage(self, t), true)
+         else
+            self:attackTargetWith(rng.table(victims), weapon, damtypeDamageType.REK_WYRMIC_FIRE, t.getDamage(self, t))
+            self:attackTargetWith(targetrng.table(victims), shield_combat, DamageType.REK_WYRMIC_FIRE, t.getDamage(self, t))
+         end
       end
    end,
 
@@ -68,7 +75,7 @@ newTalent{
       local cooldown = t.cooldown(self,t)
       return ([[You can take on the power of Fire Wyrms using Prismatic Blood.  You gain %d%% fire resistance.
 
-When you hit an enemy with a melee attack, you immediately follow up, making another attack against a random adjacent enemy doing %d%% damage as Flame.  This can only happen once every %d turns.
+When you hit an enemy with a melee attack, you immediately follow up, making another attack against a random adjacent enemy doing %d%% damage as Flame.  This can only happen once every %d turns. This will also attack with your shield, if you have one equipped.
 
 Flame damage can inflict stun (#SLATE#Mindpower vs. Physical#LAST#).  
 Flame does 10%% bonus damage. 
@@ -182,7 +189,7 @@ newTalent{
       local damage = t.getDamage(self, t)
       local radius = self:getTalentRadius(t)
       local eq = t.getEqGain(self, t)
-      return ([[Erupt with a waves of flames with a radius of %d, knocking back and stunning (#SLATE#Mindpower vs. Physical#LAST#) any targets caught inside and burning them for %0.2f flame damage.
+      return ([[Erupt with a wave of flames with a radius of %d, knocking back and stunning (#SLATE#Mindpower vs. Physical#LAST#) any targets caught inside and burning them for %0.2f flame damage.
 
 Then, recover between %d and %d equilibrium, increased for each burning creature within 10 spaces.
 
