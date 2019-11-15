@@ -1,3 +1,5 @@
+require "engine.Game"
+
 local _M = loadPrevious(...)
 
 local k, mod = debug.getlocal(6, 2) 	

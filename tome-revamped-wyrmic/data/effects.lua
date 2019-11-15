@@ -466,3 +466,32 @@ newEffect{
       if eff.cripid then self:removeTemporaryValue("talent_fail_chance", eff.cripid) end
    end,
 }
+
+newEffect{
+   name = "REK_WYRMIC_DOOM", image = "talents/impending_doom.png",
+   desc = "Doomed",
+   long_desc = function(self, eff) return ("You are cursed by dark magic, reducing healing by %d%%."):format(eff.healFactorChange*-100) end,
+   type = "magicl",
+   subtype = { curse=true }, no_ct_effect = true,
+   status = "detrimental",
+   parameters = { healFactorChange=-0.5 },
+   on_gain = function(self, err) return "#Target# is doomed to die!", "+Doom" end,
+   on_lose = function(self, err) return "#Target#'s doom has lifted.", "-Doom" end,
+   activate = function(self, eff)
+      eff.healFactorId = self:addTemporaryValue("healing_factor", eff.healFactorChange)
+   end,
+   deactivate = function(self, eff)
+      self:removeTemporaryValue("healing_factor", eff.healFactorId)
+   end,
+   on_merge = function(self, old_eff, new_eff)
+      -- add the remaining healing reduction spread out over the new duration
+      old_eff.healFactorChange = math.max(-0.75, (old_eff.healFactorChange / old_eff.totalDuration) * old_eff.dur + new_eff.healFactorChange)
+      old_eff.dur = math.max(old_eff.dur, new_eff.dur)
+      
+      self:removeTemporaryValue("healing_factor", old_eff.healFactorId)
+      old_eff.healFactorId = self:addTemporaryValue("healing_factor", old_eff.healFactorChange)
+      game.logSeen(self, "%s's doom has returned!", self.name:capitalize())
+      
+      return old_eff
+   end,
+}

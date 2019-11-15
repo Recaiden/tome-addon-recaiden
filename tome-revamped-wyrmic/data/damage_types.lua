@@ -407,30 +407,33 @@ newDamageType{
 
 -- Half now, half over 4 turns, and circle-of-death status
 newDamageType{
-   name = "deathly bane", type = "REK_CIRCLE_DEATH",
+   name = "doom", type = "REK_WYRMIC_DARK",
    projector = function(src, x, y, type, dam, state)
       state = initState(state)
       useImplicitCrit(src, state)
-      
-      local dur = 3
-      local perc = 25
-      if _G.type(dam) == "table" then dam, dur, perc = dam.dam, dam.dur, (dam.chance or perc) end
+      if _G.type(dam) == "number" then
+	 dam = {dam=dam, chance=25, dur=3}
+      end
       
       local target = game.level.map(x, y, Map.ACTOR)
-      if target and (src:reactionToward(target) < 0) then
-	 for eff_id, p in pairs(target.tmp) do
-	    local e = target.tempeffect_def[eff_id]
-	    if e.subtype.bane then return end
-	 end
-	 
-	 local what = rng.percent(50) and "blind" or "confusion"
-	 DamageType:get(DamageType.DARKNESS).projector(src, x, y, DamageType.DARKNESS, dam/2, state)
-	 if target:canBe(what) and rng.percent(perc) then
-	    target:setEffect(what == "blind" and target.EFF_BANE_BLINDED or target.EFF_BANE_CONFUSED, math.ceil(dur), {src=src, power=50, dam=dam/6, apply_power=src:combatSpellpower()})
-	 else
-	    game.logSeen(target, "%s resists the baneful energy!", target.name:capitalize())
-	 end
+
+      --Static Damage
+      if target then
+	 rekWyrmicElectrocute(src, target)
       end
+
+      local dur = 3
+      
+      local realdam = DamageType:get(DamageType.DARKNESS).projector(src, x, y, DamageType.DARKNESS, dam.dam, state)
+      if target then
+	 if dam.drain and not src:attr("dead") then
+	    src:heal(realdam * dam.drain, target)
+	 end
+	 if rng.percent(dam.chance) then
+            target:setEffect(target.EFF_REK_WYRMIC_DOOM, dur, { healFactorChange=-0.75, totalDuration=3 })
+         end
+      end
+      return realdam      
    end,
 }
 
@@ -451,7 +454,7 @@ newDamageType{
 	 rekWyrmicElectrocute(src, target)
       end
 
-      local disease_str = src:combatScale(self:combatSpellpower(), 10, 10, 20, 100)
+      local disease_str = src:combatScale(src:combatSpellpower(), 10, 10, 20, 100)
       local dur = 3
       
       local realdam = DamageType:get(DamageType.BLIGHT).projector(src, x, y, DamageType.BLIGHT, dam.dam, state)
@@ -461,7 +464,7 @@ newDamageType{
 	 end
 	 if target:canBe("disease") and rng.percent(dam.chance) then
             local eff = rng.table{{target.EFF_ROTTING_DISEASE, "con"}, {target.EFF_DECREPITUDE_DISEASE, "dex"}, {target.EFF_WEAKNESS_DISEASE, "str"}}
-            target:setEffect(eff[1], dur or 5, { src = src, [eff[2]] = disease_str, dam = dam/5 })
+            target:setEffect(eff[1], dur or 5, { src = src, [eff[2]] = disease_str, dam = dam.dam/10 })
          end
       end
       return realdam      

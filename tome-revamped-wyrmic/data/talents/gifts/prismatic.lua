@@ -22,7 +22,8 @@ newTalent{
       if self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD) then
          if not silent then game.logPlayer(self, "You must use prismatic blood instead if you know it.") end
          return false
-      end 
+      end
+      return true
    end,
    action = function(self, t)
       local possibles =  self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD, "getOptions")
@@ -134,9 +135,9 @@ newTalent{
 	 possibles[#possibles+1] = {
 	    name="Darkness",
 	    nameDrake=DamageType:get(DamageType.DARKNESS).text_color.."Undead Drake#LAST#",
-	    nameStatus="Baned",
+	    nameStatus="Doomed",
 	    damtype=DamageType.DARKNESS,
-	    status=DamageType.REK_CIRCLE_DEATH,
+	    status=DamageType.REK_WYRMIC_DARK,
 	    talent=self.T_RAZE
 	 }
       end
@@ -159,15 +160,16 @@ newTalent{
       if self:knowTalent(self.T_REK_WYRMIC_COLOR_PRIMARY) then
          self:unlearnTalentFull(self.T_REK_WYRMIC_COLOR_PRIMARY)
       end
-   end
+   end,
 
    on_unlearn = function(self, t)
       if self:getTalentLevel(t) == 0
-      and (self:knowTalent(self.T_TENTACLED_WINGS)
+         and (self:knowTalent(self.T_TENTACLED_WINGS)
          or self:knowTalent(self.T_RAZE)) then
-      local nb = self:getTalentLevelRaw(self.T_TENTACLED_WINGS) + self:getTalentLevelRaw(self.T_RAZE)
-      self:learnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY, nb)
-   end
+          local nb = self:getTalentLevelRaw(self.T_TENTACLED_WINGS) + self:getTalentLevelRaw(self.T_RAZE)
+          self:learnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY, nb)
+      end
+   end,
 
    getPassiveSpeed = function(self, t) return (self:combatTalentScale(t, 2, 10, 0.5)/100) end,
    -- Chromatic Fury hook

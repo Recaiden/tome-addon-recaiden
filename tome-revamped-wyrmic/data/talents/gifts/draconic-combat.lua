@@ -40,7 +40,7 @@ newTalent{
       -- Regain resources on hit
       self:incEquilibrium(-5)
 
-      if self.knowTalent(self.T_RAZE) then
+      if self:knowTalent(self.T_RAZE) then
          self:incSoul(1)
       end
       
@@ -71,10 +71,11 @@ newTalent{
    end,
    info = function(self, t)
       local resourceData = "reinforces your place in nature, lowering your equilibrium by 5"
-      if self.knowTalent(self.T_RAZE) then
-         resouceData = resourceData.." and tears its spirit, granting you 1 soul"
+      if self:knowTalent(self.T_RAZE) then
+         resourceData = resourceData.." and tears its spirit, granting you 1 soul"
       end
       return ([[Savagely bite the target for %d%% weapon damage.  If you hit, this predatory act %s.
+
 If the attack brings your target below %d%% life, you can try (#SLATE#Physical vs. Physical#LAST#)to swallow it whole, killing it automatically and regaining life depending on its level.
 The chance to swallow depends on the relative size of the target.
 
@@ -82,7 +83,7 @@ This talent will also attack with your shield, if you have one equipped.
 
 Passively raises critical rate (by %d%%).
 ]]):
-	 format(100 * t.getDamage(self, t), resouceData, t.maxSwallow(self, t, self), t.getPassiveCrit(self, t))
+	 format(100 * t.getDamage(self, t), resourceData, t.maxSwallow(self, t, self), t.getPassiveCrit(self, t))
    end,
 }
 
