@@ -10,8 +10,8 @@ newTalent{
    tactical = { ATTACKAREA = 3 },
    range = function(self, t) return 4 end,
    radius = function(self, t) return 1 end,
-   getDuration = function(self, t) return 10 + self:combatTalentScale(t, 2, 10, 0.75) end,
-   getDam = function(self, t) return self:combatTalentSpellDamage(t, 10, 2000) / 10 end,
+   getDuration = function(self, t) return 8 + self:combatTalentScale(t, 2, 9, 0.75) end,
+   getDam = function(self, t) return self:combatTalentSpellDamage(t, 15, 60) end,
    action = function(self, t)
       game:playSoundNear(self, "talents/fire")
       self:setEffect(self.EFF_WANDER_METEOR_STORM, t.getDuration(self, t),
@@ -51,7 +51,7 @@ newTalent{
       return{ 
 	 mag=15 + (fake and mp or self:spellCrit(mp)) * 2 * self:combatTalentScale(t, 0.2, 1, 0.75),
 	 cun=15 + (fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75),
-	 con=10 + self:callTalent(self.T_RESILIENCE, "incCon")
+	 con=10
       }
    end,
 
@@ -236,7 +236,6 @@ newTalent{
    type = {"spell/other", 1},
    require = spells_req_high4,
    points = 5,
-   getChance = function(self, t) return self:combatTalentLimit(t, 30, 5, 15) end,
    range = 10,
    direct_hit = true,
    requires_target = true,
@@ -259,7 +258,7 @@ newTalent{
 
       -- Graphic
       if core.shader.active() then
-	 game.level.map:particleEmitter(x, y, 1, "starfall", {radius=1, tx=x, ty=y})
+	 game.level.map:particleEmitter(x, y, 1, "starfall", {radius=0.5, tx=x, ty=y})
       else
 	 game.level.map:particleEmitter(x, y, 1, "circle", {oversize=0.7, a=60, limit_life=16, appear=8, speed=-0.5, img="darkness_celestial_circle", radius=1})
       end
@@ -281,7 +280,7 @@ newTalent{
    points = 5,
    mode = "passive",
 
-   getChance = function(self, t) return self:combatTalentLimit(t, 30, 5, 15) end,
+   getChance = function(self, t) return self:combatTalentLimit(t, 20, 5, 10) end,
 
    learnOnHit = function(self, t)
       self.talent_on_spell["WANDER_METEOR_BOMBARDMENT"] = {
@@ -372,7 +371,7 @@ newTalent{
 
       -- Hit a random enemy
       local nb = 0
-      while #list > 0 and nb < 3 do
+      while #list > 0 and nb < 2 do
 	 local a = rng.tableRemove(list)			
 	 meteor(self, a, a.x, a.y, dam)	 
 	 nb = nb + 1
@@ -382,7 +381,7 @@ newTalent{
   
    info = function(self, t)
       return ([[Channeled through the staff, your meteor storms are wilder and more destructive.
-		While Meteor Storm is active, three additional smaller meteors will fall each turn on an enemy near you or your summons, dealing %0.2f meteor damage. Enemies are more likely to be struck if there are multiple party members near them.
+		While Meteor Storm is active, two additional smaller meteors will fall each turn on an enemy near you or your summons, dealing %0.2f meteor damage. Enemies are more likely to be struck if there are multiple party members near them.
 		The effects increase with spellpower.]])
 	 :format(damDesc(self, DamageType.METEOR, t.getDam(self, t)))
 

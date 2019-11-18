@@ -342,8 +342,24 @@ newEffect{
       -- Hit a random enemy
       local nb = 0
       while #list > 0 and nb < 1 do
-	 local a = rng.tableRemove(list)			
-	 meteor(self, util.bound(a.x + rng.range(-1,1), 0, game.level.map.w-1), util.bound(a.y + rng.range(-1,1), 0, game.level.map.h-1), dam)
+	 local a = rng.tableRemove(list)
+
+         -- Hit within 1 space of the target so they're always included.
+         local tx = util.bound(a.x + rng.range(-1,1), 0, game.level.map.w-1)
+         local ty = util.bound(a.y + rng.range(-1,1), 0, game.level.map.h-1)
+         local rad = 1
+                               
+         self:project({type="ball", x=tx, y=ty, radius=1, selffire=false}, tx, ty, DamageType.METEOR, dam)
+
+         if core.shader.active() then
+            game.level.map:particleEmitter(tx, ty, rad, "starfall", {radius=rad, tx=tx, ty=ty})
+         else
+            game.level.map:particleEmitter(tx, ty, rad, "shadow_flash", {radius=rad, grids=grids, tx=tx, ty=ty})
+            game.level.map:particleEmitter(tx, ty, rad, "circle", {oversize=0.7, a=60, limit_life=16, appear=8, speed=-0.5, img="darkness_celestial_circle", radius=rad})
+         end
+         
+         -- Don't use the BIZARRE REALTIME METEOR except for visuals
+	 meteor(self, tx, ty, 0)
 
 	 -- Void summons hook
 	 if self:knowTalent(self.T_WANDER_METEOR_VOID_SUMMONS) then
