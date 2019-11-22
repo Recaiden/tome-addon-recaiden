@@ -270,7 +270,7 @@ newTalent{
 	 name = DamageType:get(source.damtype).text_color..DamageType:get(source.damtype).name.."#LAST#"
 	 nameStatus = source.nameStatus
       end
-      return ([[You strike the enemy with a rain of four fast blows doing %d%% weapon damage as %s each, with a chance that the enemy will be %s.
+      return ([[You strike the enemy with a rain of four fast blows doing %d%% weapon damage as %s each, with a chance that the enemy will be %s.  This will also attack with your shield, if you have one equipped.
 		
 ]]):format(100 * self:combatTalentWeaponDamage(t, 0.1, 0.6), name, nameStatus)
    end,

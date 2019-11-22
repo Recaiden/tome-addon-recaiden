@@ -93,7 +93,7 @@ newTalent{
       local dam = t.getDamageStinger(self, t)
       return ([[You can take on the power of Venom Wyrms using Prismatic Blood.  You will gain %d%% nature resistance. 
 
-While sustained, you coat your weapons and ammo in venom, giving them a %d%% chance to expose enemies to a deadly poison (%d damage over %d turns (#SLATE#Accuracy vs. Physical#LAST#), stacking up to 5 times).  The chance is reduced to 75%% if you have a shield, 50%% if you are wielding 2 weapons.
+While sustained, you coat your weapons and ammo in venom, giving them a %d%% chance to expose enemies to a deadly poison (%d damage per turn for %d turns (#SLATE#Accuracy vs. Physical#LAST#), stacking up to 5 times).  The chance is reduced to 75%% if you have a shield, 50%% if you are wielding 2 weapons.
 
 Venom is Nature damage that can inflict Crippling Poison (#SLATE#Mindpower vs. Physical#LAST#).  
 Venom deals 25%% bonus damage. 

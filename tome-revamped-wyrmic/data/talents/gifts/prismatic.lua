@@ -240,6 +240,7 @@ newTalent{
       return true
    end,
    callbackOnDealDamage = function(self, t, val, target, dead, death_note)
+      if not self:isTalentActive(self.T_REK_WYRMIC_PRISMATIC_BURST) then return end
       self:forceUseTalent(self.T_REK_WYRMIC_PRISMATIC_BURST, {ignore_energy=true})
       self:incEquilibrium(t.getCost(self, t))
       local x, y = target.x, target.y

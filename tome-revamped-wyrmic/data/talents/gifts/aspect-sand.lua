@@ -140,7 +140,7 @@ newTalent{
       local range = t.radius(self, t)
       local dash = t.getRange(self, t)
       local damage = t.getDamage(self, t)*100
-      return ([[Sense foes around you in a radius of %d.  Then, this talent will be replaced with the ability to burrow underground and emerge near an enemy within range %d, attacking it for %d%% damage.
+      return ([[Sense foes around you in a radius of %d.  Then, this talent will be replaced with the ability to burrow underground and emerge near an enemy within range %d, attacking it for %d%% mainhand weapon damage.
 
 Activating this talent is instant, but the burrowing attack takes a turn.
 Cunning: Improves detection radius
@@ -178,14 +178,14 @@ newTalent{
       -- Attack ?
       if target and target.x and core.fov.distance(self.x, self.y, target.x, target.y) == 1 then
 	 local multiplier = t.getDamage(self, t)
-         local shield, shield_combat = self:hasShield()
-         local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
-         if not shield then
-            self:attackTarget(target, nil, multiplier, true)
-         else
-            self:attackTargetWith(target, weapon, nil, damagemultiplier)
-            self:attackTargetWith(target, shield_combat, nil, multiplier)
-         end
+         --local shield, shield_combat = self:hasShield()
+         --local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
+         --if not shield then
+         self:attackTarget(target, nil, multiplier, true)
+         --else
+         --   self:attackTargetWith(target, weapon, nil, damagemultiplier)
+         --   self:attackTargetWith(target, shield_combat, nil, multiplier)
+         --end
       end
 
       if self:hasEffect(self.EFF_REK_WYRMIC_TREMORSENSE) then
@@ -197,8 +197,7 @@ newTalent{
    
    info = function(self, t)
       local multiplier = t.getDamage(self, t)
-      return ([[Burrow underground and emerge near an enemy, attacking it for %d%% damage.
-               This talent will also attack with your shield, if you have one equipped]]):format( multiplier * 100 )
+      return ([[Burrow underground and emerge near an enemy, attacking it for %d%% mainhand weapon damage.]]):format( multiplier * 100 )
    end,
 }
 

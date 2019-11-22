@@ -63,8 +63,8 @@ newTalent{
          if not shield then
             self:attackTarget(rng.table(victims), DamageType.REK_WYRMIC_FIRE, t.getDamage(self, t), true)
          else
-            self:attackTargetWith(rng.table(victims), weapon, damtypeDamageType.REK_WYRMIC_FIRE, t.getDamage(self, t))
-            self:attackTargetWith(targetrng.table(victims), shield_combat, DamageType.REK_WYRMIC_FIRE, t.getDamage(self, t))
+            self:attackTargetWith(rng.table(victims), weapon, DamageType.REK_WYRMIC_FIRE, t.getDamage(self, t))
+            self:attackTargetWith(rng.table(victims), shield_combat, DamageType.REK_WYRMIC_FIRE, t.getDamage(self, t))
          end
       end
    end,

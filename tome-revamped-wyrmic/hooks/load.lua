@@ -51,12 +51,46 @@ function modifyWyrmicTrees()
       Talents.talents_def.T_TENTACLED_WINGS.getDiseaseStrength = function(self, t)
          return self:combatScale(self:combatSpellpower(), 10, 10, 20, 100)
       end
+
+      Talents.talents_def.T_TENTACLED_WINGS.action = function(self, t)
+         local tg = self:getTalentTarget(t)
+         local x, y = self:getTarget(tg)
+         if not x or not y then return nil end
+         
+         local weapondam = t.getDamage(self, t)
+         self:project(tg, x, y, function(px, py)
+                         local act = game.level.map(px, py, Map.ACTOR)
+                         if act and self:reactionToward(act) < 0 then
+                            local shield, shield_combat = self:hasShield()
+                            local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
+                            local hit = false
+                            if not shield then
+                               hit = self:attackTarget(act, DamageType.BLIGHT, weapondam, true)
+                            else
+                               hit = self:attackTargetWith(act, weapon, DamageType.BLIGHT, weapondam)
+                               if self:attackTargetWith(act, shield_combat, DamageType.BLIGHT, weapondam)
+                                  or hit
+                               then hit = true
+                               end
+                            end
+                            if hit then act:pull(self.x, self.y, self:getTalentRange(t)) end
+                            self:addParticles(Particles.new("tentacle_pull", 1, {range=core.fov.distance(self.x, self.y, px, py), dir=math.deg(math.atan2(py-self.y, px-self.x)+math.pi/2)}))
+                         end
+                                end)
+         
+         if core.shader.active(4) then
+            local bx, by = self:attachementSpot("back", true)
+            self:addParticles(Particles.new("shader_wings", 1, {img="sickwings", life=18, x=bx, y=by, fade=-0.006, deploy_speed=14}))
+         end
+         
+         return true
+      end
       
       Talents.talents_def.T_TENTACLED_WINGS.info = function(self, t)
          return ([[You can take on the power of the otherworldly Scourge using Prismatic Blood.  You will gain %d%% blight resistance and can inflict Scourge damage using your draconic talents.
 
 Activate this talent to project tentacles in a cone of radius %d in front of you.
-Any foes caught inside are grappled by the tentacles, suffering %d%% weapon damage as blight and being pulled towards you (#SLATE#no save#LAST#).
+Any foes caught inside are grappled by the tentacles, suffering %d%% weapon damage as blight and being pulled towards you (#SLATE#no save#LAST#). This will also attack with your shield, if you have one equipped.
 
 Scourge is blight that can inflict a virulent disease (#SLATE#Spellpower vs. Spell#LAST#), reducing one of strength, dexterity, or constitution by %d.  The strength of the disease depends on your Spellpower.]]):
          format(t.getResists(self, t), self:getTalentRange(t), damDesc(self, DamageType.BLIGHT, t.getDamage(self, t) * 100), t.getDiseaseStrength(self, t))
