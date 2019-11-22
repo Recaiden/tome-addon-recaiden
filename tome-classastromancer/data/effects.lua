@@ -47,7 +47,7 @@ newEffect{
 newEffect{
    name = "WANDER_KOLAL", image = "talents/wander_summon_fire.png",
    desc = "Planetary Charge: Kolal",
-   long_desc = function(self, eff) return ("%d stacks, +%d%% to action speed."):format(eff.stacks, eff.stacks*0.022) end,
+   long_desc = function(self, eff) return ("%d stacks, +%d%% to action speed."):format(eff.stacks, eff.stacks*2.2) end,
    type = "magical",
    subtype = { fire=true, haste=true },
    status = "beneficial",

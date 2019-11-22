@@ -350,8 +350,8 @@ newTalent{
    type = {"celestial/luxam", 4},
    require = spells_req4,
    points = 5,
-   cooldown = 2,
-   negative = 10,
+   cooldown = 6,
+   negative = 12,
    tactical = { DEFEND = 2},
    range = 10,
    getAbsorb = function(self, t)
@@ -362,14 +362,18 @@ newTalent{
       local tg = {type="hit", range=self:getTalentRange(t), talent=t, first_target="friend", default_target=self, friendlyblock=false, nowarning=true}
       local tx, ty, target = self:getTarget(tg)
       if not tx or not ty or not target then return nil end
+      if target and self:reactionToward(target) >= 0 and target ~= self then
+         game:onTickEnd(function() self:alterTalentCoolingdown(t.id, -math.floor((self.talents_cd[t.id] or 0) * 0.66)) end)
+      end
       target:setEffect(target.EFF_DAMAGE_SHIELD, 10, {power=self:spellCrit(t.getAbsorb(self, t))})
       target:setEffect(target.EFF_WANDER_ICE_DAMAGE_SHIELD, 10, {power=100})
       game:playSoundNear(self, "talents/spell_generic")
       return true
    end,
    info = function(self, t)
-      return ([[Encases an ally in a protective layer of ice, shielding them from %d damage in the next 10 turns and protecting them from being stunned for as long as the shield holds.
-The total damage the ice can absorb will increase with your spellpower.]]):format(t.getAbsorb(self, t))
+      return ([[Encases an ally in a protective layer of ice for 10 turns, shielding them from %d damage and protecting them from being stunned for as long as the shield holds.
+The total damage the ice can absorb will increase with your spellpower.
+If cast on an ally other than yourself, the cooldown is reduced by 2/3]]):format(t.getAbsorb(self, t))
    end,
 }
 

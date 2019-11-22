@@ -224,7 +224,7 @@ newTalent{
 			 affected[actor] = true
 			 first = actor
 			 
-			 self:project({type="ball", selffire=true, x=dx, y=dy, radius=10, range=0}, dx, dy, function(bx, by)
+			 self:project({type="ball", selffire=false, x=dx, y=dy, radius=10, range=0}, dx, dy, function(bx, by)
 			       local actor = game.level.map(bx, by, Map.ACTOR)
 			       if actor and not affected[actor] then
 				  affected[actor] = true
@@ -245,9 +245,10 @@ newTalent{
       end
       
       local sx, sy = self.x, self.y
+      local dam = self:spellCrit(t.getDamage(self, t))
       for i, actor in ipairs(targets) do
 	 local tgr = {type="beam", range=self:getTalentRange(t), selffire=true, talent=t, x=sx, y=sy}
-	 local dam = self:spellCrit(t.getDamage(self, t))
+	 
 	 self:project(tgr, actor.x, actor.y, DamageType.GOOD_LIGHTNING, {dam=rng.avg(rng.avg(dam / 3, dam, 3), dam, 5)})
 	 
 	 if core.shader.active() then game.level.map:particleEmitter(sx, sy, math.max(math.abs(actor.x-sx), math.abs(actor.y-sy)), "lightning_beam", {tx=actor.x-sx, ty=actor.y-sy}, {type="lightning"})
@@ -264,8 +265,8 @@ newTalent{
    info = function(self, t)
       local damage = t.getDamage(self, t)
       local targets = t.getTargetCount(self, t)
-      return ([[Invokes a forking beam of lightning doing %0.2f to %0.2f damage and forking to another target.  Allies are instead healed for this amount.
-		It can hit up to %d targets up to 10 grids apart, and will never hit the same one twice.
+      return ([[Invokes a forking beam of bright lightning doing %0.2f to %0.2f damage and forking to another target.  Allies are instead healed for this amount.
+		It can hit up to %d targets up to 10 grids apart.
 		The damage will increase with your Spellpower.]]):
 	 format(damDesc(self, DamageType.LIGHTNING, damage / 3),
 		damDesc(self, DamageType.LIGHTNING, damage),
