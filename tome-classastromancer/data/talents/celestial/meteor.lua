@@ -149,7 +149,7 @@ newTalent{
       return ([[Sometimes, the meteors you call down are host to small aether elementals.  Each meteor has a %d%% chance to spawn a friendly losgoroth or manaworm for %d turns.  Their stats will increase with your spellpower.
 
 #GREEN#Blighted Summoning: Corrupted Negation (Losgoroth)
-Blighted Summoning: Worm Rot (manaworm)#{normal}#
+Blighted Summoning: Corrosive Worm (manaworm)#{normal}#
 ]]):format(chance, duration)
    end,
 }

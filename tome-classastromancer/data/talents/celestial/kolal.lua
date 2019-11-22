@@ -44,7 +44,7 @@ newTalent{
    points = 5,
    random_ego = "attack",
    message = "@Source@ conjures a Faeros!",
-   negative = -10.2, --change to Imbalance
+   negative = -5,
    cooldown = 10,
    range = 5,
    requires_target = true,
@@ -62,8 +62,9 @@ newTalent{
 	 str=15 + (fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75),
 	 dex=15 + (fake and mp or self:spellCrit(mp)) * 2 * self:combatTalentScale(t, 0.2, 1, 0.75),
 	 mag=15 + (fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75),
-	 con=15 + (fake and mp or self:spellCrit(mp)) * 1.2 * self:combatTalentScale(t, 0.2, 1, 0.75)
-
+	 con=15 + (fake and mp or self:spellCrit(mp)) * 1.2 * self:combatTalentScale(t, 0.2, 1, 0.75),
+         wil=10,
+         cun=10
       }
    end,
 
@@ -75,7 +76,12 @@ newTalent{
    end,
    
    summonTime = function(self, t)
-      return math.floor(self:combatScale(self:getTalentLevel(t) + self:getTalentLevel(self.T_WANDER_GRAND_ARRIVAL), 5, 0, 10, 5))
+      local duration = math.floor(self:combatScale(self:getTalentLevel(t), 5, 0, 10, 5))
+      local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
+      if augment then
+         duration = duration + augment.extend
+      end
+      return duration
    end,
    
    action = function(self, t)
@@ -170,7 +176,7 @@ newTalent{
    require = spells_req2,
    points = 5,
    cooldown = 10,
-   negative = -10.2,
+   negative = -10,
    range = function(self, t)
       return math.floor(self:combatTalentScale(t, 4, 8))
    end,
@@ -221,7 +227,7 @@ newTalent{
    require = spells_req3,
    points = 5,
    cooldown = function(self, t) return self:combatTalentLimit(t, 10, 30, 15) end,
-   negative = -5,
+   negative = 5,
    no_energy = true,
    tactical = {
       DEFEND = 3,

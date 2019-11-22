@@ -324,14 +324,14 @@ newTalent{
    getBonusRegen = function(self, t) return 1 end,
    getResistPenalty = function(self, t) return self:combatTalentLimit(t, 100, 15, 40) end,
 
-   callbackOnTalentPost = function(self, t, ab)
-      if not ab.type[1]:find("^celestial/") then return end
-      if not self:isTalentActive(self.T_WANDER_PAEAN_KOLAL) and not self:isTalentActive(self.T_WANDER_PAEAN_LUXAM) and not self:isTalentActive(self.T_WANDER_PAEAN_PONX) then return end
-      self:incNegative(t.getBonusRegen(self, t))
-   end,
+   -- callbackOnTalentPost = function(self, t, ab)
+   --    if not ab.type[1]:find("^celestial/") then return end
+   --    if not self:isTalentActive(self.T_WANDER_PAEAN_KOLAL) and not self:isTalentActive(self.T_WANDER_PAEAN_LUXAM) and not self:isTalentActive(self.T_WANDER_PAEAN_PONX) then return end
+   --    self:incNegative(t.getBonusRegen(self, t))
+   -- end,
    
    info = function(self, t)
       return ([[Your passion for singing the praises of the spheres reaches its zenith.
-		Your Paeans now increases your damage penetration with fire, cold, and lightning by %d%% and cause you to gain %d additional negative energy when you cast a celestial spell.]]):format(t.getResistPenalty(self, t), t.getBonusRegen(self, t))
+		Your Paeans now increases your damage penetration with fire, cold, and lightning by %d%%]]):format(t.getResistPenalty(self, t))
    end,
 }

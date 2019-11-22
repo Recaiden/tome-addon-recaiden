@@ -35,7 +35,6 @@ newTalent{
 	target = function(self, t)
 		return {type="beam", range=self:getTalentRange(t), talent=t}
 	end,
-	allow_for_arcane_combat = true,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 5, 100) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
@@ -53,7 +52,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
-		return ([[Conjures up mana into a powerful beam of lightning, doing %0.2f to %0.2f damage
+		return ([[Conjures up mana into a powerful beam of lightning, doing %0.2f to %0.2f damage to enemies and healing allies for the same amount.
 		The damage will increase with your Spellpower.]]):
 		format(damDesc(self, DamageType.LIGHTNING, damage / 3),
 		damDesc(self, DamageType.LIGHTNING, damage))
@@ -69,7 +68,7 @@ newTalent{
    random_ego = "attack",
    message = "@Source@ conjures a Gwelgoroth!",
    cooldown = 10,
-   negative = -10.2,
+   negative = -5,
    tactical = { ATTACK = { LIGHTNING = 2 } },
    range = 5,
 
@@ -87,10 +86,13 @@ newTalent{
 
    incStats = function(self, t, fake)
       local mp = self:combatSpellpower()
-      return{ 
+      return{
+         str=10,
+         dex=10,
+         con=10,
 	 mag=15 + (fake and mp or self:spellCrit(mp)) * 2 * self:combatTalentScale(t, 0.2, 1, 0.75),
-	 cun=15 + (fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75),
-	 con=10 
+         wil=10,
+	 cun=15 + (fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75)
       }
    end,
 
@@ -102,7 +104,12 @@ newTalent{
    end,
    
    summonTime = function(self, t)
-      return math.floor(self:combatScale(self:getTalentLevel(t) + self:getTalentLevel(self.T_WANDER_GRAND_ARRIVAL), 5, 0, 10, 5))
+      local duration = math.floor(self:combatScale(self:getTalentLevel(t), 5, 0, 10, 5))
+      local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
+      if augment then
+         duration = duration + augment.extend
+      end
+      return duration
    end,
    
    action = function(self, t)
@@ -192,7 +199,7 @@ newTalent{
    require = spells_req2,
    points = 5,
    random_ego = "attack",
-   negative = -8.2,
+   negative = -8,
    cooldown = 8,
    tactical = { ATTACKAREA = {LIGHTNING = 2} }, --note: only considers the primary target
    range = 10,
@@ -416,11 +423,11 @@ newTalent{
    
    getDamage = function(self, t) return self:combatTalentSpellDamage(t, 15, 80) end,
    getTargetCount = function(self, t) return math.floor(self:getTalentLevel(t)) end,
-   getManaDrain = function(self, t) return -1 end, --self:getTalentLevelRaw(t) end,
+   getDrain = function(self, t) return -2 end,
 
    callbackOnActBase = function(self, t)
-      local mana = t.getManaDrain(self, t)
-      if self:getNegative() <= mana + 1 then return end
+      local nrg = t.getDrain(self, t)
+      if self:getNegative() <= nrg + 1 then return end
       
       local tgts = {}
       local grids = core.fov.circle_grids(self.x, self.y, 6, true)
@@ -439,9 +446,9 @@ newTalent{
       
       -- Randomly take targets
       local tg = {type="hit", range=self:getTalentRange(t), talent=t, friendlyfire=true}
-      --local tg = {type="ball", radius=1, range=self:getTalentRange(t), talent=t, friendlyfire=true}
       if #tgts > 0 then
 	 game:playSoundNear(self, "talents/lightning")
+         self:incNegative(nrg)
       end
       for i = 1, t.getTargetCount(self, t) do
 	 if #tgts <= 0 then break end
@@ -451,14 +458,6 @@ newTalent{
 	 self:project(tg, a.x, a.y, DamageType.GOOD_LIGHTNING, {dam=rng.avg(1, self:spellCrit(t.getDamage(self, t)), 3)})
 
 	 game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(a.x-self.x), math.abs(a.y-self.y)), "lightning", {tx=a.x-self.x, ty=a.y-self.y})
-
-	 -- if core.shader.active() then
-	 --    game.level.map:particleEmitter(a.x, a.y, 1, "ball_lightning_beam", {radius=1, tx=x, ty=y}, {type="lightning"})
-	 -- else
-	 --    game.level.map:particleEmitter(a.x, a.y, 1, "ball_lightning_beam", {radius=1, tx=x, ty=y})
-	 -- end
-	 
-	 self:incNegative(mana)
       end
    end,
    activate = function(self, t)
@@ -475,11 +474,11 @@ newTalent{
    info = function(self, t)
       local targetcount = t.getTargetCount(self, t)
       local damage = t.getDamage(self, t)
-      local manadrain = t.getManaDrain(self, t)
+      local nrgdrain = t.getDrain(self, t)
       return ([[You immerse yourself in a fragment of the Great Storm, creating a maelstrom with a radius of 6 that follows you as long as this spell is active.
 
 Each turn, a random bright-lightning bolt will hit up to %d targets, healing alies and damaging foes for %0.2f damage.
-This powerful spell will drain %0.2f negative energy with each hit.]])
-	 :format(targetcount, damDesc(self, DamageType.GOOD_LIGHTNING, damage), -manadrain)
+This powerful spell will drain %0.2f negative energy each turn that it hits.]])
+	 :format(targetcount, damDesc(self, DamageType.GOOD_LIGHTNING, damage), -nrgdrain)
    end,
 }

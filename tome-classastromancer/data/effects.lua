@@ -404,7 +404,7 @@ newEffect{
    type = "magical",
    subtype = { arcane=true },
    status = "beneficial",
-   parameters = { ultimate=false },
+   parameters = { extend=0, ultimate=false },
    activate = function(self, eff)
    end,
    deactivate = function(self, eff)

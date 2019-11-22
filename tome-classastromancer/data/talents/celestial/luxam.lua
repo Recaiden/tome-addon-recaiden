@@ -24,7 +24,7 @@ local Map = require "engine.Map"
 
 newTalent{
 	name = "Glacial Vapor", short_name = "WANDER_ICE_VAPOR",
-	type = {"spell/water",1},
+	type = {"spell/other",1},
 	require = spells_req1,
 	points = 5,
 	random_ego = "attack",
@@ -73,7 +73,7 @@ newTalent{
    points = 5,
    random_ego = "attack",
    message = "@Source@ conjures a Shivgoroth!",
-   negative = -10.2, --change to Imbalance
+   negative = -5,
    cooldown = 10,
    range = 5,
    requires_target = true,
@@ -87,15 +87,23 @@ newTalent{
 
    incStats = function(self, t, fake)
       local mp = self:combatSpellpower()
-      return{ 
+      return{
+         str=10,
+         dex=10,
+         con=15 + (fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75),
 	 mag=15 + (fake and mp or self:spellCrit(mp)) * 2 * self:combatTalentScale(t, 0.2, 1, 0.75),
-	 cun=15 + (fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75),
-	 con=15 + (fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75)
+         wil=10,
+	 cun=15 + (fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75)
       }
    end,
    
    summonTime = function(self, t)
-      return math.floor(self:combatScale(self:getTalentLevel(t) + self:getTalentLevel(self.T_WANDER_GRAND_ARRIVAL), 5, 0, 10, 5))
+      local duration = math.floor(self:combatScale(self:getTalentLevel(t), 5, 0, 10, 5))
+      local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
+      if augment then
+         duration = duration + augment.extend
+      end
+      return duration
    end,
 
    speed = astromancerSummonSpeed,
@@ -192,7 +200,7 @@ newTalent{
    require = spells_req2,
    points = 5,
    random_ego = "attack",
-   negative = -10.2,
+   negative = -10,
    cooldown = 14,
    tactical = { ATTACKAREA = { COLD = 1, stun = 1 } },
    range = 0,
@@ -300,7 +308,7 @@ newTalent{
    type = {"celestial/luxam", 3},
    require = spells_req3,
    points = 5,
-   negative = 10,
+   negative = 15,
    cooldown = 20,
    tactical = { ATTACKAREA = 3 },
    range = 7,

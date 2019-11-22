@@ -98,10 +98,12 @@ newTalent{
    require = spells_req3,
    points = 5,
    no_energy = true,
+   negative = 5,
    cooldown = 10,
    getDuration = function(self, t)
       return self:combatTalentScale(t, 1, 4)
    end,
+   getExtension = function(self, t) return math.floor(self:combatTalentLimit(t, 6, 1, 2.8)) end,
    on_pre_use = function(self, t, silent)
       if not self:hasEffect(self.EFF_WANDER_KOLAL)
 	 or not self:hasEffect(self.EFF_WANDER_LUXAM)
@@ -124,7 +126,7 @@ newTalent{
 	 ultimate = true
       end
 
-      self:setEffect(self.EFF_WANDER_UNITY_CONVERGENCE, t.getDuration(self, t), {ultimate=ultimate})
+      self:setEffect(self.EFF_WANDER_UNITY_CONVERGENCE, t.getDuration(self, t), {extend=t.getExtension(self, t), ultimate=ultimate})
       
       self:removeEffect(self.EFF_WANDER_KOLAL)
       self:removeEffect(self.EFF_WANDER_LUXAM)
@@ -132,15 +134,15 @@ newTalent{
    end,
 
     info = function(self, t)
-       return ([[When the worlds align, great power flows through the void.  Consume your planetary charges to make your next summon (within %d turns) call a Greater Elemental, which has an additional talent.
+       return ([[When the worlds align, great power flows through the void.  Consume your planetary charges to make your next summon (within %d turns) call a Greater Elemental, which has an additional talent and lasts for %d additional turns.
 Greater Gwelgoroth: Shocks and dazes enemies
 Greater Shivgoroth: Freezes enemies in place
 Greater Faeros: Launches bolts of fire when it attacks
 
-If you have at least 5 of each charge, you will call Ultimate Elementals, which have another additional talent.
+If you have at least 5 of each charge, you will call an Ultimate Elemental, which have another additional talent.
 Ultimate Gwelgoroth: Forms hurricanes
 Ultimate Shivgoroth: Surrounded by an ice storm
-Ultimate Faeros: Continually launches fire at nearby enemies]]):format(t.getDuration(self, t))
+Ultimate Faeros: Continually launches fire at nearby enemies]]):format(t.getDuration(self, t), t.getExtension(self, t))
    end,
 }
 
