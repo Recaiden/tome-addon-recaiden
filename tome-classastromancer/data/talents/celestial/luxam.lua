@@ -373,6 +373,8 @@ newTalent{
    points = 1,
 
    callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
+      if not ox or not oy then return end
+      if not x or not y then return end
       local dx, dy = (self.x - ox), (self.y - oy)
       if dx ~= 0 then dx = dx / math.abs(dx) end
       if dy ~= 0 then dy = dy / math.abs(dy) end
