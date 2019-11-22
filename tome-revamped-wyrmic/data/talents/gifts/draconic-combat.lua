@@ -251,7 +251,16 @@ newTalent{
       local numAttacks = 4
 
       while numAttacks > 0 do
-	 local hit = self:attackTarget(target, s.status, self:combatTalentWeaponDamage(t, 0.1, 0.60), true)
+         local hit = false
+         local damage = self:combatTalentWeaponDamage(t, 0.1, 0.60)
+         local shield, shield_combat = self:hasShield()
+         local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
+         if not shield then
+            hit = self:attackTarget(target, s.status, damage, true)
+         else
+            hit = self:attackTargetWith(target, weapon, s.status, damage)
+            hit = self:attackTargetWith(target, shield_combat, s.status, damage) or hit
+         end
 	 -- Slash armor if in physical aspect
 	 if hit and self:knowTalent(self.T_REK_WYRMIC_SAND) then
 	    target:setEffect(target.EFF_SUNDER_ARMOUR, 3, {power=self:callTalent(self.T_REK_WYRMIC_SAND, "getPenetration"), apply_power=self:combatPhysicalpower()})
