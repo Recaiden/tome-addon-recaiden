@@ -1,0 +1,64 @@
+local Birther = require "engine.Birther"
+local Game = require "engine.Game"
+
+local _M = loadPrevious(...)
+
+local base_use = _M.use
+function _M:use(item)
+   if not item then return end
+   local act = item.action
+   
+   if act == "drop_to_adventure" then
+      self.actor.easy_mode_lifes = 1
+      if self.actor.level >= 2 then
+         self.actor.easy_mode_lifes = self.actor.easy_mode_lifes + 1
+      end
+      if self.actor.level >= 5 then
+         self.actor.easy_mode_lifes = self.actor.easy_mode_lifes + 1
+      end
+      if self.actor.level >= 7 then
+         self.actor.easy_mode_lifes = self.actor.easy_mode_lifes + 1
+      end
+      if self.actor.level >= 14 then
+         self.actor.easy_mode_lifes = self.actor.easy_mode_lifes + 1
+      end
+      if self.actor.level >= 24 then
+         self.actor.easy_mode_lifes = self.actor.easy_mode_lifes + 1
+      end
+      if self.actor.level >= 35 then
+         self.actor.easy_mode_lifes = self.actor.easy_mode_lifes + 1
+      end
+      game.permadeath = game.PERMADEATH_MANY
+      self:eidolonPlane()
+   elseif act == "drop_to_explore" then
+      self.actor:attr("infinite_lifes", 1)
+      game.permadeath = game.PERMADEATH_INFINITE
+      self:eidolonPlane()
+   else
+      return base_use(self, item)
+   end
+end
+
+local base_generateList = _M.generateList
+function _M:generateList()
+   base_generateList(self)
+   local list = self.list or {}
+
+   if game.permadeath ~= game.PERMADEATH_INFINITE and profile:isDonator(1) then
+      for i=#list,1,-1 do
+         list[i+1] = list[i]
+      end
+      list[1] = {name="Beg the Eidolon to save you (Go to Exploration mode)", action="drop_to_explore"}
+   end
+   if game.permadeath == game.PERMADEATH_ONE then
+      for i=#list,1,-1 do
+         list[i+1] = list[i]
+      end
+      list[1] = {name="Call on the Eidolon to save you (Go to Adventure mode)", action="drop_to_adventure"}
+   end
+   
+   self.list = list
+   for _, item in ipairs(list) do self.possible_items[item.action] = true end
+end
+
+return _M
