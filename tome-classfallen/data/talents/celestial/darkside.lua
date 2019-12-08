@@ -100,7 +100,7 @@ newTalent{
 
 	 local btg = t.getBlastTarget(self, t)
 	 local dam = self:spellCrit(t.getDamage(self, t))
-	 self:project(btg, self.x, self.y, DamageType.DARKNESS, {daze=75, dam=rng.avg(dam / 3, dam, 3)})
+	 self:project(btg, self.x, self.y, DamageType.LIGHT, {daze=75, dam=rng.avg(dam / 3, dam, 3)})
 	 --TODO particle effect
       	 game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
       end
@@ -111,7 +111,7 @@ newTalent{
    
    info = function(self, t)
       local range = t.range(self, t)
-      return ([[Fade into the darkness and reappear elsewhere within range %d.  When you emerge from the shadows, you unleash a burst of darkness, dealing %d damage to enemies in radius 1.]]):format(range, 3)
+      return ([[Fade into the darkness and reappear elsewhere within range %d.  When you emerge from the shadows, you are accompanied by a flash of light, dealing %d damage to enemies in radius 1.]]):format(range, damDesc(self, DamageType.LIGHT, t.getDamage(self, t)))
    end,
 }
 

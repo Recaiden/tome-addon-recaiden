@@ -21,9 +21,9 @@ newBirthDescriptor{
       --new base talents
       ["cursed/bloodstained"]={true, 0.3},
       ["celestial/darkside"]={true, 0.3},
+      ["cursed/solar-shadows"]={true, 0.3},
       --old base talents
-      ["cursed/shadows"]={true, 0.1},
-      ["cursed/gloom"]={false, 0.1},
+      ["cursed/gloom"]={false, 0.3},
       ["celestial/combat"]={true, 0.3},
 
       --advanced talents
@@ -35,7 +35,7 @@ newBirthDescriptor{
       ["celestial/dirge"]={true, 0.3},
       ["cursed/self-hatred"]={true, 0.3},
       --old generics
-      ["celestial/light"]={true, 0.1},
+      ["celestial/light"]={true, 0.0},
       ["technique/combat-training"]={true, 0.3},      
    },
    birth_example_particles = "darkness_shield",
@@ -48,6 +48,7 @@ newBirthDescriptor{
       [ActorTalents.T_FLN_DIRGE_ACOLYTE] = 1,
       [ActorTalents.T_FLN_DARKSIDE_SLAM] = 1,
       [ActorTalents.T_FLN_BLOODSTAINED_RUSH] = 1,
+      [ActorTalents.T_FLN_SELFHATE_HARM] = 1,
    },
    
    copy = {

@@ -13,5 +13,4 @@ overload = true
 superload = true
 data = true
 
--- Sound sampled from clips by Mike Koenig, available under Creative Commons Attribution 3.0 https://creativecommons.org/licenses/by/3.0/us/
 

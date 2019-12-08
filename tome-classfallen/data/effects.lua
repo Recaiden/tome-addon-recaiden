@@ -192,7 +192,7 @@ newEffect{
    desc = "Blinding Light",
    long_desc = function(self, eff) return ("The target is unable to see anything and burns for %0.2f light damage per turn."):format(eff.dam) end,
    type = "magical",
-   subtype = { bane=true, blind=true },
+   subtype = { light=true, blind=true },
    status = "detrimental",
    parameters = { dam=10},
    on_gain = function(self, err) return "#Target# loses sight!", "+Blind" end,
@@ -213,5 +213,114 @@ newEffect{
 	 self:resetCanSeeCache()
 	 if self.player then for uid, e in pairs(game.level.entities) do if e.x then game.level.map:updateMap(e.x, e.y) end end game.level.map.changed = true end
       end
+   end,
+}
+
+newEffect{
+   name = "FLN_GRAVITY_BUFF", image = "talents/fln_blacksun_devour.png",
+   desc = "Devourer Stance",
+   long_desc = function(self, eff)
+      local desc = ("The target is redirecting energy, adding %d gravity damage to their attacks."):format(eff.gravity)
+      if eff.counter and eff.counter < 3 then
+         return desc..("The target is storing up healing energy, currently %d"):format(eff.heal)
+      end
+      return desc
+   end,
+   type = "magical",
+   subtype = { gravity=true },
+   status = "beneficial",
+   parameters = { gravity=10, heal=0 },
+   callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, tmp)
+      if eff.counter < 3 then
+         local dam_absorb = dam * 0.5
+         eff.heal = eff.heal + dam_absorb
+      end
+      return {dam=dam}
+   end,
+   activate = function(self, eff)
+      eff.counter = 0
+      local damtype = DamageType.REK_FLN_GRAVITY_PULL
+      eff.onhit = self:addTemporaryValue("melee_project", {[damtype] = eff.gravity})
+   end,
+   deactivate = function(self, eff)
+      self:removeTemporaryValue("melee_project", eff.onhit)
+   end,
+   on_timeout = function(self, eff)
+      if not eff.counter then eff.counter = 0 end
+      eff.counter = eff.counter + 1
+      if eff.counter == 3 then
+         self:attr("allow_on_heal", 1)
+         self:heal(eff.heal, eff.src)
+         self:attr("allow_on_heal", -1)
+         eff.heal = 0
+      end
+   end,
+         }
+
+
+newEffect{
+   name = "FLN_VAMPIRE_MARK", image = "talents/fln_templar_mark_of_the_vampire.png",
+   desc = "Mark of the Vampire",
+   long_desc = function(self, eff) return ("The target is doomed to die a bloody death.  Each time it uses an ability it takes %0.2f physical damage, and incoming bleeds are strengthened by %d%%."):
+      format(eff.dam, eff.power*100)
+   end,
+   charges = function(self, eff) return (tostring(math.floor((eff.power-1)*100)).."%") end,
+   type = "mental",
+   subtype = { psionic=true },
+   status = "detrimental",
+   parameters = {dam=10, power = 0.1},
+
+   callbackOnTalentPost = function(self, t, ab)
+      DamageType:get(DamageType.PHYSICAL).projector(eff.src, self.x, self.y, DamageType.PHYSICAL, eff.dam)
+   end,
+
+   callbackOnTemporaryEffectAdd = function(self, eff, eff_id, e_def, new_eff)
+      if e_def.subtype.bleed and e_def.type ~= "other" then
+         new_eff.power = new_eff.power * (1+eff.power)
+      end
+   end,
+   
+   on_gain = function(self, err) return "#Target# is doomed!", "+Vampire Mark" end,
+   on_lose = function(self, err) return "#Target# is free from their doom.", "-Vampire Mark" end,
+}
+
+newEffect{
+   name = "FLN_SHADOW_FADE_SHIELD", image = "talents/flash_of_the_blade.png",
+   desc = "Protected by the Sun",
+   long_desc = function(self, eff) return "The Sun has granted brief invulnerability." end,
+   type = "other",
+   subtype = {},
+   status = "beneficial",
+   on_gain = function(self, err) return "#Target# is surrounded by a radiant shield!", "+Divine Shield" end,
+   parameters = {},
+   activate = function(self, eff)
+      eff.iid = self:addTemporaryValue("invulnerable", 1)
+      eff.imid = self:addTemporaryValue("status_effect_immune", 1)
+   end,
+   deactivate = function(self, eff)
+      self:removeTemporaryValue("invulnerable", eff.iid)
+      self:removeTemporaryValue("status_effect_immune", eff.imid)
+   end,
+   on_timeout = function(self, eff)
+      -- always remove
+      return true
+   end,
+}
+
+newEffect{
+   name = "FLN_SHADOW_REFT", image = "effects/fln_shadow_shadow_reave.png",
+   desc = "Shadowless",
+   long_desc = function(self, eff) return ("Target has lost their shadow, lowering light/dark resistance by %d%%."):format(-eff.resists) end,
+   type = "mental",
+   subtype = { shadow=true, psionic=true },
+   status = "detrimental",
+   parameters = { resists = 5 },
+   on_gain = function(self, err) return "#F53CBE##Target#'s shadow is torn away!", "+Reft" end,
+   on_lose = function(self, err) return "#Target#'s shadow returns to them.", "-Reft" end,
+   activate = function(self, eff)
+      eff.resistChangeId = self:addTemporaryValue("resists", { [DamageType.LIGHT]=-1*eff.resists, [DamageType.DARKNESS]=-1*eff.resists })
+   end,
+   deactivate = function(self, eff)
+      self:removeTemporaryValue("resists", eff.resistChangeId)
    end,
 }

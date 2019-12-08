@@ -119,6 +119,11 @@ if not Talents.talents_types_def["cursed/bloodstained"] then
    load("/data-classfallen/talents/cursed/bloodstained.lua")
 end
 
+if not Talents.talents_types_def["cursed/solar-shadows"] then
+   newTalentType{ allow_random=true, type="cursed/solar-shadows", name = "Shadows", description = "Summon shadows from the darkness to aid you." }
+   load("/data-classfallen/talents/cursed/solar-shadows.lua")
+end
+
 if not Talents.talents_types_def["cursed/suffering-shadows"] then
    newTalentType{ allow_random=true, type="cursed/suffering-shadows", name = "Shadows of Suffering", description = "Remorse, Pain, Guilt, Obsession, Despair" }
    load("/data-classfallen/talents/cursed/suffering-shadows.lua")

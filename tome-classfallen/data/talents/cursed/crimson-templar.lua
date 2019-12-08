@@ -1,6 +1,6 @@
 newTalent{
    name = "Shared Agony", short_name = "FLN_TEMPLAR_SHARED_AGONY",
-   type = {"cursed/crimson-templar", 4},
+   type = {"cursed/crimson-templar", 1},
    require = cursed_wil_req_high1,
    points = 5,
    mode = "sustained",
@@ -9,8 +9,13 @@ newTalent{
    tactical = { BUFF = 2, DEFEND = 2 },
    getShrug = function(self, t) return self:combatTalentLimit(t, 50, 10, 25) end,
    getAmp = function(self, t) return self:combatTalentLimit(t, 300, 130, 200) end,
+   activate = function(self, t)
+      return {}
+   end,
+   deactivate = function(self, t, p)
+      return true
+   end,
    callbackOnTakeDamage = function(self, t, src, x, y, type, dam, state)
-      -- Displace Damage
       if dam > 0 and src ~= self and not state.no_reflect then
 	 
 	 -- find available targets
@@ -56,7 +61,7 @@ newTalent{
 
 newTalent{
    name = "Splatter Sigils", short_name = "FLN_TEMPLAR_SPLATTER_SIGILS",
-   type = {"cursed/crimson-templar", 4},
+   type = {"cursed/crimson-templar", 2},
    require = cursed_wil_req_high2,
    points = 5,
    cooldown = 20,
@@ -65,7 +70,7 @@ newTalent{
    getPrice = function(self, t) return 5 end,
    getStrength = function(self, t) return self:combatTalentMindDamage(t, 4, 30) end,
    getDuration = function(self, t) return math.min(10, math.floor(self:combatTalentScale(t, 4, 8))) end,
-   radius = function(self, t) return math.min(5, math.floor(self:combatTalentScale(t, 2.5, 4.5))) end,
+   radius = function(self, t) return math.min(5, math.floor(self:combatTalentScale(t, 1.5, 3))) end,
    target = function(self, t) -- for AI only
       return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false}
    end,
@@ -74,10 +79,10 @@ newTalent{
       -- Add a lasting map effect
       game.level.map:addEffect(self,
 			       x, y, self:mindCrit(t.getDuration(self, t)),
-			       DamageType.FLN_TEMPLAR_SIGIL, self:mindCrit(t.getStrength(self, t)),
+			       DamageType.FLN_TEMPLAR_SIGIL, {dam=self:mindCrit(t.getStrength(self, t)), pow=self:combatMindpower()},
 			       self:getTalentRadius(t),
 			       5, nil,
-			       MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, oversize=0, img="darkness_celestial_circle", radius=self:getTalentRadius(t)}}, color_br=255, color_bg=48, color_bb=48, effect_shader="shader_images/darkness_effect.png"},
+			       MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, oversize=0, img="darkness_celestial_circle", radius=self:getTalentRadius(t)*2}}, color_br=255, color_bg=48, color_bb=48, effect_shader="shader_images/darkness_effect.png"},
 			       nil, true --self:spellFriendlyFire(true)
       )
    end,
@@ -91,7 +96,7 @@ newTalent{
 
    callbackOnKill = function(self, t, src, death_note)
       t.makeSigil(self, t, src.x, src.y)
-   end
+   end,
    
    info = function(self, t)
       local rad = self:getTalentRadius(t)
@@ -99,25 +104,52 @@ newTalent{
       local cost = t.getPrice(self, t)
       return ([[When you kill an enemy, their death forms a cursed magical pattern on the ground. This creates a circle of radius %d which blinds enemies (#SLATE#Mindpower vs. Magical#LAST#) and deals %d light damage while giving you %d positive energy per turn.
 
-You can activate this talent to draw the pattern in your own blood, creating it underneat you at the cost of %d%% of your maximum life.
+You can activate this talent to draw the pattern in your own blood, creating it underneath you at the cost of %d%% of your maximum life.
 
 Mindpower: Improves damage
 Mental Critical: Improves damage
 Mental Critical: Improves duration
-]]):format(rad, damDesc(self, DamageType.LIGHT, burn), cost)
+]]):format(rad, damDesc(self, DamageType.LIGHT, burn), 2, cost)
    end,
 }
 
 newTalent{
    name = "Mark of the Vampire", short_name = "FLN_TEMPLAR_MARK_OF_THE_VAMPIRE",
-   type = {"cursed/crimson-templar", 4},
+   type = {"cursed/crimson-templar", 3},
    require = cursed_wil_req_high3,
    points = 5,
-   mode = "passive",
+   cooldown = 20,
+   hate = 30,
+   range = 10,
+   radius = 2,
+   tactical = { DISABLE = 1, ATTACK = {PHYSICAL = 2} },
+   direct_hit = true,
+   requires_target = true,
+   target = function(self, t)
+      return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t, friendlyfire=false}
+   end,
+   getPower = function(self, t) return self:combatTalentMindDamage(t, 5, 100) end,
+   getBleedIncrease = function(self, t) return self:combatTalentScale(t, 0.15, 0.8) end,
+   action = function(self, t)
+      local tg = self:getTalentTarget(t)
+      local x, y = self:getTarget(tg)
+      if not x or not y then return nil end
+      dam = self:mindCrit(t.getPower(self, t))
+      self:project(tg, x, y, function(tx, ty)
+                      local target = game.level.map(tx, ty, Map.ACTOR)
+                      if not target or target == self then return end
+                      target:setEffect(target.EFF_FLN_VAMPIRE_MARK, 20, {src=self, dam=dam, power=1+t.getBleedIncrease(self, t), apply_power=self:combatMindpower()})
+                             end)
+      local _ _, _, _, x, y = self:canProject(tg, x, y)
+      game.level.map:particleEmitter(x, y, tg.radius, "circle", {oversize=0.7, g=90, b=100, a=100, limit_life=8, appear=8, speed=2, img="blight_circle", radius=self:getTalentRadius(t)})
+      game:playSoundNear(self, "talents/slime")
+      return true
+   end,
    info = function(self, t)
-      return ([[In progress...
-Hate Cost, high uptime if you can afford it
-   Make someone suffer larger bleeds, bleed when they spend a resoure]]):format()
+      return ([[Dooms your target and everything within a radius 2 ball around it for 20 turns. Each time an affected target uses a talent, it takes %0.2f physical damage as its life is drawn out.  In addition, any bleed applied to the target will have its power increased by %d%%.
+
+Mindpower: increases damage.]]):
+      format(damDesc(self, DamageType.PHYSICAL, t.getPower(self, t)), t.getBleedIncrease(self, t)*100)
    end,
 }
 
@@ -127,7 +159,9 @@ newTalent{
    require = cursed_wil_req_high4,
    points = 5,
    range = 0,
-   radius = 10, 
+   radius = 10,
+   cooldown = 24,
+   direct_hit = true,
    getExtension = function(self, t) return 2 end,
    getConversion = function(self, t) return 0.20 end,
    getInsomniaPower= function(self, t)
@@ -144,13 +178,10 @@ newTalent{
       end
       return math.ceil(power)
    end,
-   target = function(self, t) return {type="cone", radius=self:getTalentRange(t), range=0, talent=t, selffire=false} end,
-
+   target = function(self, t)
+      return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), friendlyfire=false, talent=t}
+   end,   
    action = function(self, t)
-      local tg = self:getTalentTarget(t)
-      local x, y = self:getTarget(tg)
-      if not x or not y then return nil end
-
       --Restless?
       local is_waking =0
       if self:knowTalent(self.T_RESTLESS_NIGHT) then
@@ -163,11 +194,12 @@ newTalent{
       local conversion = t.getConversion(self, t)
       local healMin = t.getMinHeal(self, t)
       
-      local power = self:spellCrit(t.getSleepPower(self, t))      
-      self:project(tg, x, y, function(tx, ty)
+      local power = self:spellCrit(t.getSleepPower(self, t))
+      local tg = self:getTalentTarget(t)
+      self:project(tg, self.x, self.y, function(tx, ty)
 		      local target = game.level.map(tx, ty, Map.ACTOR)
 		      if target then
-
+                         
 			 local bleeding = false
 			 local dur = 0
 			 for eff_id, p in pairs(target.tmp) do
@@ -175,9 +207,9 @@ newTalent{
 			    if e.subtype.bleed and e.status == "detrimental" then
 			       bleeding = true
 			       local eff = target.tmp[eff_id]
-			       drain = drain + math.max(eff.power*eff.dur*conversion,
-							healMin)
+			       drain = drain + math.max(eff.power*eff.dur*conversion, healMin)
 			       dur = math.max(dur, eff.dur)
+                               target:removeEffect(eff)
 			    end
 			 end
 			 
@@ -192,7 +224,7 @@ newTalent{
 
       -- Drain the blood to heal
       self:attr("allow_on_heal", 1)
-      self:heal(t.getHeal(self, t), self) -- don't crit, would double dip crit bleeds
+      self:heal(drain, self) -- don't crit, would double dip crit bleeds
       self:attr("allow_on_heal", -1)
       
       game:playSoundNear(self, "talents/dispel")
@@ -205,8 +237,8 @@ newTalent{
       local extension = t.getExtension(self, t)
       local sleep = t.getSleepPower(self, t)
       return ([[Draw out the wounds of nearby enemies, healing yourself and putting them into a merciful sleep.
-		Enemies within range have their bleed effects removed.  You are healed for %d%% of the remaining damage (minimum %d per target).  Enemies fall asleep for %d turns longer than they would have bled, rendering them unable to act. Every %d points of damage the target suffers will reduce their sleep duration by one turn.
+		Enemies within range have their bleed effects removed.  You are healed for %d%% of the remaining damage (minimum %d per target).  Enemies fall asleep for %d turns longer than they would have bled, rendering them unable to act. Every %d points of damage the targets suffer will reduce their sleep duration by one turn.
 
-When Sleep ends, the target will benefit from Insomnia for a number of turns equal to the amount of time it was asleep (up to ten turns max), granting it 50%% sleep immunity for the duration Insomnia effect.]]):format(conversion, minimum, extension, sleep)
+When Sleep ends, each target will benefit from Insomnia for a number of turns equal to the amount of time it was asleep (up to ten turns max), granting it 50%% sleep immunity for the duration Insomnia effect.]]):format(conversion, minimum, extension, sleep)
    end,
 }

@@ -25,7 +25,7 @@ newTalent{
    require = cursed_str_req1,
    points = 5,
    cooldown = 12,
-   positive = -5.2,
+   positive = -4.5,
    hate = 3,
    tactical = { ATTACK = 2, CLOSEIN = 1 },
    range = 8,
@@ -83,7 +83,7 @@ newTalent{
    points = 5,
    cooldown = 8,
    hate = 10,
-   positive = -10.4,
+   positive = -9,
    tactical = { ATTACK = 2 },
    range = 1,
    requires_target = true,
@@ -163,11 +163,18 @@ newTalent{
    on_unlearn = function(self, t) self:unlearnTalent(self.T_FLN_BLEED_RESIST) end,
    getLeech = function(self, t) return self:combatTalentScale(t, 3, 8) end,
    callbackOnDealDamage = function(self, t, val, target, dead, death_note)
-      local leech = t.getLeech(self, t) * getHateMultiplier(self, 0.3, 1.5, false)
-      self:heal(leech * val / 100, self)
+      local cap = self.max_life / 6
+      local used = self.turn_procs.rek_fallen_thirst_heal or 0
+      if used > 0 then cap = cap - used end
+      if used < cap then
+         local leech = t.getLeech(self, t) * getHateMultiplier(self, 0.3, 1.5, false) * val / 100
+         if leech > cap then leech = cap end
+         self:heal(leech, self)
+         self.turn_procs.rek_fallen_thirst_heal = leech + used
+      end
    end,
    info = function(self, t)
-      return ([[Your hunger for violence and suffering sustains you.  All damage you do heals you for a portion of the damage done, from %d%% (at 0 Hate to) %d%% (at max Hate)
+      return ([[Your hunger for violence and suffering sustains you.  All damage you do heals you for a portion of the damage done, from %d%% (at 0 Hate to) %d%% (at max Hate).  You can recover no more than 1/6 of your max life each turn this way.
 
 Each level in Bloodstained talents reduces the amount of damage you take from bleed effects by 2%%]]):
 	 format(t.getLeech(self, t)*0.3, t.getLeech(self,t)*1.5)

@@ -36,6 +36,9 @@ newDamageType{
 	 if dam.slow then
 	    target:setEffect(target.EFF_SLOW, dam.dur, {power=dam.slow, apply_power=src:combatPhysicalpower(), no_ct_effect=true})
 	 end
+         if src:isTalentActive(src.T_FLN_BLACKSUN_SINGULARITY) then
+            target:setEffect(target.EFF_ANTI_GRAVITY, 2, {})
+         end
       end
 
       if target:checkHit(src:combatPhysicalpower(), target:combatPhysicalResist(), 0, 95, 5) and target:canBe("knockback") then
@@ -59,7 +62,7 @@ newDamageType{
 	 if target == src then
 	    target:setEffect(target.EFF_BLAZING_LIGHT, 1, {power = 2, no_ct_effect=true})
 	 else
-	    target:setEffect(target.EFF_FLN_BLINDING_LIGHT, 1, {power= dam, apply_power=src:combatMindpower(), no_ct_effect=true})
+	    target:setEffect(target.EFF_FLN_BLINDING_LIGHT, 1, {src=src, power = dam.dam, apply_power=dam.pow, no_ct_effect=true})
 	 end
       end
    end,
