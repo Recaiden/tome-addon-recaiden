@@ -10,6 +10,29 @@ clearDirges = function(self)
    end
 end
 
+upgradeDirgeActivate = function(self, t, ret)
+   --Fire shield
+   if self:knowTalent(self.T_FLN_DIRGE_INTONER) then
+      local t2 = self:getTalentFromId(self.T_FLN_DIRGE_INTONER)
+      self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.MIND]=t2.getDamageOnMeleeHit(self, t2)})
+      self:talentTemporaryValue(ret, "stun_immune", t2.getImmunity(self, t))
+      self:talentTemporaryValue(ret, "knockback_immune", t2.getImmunity(self, t))
+   end
+   
+   --Adept Upgrade
+   if self:knowTalent(self.T_FLN_DIRGE_ADEPT) then
+      local t3 = self:getTalentFromId(self.T_FLN_DIRGE_ADEPT)
+      self:talentTemporaryValue(ret, "fear_immune", t3.getImmune(self, t3))
+      self:talentTemporaryValue(ret, "confusion_immune", t3.getImmune(self, t3))
+   end
+   
+   --Nihil upgrade
+   if self:knowTalent(self.T_FLN_DIRGE_NIHILIST) then
+      local t4 = self:getTalentFromId(self.T_FLN_DIRGE_NIHILIST)
+      self:talentTemporaryValue(ret, "flat_damage_armor", {all=t4.getArmor(self, t4)})
+   end
+end
+
 newTalent{
    name = "Dirge of Famine", short_name = "FLN_DIRGE_FAMINE",
    type = {"celestial/dirges", 1},
@@ -29,19 +52,7 @@ newTalent{
       self:talentTemporaryValue(ret, "life_regen", t.getRegen(self, t))
       self:talentTemporaryValue(ret, "resists", {all = t.getResist(self, t)})
 
-      --Fire shield
-      if self:knowTalent(self.T_FLN_DIRGE_INTONER) then
-	 local t2 = self:getTalentFromId(self.T_FLN_DIRGE_INTONER)
-	 self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.MIND]=t2.getDamageOnMeleeHit(self, t2)})
-	 self:talentTemporaryValue(ret, "stun_immune", t2.getImmunity(self, t))
-	 self:talentTemporaryValue(ret, "knockback_immune", t2.getImmunity(self, t))
-      end
-
-      --Nihil upgrade
-      if self:knowTalent(self.T_FLN_DIRGE_NIHILIST) then
-	 local t4 = self:getTalentFromId(self.T_FLN_DIRGE_NIHILIST)
-	 self:talentTemporaryValue(ret, "flat_damage_armor", {all=t4.getArmor(self, t4)})
-      end
+      upgradeDirgeActivate(self, t, ret)
       
       return ret
    end,
@@ -100,19 +111,7 @@ newTalent{
       local ret = {}
       --Basic effect is in callbacks
       
-      --Fire shield
-      if self:knowTalent(self.T_FLN_DIRGE_INTONER) then
-	 local t2 = self:getTalentFromId(self.T_FLN_DIRGE_INTONER)
-	 self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.MIND]=t2.getDamageOnMeleeHit(self, t2)})
-	 self:talentTemporaryValue(ret, "stun_immune", t2.getImmunity(self, t))
-	 self:talentTemporaryValue(ret, "knockback_immune", t2.getImmunity(self, t))
-      end
-
-      --Nihil upgrade
-      if self:knowTalent(self.T_FLN_DIRGE_NIHILIST) then
-	 local t4 = self:getTalentFromId(self.T_FLN_DIRGE_NIHILIST)
-	 self:talentTemporaryValue(ret, "flat_damage_armor", {all=t4.getArmor(self, t4)})
-      end
+      upgradeDirgeActivate(self, t, ret)
       
       return ret
    end,
@@ -156,19 +155,7 @@ newTalent{
       local ret = {}
       --Basic effect is in callbacks
       
-      --Fire shield
-      if self:knowTalent(self.T_FLN_DIRGE_INTONER) then
-	 local t2 = self:getTalentFromId(self.T_FLN_DIRGE_INTONER)
-	 self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.MIND]=t2.getDamageOnMeleeHit(self, t2)})
-	 self:talentTemporaryValue(ret, "stun_immune", t2.getImmunity(self, t))
-	 self:talentTemporaryValue(ret, "knockback_immune", t2.getImmunity(self, t))
-      end
-
-      --Nihil upgrade
-      if self:knowTalent(self.T_FLN_DIRGE_NIHILIST) then
-	 local t4 = self:getTalentFromId(self.T_FLN_DIRGE_NIHILIST)
-	 self:talentTemporaryValue(ret, "flat_damage_armor", {all=t4.getArmor(self, t4)})
-      end
+      upgradeDirgeActivate(self, t, ret)
       
       return ret
    end,
@@ -179,7 +166,7 @@ newTalent{
       if self:knowTalent(self.T_FLN_DIRGE_ADEPT) then
 	 clearDirges(self)
 	 local t3 = self:getTalentFromId(self.T_FLN_DIRGE_ADEPT)
-	 self:setEffect(self.EFF_FLN_DIRGE_LINGER_PESTILENCE, t3.getDuration(self, t3), {src=self, heal=t.getRegen(self, t)})
+	 self:setEffect(self.EFF_FLN_DIRGE_LINGER_PESTILENCE, t3.getDuration(self, t3), {src=self, heal=t.getShield(self, t)})
       end
       
       return true
@@ -239,8 +226,7 @@ newTalent{
    type = {"celestial/dirge", 2},
    require = divi_req2,
    points = 5,
-   no_energy = true,
-   cooldown = 15,
+   mode = "passive",
    getDamageOnMeleeHit = function(self, t) return self:combatTalentMindDamage(t, 5, 50) * (1 + (1 + self.level)/40) end,
    getImmunity = function(self, t) return math.min(1, self:combatTalentScale(t, 0.05, 0.45, 0.5)) end,
    action = function(self, t)
@@ -249,8 +235,8 @@ newTalent{
    info = function(self, t)
       local damage = t.getDamageOnMeleeHit(self, t)
       local nostun = t.getImmunity(self, t)
-      return ([[Your dirges carry the pain within you, which threatens to swallow those who come to close.  Anyone who hits you in melee suffers %d mind damage.
-You, on the other hand, are steadied.  Your dirges increase your resistance to stun and knockback by %d%%.
+      return ([[Your dirges carry the pain within you, which threatens to swallow those who come too close.  Anyone who hits you in melee suffers %d mind damage.
+You, on the other hand, are steadied by the song.  Your dirges increase your resistance to stun and knockback by %d%%.
 
 Mindpower: increases damage.
 Level: increases damage.]]):format(damage, nostun)
@@ -263,8 +249,12 @@ newTalent{
    require = divi_req3,
    points = 5,
    mode = "passive",
+   getDuration = function(self, t) return self:getTalentLevel(t) end,
+   getImmune = function(self, t) return self:combatTalentLimit(t, 1, 0.15, 0.5) end,
    info = function(self, t)
-      return ([[Your dirges echo mournfully through the air.  When you end a dirge, you continue to gain its acolyte-level effects for %d turns.  You can only benefit from one such lingering dirge at a time.]]):format( self:getTalentLevel(t))
+      return ([[Your dirges echo mournfully through the air.  When you end a dirge, you continue to gain its acolyte-level effects for %d turns.  You can only benefit from one such lingering dirge at a time.
+
+Furthermore, you are given focus by the song.  Your dirges increase your resistance to confusion and fear by %d%%.]]):format(t.getDuration(self, t), t.getImmune(self, t)*100)
    end,
 }
 
