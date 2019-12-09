@@ -42,7 +42,7 @@ newTalent{
    cooldown = 12,
    sustain_slots = 'fallen_celestial_dirge',
    mode = "sustained",
-   getRegen = function(self, t) return self:combatTalentScale(t, 2, 15, 0.75) end,
+   getRegen = function(self, t) return self:combatTalentScale(t, 2, 6, 0.75) * math.sqrt(self.level) end,
    getResist = function(self, t) return self:combatTalentScale(t, 5, 10) end,
    activate = function(self, t)
       game:playSoundNear(self, "talents/spell_generic2")
@@ -63,7 +63,7 @@ newTalent{
       if self:knowTalent(self.T_FLN_DIRGE_ADEPT) then
 	 clearDirges(self)
 	 local t3 = self:getTalentFromId(self.T_FLN_DIRGE_ADEPT)
-	 self:setEffect(self.EFF_FLN_DIRGE_LINGER_FAMINE, t3.getDuration(self, t3), {src=self, heal=t.getRegen(self, t)})
+	 self:setEffect(self.EFF_FLN_DIRGE_LINGER_FAMINE, t3.getDuration(self, t3), {src=self, heal=t.getRegen(self, t), resist=t.getResist(self, t)})
       end
       
       return true
@@ -71,7 +71,7 @@ newTalent{
    info = function(self, t)
       return ([[Sing a song of wasting and desolation which sustains you in hard times.
 
-This dirge increases your health regeneration by %d and your resistance to damage by %d%%]]):format(t.getRegen(self, t), t.getResist(self, t))
+This dirge increases your health regeneration by %d and your resistance to damage by %d%%.  The regeneration will increase with your level.]]):format(t.getRegen(self, t), t.getResist(self, t))
    end,
 }
 
@@ -84,12 +84,12 @@ newTalent{
    cooldown = 12,
    sustain_slots = 'fallen_celestial_dirge',
    mode = "sustained",
-   getHeal = function(self, t) return self:combatTalentScale(t, 5, 30) end,
+   --getHeal = function(self, t) return self:combatTalentScale(t, 5, 30) end,
    callbackOnCrit = function(self, t)
       if self.turn_procs.fallen_conquest_on_crit then return end
       self.turn_procs.fallen_conquest_on_crit = true
       
-      self:heal(self:mindCrit(t.getHeal(self, t)), self)
+      self.energy.value = self.energy.value + 100
       if core.shader.active(4) then
 	 self:addParticles(Particles.new("shader_shield_temp", 1, {toback=true , size_factor=1.5, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=2.0, circleDescendSpeed=3.5}))
 	 self:addParticles(Particles.new("shader_shield_temp", 1, {toback=false, size_factor=1.5, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=1.0, circleDescendSpeed=3.5}))
@@ -99,7 +99,7 @@ newTalent{
       if self.turn_procs.fallen_conquest_on_kill then return end
       self.turn_procs.fallen_conquest_on_kill = true
       
-      self:heal(self:mindCrit(t.getHeal(self, t)), self)
+      self.energy.value = self.energy.value + 500
       if core.shader.active(4) then
 	 self:addParticles(Particles.new("shader_shield_temp", 1, {toback=true , size_factor=1.5, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=2.0, circleDescendSpeed=3.5}))
 	 self:addParticles(Particles.new("shader_shield_temp", 1, {toback=false, size_factor=1.5, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=1.0, circleDescendSpeed=3.5}))
@@ -122,18 +122,15 @@ newTalent{
       if self:knowTalent(self.T_FLN_DIRGE_ADEPT) then
 	 clearDirges(self)
 	 local t3 = self:getTalentFromId(self.T_FLN_DIRGE_ADEPT)
-	 self:setEffect(self.EFF_FLN_DIRGE_LINGER_CONQUEST, t3.getDuration(self, t3), {src=self, heal=t.getRegen(self, t)})
+	 self:setEffect(self.EFF_FLN_DIRGE_LINGER_CONQUEST, t3.getDuration(self, t3), {src=self})
       end
       
       return true
    end,
    info = function(self, t)
-      local heal = t.getHeal(self, t)
       return ([[Sing a song of violence and victory (mostly violence) and sustain yourself through cruelty.
-Each time you deal a critical strike you gain %d life (only once per turn).
-Each time you kill a creature you gain %d life (only once per turn).
-		
-This healing can critically strike based on your mental critical rate.
+Each time you deal a critical strike you gain 10%% of a turn (only once per turn).
+Each time you kill a creature you gain 50%% of a turn (only once per turn).
 ]]):format(heal, heal)
    end,
 }
@@ -148,7 +145,11 @@ newTalent{
    sustain_slots = 'fallen_celestial_dirge',
    mode = "sustained",
    getShield = function(self, t) return self:combatTalentScale(t, 3, 7.5, 0.75) end,
-   --TODO callback
+   callbackOnTemporaryEffectAdd = function(self, t, eff_id, e_def, eff)      
+      if e_def.status == "detrimental" and e_def.type ~= "other" then
+         self:setEffect(self.EFF_DAMAGE_SHIELD, eff.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(t.getShield(self, t))})
+      end
+   end,
    activate = function(self, t)
       game:playSoundNear(self, "talents/spell_generic2")
       
@@ -172,8 +173,8 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[In-progress]]):
-	 format()
+      return ([[Sing a song of decay and defiance and sustain yourself through spite.
+Each time you suffer a detrimental effect, you gain a shield with strength %d, that lasts as long as the effect would.]]):format(t.getShield(self, t))
    end,
 }
 
@@ -195,6 +196,19 @@ newTalent{
       self:unlearnTalent(self.T_FLN_DIRGE_CONQUEST)
       self:unlearnTalent(self.T_FLN_DIRGE_PESTILENCE)
    end,
+
+   callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
+      if moved and not self:knowTalentType("cursed/cursed-aura") and self.chooseCursedAuraTree then
+         if self.player then
+            -- function placed in defiling touch where cursing logic exists
+            local t = self:getTalentFromId(self.T_DEFILING_TOUCH)
+            if t.chooseCursedAuraTree(self, t) then
+               self.chooseCursedAuraTree = nil
+            end
+         end
+      end   
+   end,
+   
    info = function(self, t)
       local ret = ""
       local old1 = self.talents[self.T_FLN_DIRGE_FAMINE]
@@ -229,9 +243,6 @@ newTalent{
    mode = "passive",
    getDamageOnMeleeHit = function(self, t) return self:combatTalentMindDamage(t, 5, 50) * (1 + (1 + self.level)/40) end,
    getImmunity = function(self, t) return math.min(1, self:combatTalentScale(t, 0.05, 0.45, 0.5)) end,
-   action = function(self, t)
-      return true
-   end,
    info = function(self, t)
       local damage = t.getDamageOnMeleeHit(self, t)
       local nostun = t.getImmunity(self, t)

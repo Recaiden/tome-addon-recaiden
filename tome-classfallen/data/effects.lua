@@ -108,19 +108,21 @@ newEffect{
    type = "mental",
    subtype = { regen=true },
    status = "beneficial",
-   parameters = { heal=1 },
+   parameters = { heal=1, resist=0 },
    activate = function(self, eff)
       eff.healid = self:addTemporaryValue("life_regen", eff.heal)
+      eff.resistsid = self:addTemporaryValue("resists", { all=-1*eff.resist })
    end,
    deactivate = function(self, eff)
       self:removeTemporaryValue("life_regen", eff.healid)
+      self:removeTemporaryValue("resists", eff.resistsid)
    end,
 }
 
 newEffect{
    name = "FLN_DIRGE_LINGER_CONQUEST", image = "effects/fln_dirge_conquest.png",
    desc = "Dirge of Conquest",
-   long_desc = function(self, eff) return ("The target is stealing health"):format() end,
+   long_desc = function(self, eff) return ("The target will gain a surge of energy on kill or crit"):format() end,
    type = "mental",
    subtype = { regen=true },
    status = "beneficial",
@@ -129,8 +131,9 @@ newEffect{
    callbackOnCrit = function(self, eff)
       if self.turn_procs.fallen_conquest_on_crit then return end
       self.turn_procs.fallen_conquest_on_crit = true
-      
-      self:heal(self:mindCrit(eff.heal), self)
+
+      self.energy.value = self.energy.value + 100
+      --self:heal(self:mindCrit(eff.heal), self)
       if core.shader.active(4) then
 	 self:addParticles(Particles.new("shader_shield_temp", 1, {toback=true , size_factor=1.5, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=2.0, circleDescendSpeed=3.5}))
 	 self:addParticles(Particles.new("shader_shield_temp", 1, {toback=false, size_factor=1.5, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=1.0, circleDescendSpeed=3.5}))
@@ -140,7 +143,8 @@ newEffect{
       if self.turn_procs.fallen_conquest_on_kill then return end
       self.turn_procs.fallen_conquest_on_kill = true
       
-      self:heal(self:mindCrit(eff.heal), self)
+      --self:heal(self:mindCrit(eff.heal), self)
+      self.energy.value = self.energy.value + 500
       if core.shader.active(4) then
 	 self:addParticles(Particles.new("shader_shield_temp", 1, {toback=true , size_factor=1.5, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=2.0, circleDescendSpeed=3.5}))
 	 self:addParticles(Particles.new("shader_shield_temp", 1, {toback=false, size_factor=1.5, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=1.0, circleDescendSpeed=3.5}))
@@ -161,18 +165,21 @@ newEffect{
    subtype = { regen=true },
    status = "beneficial",
    parameters = { heal=1 },
+   callbackOnTemporaryEffectAdd = function(self, eff, eff_id, e_def, eff_incoming)
+      if e_def.status == "detrimental" and e_def.type ~= "other" then
+         self:setEffect(self.EFF_DAMAGE_SHIELD, eff_incoming.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(t.getShield(self, t))})
+      end
+   end,
    activate = function(self, eff)
-      eff.healid = self:addTemporaryValue("life_regen", eff.heal)
    end,
    deactivate = function(self, eff)
-      self:removeTemporaryValue("life_regen", eff.healid)
    end,
 }
 
 newEffect{
    name = "FLN_NO_LIGHT", image = "talents/fln_darkside_sunset.png",
    desc = "Lights Out",
-   long_desc = function(self, eff) return ("The target is cut off from the sun"):format() end,
+   long_desc = function(self, eff) return "The target is cut off from the sun" end,
    type = "other",
    subtype = { magic=true },
    status = "detrimental",

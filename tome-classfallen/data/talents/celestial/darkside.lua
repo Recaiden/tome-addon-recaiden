@@ -100,7 +100,7 @@ newTalent{
 
 	 local btg = t.getBlastTarget(self, t)
 	 local dam = self:spellCrit(t.getDamage(self, t))
-	 self:project(btg, self.x, self.y, DamageType.LIGHT, {daze=75, dam=rng.avg(dam / 3, dam, 3)})
+	 self:project(btg, self.x, self.y, DamageType.LIGHT, dam)
 	 --TODO particle effect
       	 game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
       end
@@ -147,7 +147,7 @@ newTalent{
       
       self:addParticles(Particles.new("meleestorm", 2, {radius=t.radius(self, t), img="spinningwinds_black"}))
       if not self:attr("zero_resource_cost") and not self:attr("force_talent_ignore_ressources") then self:incPositive(-1 * self:getPositive()) end
-      self:setEffect(self.EFF_FLN_NO_LIGHT, 5)
+      self:setEffect(self.EFF_FLN_NO_LIGHT, 5, {})
       return true
    end,
    info = function(self, t)

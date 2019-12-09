@@ -203,6 +203,7 @@ local function createBonusShadow(self, level, tCallShadows, tShadowWarriors, tSh
 end
 
 
+-- Provides distractions, weak targets to lifesteal froim/jump to, and a renewable source of on-kills
 newTalent{
    name = "Shadowed Memories", short_name = "FLN_SHADOW_TWISTING_SHADOWS",
    type = {"cursed/suffering-shadows", 1},
@@ -213,6 +214,25 @@ newTalent{
    tactical = { DEFEND = 3 },
    getCount = function(self, t) return math.ceil(self:getTalentLevel(t)+2) end,
    action = function(self, t)
+      -- Boost your existing shadows, which is just a consolation
+      local apply = function(a)
+	 a.energy.value = a.energy.value + 1000
+      end
+      if game.party and game.party:hasMember(self) then
+	 for act, def in pairs(game.party.members) do
+	    if act.summoner and act.summoner == self and act.subtype == "shadow" then
+	       apply(act)
+	    end
+	 end
+      else
+	 for uid, act in pairs(game.level.entities) do
+	    if act.summoner and act.summoner == self and act.subtype == "shadow" then
+	       apply(act)
+	    end
+	 end
+      end
+
+      -- Summon the shades
       local nb = t.getCount(self, t)
       for i = 1, nb do
          local x, y = util.findFreeGrid(rng.range(-10, 10)+self.x, rng.range(-10, 10)+self.y, 5, true, {[Map.ACTOR]=true})
@@ -292,8 +312,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Reach into your dark memories, summoning %d shades of the past.  The shades do not know friend from foe, but are mostly harmless.
-For each summoned shade killed by your enemies, the cooldown of this talent is reduced by 5.]]):format(t.getCount(self, t))
+      return ([[Reach into your dark memories to empower your shadows.  Each of your shadows gains 1 turn, but you also summon %d shades of the past in randionm spaces nearby.  The shades do not know friend from foe, but are mostly harmless.]]):format(t.getCount(self, t))
    end,
 }
 

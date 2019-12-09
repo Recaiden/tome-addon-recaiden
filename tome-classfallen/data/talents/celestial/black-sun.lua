@@ -128,6 +128,7 @@ newTalent{
    getOnhit = function(self,t) return self:combatTalentSpellDamage(t, 10, 50) end,
    action = function(self, t)
       self:setEffect(self.EFF_FLN_GRAVITY_BUFF, t.getDuration(self,t), {gravity=t.getOnhit(self,t)})
+      return true
    end,
    info = function(self, t)
       return ([[Attune yourself to the endless hunger of distant dead suns.  For the next %d turns, your attacks will inflict an additional %d gravity damage and attempt to pull enemies closer.  After three turns, you will recover half of all damage taken during this effect.]]):format(t.getDuration(self,t), damDesc(self, DamageType.PHSYICAL, t.getOnhit(self,t)))
