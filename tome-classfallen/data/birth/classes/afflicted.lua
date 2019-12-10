@@ -4,11 +4,11 @@ newBirthDescriptor{
    locked = function() return profile.mod.allow_build.divine end,
    locked_desc = "....",
    desc = {
-      "Once, you had a code, a calling.  You carried the light into the darkness.",
-      "In the darkness, you faltered.  Whether it was greed, for love, or simple cowardice, you broke your oath; now you are fallen from grace.",
+      "Once, they had a code, a calling.  They carried the light into the darkness.",
+      "In the darkness, they faltered.  Whether it was greed, for love, or simple cowardice, they broke the oath; now they are Fallen from grace.",
       "And yet, the sun still shines as brightly as ever.",
-      "Fueled by their own misery and twisted solar magics, Fallen are devastating melee combatants.",
-      "Their most important stats are Strength and willpower.",
+      "Fueled by their own misery and twisted solar magics, the Fallen are devastating melee combatants.",
+      "Their most important stats are Strength, Magic, and Willpower.",
       "#GOLD#Stat modifiers:",
       "#LIGHT_BLUE# * +5 Strength, +0 Dexterity, +0 Constitution",
       "#LIGHT_BLUE# * +2 Magic, +2 Willpower, +0 Cunning",
@@ -45,7 +45,7 @@ newBirthDescriptor{
       [ActorTalents.T_ARMOUR_TRAINING] = 2,
       [ActorTalents.T_HEALING_LIGHT] = 1,
       [ActorTalents.T_WEAPON_OF_LIGHT] = 1,
-      [ActorTalents.T_FLN_DIRGE_ACOLYTE] = 1,
+      --[ActorTalents.T_FLN_DIRGE_ACOLYTE] = 1,
       [ActorTalents.T_FLN_DARKSIDE_SLAM] = 1,
       [ActorTalents.T_FLN_BLOODSTAINED_RUSH] = 1,
       [ActorTalents.T_FLN_SELFHATE_HARM] = 1,
@@ -54,7 +54,7 @@ newBirthDescriptor{
    copy = {
       max_life = 110,
       resolvers.equipbirth{ id=true,
-			    {type="weapon", subtype="greatsword", name="bloodstained iron greatsword", autoreq=true, ego_chance=-1000},
+			    {type="weapon", subtype="greatsword", name="iron greatsword", autoreq=true, ego_chance=-1000},
 			    {type="armor", subtype="heavy", name="iron mail armour", autoreq=true, ego_chance=-1000, ego_chance=-1000}
       },
    },

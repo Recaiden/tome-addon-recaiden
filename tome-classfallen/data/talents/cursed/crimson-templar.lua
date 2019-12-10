@@ -25,7 +25,7 @@ newTalent{
 	       local a = game.level.map(x, y, Map.ACTOR)
 	       if a and self:reactionToward(a) < 0 then
 		  for eff_id, p in pairs(a.tmp) do
-		     local e = target.tempeffect_def[eff_id]
+		     local e = a.tempeffect_def[eff_id]
 		     if e.subtype.bleed and e.status == "detrimental" then
 			tgts[#tgts+1] = a
 			break
@@ -37,7 +37,7 @@ newTalent{
 	 -- Displace the damage
 	 local a = rng.table(tgts)
 	 if a then
-	    local displace = dam * t.getShrug(self, t)
+	    local displace = dam * t.getShrug(self, t) / 100
 	    dam = dam - displace
 	    displace = displace * t.getAmp(self, t) / 100
 	    state.no_reflect = true

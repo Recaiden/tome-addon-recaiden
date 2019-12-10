@@ -72,7 +72,7 @@ newEffect{
 }
 
 newEffect{
-   name = "Self-Judgement", image = "talents/fln_selfhate_judgement.png",
+   name = "FLN_JUDGEMENT_BLEED", image = "talents/fln_selfhate_judgement.png",
    desc = "Self-Judgement",
    long_desc = function(self, eff) return ("Your body is bleeding, losing %0.2f life each turn."):format(eff.power) end,
    type = "other",
@@ -80,7 +80,7 @@ newEffect{
    status = "detrimental",
    parameters = { power=10 },
    on_gain = function(self, err) return "#CRIMSON##Target# is torn open by the powerful blow!", "+Self-Judgement" end,
-   on_lose = function(self, err) return "#CRIMSON#The flames around #target# vanish.", "-Self-Judgement" end,
+   on_lose = function(self, err) return "#CRIMSON##Target#'s wound has closed.", "-Self-Judgement" end,
    on_merge = function(self, old_eff, new_eff)
       local remaining = old_eff.dur*old_eff.power
       old_eff.dur = new_eff.dur
@@ -102,7 +102,7 @@ newEffect{
 }
 
 newEffect{
-   name = "FLN_DIRGE_LINGER_FAMINE", image = "effects/fln_dirge_famine.png",
+   name = "FLN_DIRGE_LINGER_FAMINE", image = "talents/fln_dirge_famine.png",
    desc = "Dirge of Famine",
    long_desc = function(self, eff) return ("The target is regenerating health"):format() end,
    type = "mental",
@@ -120,7 +120,7 @@ newEffect{
 }
 
 newEffect{
-   name = "FLN_DIRGE_LINGER_CONQUEST", image = "effects/fln_dirge_conquest.png",
+   name = "FLN_DIRGE_LINGER_CONQUEST", image = "talents/fln_dirge_conquest.png",
    desc = "Dirge of Conquest",
    long_desc = function(self, eff) return ("The target will gain a surge of energy on kill or crit"):format() end,
    type = "mental",
@@ -158,7 +158,7 @@ newEffect{
 }
 
 newEffect{
-   name = "FLN_DIRGE_LINGER_PESTILENCE", image = "effects/fln_dirge_pestilence.png",
+   name = "FLN_DIRGE_LINGER_PESTILENCE", image = "talents/fln_dirge_pestilence.png",
    desc = "Dirge of Pestilence",
    long_desc = function(self, eff) return ("The target is regenerating health"):format() end,
    type = "mental",
@@ -277,7 +277,7 @@ newEffect{
    status = "detrimental",
    parameters = {dam=10, power = 0.1},
 
-   callbackOnTalentPost = function(self, t, ab)
+   callbackOnTalentPost = function(self, eff, ab)
       DamageType:get(DamageType.PHYSICAL).projector(eff.src, self.x, self.y, DamageType.PHYSICAL, eff.dam)
    end,
 

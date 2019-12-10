@@ -137,7 +137,7 @@ newTalent{
       self:project(tg, self.x, self.y, function(px, py, tg, self)
 		      local target = game.level.map(px, py, Map.ACTOR)
 		      if target and target ~= self then
-			 self:attackTarget(target, nil, damage)
+			 self:attackTarget(target, nil, damage, true)
 			 if target:canBe("stun") then
 			    local power = math.max(self:combatSpellpower(), self:combatMindpower(), self:combatPhysicalpower())
 			    target:setEffect(target.EFF_DAZED, 3, {apply_power=power})
