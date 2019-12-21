@@ -1,7 +1,7 @@
 newTalent{
    name = "Shared Agony", short_name = "FLN_TEMPLAR_SHARED_AGONY",
    type = {"cursed/crimson-templar", 1},
-   require = cursed_wil_req_high1,
+   require = cursed_str_req_high1,
    points = 5,
    mode = "sustained",
    cooldown = 10,
@@ -62,7 +62,7 @@ newTalent{
 newTalent{
    name = "Splatter Sigils", short_name = "FLN_TEMPLAR_SPLATTER_SIGILS",
    type = {"cursed/crimson-templar", 2},
-   require = cursed_wil_req_high2,
+   require = cursed_str_req_high2,
    points = 5,
    cooldown = 20,
    tactical = { DEFEND = 1, DISABLE = {SLOW = 1} },
@@ -82,7 +82,7 @@ newTalent{
 			       DamageType.FLN_TEMPLAR_SIGIL, {dam=self:mindCrit(t.getStrength(self, t)), pow=self:combatMindpower()},
 			       self:getTalentRadius(t),
 			       5, nil,
-			       MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, oversize=0, img="darkness_celestial_circle", radius=self:getTalentRadius(t)*2}}, color_br=255, color_bg=48, color_bb=48, effect_shader="shader_images/darkness_effect.png"},
+			       MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, oversize=0, img="fln_celestial_circle", radius=self:getTalentRadius(t)*2}}, color_br=255, color_bg=187, color_bb=187, alpha=10, effect_shader="shader_images/sunlight_effect.png"},
 			       nil, true --self:spellFriendlyFire(true)
       )
    end,
@@ -102,21 +102,22 @@ newTalent{
       local rad = self:getTalentRadius(t)
       local burn = t.getStrength(self, t)
       local cost = t.getPrice(self, t)
-      return ([[When you kill an enemy, their death forms a cursed magical pattern on the ground. This creates a circle of radius %d which blinds enemies (#SLATE#Mindpower vs. Magical#LAST#) and deals %d light damage while giving you %d positive energy per turn.
+      local dur = t.getDuration(self, t)
+      return ([[When you kill an enemy, their death forms a cursed magical pattern on the ground. This creates a circle of radius %d which blinds enemies (#SLATE#Mindpower vs. Magical#LAST#) and deals %d light damage while giving you %d positive energy per turn.  The circle lasts for %d turns.
 
 You can activate this talent to draw the pattern in your own blood, creating it underneath you at the cost of %d%% of your maximum life.
 
 Mindpower: Improves damage
 Mental Critical: Improves damage
 Mental Critical: Improves duration
-]]):format(rad, damDesc(self, DamageType.LIGHT, burn), 2, cost)
+]]):format(rad, damDesc(self, DamageType.LIGHT, burn), 2, dur, cost)
    end,
 }
 
 newTalent{
    name = "Mark of the Vampire", short_name = "FLN_TEMPLAR_MARK_OF_THE_VAMPIRE",
    type = {"cursed/crimson-templar", 3},
-   require = cursed_wil_req_high3,
+   require = cursed_str_req_high3,
    points = 5,
    cooldown = 20,
    hate = 30,
@@ -156,7 +157,7 @@ Mindpower: increases damage.]]):
 newTalent{
    name = "Rosebloom", short_name = "FLN_TEMPLAR_ROSEBLOOM",
    type = {"cursed/crimson-templar", 4},
-   require = cursed_wil_req_high4,
+   require = cursed_str_req_high4,
    points = 5,
    range = 0,
    radius = 10,

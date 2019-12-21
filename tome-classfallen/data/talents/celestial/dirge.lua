@@ -15,8 +15,8 @@ upgradeDirgeActivate = function(self, t, ret)
    if self:knowTalent(self.T_FLN_DIRGE_INTONER) then
       local t2 = self:getTalentFromId(self.T_FLN_DIRGE_INTONER)
       self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.MIND]=t2.getDamageOnMeleeHit(self, t2)})
-      self:talentTemporaryValue(ret, "stun_immune", t2.getImmunity(self, t))
-      self:talentTemporaryValue(ret, "knockback_immune", t2.getImmunity(self, t))
+      self:talentTemporaryValue(ret, "stun_immune", t2.getImmune(self, t2))
+      self:talentTemporaryValue(ret, "knockback_immune", t2.getImmune(self, t2))
    end
    
    --Adept Upgrade
@@ -144,7 +144,7 @@ newTalent{
    cooldown = 12,
    sustain_slots = 'fallen_celestial_dirge',
    mode = "sustained",
-   getShield = function(self, t) return self:combatTalentScale(t, 3, 7.5, 0.75) end,
+   getShield = function(self, t) return self:combatTalentScale(t, 50, 200, 0.75) end,
    callbackOnTemporaryEffectAdd = function(self, t, eff_id, e_def, eff)      
       if e_def.status == "detrimental" and e_def.type ~= "other" then
          self:setEffect(self.EFF_DAMAGE_SHIELD, eff.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(t.getShield(self, t))})
@@ -242,10 +242,10 @@ newTalent{
    points = 5,
    mode = "passive",
    getDamageOnMeleeHit = function(self, t) return self:combatTalentMindDamage(t, 5, 50) * (1 + (1 + self.level)/40) end,
-   getImmunity = function(self, t) return math.min(1, self:combatTalentScale(t, 0.05, 0.45, 0.5)) end,
+   getImmune = function(self, t) return math.min(1, self:combatTalentScale(t, 0.05, 0.45, 0.5)) end,
    info = function(self, t)
       local damage = t.getDamageOnMeleeHit(self, t)
-      local nostun = t.getImmunity(self, t)
+      local nostun = t.getImmune(self, t)*100
       return ([[Your dirges carry the pain within you, which threatens to swallow those who come too close.  Anyone who hits you in melee suffers %d mind damage.
 You, on the other hand, are steadied by the song.  Your dirges increase your resistance to stun and knockback by %d%%.
 

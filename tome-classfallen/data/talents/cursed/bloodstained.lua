@@ -37,6 +37,10 @@ newTalent{
    target = function(self, t) return {type="hit", pass_terrain = true, range=self:getTalentRange(t)} end,
    on_learn = function(self, t) self:learnTalent(self.T_FLN_BLEED_RESIST, true) end,
    on_unlearn = function(self, t) self:unlearnTalent(self.T_FLN_BLEED_RESIST) end,
+   on_pre_use = function(self, t)
+      if self:attr("never_move") then return false end
+      return true
+   end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)
       local x, y, target = self:getTarget(tg)

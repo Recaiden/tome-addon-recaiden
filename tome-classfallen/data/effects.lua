@@ -10,7 +10,7 @@ newEffect{
    name = "FLN_RUSH_MARK", image = "talents/fln_blood_rush.png",
    desc = "Marked for Death",
    long_desc = function(self, eff) return ("Reduces Blood Rush cooldown if killed"):format() end,
-   type = "mental",
+   type = "other",
    subtype = { status=true, },
    status = "detrimental",
    parameters = { },
@@ -24,14 +24,9 @@ newEffect{
    callbackOnDeath = function(self, eff, src, note)
       marker = eff.src
       reduc = eff.dur * 2
-      for tid, _ in pairs(marker.talents_cd) do
-	 if tid == marker.T_FLN_BLOODSTAINED_RUSH then
-	    local t = marker:getTalentFromId(tid)
-	    if t and not t.fixed_cooldown then
-	       marker.talents_cd[tid] = marker.talents_cd[tid] - reduc
-	    end
-	    break
-	 end
+      local tid = marker.T_FLN_BLOODSTAINED_RUSH
+      if marker.talents_cd[tid] then
+         marker.talents_cd[tid] = marker.talents_cd[tid] - reduc
       end
    end,
 }
@@ -105,7 +100,7 @@ newEffect{
    name = "FLN_DIRGE_LINGER_FAMINE", image = "talents/fln_dirge_famine.png",
    desc = "Dirge of Famine",
    long_desc = function(self, eff) return ("The target is regenerating health"):format() end,
-   type = "mental",
+   type = "magical",
    subtype = { regen=true },
    status = "beneficial",
    parameters = { heal=1, resist=0 },
@@ -123,8 +118,8 @@ newEffect{
    name = "FLN_DIRGE_LINGER_CONQUEST", image = "talents/fln_dirge_conquest.png",
    desc = "Dirge of Conquest",
    long_desc = function(self, eff) return ("The target will gain a surge of energy on kill or crit"):format() end,
-   type = "mental",
-   subtype = { regen=true },
+   type = "magical",
+   subtype = { haste=true },
    status = "beneficial",
    parameters = { heal=1 },
 
@@ -133,7 +128,6 @@ newEffect{
       self.turn_procs.fallen_conquest_on_crit = true
 
       self.energy.value = self.energy.value + 100
-      --self:heal(self:mindCrit(eff.heal), self)
       if core.shader.active(4) then
 	 self:addParticles(Particles.new("shader_shield_temp", 1, {toback=true , size_factor=1.5, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=2.0, circleDescendSpeed=3.5}))
 	 self:addParticles(Particles.new("shader_shield_temp", 1, {toback=false, size_factor=1.5, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=1.0, circleDescendSpeed=3.5}))
@@ -143,7 +137,6 @@ newEffect{
       if self.turn_procs.fallen_conquest_on_kill then return end
       self.turn_procs.fallen_conquest_on_kill = true
       
-      --self:heal(self:mindCrit(eff.heal), self)
       self.energy.value = self.energy.value + 500
       if core.shader.active(4) then
 	 self:addParticles(Particles.new("shader_shield_temp", 1, {toback=true , size_factor=1.5, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=2.0, circleDescendSpeed=3.5}))
@@ -160,14 +153,14 @@ newEffect{
 newEffect{
    name = "FLN_DIRGE_LINGER_PESTILENCE", image = "talents/fln_dirge_pestilence.png",
    desc = "Dirge of Pestilence",
-   long_desc = function(self, eff) return ("The target is regenerating health"):format() end,
-   type = "mental",
-   subtype = { regen=true },
+   long_desc = function(self, eff) return ("The target will gain a shield upon suffering a detrimental effect"):format() end,
+   type = "magical",
+   subtype = { shield=true },
    status = "beneficial",
-   parameters = { heal=1 },
+   parameters = { shield=50 },
    callbackOnTemporaryEffectAdd = function(self, eff, eff_id, e_def, eff_incoming)
       if e_def.status == "detrimental" and e_def.type ~= "other" then
-         self:setEffect(self.EFF_DAMAGE_SHIELD, eff_incoming.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(t.getShield(self, t))})
+         self:setEffect(self.EFF_DAMAGE_SHIELD, eff_incoming.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(eff.shield)})
       end
    end,
    activate = function(self, eff)

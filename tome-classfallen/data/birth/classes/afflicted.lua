@@ -16,6 +16,7 @@ newBirthDescriptor{
    },
    power_source = {arcane=true},
    stats = { str=5, wil=2, mag=2 },
+   not_on_random_boss = true,
    talents_types = {
       --Class
       --new base talents
