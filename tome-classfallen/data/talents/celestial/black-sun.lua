@@ -100,7 +100,8 @@ newTalent{
          summoner = self,
                           }
       e:rebuild_particles()
-      
+
+      game:playSoundNear(self, "talents/fallen_brokenglass")
       game.level:addEntity(e)
       game.level.map(x, y, Map.TERRAIN+1, e)
       game.level.map:updateMap(x, y)

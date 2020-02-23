@@ -312,7 +312,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Reach into your dark memories to empower your shadows.  Each of your shadows gains 1 turn, but you also summon %d shades of the past in randionm spaces nearby.  The shades do not know friend from foe, but are mostly harmless.]]):format(t.getCount(self, t))
+      return ([[Reach into your dark memories to empower your shadows.  Each of your shadows gains 1 turn, but you also summon %d shades of the past in random spaces nearby.  The shades do not know friend from foe, but are mostly harmless.]]):format(t.getCount(self, t))
    end,
 }
 
@@ -389,16 +389,18 @@ newTalent{
       local seen = {}
 
       -- Collect all enemies within range of any shadow
-      for _, actor in pairs(game.level.entities) do
-	 if actor.summoner and actor.summoner == self and actor.subtype == "shadow" then
-	    self:project({type="ball", radius=self:getTalentRange(t)}, actor.x, actor.y, function(px, py)
-		  local tgt = game.level.map(px, py, Map.ACTOR)
-		  if tgt and self:reactionToward(tgt) < 0 and not seen[tgt.uid] then
-		     tgts[#tgts+1] = tgt
-		     seen[tgt.uid] = true
-		  end
-	    end)   
-	 end
+      if game.level then
+         for _, actor in pairs(game.level.entities) do
+            if actor.summoner and actor.summoner == self and actor.subtype == "shadow" then
+               self:project({type="ball", radius=self:getTalentRange(t)}, actor.x, actor.y, function(px, py)
+                               local tgt = game.level.map(px, py, Map.ACTOR)
+                               if tgt and self:reactionToward(tgt) < 0 and not seen[tgt.uid] then
+                                  tgts[#tgts+1] = tgt
+                                  seen[tgt.uid] = true
+                               end
+                                                                                            end)   
+            end
+         end
       end
 
       if #tgts > 0 then
@@ -449,6 +451,15 @@ newTalent{
 	    end
 	 end
       end
+      
+      game:playSoundNear(self, "talents/fallen_scream")
+      for _, actor in pairs(game.level.entities) do
+         if actor.summoner and actor.summoner == self and actor.subtype == "shadow" then
+            game.level.map:particleEmitter(actor.x, actor.y, 3, "shout", {additive=true, life=10, size=3, distorion_factor=0.5, radius=3, nb_circles=6, rm=0.1, rM=0.2, gm=0, gM=0, bm=0.8, bM=0.9, am=0.4, aM=0.6})
+         end
+      end
+      
+
       return true
    end,
    info = function(self, t)
@@ -517,6 +528,7 @@ newTalent{
       shadow:forceLevelup(level)
       game.zone:addEntity(game.level, shadow, "actor", x, y)
       shadow:feed()
+      game:playSoundNear(self, "talents/fallen_tearing")
       game.level.map:particleEmitter(x, y, 1, "teleport_in")
       return true
    end,

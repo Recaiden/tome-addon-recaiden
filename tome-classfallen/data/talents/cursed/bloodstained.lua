@@ -52,7 +52,15 @@ newTalent{
       -- Attack
       if target and target.x and core.fov.distance(self.x, self.y, target.x, target.y) == 1 then
 	 target:setEffect(target.EFF_FLN_RUSH_MARK, 6, {src=self})
-	 self:attackTarget(target, nil, 1, true)
+	 local hit = self:attackTarget(target, nil, 1, true)
+         if hit then
+            if target.dead then
+                local tid = self.T_FLN_BLOODSTAINED_RUSH
+                if self.talents_cd[tid] then
+                   self.talents_cd[tid] = math.max(0, self.talents_cd[tid] - 12)
+                end
+            end
+         end
 	 if target:canBe('cut') then
 	    local sw = self:getInven("MAINHAND")
 	    if sw then

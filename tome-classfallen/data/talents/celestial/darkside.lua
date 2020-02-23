@@ -72,8 +72,11 @@ newTalent{
    range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7, 0.5, 0, 1)) end,
    requires_target = true,
    is_teleport = true,
+   --target = function(self, t)
+   --   return {type="hit", nolock=true, range=self:getTalentRange(t)}
+   --end,
    target = function(self, t)
-      return {type="hit", nolock=true, range=self:getTalentRange(t)}
+      return {type="ball", range=self:getTalentRange(t), radius=1, selffire=false, talent=t}
    end,
    getBlastTarget = function(self, t)
       return {type="ball", range=0, radius=1, selffire=false, talent=t}
@@ -105,7 +108,7 @@ newTalent{
       	 game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
       end
    
-      game:playSoundNear(self, "talents/teleport")
+      game:playSoundNear(self, "talents/fallen_stardust")
       return true
    end,
    

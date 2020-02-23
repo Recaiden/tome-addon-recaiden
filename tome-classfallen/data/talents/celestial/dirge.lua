@@ -53,6 +53,7 @@ newTalent{
       self:talentTemporaryValue(ret, "resists", {all = t.getResist(self, t)})
 
       upgradeDirgeActivate(self, t, ret)
+      game:playSoundNear(self, "talents/fallen_chant_one")
       
       return ret
    end,
@@ -84,7 +85,6 @@ newTalent{
    cooldown = 12,
    sustain_slots = 'fallen_celestial_dirge',
    mode = "sustained",
-   --getHeal = function(self, t) return self:combatTalentScale(t, 5, 30) end,
    callbackOnCrit = function(self, t)
       if self.turn_procs.fallen_conquest_on_crit then return end
       self.turn_procs.fallen_conquest_on_crit = true
@@ -112,6 +112,7 @@ newTalent{
       --Basic effect is in callbacks
       
       upgradeDirgeActivate(self, t, ret)
+      game:playSoundNear(self, "talents/fallen_chant_two")
       
       return ret
    end,
@@ -157,6 +158,7 @@ newTalent{
       --Basic effect is in callbacks
       
       upgradeDirgeActivate(self, t, ret)
+      game:playSoundNear(self, "talents/fallen_chant_three")
       
       return ret
    end,
@@ -223,10 +225,10 @@ newTalent{
 	    local t3 = self:getTalentFromId(self.T_FLN_DIRGE_PESTILENCE)
 	    ret = ([[Even now, something compels you to sing.
 			Dirge of Famine: Increases health regen by %d.
-			Dirge of Conquest: Heals you for %d on critical or kill.
+			Dirge of Conquest: Gives you part of a turn on critical or kill.
 			Dirge of Pestilence: Shields you for %d when you suffer a detrimental effect.
 			You may only have one Dirge active at a time.]]):
-	       format(t1.getRegen(self, t1), t2.getHeal(self, t2), t3.getShield(self, t3))
+	       format(t1.getRegen(self, t1), t3.getShield(self, t3))
       end)
       self.talents[self.T_FLN_DIRGE_FAMINE] = old1
       self.talents[self.T_FLN_DIRGE_CONQUEST] = old2
@@ -261,7 +263,7 @@ newTalent{
    points = 5,
    mode = "passive",
    getDuration = function(self, t) return self:getTalentLevel(t) end,
-   getImmune = function(self, t) return self:combatTalentLimit(t, 1, 0.15, 0.5) end,
+   getImmune = function(self, t) return math.min(1, self:combatTalentScale(t, 0.05, 0.45, 0.5)) end,
    info = function(self, t)
       return ([[Your dirges echo mournfully through the air.  When you end a dirge, you continue to gain its acolyte-level effects for %d turns.  You can only benefit from one such lingering dirge at a time.
 

@@ -7,12 +7,21 @@ newTalent{
    hate = -10,
    cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 5, 14, 6)) end,
    getDamage = function(self, t)
-      return self.max_life / math.ceil(self:combatTalentLimit(t, 100, 10, 50))
+      return self.max_life / math.ceil(self:combatTalentLimit(t, 50, 10, 20))
    end,
    getHate = function(self, t) return 2 end,
+
+   on_pre_use = function(self, t, silent)
+      if self.in_combat then
+         return true
+      end
+      if not silent then game.logPlayer(self, "You can only use this while in combat") end
+      return false
+   end,
    action = function(self, t)
       local damage = t.getDamage(self, t)
       self:setEffect(self.EFF_CUT, 5, {src=self, power=damage/5, no_ct_effect=true, unresistable=true})
+      game:playSoundNear(self, "talents/fallen_chop")
       return true
    end,
    callbackOnActBase = function(self, t)
@@ -28,9 +37,9 @@ newTalent{
    info = function(self, t)
       local damage = t.getDamage(self, t)
       local regen = t.getHate(self, t)
-      return ([[Quickly draw a blade across your skin, bleeding yourself for a small portion of your maximum life (%d damage) over the next 5 turns.
+      return ([[At the start of each turn, if you're bleeding, you gain %d hate.
 
-At the start of each turn, if you're bleeding, you gain %d hate.
+Youy can activate this talent to quickly draw a blade across your skin, bleeding yourself for a small portion of your maximum life (%d damage) over the next 5 turns.
 
 #{italic}#Pain is just about the only thing you can still feel.#{normal}#]]):format(damage, regen)
    end,
