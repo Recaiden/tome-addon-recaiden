@@ -168,7 +168,7 @@ newTalent{
    info = function(self, t)
       local conv = t.getConversion(self, t)
       local proj = t.getSlow(self, t)
-      return ([[Create a gravity field around you that converts %d%% all damage you deal into physical damage, slows incoming projectiles by %d%%, and causes your gravity damage to reduce the target's knockback resistance by half for two turns.]]):format(conv, proj)
+      return ([[Create a gravity field around you that converts %d%% of all damage you deal into physical damage, slows incoming projectiles by %d%%, and causes your gravity damage to reduce the target's knockback resistance by half for two turns.]]):format(conv, proj)
 	end,
 }
 

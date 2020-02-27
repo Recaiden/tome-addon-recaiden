@@ -42,7 +42,8 @@ newDamageType{
       end
 
       if target:checkHit(src:combatPhysicalpower(), target:combatPhysicalResist(), 0, 95, 5) and target:canBe("knockback") then
-	 target:pull(src.x, src.y, 1)
+         local source = src.__project_source or src
+	 target:pull(source.x, source.y, 2)
 	 game.logSeen(target, "%s is pulled in!", target.name:capitalize())
       else
 	 game.logSeen(target, "%s resists the gravity!", target.name:capitalize())

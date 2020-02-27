@@ -55,10 +55,9 @@ newTalent{
 	 local hit = self:attackTarget(target, nil, 1, true)
          if hit then
             if target.dead then
-                local tid = self.T_FLN_BLOODSTAINED_RUSH
-                if self.talents_cd[tid] then
-                   self.talents_cd[tid] = math.max(0, self.talents_cd[tid] - 12)
-                end
+               game:onTickEnd(function() 
+                                 self:alterTalentCoolingdown(t.id, -12)
+                              end)
             end
          end
 	 if target:canBe('cut') then

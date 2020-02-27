@@ -26,7 +26,7 @@ newEffect{
       reduc = eff.dur * 2
       local tid = marker.T_FLN_BLOODSTAINED_RUSH
       if marker.talents_cd[tid] then
-         marker.talents_cd[tid] = math.max(0, marker.talents_cd[tid] - reduc)
+         marker.talents_cd[tid] = marker.talents_cd[tid] - reduc
       end
    end,
 }
@@ -176,7 +176,7 @@ newEffect{
    type = "other",
    subtype = { magic=true },
    status = "detrimental",
-   parameters = { unresistable=true },
+   parameters = { },
    callbackOnActBase = function(self, t)
       self:incPositive(-1 * self:getPositive())
    end,   
