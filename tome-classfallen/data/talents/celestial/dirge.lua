@@ -147,7 +147,7 @@ newTalent{
    mode = "sustained",
    getShield = function(self, t) return self:combatTalentScale(t, 50, 200, 0.75) end,
    callbackOnTemporaryEffectAdd = function(self, t, eff_id, e_def, eff)      
-      if e_def.status == "detrimental" and e_def.type ~= "other" then
+      if e_def.status == "detrimental" and e_def.type ~= "other" and eff.src ~= self then
          self:setEffect(self.EFF_DAMAGE_SHIELD, eff.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(t.getShield(self, t))})
       end
    end,

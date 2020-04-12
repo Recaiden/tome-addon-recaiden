@@ -147,7 +147,8 @@ newTalent{
 			 end
 		      end
       end)
-      
+
+      game:playSoundNear(self, "talents/fallen_sun_whoosh")
       self:addParticles(Particles.new("meleestorm", 2, {radius=t.radius(self, t), img="spinningwinds_black"}))
       if not self:attr("zero_resource_cost") and not self:attr("force_talent_ignore_ressources") then self:incPositive(-1 * self:getPositive()) end
       self:setEffect(self.EFF_FLN_NO_LIGHT, 5, {})

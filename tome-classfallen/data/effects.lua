@@ -159,7 +159,7 @@ newEffect{
    status = "beneficial",
    parameters = { shield=50 },
    callbackOnTemporaryEffectAdd = function(self, eff, eff_id, e_def, eff_incoming)
-      if e_def.status == "detrimental" and e_def.type ~= "other" then
+      if e_def.status == "detrimental" and e_def.type ~= "other" and eff_incoming.src ~= self then
          self:setEffect(self.EFF_DAMAGE_SHIELD, eff_incoming.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(eff.shield)})
       end
    end,

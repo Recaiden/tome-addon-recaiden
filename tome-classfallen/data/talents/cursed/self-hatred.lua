@@ -96,12 +96,16 @@ newTalent{
 	    self.talents_cd[tid] = self.talents_cd[tid] - 1
 	 end
       end
-   end,
+   end,   
    activate = function(self, t)
       t.surge(self, t)
-      return {}
+      local ret = {}
+      game:playSoundNear(self, "talents/fire")
+      ret.particle = self:addParticles(Particles.new("rek_blood_inferno", 1))
+      return ret
    end,
    deactivate = function(self, t, p)
+      self:removeParticles(p.particle)
       return true
    end,
    callbackOnActBase = function(self, t)
