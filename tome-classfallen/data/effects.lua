@@ -103,14 +103,12 @@ newEffect{
    type = "magical",
    subtype = { regen=true },
    status = "beneficial",
-   parameters = { heal=1, resist=0 },
+   parameters = { heal=1 },
    activate = function(self, eff)
       eff.healid = self:addTemporaryValue("life_regen", eff.heal)
-      eff.resistsid = self:addTemporaryValue("resists", { all=-1*eff.resist })
    end,
    deactivate = function(self, eff)
       self:removeTemporaryValue("life_regen", eff.healid)
-      self:removeTemporaryValue("resists", eff.resistsid)
    end,
 }
 

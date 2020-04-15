@@ -1,8 +1,8 @@
 long_name = "Class: Fallen"
 short_name = "classfallen"
 for_module = "tome"
-version = {1,5,0}
-addon_version = {0, 1, 0}
+version = {1,6,0}
+addon_version = {0, 1, 1}
 weight = 27681
 author = { 'recaiden' }
 description = [[A new class, an afflicted/celestial warrior.]]
@@ -12,5 +12,7 @@ hooks = true
 overload = true
 superload = true
 data = true
+
+-- Sound effects provided by Mike Koenig, Lisa Redfern, Mark DiAngelo, Marianne Gagnon
 
 

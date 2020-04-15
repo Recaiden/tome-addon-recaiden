@@ -235,7 +235,7 @@ newTalent{
       -- Summon the shades
       local nb = t.getCount(self, t)
       for i = 1, nb do
-         local x, y = util.findFreeGrid(rng.range(-10, 10)+self.x, rng.range(-10, 10)+self.y, 5, true, {[Map.ACTOR]=true})
+         local x, y = util.findFreeGrid(rng.range(-5, 5)+self.x, rng.range(-5, 5)+self.y, 5, true, {[Map.ACTOR]=true})
          if x and y then
             local NPC = require "mod.class.NPC"
             local level = self.level
@@ -281,6 +281,9 @@ newTalent{
                poison_immune = 1,
                stun_immune = 1,
                blind_immune = 1,
+               hated_by_everybody = 1,
+               hated_by_summoner = 1,
+               hates_everybody = 1
             }
             
             m.level = level
@@ -299,7 +302,6 @@ newTalent{
                m.image = "npc/shadow_star_crusader.png"
                m.desc = [[You remember...terror]]
             end
-            m.faction = "cosmic-fauna"
             m.no_necrotic_soul = true
             
             m:resolve() m:resolve(nil, true)
@@ -312,7 +314,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Reach into your dark memories to empower your shadows.  Each of your shadows gains 1 turn, but you also summon %d shades of the past in random spaces nearby.  The shades do not know friend from foe, but are mostly harmless.]]):format(t.getCount(self, t))
+      return ([[Reach into your memories and let out the darkness into nearby shadows.  Each of your shadows gains 1 turn, but you also summon %d shades of the past in random spaces nearby.  The shades do not know friend from foe, but are mostly harmless.]]):format(t.getCount(self, t))
    end,
 }
 

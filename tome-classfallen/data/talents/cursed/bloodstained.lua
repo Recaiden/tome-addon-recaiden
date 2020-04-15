@@ -59,19 +59,19 @@ newTalent{
                                  self:alterTalentCoolingdown(t.id, -12)
                               end)
             end
-         end
-	 if target:canBe('cut') then
-	    local sw = self:getInven("MAINHAND")
-	    if sw then
-	       sw = sw[1] and sw[1].combat
-	    end
-	    sw = sw or self.combat
-	    local dam = self:combatDamage(sw)
-	    local damrange = self:combatDamageRange(sw)
-	    dam = rng.range(dam, dam * damrange)
-	    dam = dam * t.getBleedDamage(self, t)
-	    target:setEffect(target.EFF_CUT, 5, {power=dam / 5, src=self, apply_power=self:combatPhysicalpower()})
+            if target:canBe('cut') then
+               local sw = self:getInven("MAINHAND")
+               if sw then
+                  sw = sw[1] and sw[1].combat
+               end
+               sw = sw or self.combat
+               local dam = self:combatDamage(sw)
+               local damrange = self:combatDamageRange(sw)
+               dam = rng.range(dam, dam * damrange)
+               dam = dam * t.getBleedDamage(self, t)
+               target:setEffect(target.EFF_CUT, 5, {power=dam / 5, src=self, apply_power=self:combatPhysicalpower()})
 	 end
+         end
       end
       
       return true
@@ -153,11 +153,11 @@ newTalent{
    callbackOnMeleeHit = function(self, t, target, dam)
       if not target then return end
       if target:canBe('cut') then
-	 target:setEffect(target.EFF_CUT, 5, {power=dam * t.getBleed(self, t), src=self, apply_power=self:combatPhysicalpower()})
+	 target:setEffect(target.EFF_CUT, 5, {power=dam * t.getBleed(self, t), src=self)})
       end
    end,
    info = function(self, t)
-      return ([[Your melee attacks also cause the target to bleed for %d%% of the damage dealt over five turns.
+      return ([[Your melee attacks also cause the target to bleed (#SLATE#Physical power vs. Physical#LAST#) for %d%% of the damage dealt over five turns.
 
 Each level in Bloodstained talents reduces the amount of damage you take from bleed effects by 2%%]]):
 	 format(t.getBleed(self, t)*100)

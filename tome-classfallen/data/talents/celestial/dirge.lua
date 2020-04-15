@@ -43,14 +43,11 @@ newTalent{
    sustain_slots = 'fallen_celestial_dirge',
    mode = "sustained",
    getRegen = function(self, t) return self:combatTalentScale(t, 2, 6, 0.75) * math.sqrt(self.level) end,
-   getResist = function(self, t) return self:combatTalentScale(t, 5, 10) end,
    activate = function(self, t)
-      game:playSoundNear(self, "talents/spell_generic2")
-      
       local ret = {}
+      ret.particle = self:addParticles(Particles.new("rek_dirge_shield", 1))
       --Basic effect
       self:talentTemporaryValue(ret, "life_regen", t.getRegen(self, t))
-      self:talentTemporaryValue(ret, "resists", {all = t.getResist(self, t)})
 
       upgradeDirgeActivate(self, t, ret)
       game:playSoundNear(self, "talents/fallen_chant_one")
@@ -58,13 +55,13 @@ newTalent{
       return ret
    end,
    deactivate = function(self, t, p)
-      --self:removeParticles(p.particle)
+      self:removeParticles(p.particle)
       
       --Adept Upgrade
       if self:knowTalent(self.T_FLN_DIRGE_ADEPT) then
 	 clearDirges(self)
 	 local t3 = self:getTalentFromId(self.T_FLN_DIRGE_ADEPT)
-	 self:setEffect(self.EFF_FLN_DIRGE_LINGER_FAMINE, t3.getDuration(self, t3), {src=self, heal=t.getRegen(self, t), resist=t.getResist(self, t)})
+	 self:setEffect(self.EFF_FLN_DIRGE_LINGER_FAMINE, t3.getDuration(self, t3), {src=self, heal=t.getRegen(self, t)})
       end
       
       return true
@@ -72,7 +69,7 @@ newTalent{
    info = function(self, t)
       return ([[Sing a song of wasting and desolation which sustains you in hard times.
 
-This dirge increases your health regeneration by %d and your resistance to damage by %d%%.  The regeneration will increase with your level.]]):format(t.getRegen(self, t), t.getResist(self, t))
+This dirge increases your health regeneration by %d.  The regeneration will increase with your level.]]):format(t.getRegen(self, t))
    end,
 }
 
@@ -106,9 +103,9 @@ newTalent{
       end
    end,
    activate = function(self, t)
-      game:playSoundNear(self, "talents/spell_generic2")
       
       local ret = {}
+      ret.particle = self:addParticles(Particles.new("rek_dirge_shield", 1))
       --Basic effect is in callbacks
       
       upgradeDirgeActivate(self, t, ret)
@@ -117,7 +114,7 @@ newTalent{
       return ret
    end,
    deactivate = function(self, t, p)
-      --self:removeParticles(p.particle)
+      self:removeParticles(p.particle)
       
       --Adept Upgrade
       if self:knowTalent(self.T_FLN_DIRGE_ADEPT) then
@@ -151,10 +148,10 @@ newTalent{
          self:setEffect(self.EFF_DAMAGE_SHIELD, eff.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(t.getShield(self, t))})
       end
    end,
-   activate = function(self, t)
-      game:playSoundNear(self, "talents/spell_generic2")
-      
+   activate = function(self, t)      
       local ret = {}
+      ret.particle = self:addParticles(Particles.new("rek_dirge_shield", 1))
+
       --Basic effect is in callbacks
       
       upgradeDirgeActivate(self, t, ret)
@@ -163,7 +160,7 @@ newTalent{
       return ret
    end,
    deactivate = function(self, t, p)
-      --self:removeParticles(p.particle)
+      self:removeParticles(p.particle)
       
       --Adept Upgrade
       if self:knowTalent(self.T_FLN_DIRGE_ADEPT) then
@@ -225,8 +222,8 @@ newTalent{
 	    local t3 = self:getTalentFromId(self.T_FLN_DIRGE_PESTILENCE)
 	    ret = ([[Even now, something compels you to sing.
 			Dirge of Famine: Increases health regen by %d.
-			Dirge of Conquest: Gives you part of a turn on critical or kill.
-			Dirge of Pestilence: Shields you for %d when you suffer a detrimental effect.
+			Dirge of Conquest: Gives you part of a turn on critical (10%%) or kill (50%%).
+			Dirge of Pestilence: Shields you for %d when an enemy inflicts a detrimental effect on you.
 			You may only have one Dirge active at a time.]]):
 	       format(t1.getRegen(self, t1), t3.getShield(self, t3))
       end)

@@ -18,7 +18,7 @@ newTalent{
       local tg = self:getTalentTarget(t)
       local x, y, target = self:getTarget(tg)
       if not target or not self:canProject(tg, x, y) then return nil end
-      local hit = self:attackTarget(target, nil, self:combatTalentWeaponDamage(t, 1, 1.5), true)
+      local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
       
       if hit then
 	 if target:canBe("stun") then
@@ -32,7 +32,7 @@ newTalent{
    end,
    info = function(self, t)
       local damage = t.getDamage(self, t)
-      return ([[Hits the target with your weapon, doing %d%% damage. If the attack hits, the target is stunned (#SLATE#Physical power vs. Physical#LAST#) for %d turns and has their bleed resistance reduced by 50%%
+      return ([[Hits the target with your weapon, doing %d%% damage. If the attack hits, the target is stunned (#SLATE#Physical power vs. Physical#LAST#) for %d turns and has their bleed resistance reduced by 50%%.
 
 #{italic}#It may not bleed, exactly, but you'll make it hurt.#{normal}#]])
 	 :format(100 * damage, t.getDuration(self, t))
@@ -72,9 +72,6 @@ newTalent{
    range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7, 0.5, 0, 1)) end,
    requires_target = true,
    is_teleport = true,
-   --target = function(self, t)
-   --   return {type="hit", nolock=true, range=self:getTalentRange(t)}
-   --end,
    target = function(self, t)
       return {type="ball", range=self:getTalentRange(t), radius=1, selffire=false, talent=t}
    end,
@@ -96,7 +93,7 @@ newTalent{
       --TODO swap with darkness particles
       game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
       
-      if not self:teleportRandom(x, y, 1) then
+      if not self:teleportRandom(x, y, 0) then
 	 game.logSeen(self, "%s's teleportation fizzles!", self.name:capitalize())
       else
 	 game.logSeen(self, "%s emerges from the darkness!", self.name:capitalize())

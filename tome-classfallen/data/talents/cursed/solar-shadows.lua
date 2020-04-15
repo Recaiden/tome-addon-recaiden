@@ -158,7 +158,7 @@ newTalent{
    range = 1,
    direct_hit = true,
    requires_target = true,
-   getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 200) end,
+   getDamage = function(self, t) return self:combatTalentSpellDamage(t, 8, 130) end,
    action = function(self, t)
       local tg = {type="hit", range=self:getTalentRange(t), talent=t}
       local x, y = self:getTarget(tg)
@@ -186,7 +186,7 @@ newTalent{
    range = 6,
    direct_hit = true,
    requires_target = true,
-   getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 140) end,   
+   getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 85) end,   
    action = function(self, t)
       local tg = {type="ball", range=self:getTalentRange(t), radius=1, talent=t}
       local x, y, target = self:getTarget(tg)

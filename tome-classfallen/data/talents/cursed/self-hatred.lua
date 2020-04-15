@@ -39,9 +39,9 @@ newTalent{
       local regen = t.getHate(self, t)
       return ([[At the start of each turn, if you're bleeding, you gain %d hate.
 
-Youy can activate this talent to quickly draw a blade across your skin, bleeding yourself for a small portion of your maximum life (%d damage) over the next 5 turns.
+You can activate this talent to quickly draw a blade across your skin, bleeding yourself for a small portion of your maximum life (%d damage) over the next 5 turns.  This bleed cannot be resisted.
 
-#{italic}#Pain is just about the only thing you can still feel.#{normal}#]]):format(damage, regen)
+#{italic}#Pain is just about the only thing you can still feel.#{normal}#]]):format(regen, damage)
    end,
 }
 
@@ -134,6 +134,7 @@ newTalent{
    mode = "passive",
    getTime = function(self, t) return self:combatTalentScale(t, 3, 5) end,
    getThreshold = function(self, t) return self:combatTalentLimit(t, 10, 30, 15) end,
+   getSpillThreshold = function(self, t) return 15 end,
    callbackOnTakeDamage = function(self, t, src, x, y, type, dam, state)
       if dam < 0 then return {dam = dam} end
       if not state then return {dam = dam} end
@@ -149,8 +150,12 @@ newTalent{
       end
       
       local lt = t.getThreshold(self, t)/100
+      local st = t.getSpillThreshold(self, t)/100
       if dam > self.max_life*lt then
 	 local reduce = dam - lt
+         if reduce > self.max_life * st then
+            reduce = math.floor(dam * st / (lt+st)))
+         end
 	 local length = t.getTime(self, t)
 	 if src.logCombat then src:logCombat(self, "#CRIMSON##Target# suffers from %s from #Source#, mitigating the blow!#LAST#.", is_attk and "an attack" or "damage") end
 	 dam = dam - reduce
@@ -165,8 +170,9 @@ newTalent{
    info = function(self, t)
       local time = t.getTime(self, t)
       local threshold = t.getThreshold(self, t)
-      return ([[Any direct damage that exceeds %d%% of your maximum life has the excess damage converted to a shallow wound that bleeds over the next %d turns.  This bleed cannot be resisted or removed, but can be reduced by Bloodstained.
+      local failThreshold = t.getSpillThreshold(self, t)
+      return ([[Any direct damage that exceeds %d%% of your maximum life has the excess damage converted to a shallow wound that bleeds over the next %d turns.  This bleed cannot be resisted or removed, but can be reduced by Bloodstained. Extremely powerful hits (more than %d%% of your max life) are not fully absorbed.
 
-#{italic}#You can't just die.  That would be too easy.  You deserve to die slowly.#{normal}#]]):format(threshold, time)
+#{italic}#You can't just die.  That would be too easy.  You deserve to die slowly.#{normal}#]]):format(threshold, time, failThreshold)
    end,
 }

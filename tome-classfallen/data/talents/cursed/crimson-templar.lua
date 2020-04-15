@@ -163,7 +163,7 @@ newTalent{
    radius = 10,
    cooldown = 24,
    direct_hit = true,
-   getExtension = function(self, t) return 2 end,
+   getExtension = function(self, t) return math.floor(self:combatTalentScale(t, 0, 4)) end,
    getConversion = function(self, t) return 0.20 end,
    getInsomniaPower= function(self, t)
       local t = self:getTalentFromId(self.T_SANDMAN)
@@ -171,38 +171,38 @@ newTalent{
       return 20 - reduction
    end,
    getMinHeal = function(self, t) return self:combatTalentScale(t, 10, 25) end,
-   getSleepPower = function(self, t) 
-      local power = self:combatTalentSpellDamage(t, 5, 25)
+   getSleepMultiplier = function(self, t)
       if self:knowTalent(self.T_SANDMAN) then
-	 local t = self:getTalentFromId(self.T_SANDMAN)
-	 power = power * t.getSleepPowerBonus(self, t)
+	 local sandman = self:getTalentFromId(self.T_SANDMAN)
+	 return sandman.getSleepPowerBonus(self, sandman)
       end
-      return math.ceil(power)
+      return 1
    end,
    target = function(self, t)
       return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), friendlyfire=false, talent=t}
    end,   
    action = function(self, t)
-      --Restless?
+      --Restless night compatibility for adventurers
       local is_waking =0
       if self:knowTalent(self.T_RESTLESS_NIGHT) then
 	 local t = self:getTalentFromId(self.T_RESTLESS_NIGHT)
 	 is_waking = t.getDamage(self, t)
       end
 
-      -- Store up blood
+      -- Store up bleed damage
       local drain = 0
       local conversion = t.getConversion(self, t)
       local healMin = t.getMinHeal(self, t)
       
-      local power = self:spellCrit(t.getSleepPower(self, t))
+      local sleepMultiplier = t.getSleepMultiplier(self, t)
       local tg = self:getTalentTarget(t)
       self:project(tg, self.x, self.y, function(tx, ty)
 		      local target = game.level.map(tx, ty, Map.ACTOR)
 		      if target then
                          
 			 local bleeding = false
-			 local dur = 0
+			 local dur = 1
+                         local sleepPower = 0
 			 for eff_id, p in pairs(target.tmp) do
 			    local e = target.tempeffect_def[eff_id]
 			    if e.subtype.bleed and e.status == "detrimental" then
@@ -210,22 +210,22 @@ newTalent{
 			       local eff = target.tmp[eff_id]
 			       drain = drain + math.max(eff.power*eff.dur*conversion, healMin)
 			       dur = math.max(dur, eff.dur)
-                               target:removeEffect(eff)
+                               sleepPower = sleepPower + eff.power
+                               --target:removeEffect(eff)
 			    end
 			 end
 			 
-			 
 			 if bleeding and target:canBe("sleep") then
-			    target:setEffect(target.EFF_SLEEP, dur+t.getExtension(self, t), {src=self, power=power, contagious=0, waking=is_waking, insomnia=t.getInsomniaPower(self, t), no_ct_effect=true, apply_power=self:combatSpellpower()})
+			    target:setEffect(target.EFF_SLEEP, dur+t.getExtension(self, t), {src=self, power = math.ceil(sleepPower * sleepMultiplier * 1.5), contagious=0, waking=is_waking, insomnia=t.getInsomniaPower(self, t), no_ct_effect=true, apply_power=self:combatSpellpower()})
 			 else
 			    game.logSeen(self, "%s resists the sleep!", target.name:capitalize())
 			 end
 		      end
       end)
 
-      -- Drain the blood to heal
+      -- Heal to heal
       self:attr("allow_on_heal", 1)
-      self:heal(drain, self) -- don't crit, would double dip crit bleeds
+      self:heal(drain, self) -- don't crit, would double dip
       self:attr("allow_on_heal", -1)
       
       game:playSoundNear(self, "talents/dispel")
@@ -236,10 +236,9 @@ newTalent{
       local conversion = t.getConversion(self, t)*100
       local minimum = t.getMinHeal(self, t)
       local extension = t.getExtension(self, t)
-      local sleep = t.getSleepPower(self, t)
-      return ([[Draw out the wounds of nearby enemies, healing yourself and putting them into a merciful sleep.
-		Enemies within range have their bleed effects removed.  You are healed for %d%% of the remaining damage (minimum %d per target).  Enemies fall asleep for %d turns longer than they would have bled, rendering them unable to act. Every %d points of damage the targets suffer will reduce their sleep duration by one turn.
+      return ([[Draw on the wounds of nearby enemies, healing yourself and putting them into a merciful sleep.
+		You are healed for %d%% of the remaining damage of bleed effects on enemies in range (minimum %d per bleed).  Enemies fall asleep for %d turns longer than their longest-lasting bleed, rendering them unable to act. The strength of the sleep effect is based on the strength of the bleed.  Excess damage will reduce their sleep duration.
 
-When Sleep ends, each target will benefit from Insomnia for a number of turns equal to the amount of time it was asleep (up to ten turns max), granting it 50%% sleep immunity for the duration Insomnia effect.]]):format(conversion, minimum, extension, sleep)
+When the sleep ends, each target will benefit from Insomnia for a number of turns equal to the amount of time it was asleep (up to ten turns max), granting it 50%% sleep immunity.]]):format(conversion, minimum, extension)
    end,
 }
