@@ -85,7 +85,7 @@ newTalent{
 	 if e.status == "detrimental" and e.type ~= "other" then
 	    local e2 = self.tmp[eff_id]
 	    e2.dur = e2.dur - 1
-	    if e2.dur <= 0 then self:removeEffect(eff) end
+	    if e2.dur <= 0 then self:removeEffect(eff_id) end
 	 end
       end
 
@@ -154,7 +154,7 @@ newTalent{
       if dam > self.max_life*lt then
 	 local reduce = dam - lt
          if reduce > self.max_life * st then
-            reduce = math.floor(dam * st / (lt+st)))
+            reduce = math.floor(dam * st / (lt+st))
          end
 	 local length = t.getTime(self, t)
 	 if src.logCombat then src:logCombat(self, "#CRIMSON##Target# suffers from %s from #Source#, mitigating the blow!#LAST#.", is_attk and "an attack" or "damage") end
@@ -170,8 +170,8 @@ newTalent{
    info = function(self, t)
       local time = t.getTime(self, t)
       local threshold = t.getThreshold(self, t)
-      local failThreshold = t.getSpillThreshold(self, t)
-      return ([[Any direct damage that exceeds %d%% of your maximum life has the excess damage converted to a shallow wound that bleeds over the next %d turns.  This bleed cannot be resisted or removed, but can be reduced by Bloodstained. Extremely powerful hits (more than %d%% of your max life) are not fully absorbed.
+      local failThreshold = t.getThreshold(self, t) + t.getSpillThreshold(self, t)
+      return ([[Any direct damage that exceeds %d%% of your maximum life has the excess damage converted to a shallow wound that bleeds over the next %d turns.  This bleed cannot be resisted or removed, but can be reduced by Bloodstained. Extremely powerful hits (more than %d%% of your max life) are not fully converted.
 
 #{italic}#You can't just die.  That would be too easy.  You deserve to die slowly.#{normal}#]]):format(threshold, time, failThreshold)
    end,

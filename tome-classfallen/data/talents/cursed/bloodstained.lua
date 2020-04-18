@@ -6,11 +6,15 @@ newTalent{
    callbackOnTemporaryEffectAdd = function(self, t, eff_id, e_def, eff)
       if e_def.subtype.bleed and e_def.type ~= "other" then
 	 local diminishment = math.min((
-	       self:getTalentLevelRaw(self.T_FLN_BLOODSTINED_RUSH)
-		  + self:getTalentLevelRaw(self.T_FLN_BLOODSTINED_FURY)
-		  + self:getTalentLevelRaw(self.T_FLN_BLOODSTINED_BATH)
-		  + self:getTalentLevelRaw(self.T_FLN_BLOODSTINED_THIRST))*2, 90)
-	 eff.power = eff.power * (100-diminishment) / 100
+	       self:getTalentLevelRaw(self.T_FLN_BLOODSTAINED_RUSH)
+		  + self:getTalentLevelRaw(self.T_FLN_BLOODSTAINED_FURY)
+		  + self:getTalentLevelRaw(self.T_FLN_BLOODSTAINED_BATH)
+		  + self:getTalentLevelRaw(self.T_FLN_BLOODSTAINED_THIRST))*2, 90)
+         if eff.dam then
+            eff.dam = eff.dam * (100-diminishment) / 100
+         elseif eff.power then
+            eff.power = eff.power * (100-diminishment) / 100
+         end
       end
    end,
    info = function(self, t)
@@ -150,10 +154,11 @@ newTalent{
    deactivate = function(self, t, p)
       return true
    end,
-   callbackOnMeleeHit = function(self, t, target, dam)
+   callbackOnMeleeAttack = function(self, t, target, hitted, crit, weapon, damtype, mult, dam) 
       if not target then return end
+      if not hitted then return end
       if target:canBe('cut') then
-	 target:setEffect(target.EFF_CUT, 5, {power=dam * t.getBleed(self, t), src=self)})
+	 target:setEffect(target.EFF_CUT, 5, {power=dam * t.getBleed(self, t), src=self})
       end
    end,
    info = function(self, t)

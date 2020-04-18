@@ -19,3 +19,25 @@ end)
 -- 		     self:loadList("/data-classfallen/world-artifacts.lua", data.no_default, data.res, data.mod, data.loaded)
 -- 		  end
 -- end)
+
+-- Give Solar Shadows mastery to anything with Shadows mastery
+local masteryEquivalents = {
+   ["cursed/shadows"] = "cursed/solar-shadows",
+}
+class:bindHook("Entity:loadList",
+               function(self, data)
+                  for _,obj in pairs(data.res) do
+                     if type(obj) == "table" then
+			if obj.wielder then
+                           if obj.wielder.talents_types_mastery then
+                              for t,m in pairs(obj.wielder.talents_types_mastery) do
+                                 if masteryEquivalents[t] then
+                                    obj.wielder.talents_types_mastery[masteryEquivalents[t]] = m
+                                 end
+                              end
+                           end
+			end
+                     end
+                  end
+               end
+              )
