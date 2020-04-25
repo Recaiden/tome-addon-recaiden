@@ -25,8 +25,8 @@ newEffect{
 }
 
 newEffect{
-   name = "MUMMY_WEAKNESS", image = "talents/exploit_weakness.png",
-   desc = "Weakened Defenses",
+   name = "MUMMY_WEAKNESS", image = "talents/mummy_curse.png",
+   desc = "Mummy's Curse",
    long_desc = function(self, eff) return ("The target's damage resistance has been reduced by %d%%."):format(eff.cur_inc) end,
    type = "magical",
    subtype = { sunder=true },
@@ -50,7 +50,7 @@ newEffect{
 }
 
 newEffect{
-   name = "MUMMY_STRENGTH", image = "talents/exploit_weakness.png",
+   name = "MUMMY_STRENGTH", image = "talents/mummy_crown.png",
    desc = "Strengthened Defenses",
    long_desc = function(self, eff) return ("The target's determination increases their damage resistance by %d%%."):format(eff.cur_inc) end,
    type = "magical",

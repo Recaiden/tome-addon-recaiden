@@ -18,9 +18,27 @@ newBirthDescriptor {
      '#LIGHT_BLUE# * +3 Strength, -3 Dexterity, +0 Constitution',
      '#LIGHT_BLUE# * +2 Magic, +3 Willpower, +0 Cunning',
      '#GOLD#Life per level:#LIGHT_BLUE# 12',
-     '#GOLD#Experience penalty:#LIGHT_BLUE# +20%'},
+     '#GOLD#Experience penalty:#LIGHT_BLUE# +10%'},
   moddable_attachement_spots = "race_ghoul",
   moddable_attachement_spots_sexless=true,
+  cosmetic_options = {
+     skin = {
+        {name="Pale Bandages ", file="base_01"},
+        {name="White Bandages", file="base_04"},
+        {name="Ashen Bandages", file="base_08"},
+        {name="Demonic Red Bandages", file="demonic_01", unlock="cosmetic_red_skin"}
+     },
+     horns = {
+        {name="Minotaur Horns", file="horns_01", unlock="cosmetic_doomhorns"},
+        {name="Ram Horns", file="horns_02", unlock="cosmetic_doomhorns"},
+        {name="Demonic Horns", file="horns_03", unlock="cosmetic_doomhorns"},
+        {name="Demonic Bull Horns", file="horns_04", unlock="cosmetic_doomhorns"},
+	{name="Demonic Longhorns", file="horns_05", unlock="cosmetic_doomhorns"},
+	{name="Branching Horns 1", file="horns_06", unlock="cosmetic_doomhorns"},
+	{name="Branching Horns 2", file="horns_07", unlock="cosmetic_doomhorns"},
+	{name="Branching Horns 3", file="horns_08", unlock="cosmetic_doomhorns"},
+     },
+  },
   descriptor_choices =
      {
 	sex =
@@ -30,14 +48,13 @@ newBirthDescriptor {
 	   },
      },
   inc_stats = { str = 3, dex = -3, con = 0, mag = 2, wil = 3, cun = 0 },
-  experience = 1.2,
+  experience = 1.1,
   talents_types = {
      ["undead/mummy"]={true, 0.1},
      ["undead/mummified"]={true, 0.1},
   },
   talents = {
      [ActorTalents.T_MUMMY_EMBALM]=1,
-     --[ActorTalents.T_MUMMY_FIRE_WEAKNESS]=1, --no longer needed
   },
   copy = {
      type = "undead", subtype="mummy",
@@ -45,7 +62,7 @@ newBirthDescriptor {
      starting_intro = "mummy",
      life_rating=12,
      poison_immune = 0.8,
-     resists = { [engine.DamageType.FIRE] = -50, },
+     resists = { [engine.DamageType.FIRE] = -25, },
      cut_immune = 1,
      fear_immune = 1,
      no_breath = 1,
