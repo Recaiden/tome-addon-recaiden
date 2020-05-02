@@ -86,28 +86,43 @@ newEffect{
          }
 
 newEffect{
-	name = "REK_WIGHT_DESPAIR", image = "effects/despair.png",
-	desc = "Despair",
-	long_desc = function(self, eff) return ("The target is in despair, reducing their armour, defence, and saves resist by %d."):tformat(-eff.statChange) end,
-	charges = function(self, eff) return math.floor(-eff.statChange) end,	
-	type = "mental",
-	subtype = { fear=true },
-	status = "detrimental",
-	parameters = {statChange = -10},
-	on_gain = function(self, err) return "#F53CBE##Target# is in despair!", "+Despair" end,
-	on_lose = function(self, err) return "#Target# is no longer in despair", "-Despair" end,
-	activate = function(self, eff)
-           eff.despairSaveM = self:addTemporaryValue("combat_mentalresist", eff.statChange)
-           eff.despairSaveS = self:addTemporaryValue("combat_spellresist", eff.statChange)
-           eff.despairSaveP = self:addTemporaryValue("combat_physresist", eff.statChange)
-           eff.despairArmor = self:addTemporaryValue("combat_armor", eff.statChange)
-           eff.despairDef = self:addTemporaryValue("combat_def", eff.statChange)
-	end,
-	deactivate = function(self, eff)
-           self:removeTemporaryValue("combat_mentalresist", eff.despairSaveM)
-           self:removeTemporaryValue("combat_spellresist", eff.despairSaveS)
-           self:removeTemporaryValue("combat_physresist", eff.despairSaveP)
-           self:removeTemporaryValue("combat_armor", eff.despairArmor)
-           self:removeTemporaryValue("combat_def", eff.despairDef)
-	end,
+   name = "REK_WIGHT_DESPAIR", image = "talents/rek_wight_drain.png",
+   desc = "Despair",
+   long_desc = function(self, eff) return ("The target is in despair, reducing their armour, defence, and saves resist by %d."):tformat(-eff.statChange) end,
+   charges = function(self, eff) return math.floor(-eff.statChange) end,	
+   type = "mental",
+   subtype = { fear=true }, -- but bypasses fear resistance
+   status = "detrimental",
+   parameters = {statChange = -10},
+   on_gain = function(self, err) return "#F53CBE##Target# is in despair!", "+Despair" end,
+   on_lose = function(self, err) return "#Target# is no longer in despair", "-Despair" end,
+   activate = function(self, eff)
+      eff.despairSaveM = self:addTemporaryValue("combat_mentalresist", eff.statChange)
+      eff.despairSaveS = self:addTemporaryValue("combat_spellresist", eff.statChange)
+      eff.despairSaveP = self:addTemporaryValue("combat_physresist", eff.statChange)
+      eff.despairArmor = self:addTemporaryValue("combat_armor", eff.statChange)
+      eff.despairDef = self:addTemporaryValue("combat_def", eff.statChange)
+   end,
+   deactivate = function(self, eff)
+      self:removeTemporaryValue("combat_mentalresist", eff.despairSaveM)
+      self:removeTemporaryValue("combat_spellresist", eff.despairSaveS)
+      self:removeTemporaryValue("combat_physresist", eff.despairSaveP)
+      self:removeTemporaryValue("combat_armor", eff.despairArmor)
+      self:removeTemporaryValue("combat_def", eff.despairDef)
+   end,
+}
+
+newEffect{
+   name = "REK_WIGHT_FEARLESS", image = "talents/rek_wight_drain.png",
+   desc = "Immune to Draining Presence",
+   long_desc = function(self, eff) return "You refused to give in to fear and can ignore the draining presence of wights...for now." end,
+   type = "mental",
+   subtype = { fear=true },
+   status = "beneficial",
+   parameters = {},
+   on_gain = function(self, err) return nil, true end,
+   on_lose = function(self, err) return nil, true end,
+   activate = function(self, eff)
+      game:onTickEnd(function() self:removeEffect(self.EFF_REK_WIGHT_DESPAIR) end)
+   end,
 }
