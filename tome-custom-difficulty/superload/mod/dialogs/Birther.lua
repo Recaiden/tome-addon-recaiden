@@ -59,6 +59,8 @@ function updateDifficulties(self)
    -- Copy data to game_state object
    if tonumber(self.c_rek_dif_bossscale.text) then
       state["fixedboss_class_level_rate_mult"] = tonumber(self.c_rek_dif_bossscale.text)
+   else
+      state["fixedboss_class_level_rate_mult"] = 1
    end
    if tonumber(self.c_rek_dif_zone_mul.text) then
       state["difficulty_level_mult"] = tonumber(self.c_rek_dif_zone_mul.text)
@@ -70,7 +72,7 @@ function updateDifficulties(self)
       state["difficulty_life_mult"] = tonumber(self.c_rek_dif_health.text)
    end
    if tonumber(self.c_rek_dif_talent.text) then
-      state["difficulty_talent_mult"] = tonumber(self.c_rek_dif_talent.text)/100
+      state["difficulty_talent_mult"] = 1+tonumber(self.c_rek_dif_talent.text)/100
    end
          
    --Hunted talent
@@ -147,7 +149,7 @@ function updateDifficulties(self)
       and (tonumber(self.c_rek_dif_stairwait.text) or 1) >= 2
    then
       copy["__game_difficulty"] = 2
-      d["name"] = "Custom"
+      d["name"] = "Normal"
    end
 
    d.copy = copy
