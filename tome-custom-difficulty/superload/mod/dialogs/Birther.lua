@@ -37,6 +37,7 @@ function updateDifficulties(self)
    copy["instakill_immune"] = 1
    -- Setup money and level
    copy["money"] = tonumber(self.c_rek_dif_gold.text) or 0
+   copy["max_life_bonus"] = tonumber(self.c_rek_dif_life_bonus.text) or 0
    copy["start_level"] = tonumber(self.c_rek_dif_level.text) or 1
 
    -- Set random spawn rates if applicable
@@ -104,16 +105,9 @@ function updateDifficulties(self)
    end
    
    -- Determine difficulty for achievements
-   if (tonumber(self.c_rek_dif_gold.text) or 0) > 1
-      or (tonumber(self.c_rek_dif_level.text) or 1) > 1
-      or self.c_rek_dif_ezstatus.checked
-   then
-      copy["__game_difficulty"] = 1
-      d["name"] = "Easy"
-      
-   elseif
+   if
       (tonumber(self.c_rek_dif_zone_mul.text) or 1) >= 2.5
-      and (tonumber(self.c_rek_dif_zone_add.text) or 1) >= 1
+      and (tonumber(self.c_rek_dif_zone_add.text) or 1) >= 2
       and (tonumber(self.c_rek_dif_talent.text) or 1) >= 170
       and self.c_rek_dif_randrare.value >= 30
       and self.c_rek_dif_randboss.value >= 5
@@ -122,19 +116,16 @@ function updateDifficulties(self)
       and self.c_rek_dif_hunted.checked
    then
       copy["__game_difficulty"] = 5
-      d["name"] = "Madness"
-      
+      d["name"] = "Madness" 
    elseif (tonumber(self.c_rek_dif_zone_mul.text) or 1) >= 1.5
       and (tonumber(self.c_rek_dif_zone_add.text) or 1) >= 1
-      and (tonumber(self.c_rek_dif_talent.text) or 1) >= 50
+      and (tonumber(self.c_rek_dif_talent.text) or 1) >= 70
       and self.c_rek_dif_randrare.value >= 30
       and self.c_rek_dif_randboss.value >= 5
-      and (tonumber(self.c_rek_dif_health.text) or 1) >= 1.2
       and (tonumber(self.c_rek_dif_stairwait.text) or 1) >= 5
    then
       copy["__game_difficulty"] = 4
       d["name"] = "Insane"
-
    elseif (tonumber(self.c_rek_dif_zone_mul.text) or 1) >= 1.5
       and (tonumber(self.c_rek_dif_talent.text) or 1) >= 30
       and self.c_rek_dif_randrare.value >= 7
@@ -142,8 +133,7 @@ function updateDifficulties(self)
       and (tonumber(self.c_rek_dif_stairwait.text) or 1) >= 3
    then
       copy["__game_difficulty"] = 3
-      d["name"] = "Nightmare"
-      
+      d["name"] = "Nightmare" 
    elseif (tonumber(self.c_rek_dif_zone_mul.text) or 1) >= 1
       and (tonumber(self.c_rek_dif_health.text) or 1) >= 1
       and (tonumber(self.c_rek_dif_stairwait.text) or 1) >= 2
@@ -152,10 +142,112 @@ function updateDifficulties(self)
       d["name"] = "Normal"
    end
 
+   if copy["__game_difficulty"] < 5
+      and((tonumber(self.c_rek_dif_gold.text) or 0) > 0
+       or (tonumber(self.c_rek_dif_life_bonus.text) or 0) > 0)
+   then
+      copy["__game_difficulty"] = 1
+      d["name"] = "Easy"
+   end
+
+   if (tonumber(self.c_rek_dif_gold.text) or 0) > 500
+       or (tonumber(self.c_rek_dif_life_bonus.text) or 0) > 100
+   then
+      copy["__game_difficulty"] = 1
+      d["name"] = "Easy"
+   end
+   
+   if self.c_rek_dif_ezstatus.checked
+   then
+      copy["__game_difficulty"] = 1
+      d["name"] = "Easy"
+   end
+
    d.copy = copy
    d.game_state = state
    self.birth_descriptor_def.difficulty["Custom"] = d
    self:setDescriptor("difficulty", "Custom")
+end
+
+function numberSliderSetValue(box, value)
+   box.nbox.number = value
+   box.nbox:updateText(0)
+   box:onChange()
+end
+
+function setToStandardDifficulty(self, name)
+   if name == "Easy" then
+      self.c_rek_dif_zone_mul:setText("1.0")
+      self.c_rek_dif_zone_add:setText("0")
+      self.c_rek_dif_talent:setText("0")
+      numberSliderSetValue(self.c_rek_dif_randrare, 4)
+      numberSliderSetValue(self.c_rek_dif_randboss, 0)
+      self.c_rek_dif_bossscale:setText("1.0")
+      self.c_rek_dif_stairwait:setText("2")
+      self.c_rek_dif_health:setText("1.0")
+      self.c_rek_dif_hunted.checked = false
+      self.c_rek_dif_ezstatus.checked = true
+      self.c_rek_dif_level:setText("1")
+      self.c_rek_dif_life_bonus:setText("0")
+      self.c_rek_dif_gold:setText("0")
+   elseif name == "Normal" then
+      self.c_rek_dif_zone_mul:setText("1.0")
+      self.c_rek_dif_zone_add:setText("0")
+      self.c_rek_dif_talent:setText("0")
+      numberSliderSetValue(self.c_rek_dif_randrare, 4)
+      numberSliderSetValue(self.c_rek_dif_randboss, 0)
+      self.c_rek_dif_bossscale:setText("1.0")
+      self.c_rek_dif_stairwait:setText("2")
+      self.c_rek_dif_health:setText("1.0")
+      self.c_rek_dif_hunted.checked = false
+      self.c_rek_dif_ezstatus.checked = false
+      self.c_rek_dif_level:setText("1")
+      self.c_rek_dif_life_bonus:setText("0")
+      self.c_rek_dif_gold:setText("0")
+   elseif name == "Nightmare" then
+      self.c_rek_dif_zone_mul:setText("1.5")
+      self.c_rek_dif_zone_add:setText("0")
+      self.c_rek_dif_talent:setText("30")
+      numberSliderSetValue(self.c_rek_dif_randrare, 7)
+      numberSliderSetValue(self.c_rek_dif_randboss, 0)
+      self.c_rek_dif_bossscale:setText("1.3")
+      self.c_rek_dif_stairwait:setText("3")
+      self.c_rek_dif_health:setText("1.0")
+      self.c_rek_dif_hunted.checked = false
+      self.c_rek_dif_ezstatus.checked = false
+      self.c_rek_dif_level:setText("1")
+      self.c_rek_dif_life_bonus:setText("0")
+      self.c_rek_dif_gold:setText("0")
+   elseif name == "Insane" then
+      self.c_rek_dif_zone_mul:setText("1.5")
+      self.c_rek_dif_zone_add:setText("1")
+      self.c_rek_dif_talent:setText("70")
+      numberSliderSetValue(self.c_rek_dif_randrare, 30)
+      numberSliderSetValue(self.c_rek_dif_randboss, 5)
+      self.c_rek_dif_bossscale:setText("1.7")
+      self.c_rek_dif_stairwait:setText("5")
+      self.c_rek_dif_health:setText("1.0")
+      self.c_rek_dif_hunted.checked = false
+      self.c_rek_dif_ezstatus.checked = false
+      self.c_rek_dif_level:setText("1")
+      self.c_rek_dif_life_bonus:setText("0")
+      self.c_rek_dif_gold:setText("0")
+   elseif name == "Madness" then
+      self.c_rek_dif_zone_mul:setText("2.5")
+      self.c_rek_dif_zone_add:setText("2")
+      self.c_rek_dif_talent:setText("170")
+      numberSliderSetValue(self.c_rek_dif_randrare, 30)
+      numberSliderSetValue(self.c_rek_dif_randboss, 5)
+      self.c_rek_dif_bossscale:setText("2.7")
+      self.c_rek_dif_stairwait:setText("9")
+      self.c_rek_dif_health:setText("3.0")
+      self.c_rek_dif_hunted.checked = true
+      self.c_rek_dif_ezstatus.checked = false
+      self.c_rek_dif_level:setText("1")
+      self.c_rek_dif_life_bonus:setText("100")
+      self.c_rek_dif_gold:setText("500")
+   end
+   updateDifficulties(self)
 end
 
 function _M:init(title, actor, order, at_end, quickbirth, w, h)
@@ -262,6 +354,10 @@ function _M:init(title, actor, order, at_end, quickbirth, w, h)
    self.c_rek_dif_gold = Textbox.new{
       title="Player Starting Gold: ", text="0", chars=7, max_len=10,
       fct=function() end, on_change=function(s) updateDifficulties(self) end, on_mouse = function(button) end
+                                    }
+   self.c_rek_dif_life_bonus = Textbox.new{
+      title="Player Bonus Life: ", text="0", chars=7, max_len=10,
+      fct=function() end, on_change=function(s) updateDifficulties(self) end, on_mouse = function(button) end
    }
    self.c_rek_dif_hunted = Checkbox.new{title="Hunted", default=false, fct=function() end, on_change=function(s) updateDifficulties(self) end}
    self.c_rek_dif_ezstatus = Checkbox.new{title="Debuff Resistance", default=false, fct=function() end, on_change=function(s) updateDifficulties(self) end}
@@ -271,9 +367,18 @@ function _M:init(title, actor, order, at_end, quickbirth, w, h)
    self.c_campaign_text = Textzone.new{auto_width=true, auto_height=true, text="Campaign: "}
    self.c_campaign = Dropdown.new{width=400, fct=function(item) self:campaignUse(item) end, on_select=function(item) self:updateDesc(item) end, list=self.all_campaigns, nb_items=#self.all_campaigns}
 
+   -- permadeath
    self:generatePermadeaths()
    self.c_permadeath_text = Textzone.new{auto_width=true, auto_height=true, text="Permadeath: "}
    self.c_permadeath = Dropdown.new{width=150, fct=function(item) self:permadeathUse(item) end, on_select=function(item) self:updateDesc(item) end, list=self.all_permadeaths, nb_items=#self.all_permadeaths}
+
+   -- preset difficulty selector
+   self.c_diff_preset_easy = Button.new{text="Easy", fct=function() setToStandardDifficulty(self, "Easy") end}
+   self.c_diff_preset_norm = Button.new{text="Normal", fct=function() setToStandardDifficulty(self, "Normal") end}
+   self.c_diff_preset_nite = Button.new{text="Nightmare", fct=function() setToStandardDifficulty(self, "Nightmare") end}
+   self.c_diff_preset_insn = Button.new{text="Insane", fct=function() setToStandardDifficulty(self, "Insane") end}
+   self.c_diff_preset_madn = Button.new{text="Madness", fct=function() setToStandardDifficulty(self, "Madness") end}
+
    
    self.c_desc = TextzoneList.new{width=math.floor(self.iw / 4 - 15), height=self.ih - self.c_female.h - self.c_permadeath.h - self.c_ok.h - self.c_campaign.h - 10, scrollbar=true, pingpong=20, no_color_bleed=true}
    
@@ -332,8 +437,13 @@ function _M:init(title, actor, order, at_end, quickbirth, w, h)
       {left=self.c_race, top=self.c_permadeath, ui=self.c_class},
       
       --List of fields/boxes for difficulty
-      --{left=self.c_class,
-      {left=self.c_class, top=self.c_permadeath, ui=self.c_rek_dif_zone_mul},
+      {left=self.c_class, top=self.c_campaign, ui=self.c_diff_preset_easy},
+      {left=self.c_diff_preset_easy, top=self.c_campaign, ui=self.c_diff_preset_norm},
+      {left=self.c_diff_preset_norm, top=self.c_campaign, ui=self.c_diff_preset_nite},
+      {left=self.c_diff_preset_nite, top=self.c_campaign, ui=self.c_diff_preset_insn},
+      {left=self.c_diff_preset_insn, top=self.c_campaign, ui=self.c_diff_preset_madn},
+                
+      {left=self.c_class, top=self.c_diff_preset_madn, ui=self.c_rek_dif_zone_mul},
       {left=self.c_class, top=self.c_rek_dif_zone_mul, ui=self.c_rek_dif_zone_add},
       {left=self.c_class, top=self.c_rek_dif_zone_add, ui=self.c_rek_dif_talent},
       {left=self.c_class, top=self.c_rek_dif_talent, ui=self.c_rek_dif_randrare},
@@ -344,10 +454,11 @@ function _M:init(title, actor, order, at_end, quickbirth, w, h)
       {left=self.c_class, top=self.c_rek_dif_health, ui=self.c_rek_dif_hunted},
       {left=self.c_class, top=self.c_rek_dif_hunted, ui=self.c_rek_dif_ezstatus},
       {left=self.c_class, top=self.c_rek_dif_ezstatus, ui=self.c_rek_dif_level},
-      {left=self.c_class, top=self.c_rek_dif_level, ui=self.c_rek_dif_gold},
+      {left=self.c_class, top=self.c_rek_dif_level, ui=self.c_rek_dif_life_bonus},
+      {left=self.c_class, top=self.c_rek_dif_life_bonus, ui=self.c_rek_dif_gold},
       --
       
-      {right=0, top=self.c_permadeath, ui=self.c_desc},
+      {right=0, top=self.c_diff_preset_madn, ui=self.c_desc},
       
       -- Buttons
       {left=0, bottom=0, ui=self.c_ok, hidden=true},
@@ -405,13 +516,13 @@ function _M:on_focus(id, ui)
    elseif self.focus_ui and self.focus_ui.ui == self.c_permadeath then
       local item = self.c_permadeath.c_list.list[self.c_permadeath.c_list.sel]
       self.c_desc:switchItem(item, item.desc)
-      -- Focus Descriptions for new difficulty options
+   -- Focus Descriptions for new difficulty options
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_zone_mul then
       self.c_desc:switchItem(self.c_rek_dif_zone_mul, "Multiply the level of all zones by this amount.\nNightmare: 1.5 or higher\nMadness: 2.5 or higher")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_zone_add then
-      self.c_desc:switchItem(self.c_rek_dif_zone_add, "Increase the level of all enemies by this amount.\nInsane: 1 or more")
+      self.c_desc:switchItem(self.c_rek_dif_zone_add, "Increase the level of all enemies by this amount.\nInsane: 1 or more\nMadness: 2 or more")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_talent then
-      self.c_desc:switchItem(self.c_rek_dif_talent, "Increase the level of all enemy talents by this percentage.\nNightmare: 30+\nInsane: 80+\nMadness: 170+")
+      self.c_desc:switchItem(self.c_rek_dif_talent, "Increase the level of all enemy talents by this percentage.\nNightmare: 30+\nInsane: 70+\nMadness: 170+")
       
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_randrare then
       self.c_desc:switchItem(self.c_rek_dif_randrare, "The percentage of random enemies that will spawn with higher rank and extra talents.\nNightmare: 7 or higher\nInsane: 30 or higher")
@@ -421,7 +532,7 @@ function _M:on_focus(id, ui)
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_stairwait then
       self.c_desc:switchItem(self.c_rek_dif_stairwait, "The number of turns you need to wait after a kill before you can use stairs.\n2+ for Normal\n3+ for Nightmare\n5+ for Insane\n9+ for Madness")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_health then
-      self.c_desc:switchItem(self.c_rek_dif_health, "Multiply the health of all enemies by this amount.\nInsane: 1.2 or higher\nMadness: 3.0 or higher")
+      self.c_desc:switchItem(self.c_rek_dif_health, "Multiply the health of all enemies by this amount.\nMadness: 3.0 or higher")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_bossscale then
       self.c_desc:switchItem(self.c_rek_dif_bossscale, "Increase the talents given to fixed bosses.\nNightmare: 1.3+\nInsane: 1.8+\nMadness: 2.7+")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_hunted then
@@ -430,8 +541,10 @@ function _M:on_focus(id, ui)
       self.c_desc:switchItem(self.c_rek_dif_ezstatus, "Using this will halve the duration of detrimental statuses applied to the player.\nUsing it disqualifies you from achievements")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_level then
       self.c_desc:switchItem(self.c_rek_dif_level, "The level the player starts at.\nRaising it disqualifies you from achievements")
+   elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_life_bonus then
+      self.c_desc:switchItem(self.c_rek_dif_life_bonus, "The level the player starts at.\nRaising it disqualifies you from achievements unless you also qualify for Madness")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_gold then
-      self.c_desc:switchItem(self.c_rek_dif_gold, "The gold the player starts with.\nRaising it disqualifies you from achievements")       
+      self.c_desc:switchItem(self.c_rek_dif_gold, "The gold the player starts with.\nRaising it disqualifies you from achievements unless you also qualify for Madness")
    end
 end
 
