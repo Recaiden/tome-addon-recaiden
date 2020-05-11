@@ -4,14 +4,16 @@ newTalent{
    require = martyr_req1,
    points = 5,
    mode = "passive",
-
-   passives = function(self, t, p)
-
+   getMinBonus = function(self, t) return self:combatTalentScale(t, 5, 15) end,
+   getMinPenalty = function(self, t) return self:combatTalentScale(t, 10, 25) end,
+   callbackOnChaosEffect = function(self, t, effectname, ief, v)
+      game.logPlayer(self, "DEBUG insanity effect of strength ", ief) end
    end,
-
    info = function(self, t)
-      return ([[...
-]]):format()
+      return ([[You learn to intensify chaotic forces to your advantage.
+Positive insanity effects will have at least %d / 50 power and be more common.
+Negative insanity effects will have at least %d / 50 power but be less common.
+]]):format(t.getMinBonus(self, t), t.getMinPenalty(self, t))
    end,
 }
 
@@ -32,6 +34,10 @@ newTalent{
    end,
    getMinSteps = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
    getMaxSteps = function(self, t) return 8 end,
+   action = function(self, t)
+      self:setEffect(self.EFF_REK_MTYR_MANIC_SPEED, 1, {min_steps=t.getMinSteps(self, t), max_steps=t.getMaxSteps(self, t), src=self})
+      return true
+   end,
    info = function(self, t)
       return ([[Step into the time between seconds and move at infinite speed.  This will last for a random number of steps between %d and %d, or for one turn, whichever comes sooner.
 

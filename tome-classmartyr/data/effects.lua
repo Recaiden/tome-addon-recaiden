@@ -144,3 +144,32 @@ newEffect{
    deactivate = function(self, eff)
    end,
 }
+
+newEffect{
+   name = "REK_MTYR_MANIC_SPEED", image = "talents/rek_mtyr_polarity_dement.png",
+   desc = "Demented",
+   long_desc = function(self, eff) return ("The target is moving at infinite speed for %d to %d steps."):format(eff.power) end,
+   type = "mental",
+   charges = function(self, eff) return eff.stacks end,
+   subtype = { haste=true },
+   status = "beneficial",
+   parameters = { min_steps=1, max_steps=8 },
+   on_gain = function(self, err) return _t"#Target# accelerates out of sight!", _t"+Infinite Speed" end,
+   on_lose = function(self, err) return _t"#Target# has lost their manic speed", _t"-Infinite Speed" end,
+   activate = function(self, eff)
+      -- absurd hack, replace with superload of Actor:move
+      self:effectTemporaryValue(eff, "move_stamina_instead_of_energy", -0.00001)
+      eff.steps = 0
+   end,
+   deactivate = function(self, eff)
+   end,
+   callbackOnMove = function(self, eff, moved, force, ox, oy, x, y)
+      if not moved then return end
+      if ox == x and oy == y then return end
+      eff.steps = eff.steps + 1
+      local remaining = eff.max_steps - eff.steps +1
+      if remaining >= eff.maxSteps or ranndom.chance(100/remaining) then
+         self:removeEffect(self.EFF_REK_MTYR_MANIC_SPEED)
+      end
+   end,
+}
