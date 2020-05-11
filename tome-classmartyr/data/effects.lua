@@ -61,7 +61,7 @@ newEffect{
 
 
 newEffect{
-   name = "REK_MTYR_SCORN", image = "talents/rek_mtyr_infest.png",
+   name = "REK_MTYR_SCORN", image = "talents/rek_mtyr_scourge_infest.png",
    desc = "Scorned",
    long_desc = function(self, eff)
       local str = ("The target's self-image has been crushed, and they take %d damage each turn as a Disease effect"):format(eff.damage)
@@ -97,5 +97,50 @@ newEffect{
          end
       end
       eff.damage = eff.damage*eff.ramp
+   end,
+         }
+
+newEffect{
+   name = "REK_MTYR_INSPIRED", image = "talents/rek_mtyr_polarity_rebound.png",
+   desc = "Inspired",
+   long_desc = function(self, eff) return ("You are empowered by your madness, increasing  mindpower by %d."):format(eff.power * eff.stacks) end,
+   type = "other",
+   charges = function(self, eff) return eff.stacks end,
+   subtype = { demented=true },
+   status = "beneficial",
+   parameters = { power=2, stacks=1, max_stacks=5 },
+   on_merge = function(self, old_eff, new_eff)
+      old_eff.dur = new_eff.dur
+      old_eff.stacks = math.min(old_eff.stacks + new_eff.stacks, new_eff.max_stacks)
+      old_eff.power = math.max(old_eff.power, new_eff.power)
+      
+      self:removeTemporaryValue("combat_mindpower", old_eff.mentalP)
+      
+      old_eff.mentalP = self:addTemporaryValue("combat_mindpower", old_eff.power*old_eff.stacks)
+      
+      return old_eff
+   end,   
+   activate = function(self, eff)
+      eff.mentalP = self:addTemporaryValue("combat_mindpower", eff.power*eff.stacks)
+   end,
+   deactivate = function(self, eff)
+      self:removeTemporaryValue("combat_mindpower", eff.mentalP)
+   end,
+}
+
+newEffect{
+   name = "REK_MTYR_DEMENTED", image = "talents/rek_mtyr_polarity_dement.png",
+   desc = "Demented",
+   long_desc = function(self, eff) return ("The target cannot think clearly, reducing their damage and increasing their cooldowns by %d%%."):format(eff.power) end,
+   type = "mental",
+   charges = function(self, eff) return eff.stacks end,
+   subtype = { demented=true },
+   status = "detrimental",
+   parameters = { power=10 },
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "numbed", eff.power)
+      -- cooldown increase is in Actor.Lua
+   end,
+   deactivate = function(self, eff)
    end,
 }
