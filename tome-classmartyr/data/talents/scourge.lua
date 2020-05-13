@@ -122,7 +122,7 @@ newTalent{
              if d.tgt:canBe("knockback") then
                 d.tgt:pull(target.x, target.y, self:getTalentRadius(t)+1,
                            function(a)
-                              game.logSeen(d.tgt, "A tentacle pulls %s into %s!", d.tgt.name, target.name)
+                              game.logSeen(d.tgt, "%s is pulled into %s!", d.tgt.name, target.name)
                               DT:get(DT.PHYSICAL).projector(self, d.tgt.x, d.tgt.y, DT.PHYSICAL, dam)
                               DT:get(DT.PHYSICAL).projector(self, target.x, target.y, DT.PHYSICAL, dam)
                               if gift then
@@ -137,7 +137,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Tentacles burst from a Scorned target, grabbing all enemies within range %d and violently pulling them closer, dealing %d damage to both if they collide.
+      return ([[A scorned target gathers its fellows from within range %d#SLATE#(Checks knockback resistance)#LAST# creating a dangerous feedback effect that deals %d physical damage to both.
 
 #GREEN#Our Gift:#LAST# all targets pulled in also have Scorn applied to them.
 ]]):format(self:getTalentRadius(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)))
