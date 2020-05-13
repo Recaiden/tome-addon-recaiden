@@ -18,6 +18,7 @@ newBirthDescriptor{
    talents_types = {
       --Class
       --new base talents
+      ["demented/chivalry"]={true, 0.3},
       ["demented/unsettling"]={true, 0.3},
       ["demented/whispers"]={true, 0.3},
       ["demented/scourge"]={true, 0.3},

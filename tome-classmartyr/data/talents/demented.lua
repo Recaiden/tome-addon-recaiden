@@ -74,6 +74,42 @@ str_req_high4 = {
 	level = function(level) return 22 + (level-1)  end,
 }
 
+martyr_mirror_req1 = {
+   stat = { str=function(level) return 12 + (level-1) * 2 end },
+   level = function(level) return 0 + (level-1) end,
+   special = {
+      desc="Cannot learn this talent directly",
+      fct=function(self) return false end
+   },
+}
+
+martyr_mirror_req2 = {
+   stat = { str=function(level) return 20 + (level-1) * 2 end },
+   level = function(level) return 4 + (level-1) end,
+   special = {
+      desc="Cannot learn this talent directly",
+      fct=function(self) return false end
+   },
+}
+
+martyr_mirror_req3 = {
+   stat = { str=function(level) return 28 + (level-1) * 2 end },
+   level = function(level) return 8 + (level-1) end,
+   special = {
+      desc="Cannot learn this talent directly",
+      fct=function(self) return false end
+   },
+}
+
+martyr_mirror_req4 = {
+   stat = { str=function(level) return 36 + (level-1) * 2 end },
+   level = function(level) return 12 + (level-1) end,
+   special = {
+      desc="Cannot learn this talent directly",
+      fct=function(self) return false end
+   },
+}
+
 
 if not Talents.talents_types_def["demented/unsettling"] then
    newTalentType{ allow_random=false, type="demented/unsettling", name = "Unsettling Words", description = "Distort your enemies' perceptions and fray their sanity.", is_mind=true }
@@ -93,4 +129,9 @@ end
 if not Talents.talents_types_def["demented/scourge"] then
    newTalentType{ allow_random=false, is_mind=true, type="demented/scourge", name = "Scourge", description = "We will fight; you are but a vessel." }
    load("/data-classmartyr/talents/scourge.lua")
+end
+
+if not Talents.talents_types_def["demented/chivalry"] then
+   newTalentType{ allow_random=false, is_mind=true, type="demented/chivalry", name = "Chivalry", description = "ONward, to greater challenges, for glory!" }
+   load("/data-classmartyr/talents/chivalry.lua")
 end

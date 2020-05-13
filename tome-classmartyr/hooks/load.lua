@@ -5,7 +5,9 @@ local DamageType = require "engine.DamageType"
 local Talents = require "engine.interface.ActorTalents"
 local Zone = require "engine.Zone"
 local Map = require "engine.Map"
+local Colors = require "engine.colors"
 
+Colors:defineColor('MIDNIGHT', 25, 25, 112)
 class:bindHook("ToME:load", function(self, data)
   Talents:loadDefinition('/data-classmartyr/talents/demented.lua')
   ActorTemporaryEffects:loadDefinition('/data-classmartyr/effects.lua')
