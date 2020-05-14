@@ -41,7 +41,7 @@ newTalent{
          -- insanityBonus
          if amInsane(self) then
             if target:canBe("stun") then
-               target:setEffect(target.EFF_STUN, t.getDuration(self, t), {apply_power=self:combatMindpower()})
+               target:setEffect(target.EFF_STUNNED, t.getDuration(self, t), {apply_power=self:combatMindpower()})
             end
          end
       end

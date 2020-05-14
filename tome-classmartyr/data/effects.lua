@@ -148,17 +148,19 @@ newEffect{
 newEffect{
    name = "REK_MTYR_MANIC_SPEED", image = "talents/rek_mtyr_polarity_dement.png",
    desc = "Demented",
-   long_desc = function(self, eff) return ("The target is moving at infinite speed for %d to %d steps."):format(eff.power) end,
+   long_desc = function(self, eff) return ("The target is moving at infinite speed for %d to %d steps."):format(eff.min_steps, eff.max_steps) end,
    type = "mental",
-   charges = function(self, eff) return eff.stacks end,
+   charges = function(self, eff) return math.max(0, eff.min_steps - eff.steps) end,
    subtype = { haste=true },
    status = "beneficial",
    parameters = { min_steps=1, max_steps=8 },
-   on_gain = function(self, err) return _t"#Target# accelerates out of sight!", _t"+Infinite Speed" end,
-   on_lose = function(self, err) return _t"#Target# has lost their manic speed", _t"-Infinite Speed" end,
+
+   on_gain = function(self, err) return "#Target# accelerates out of sight!", "+Infinite Speed" end,
+   on_lose = function(self, err) return "#Target# has lost their manic speed.", "-Infinite Speed" end,
    activate = function(self, eff)
-      -- absurd hack, replace with superload of Actor:move
-      self:effectTemporaryValue(eff, "move_stamina_instead_of_energy", -0.00001)
+      -- absurd hack, please replace 
+      --self:effectTemporaryValue(eff, "move_stamina_instead_of_energy", -0.00001)
+      self.did_energy = true
       eff.steps = 0
    end,
    deactivate = function(self, eff)
@@ -166,9 +168,19 @@ newEffect{
    callbackOnMove = function(self, eff, moved, force, ox, oy, x, y)
       if not moved then return end
       if ox == x and oy == y then return end
+
+      self.did_energy = true
+      if self.reload then
+         local reloaded = self:reload()
+         if not reloaded and self.reloadQS then
+            self:reloadQS()
+         end
+      end
+      --self.energy.value = self.energy.value + game.energy_to_act * self:combatMovementSpeed(x, y)
+      
       eff.steps = eff.steps + 1
       local remaining = eff.max_steps - eff.steps +1
-      if remaining >= eff.maxSteps or ranndom.chance(100/remaining) then
+      if eff.steps >= eff.max_steps or (eff.steps > eff.min_steps and rng.percent(100/remaining)) then
          self:removeEffect(self.EFF_REK_MTYR_MANIC_SPEED)
       end
    end,

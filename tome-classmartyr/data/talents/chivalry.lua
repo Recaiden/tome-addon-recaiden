@@ -63,13 +63,55 @@ newTalent{
    type = {"demented/chivalry", 2},
    require = martyr_mirror_req2,
    points = 5,
-   mode = "passive",
-   getRamp = function(self, t) return self:combatTalentScale(t, 0.08, 0.3) end,
-   getFail = function(self, t) return math.min(33, self:combatTalentScale(t, 10, 20)) end,
+   range = 10,
+   target = function(self, t) return {type="widebeam", radius=1, range=self:getTalentRange(t), selffire=false, talent=t} end,
+   getHitDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
+   getSideDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
+   getDazeDuration = function(self, t) return self:combatTalentScale(t, 2, 7) end,
+   getStunDuration = function(self, t) return self:combatTalentScale(t, 2, 7) end,
+   action = function(self, t)
+      local tg = self:getTalentTarget(t)
+      local x, y = self:getTarget(tg)
+      if not x or not y then return nil end
+      local _ _, _, _, x, y = self:canProject(tg, x, y)
+      if core.fov.distance(self.x, self.y, x, y) < 1 then return nil end
+      
+      local tgts = {}
+      local dam = self:spellCrit(t.getDamage(self, t))
+      local slow = t.getSlow(self, t)
+      local proj = t.getProj(self, t)
+      self:project(tg, x, y, function(px, py)
+                      DamageType:get(DamageType.OCCULT).projector(self, px, py, DamageType.OCCULT, dam)
+                      local target = game.level.map(px, py, Map.ACTOR)
+                      if target then tgts[target] = true end
+                             end)
+      
+      local sorted_tgts = {}
+      for target, _ in pairs(tgts) do
+         sorted_tgts[#sorted_tgts+1] = {target=target, dist=core.fov.distance(self.x, self.y, target.x, target.y)}
+      end
+      table.sort(sorted_tgts, "dist")
+      
+      -- Compute beam direction to knockback all targets in that direction even if they are on the sides of the beam
+      local angle = math.atan2(y - self.y, x - self.x)
+      
+      for _, tgt in ripairs(sorted_tgts) do
+         local target = tgt.target
+         if target:canBe("slow") then
+            target:setEffect(target.EFF_CONGEAL_TIME, 4, {slow=slow, proj=proj, apply_power=self:combatSpellpower()})
+         end
+         if self:getTalentLevel(t) >= 5 and target:canBe("knockback") then
+            target:pull(target.x + math.cos(angle) * 10, target.y + math.sin(angle) * 10, 3)
+         end
+      end
+      
+      return true
+   end,
+   
    info = function(self, t)
-      return ([[Hop astride your noble steed and run down a target at least 3 spaces away.  All other targets in or next to your path will be attacked with your mainhand weapon for %d%% damage and dazed for %d turns on a hit.  Your main target will be struck with all weapnos for %d%% damage and stunned for %d turns.
+      return ([[Hop astride your noble steed and run down a target at least 3 spaces away.  All other targets in or next to your path will be attacked with your mainhand weapon for %d%% damage and dazed for %d turns on a hit.  Your main target will be struck with all weapons for %d%% damage and stunned for %d turns.
 
-If you are wielding the #MIDNIGHT#Moment#LAST# you will deal full damage to all targets.]]):format(t.getRamp(self, t)*100, t.getFail(self, t))
+If you are wielding the #MIDNIGHT#Moment#LAST# you will deal full damage to all targets.]]):format(t.getSideDamage(self, t)*100, t.getDazeDuration(self, t), t.getHitDamage(self, t)*100, t.getStunDuration(self, t))
    end,
 }
 
@@ -133,7 +175,7 @@ newTalent{
    info = function(self, t)
       return ([[Throw off any stun, daze, or pin that would stop you from moving and then lunge forward, striking a random adjacent enemy for %d%% damage.
 This will also attack with your shield if you have one equipped.
-]]):format(self:getDamage(t))
+]]):format(t.getDamage(self, t)*100)
    end,
 }
 
@@ -143,15 +185,15 @@ newTalent{
    require = martyr_mirror_req4,
    points = 5,
    mode = "passive",
-   immunities = function(self, t) return self:combatTalentLimit(t, 1, 0.2, 0.7) end,
+   getImmunities = function(self, t) return self:combatTalentLimit(t, 1, 0.2, 0.7) end,
    passives = function(self, t, p)
-      self:talentTemporaryValue(p, "blind_immune", t.immunities(self, t))
-      self:talentTemporaryValue(p, "disarm_immune", t.immunities(self, t))
-      self:talentTemporaryValue(p, "cut_immune", t.immunities(self, t))
+      self:talentTemporaryValue(p, "blind_immune", t.getImmunities(self, t))
+      self:talentTemporaryValue(p, "disarm_immune", t.getImmunities(self, t))
+      self:talentTemporaryValue(p, "cut_immune", t.getImmunities(self, t))
    end,
    info = function(self, t)
       return ([[You will not let minor wounds and difficulties stop you from fighting.
 		You gain %d%% resistance to disarms, wounds and blindness.]]):
-      format(t.critResist(self, t), 100*t.immunities(self, t))
+      format(100*t.getImmunities(self, t))
    end,
 }

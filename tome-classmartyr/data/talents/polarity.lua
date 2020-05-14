@@ -7,7 +7,7 @@ newTalent{
    getMinBonus = function(self, t) return self:combatTalentScale(t, 5, 15) end,
    getMinPenalty = function(self, t) return self:combatTalentScale(t, 10, 25) end,
    callbackOnChaosEffect = function(self, t, effectname, ief, v)
-      game.logPlayer(self, "DEBUG insanity effect of strength ", ief) end
+      game.logPlayer(self, "DEBUG insanity effect of strength ", ief)
    end,
    info = function(self, t)
       return ([[You learn to intensify chaotic forces to your advantage.
@@ -64,7 +64,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[When you suffer a negative insanity effect, the mad visions grant you Inspiration, increasing your Mindpower by %d for %d turns.  This stacks up to %d times.
-]]):format(t.getPower(self, t), t.getDuration(self, t) t.getMaxStacks(self, t))
+]]):format(t.getPower(self, t), t.getDuration(self, t), t.getMaxStacks(self, t))
    end,
 }
 
@@ -74,7 +74,7 @@ newTalent{
    require = martyr_req4,
    points = 5,
    cooldown = 8,
-   getDamage = function(self, t) return math.min(50, self:combatTalentMindDamage(t, 15, 40)) end,
+   getPower = function(self, t) return math.min(50, self:combatTalentMindDamage(t, 15, 40)) end,
    getDuration = function(self, t) return self:combatTalentScale(t, 3, 5) end,
    range = 10,
    target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
