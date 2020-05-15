@@ -184,4 +184,20 @@ newEffect{
          self:removeEffect(self.EFF_REK_MTYR_MANIC_SPEED)
       end
    end,
+         }
+
+newEffect{
+   name = "REK_MTYR_OVERSEER", image = "talents/rek_mtyr_vagabond_tainted_bullets.png",
+   desc = "Psychic Tunneling",
+   long_desc = function(self, eff) return ("Detects creatures of type %s/%s in radius 15."):format(eff.type, eff.subtype) end,
+   type = "mental",
+   subtype = { whisper=true },
+   status = "beneficial",
+   parameters = { type="humanoid", subtype="human" },
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "esp", {[eff.type.."/"..eff.subtype]=1})
+      self:effectTemporaryValue(eff, "esp_range", 5)
+   end,
+   deactivate = function(self, eff)
+   end,
 }

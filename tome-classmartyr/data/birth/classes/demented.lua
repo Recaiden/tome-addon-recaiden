@@ -19,6 +19,7 @@ newBirthDescriptor{
       --Class
       --new base talents
       ["demented/chivalry"]={true, 0.3},
+      ["demented/vagabond"]={true, 0.3},
       ["demented/unsettling"]={true, 0.3},
       ["demented/whispers"]={true, 0.3},
       ["demented/scourge"]={true, 0.3},
@@ -36,20 +37,37 @@ newBirthDescriptor{
    },
    birth_example_particles = "darkness_shield",
    talents = {
+      [ActorTalents.T_SHOOT] = 1,
       --[ActorTalents.T_WEAPONS_MASTERY] = 1,
       [ActorTalents.T_WEAPON_COMBAT] = 1,
       [ActorTalents.T_REK_MTYR_WHISPERS_SLIPPING_PSYCHE] = 1,
       [ActorTalents.T_REK_MTYR_UNSETTLING_UNNERVE] = 1,
-      
-      --[ActorTalents.T_ARMOUR_TRAINING] = 2,
+      [ActorTalents.T_REK_MTYR_POLARITY_DEEPER_SHADOWS] = 1,
    },
    
    copy = {
-      max_life = 110,
+      max_life = 105,
+      resolvers.auto_equip_filters{
+         MAINHAND = {type="weapon", subtype="sling"},
+         OFFHAND = {type="none"},
+         QUIVER={properties={"archery_ammo"}, special=function(e, filter) -- must match the MAINHAND weapon, if any
+               local mh = filter._equipping_entity and filter._equipping_entity:getInven(filter._equipping_entity.INVEN_MAINHAND)
+               mh = mh and mh[1]
+               if not mh or mh.archery == e.archery_ammo then return true end
+                                                      end},
+         QS_MAINHAND = {type="weapon", not_properties={"twohanded"}},
+                                  },
       resolvers.equipbirth{ id=true,
-			    {type="weapon", subtype="greatsword", name="iron greatsword", autoreq=true, ego_chance=-1000},
-			    {type="armor", subtype="heavy", name="iron mail armour", autoreq=true, ego_chance=-1000, ego_chance=-1000}
-      },
+                            {type="weapon", subtype="sling", name="rough leather sling", autoreq=true, ego_chance=-1000},
+                            {type="ammo", subtype="shot", name="pouch of iron shots", autoreq=true, ego_chance=-1000},
+                          },
+      resolvers.inventorybirth{
+         id=true, inven="QS_MAINHAND",
+         {type="weapon", subtype="dagger", name="iron dagger", autoreq=true, ego_chance=-1000},
+                              },
+      resolvers.generic(function(e)
+                           e.auto_shoot_talent = e.T_SHOOT
+                        end),
    },
    copy_add = {
       life_rating = 1,

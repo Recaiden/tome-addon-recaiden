@@ -110,6 +110,7 @@ martyr_mirror_req4 = {
    },
 }
 
+archerPreUse = Talents.main_env.archerPreUse
 
 if not Talents.talents_types_def["demented/unsettling"] then
    newTalentType{ allow_random=false, type="demented/unsettling", name = "Unsettling Words", description = "Distort your enemies' perceptions and fray their sanity.", is_mind=true }
@@ -132,6 +133,11 @@ if not Talents.talents_types_def["demented/scourge"] then
 end
 
 if not Talents.talents_types_def["demented/chivalry"] then
-   newTalentType{ allow_random=false, is_mind=true, type="demented/chivalry", name = "Chivalry", description = "ONward, to greater challenges, for glory!" }
+   newTalentType{ allow_random=false, is_mind=true, type="demented/chivalry", name = "Chivalry", description = "Onward, to greater challenges, for glory!" }
    load("/data-classmartyr/talents/chivalry.lua")
+end
+
+if not Talents.talents_types_def["demented/vagabond"] then
+   newTalentType{ allow_random=false, is_mind=true, type="demented/vagabond", name = "Vagabond", description = "I'm not the only one seeing this, right?" }
+   load("/data-classmartyr/talents/vagabond.lua")
 end

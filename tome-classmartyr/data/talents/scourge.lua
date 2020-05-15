@@ -1,5 +1,5 @@
 newTalent{
-   name = "Infest", short_name = "REK_MTYR_SCOURGE_INFEST",
+   name = "Scorn", short_name = "REK_MTYR_SCOURGE_INFEST",
    type = {"demented/scourge", 1},
    require = martyr_req1,
    points = 5,
