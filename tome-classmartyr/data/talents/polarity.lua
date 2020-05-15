@@ -6,9 +6,6 @@ newTalent{
    mode = "passive",
    getMinBonus = function(self, t) return self:combatTalentScale(t, 5, 15) end,
    getMinPenalty = function(self, t) return self:combatTalentScale(t, 10, 25) end,
-   callbackOnChaosEffect = function(self, t, effectname, ief, v)
-      game.logPlayer(self, "DEBUG insanity effect of strength ", ief)
-   end,
    info = function(self, t)
       return ([[You learn to intensify chaotic forces to your advantage.
 Positive insanity effects will have at least %d / 50 power and be more common.
@@ -22,12 +19,15 @@ newTalent{
    type = {"demented/polarity", 2},
    require = martyr_req2,
    points = 5,
-   insanity = 15,
    no_energy = true,
    cooldown = 12,
    on_pre_use = function(self, t, silent)
       if self:attr("never_move") then
          if not silent then game.logPlayer(self, "You can't use this if you can't move") end
+         return false
+      end
+      if self:getInsanity() < 10 then
+         if not silent then game.logPlayer(self, "You aren't insane enough to use this") end
          return false
       end
       return true
@@ -40,6 +40,8 @@ newTalent{
    end,
    info = function(self, t)
       return ([[Step into the time between seconds and move at infinite speed.  This will last for a random number of steps between %d and %d, or for one turn, whichever comes sooner.
+
+Requires 10 insanity or higher, but has no cost.
 
 #{italic}#Perfection is not 'going faster'.  Perfection is 'already being there'.#{normal}#]]):format(t.getMinSteps(self, t), t.getMaxSteps(self, t))
    end,
@@ -56,10 +58,9 @@ newTalent{
    getMaxStacks = function(self, t) return 5 end,
    callbackOnChaosEffect = function(self, t, effectname, ief, v)
       if self.turn_procs.rek_mtyr_inspired then return end
-      local trig = t.getTrigger(self, t)
-      if ief < 0 then
+      if (ief < 0 and effectname == "damage") or (ief > 0 and effectname == "cooldown") then
          self.turn_procs.rek_mtyr_inspired = true
-         self:setEffect(self.EFF_REK_MTYR_INSPIRED, 10, {stacks = 1, max_stacks=t.getMax(self, t)})
+         self:setEffect(self.EFF_REK_MTYR_INSPIRED, 10, {stacks = 1, max_stacks=t.getMaxStacks(self, t)})
       end
    end,
    info = function(self, t)
@@ -74,7 +75,7 @@ newTalent{
    require = martyr_req4,
    points = 5,
    cooldown = 8,
-   getPower = function(self, t) return math.min(50, self:combatTalentMindDamage(t, 15, 40)) end,
+   getPower = function(self, t) return math.min(0.50, self:combatTalentMindDamage(t, 0.15, 0.40)) end,
    getDuration = function(self, t) return self:combatTalentScale(t, 3, 5) end,
    range = 10,
    target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
@@ -99,6 +100,8 @@ newTalent{
    end,
    info = function(self, t)
       return ([[Consume your Inspiration to drag a target into the depths of insanity, reducing their damage dealt by %d%% and increasing the cooldowns of any talents they use by %d%% for the next %d turns.
-]]):format(t.getPower(self, t), t.getPower(self, t), t.getDuration(self, t))
+
+Mindpower: increases effects
+]]):format(100*t.getPower(self, t), 100*t.getPower(self, t), t.getDuration(self, t))
    end,
 }

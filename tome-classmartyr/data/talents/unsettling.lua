@@ -4,7 +4,21 @@ newTalent{
    require = martyr_req1,
    points = 5,
    cooldown = 3,
-   range = 3,
+   range = function(self, t)
+      local weapon, ammo, offweapon, pf_weapon = self:hasArcheryWeapon()
+      if not (weapon and weapon.combat) and not (pf_weapon and pf_weapon.combat) then 
+         if self:hasArcheryWeaponQS() then
+            weapon, ammo, offweapon, pf_weapon = self:hasArcheryWeaponQS()
+         else
+            return 3
+         end
+      end
+      local br = (self.archery_bonus_range or 0)
+      return math.max(weapon and br + weapon.combat.range or 6,
+         offweapon and offweapon.combat and br + offweapon.combat.range or 0,
+         pf_weapon and pf_weapon.combat and br + pf_weapon.combat.range or 0,
+         self:attr("archery_range_override") or 0)
+   end,
    requires_target = true,
    tactical = { DISABLE = { confusion = 2 } },
    target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
@@ -56,9 +70,9 @@ newTalent{
    end,
    
    info = function(self, t)
-      return ([[Inform an enemy about the true bleak vistas of reality, confusing them for %d turns (%d power).
+      return ([[Inform an enemy about the true bleak vistas of reality, confusing them for %d turns (%d power).  The range of this talent will increase with the firing range of a ranged weapon in your main set or offset (but is always at least 3).
 
-#ORANGE#Sanity Bonus:#LAST# Take advantage of their moment of realization to throw a sucker punch, dealing %d%% unarmed damage.
+#ORANGE#Sanity Bonus:#LAST# Take advantage of their moment of realization to throw a sucker punch(even at range), dealing %d%% unarmed damage.
 ]]):format(t.getDuration(self, t), t.getPower(self, t), 100*t.getDamage(self, t))
    end,
 }

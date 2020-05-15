@@ -133,12 +133,11 @@ newEffect{
    desc = "Demented",
    long_desc = function(self, eff) return ("The target cannot think clearly, reducing their damage and increasing their cooldowns by %d%%."):format(eff.power) end,
    type = "mental",
-   charges = function(self, eff) return eff.stacks end,
    subtype = { demented=true },
    status = "detrimental",
-   parameters = { power=10 },
+   parameters = { power=0.1 },
    activate = function(self, eff)
-      self:effectTemporaryValue(eff, "numbed", eff.power)
+      self:effectTemporaryValue(eff, "numbed", eff.power*100)
       -- cooldown increase is in Actor.Lua
    end,
    deactivate = function(self, eff)
