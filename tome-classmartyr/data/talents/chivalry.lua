@@ -1,60 +1,55 @@
 newTalent{
-   name = "Duelist's Challenge", short_name = "REK_MTYR_CHIVALRY_DUELIST_CHALLENGE",
+   name = "Champion's Focus", short_name = "REK_MTYR_CHIVALRY_CHAMPIONS_FOCUS",
    type = {"demented/chivalry", 1},
    require = martyr_mirror_req1,
    points = 5,
-   cooldown = 6,
-   range = 1,
-   is_melee = true,
-   requires_target = true,
-   tactical = { ATTACK = 1 },
-   target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
-   getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
-   getHitDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
-   getDotDamage = function(self, t) return self:combatTalentMindDamage(t, 4, 25) end,
-   action = function(self, t)
-      local tg = self:getTalentTarget(t)
-      local x, y, target = self:getTarget(tg)
-      if not target or not self:canProject(tg, x, y) then return nil end
-      if not target then return end
-
-      local dam = self:mindCrit(t.getDotDamage(self, t))
-      local ramp = 1
-      local fail = 0
-      local lifesteal = 0
-      --DoT
-      if self:knowTalent(self.T_REK_MTYR_CHIVALRY_SPROUTING) then
-         local t2 = self:getTalentFromId(self.T_REK_MTYR_CHIVALRY_SPROUTING)
-         ramp = ramp + t2.getRamp(self, t2)
-         if amInsane(self) then
-            fail = t2.getFail(self, t2)
-         end
+   cooldown = 15,
+   getChance = function(self,t) return self:combatLimit(self:combatTalentStatDamage(t, "dex", 10, 90),100, 6.8, 6.8, 61, 61) end,
+   getCost = function(self, t) return self:combatTalentScale(t, 5, 5) end,
+   getCost = function(self, t) return self:combatTalentScale(t, 40, 40) end,
+   on_pre_use = function(self, t, silent)
+      if self:getInsanity() < 40 then
+         if not silent then game.logPlayer(self, "You aren't insane enough to use this") end
+         return false
       end
-      if self:knowTalent(self.T_REK_MTYR_CHIVALRY_SHARED_FEAST) then
-         local t4 = self:getTalentFromId(self.T_REK_MTYR_CHIVALRY_SHARED_FEAST)
-         lifesteal = lifesteal + t4.getDrain(self, t4)
-      end
-
-      local hit = self:attackTarget(target, nil, 1, true)
-      if hit and not target.dead then
-         target:setEffect(target.EFF_REK_MTYR_SCORN, 5, {damage=dam, ramp=ramp, fail=fail, lifesteal=lifesteal, src=self, apply_power=self:combatMindpower()})
-         -- insanityBonus
-         if amInsane(self) then
-            if target:canBe("stun") then
-               target:setEffect(target.EFF_STUN, t.getDuration(self, t), {apply_power=self:combatMindpower()})
-            end
-         end
-      end
-      
       return true
    end,
-   
-   info = function(self, t)
-      return ([[Strike an enemy in melee, and, if you hit, afflict the target with Scorn, which does %d mind damage per turn for %d turns (#SLATE#No save#LAST#).  Scorn ignores immunity but is otherwise treated as a disease.
-Mindpower: increases damage.
+   callbackOnMeleeAttack = function(self, t, target, hitted, crit, weapon, damtype, mult, dam, hd)
+      -- checks self.turn_procs._no_melee_recursion just in case
+      if hitted and weapon and not (self.turn_procs._rek_mtyr_focus_active or self.turn_procs._no_melee_recursion or target.dead) then
+         local rek_mtyr_focus = self.turn_procs._rek_mtyr_focus or {}
+         self.turn_procs._rek_mtyr_focus = rek_mtyr_focus
+         if not rek_mtyr_focus[weapon] and rng.percent(t.getChance(self, t)) then
+            rek_mtyr_focus[weapon] = true
 
-#GREEN#Our Gift:#LAST# The target will be stunned (#SLATE#Mindpower vs. Physical#LAST#) for %d turns.
-]]):format(t.getDotDamage(self, t), 5, t.getDuration(self, t))
+            self.turn_procs._rek_mtyr_focus_active = true
+            self:attackTargetWith(target, weapon, damtype, mult)
+            self.turn_procs._rek_mtyr_focus_active = nil
+
+            self:incInsanity(-1*t.getCost(self, t))
+            if self:getInsanity() < t.getThreshold(self, t) then
+               self:forceUseTalent(self.T_MTYR_CHIVALRY_CHAMPIONS_FOCUS, {ignore_energy=true})
+            end
+            
+         end
+      end
+   end,
+   activate = function(self, t)
+      local ret = {}
+      
+      return ret
+   end,
+   deactivate = function(self, t, p)
+      --self:removeParticles(p.particle)
+      return true
+   end,
+   info = function(self, t)
+      return ([[Each melee attack you land on your target has a %d%% chance to trigger another, similar strike.
+This works for all blows, even those from other talents and from shield bashes, but this talent can grant at most one attack per weapon per turn.
+
+This will consume %d insanity when it triggers, and deactivate if this brings you to below %d insanity.
+
+Dexterity: increases chance]]):format(t.getchance(self, t), t.getCost(self, t), t.getThreshold(self, t))
    end,
 }
 
