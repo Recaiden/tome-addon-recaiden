@@ -112,14 +112,24 @@ martyr_mirror_req4 = {
 
 archerPreUse = Talents.main_env.archerPreUse
 
-if not Talents.talents_types_def["demented/unsettling"] then
-   newTalentType{ allow_random=false, type="demented/unsettling", name = "Unsettling Words", description = "Distort your enemies' perceptions and fray their sanity.", is_mind=true }
-   load("/data-classmartyr/talents/unsettling.lua")
+if not Talents.talents_types_def["demented/chivalry"] then
+   newTalentType{ allow_random=false, is_mind=true, type="demented/chivalry", name = "Chivalry", description = "Onward, to greater challenges, for glory!" }
+   load("/data-classmartyr/talents/chivalry.lua")
+end
+
+if not Talents.talents_types_def["demented/vagabond"] then
+   newTalentType{ allow_random=false, is_mind=true, type="demented/vagabond", name = "Vagabond", description = "I'm not the only one seeing this, right?" }
+   load("/data-classmartyr/talents/vagabond.lua")
 end
 
 if not Talents.talents_types_def["demented/whispers"] then
    newTalentType{ allow_random=false, type="demented/whispers", name = "Beinagrind Whispers", description = "Exist on the edge of madness", is_mind=true }
    load("/data-classmartyr/talents/whispers.lua")
+end
+
+if not Talents.talents_types_def["demented/unsettling"] then
+   newTalentType{ allow_random=false, type="demented/unsettling", name = "Unsettling Words", description = "Distort your enemies' perceptions and fray their sanity.", is_mind=true }
+   load("/data-classmartyr/talents/unsettling.lua")
 end
 
 if not Talents.talents_types_def["demented/polarity"] then
@@ -132,12 +142,7 @@ if not Talents.talents_types_def["demented/scourge"] then
    load("/data-classmartyr/talents/scourge.lua")
 end
 
-if not Talents.talents_types_def["demented/chivalry"] then
-   newTalentType{ allow_random=false, is_mind=true, type="demented/chivalry", name = "Chivalry", description = "Onward, to greater challenges, for glory!" }
-   load("/data-classmartyr/talents/chivalry.lua")
-end
-
-if not Talents.talents_types_def["demented/vagabond"] then
-   newTalentType{ allow_random=false, is_mind=true, type="demented/vagabond", name = "Vagabond", description = "I'm not the only one seeing this, right?" }
-   load("/data-classmartyr/talents/vagabond.lua")
+if not Talents.talents_types_def["demented/standard-bearer"] then
+   newTalentType{ allow_random=false, is_mind=true, type="demented/standard-bearer", name = "Standard-Bearer", description = "To he who is victorious, ever more victories will flow!" }
+   load("/data-classmartyr/talents/standard-bearer.lua")
 end

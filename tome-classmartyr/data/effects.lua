@@ -199,4 +199,19 @@ newEffect{
    end,
    deactivate = function(self, eff)
    end,
+         }
+
+newEffect{
+   name = "REK_FLAG_SYMBIOSIS", image = "talents/rek_mtyr_standard_symbiosis.png",
+   desc = "Aura of Confidence",
+   long_desc = function(self, eff) return ("Linked to their flag gaining %d%% all damage resistance."):format(eff.resist) end,
+   type = "other",
+   subtype = { miscellaneous=true },
+   status = "beneficial",
+   parameters = { resist=10, save=0 },
+   on_gain = function(self, err) return "#Target# links closer to his ally!", true end,
+   on_lose = function(self, err) return "#Target# no longer seems to be in sync with his ally.", true end,
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "resists", {all = eff.resist})
+   end,
 }

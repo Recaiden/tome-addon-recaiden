@@ -6,7 +6,7 @@ newTalent{
    cooldown = 15,
    getChance = function(self,t) return self:combatLimit(self:combatTalentStatDamage(t, "dex", 10, 90),100, 6.8, 6.8, 61, 61) end,
    getCost = function(self, t) return self:combatTalentScale(t, 5, 5) end,
-   getCost = function(self, t) return self:combatTalentScale(t, 40, 40) end,
+   getThreshold = function(self, t) return self:combatTalentScale(t, 40, 40) end,
    on_pre_use = function(self, t, silent)
       if self:getInsanity() < 40 then
          if not silent then game.logPlayer(self, "You aren't insane enough to use this") end
@@ -49,7 +49,7 @@ This works for all blows, even those from other talents and from shield bashes, 
 
 This will consume %d insanity when it triggers, and deactivate if this brings you to below %d insanity.
 
-Dexterity: increases chance]]):format(t.getchance(self, t), t.getCost(self, t), t.getThreshold(self, t))
+Dexterity: increases chance]]):format(t.getChance(self, t), t.getCost(self, t), t.getThreshold(self, t))
    end,
 }
 

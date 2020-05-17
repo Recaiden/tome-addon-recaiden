@@ -23,6 +23,7 @@ newBirthDescriptor{
       ["demented/unsettling"]={true, 0.3},
       ["demented/whispers"]={true, 0.3},
       ["demented/scourge"]={true, 0.3},
+      ["demented/standard-bearer"]={true, 0.3},
 
       --advanced talents
 
