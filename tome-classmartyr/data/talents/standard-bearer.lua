@@ -21,8 +21,8 @@ function martyrSetupSummon(self, def, x, y, level, turns, no_control)
 
    m.ai_state = m.ai_state or {}
    m.ai_state.tactic_leash = 100
-   -- Try to use stored AI talents to preserve tweaking over multiple summons
    m.ai_talents = self.stored_ai_talents and self.stored_ai_talents[m.name] or {}
+   
    m.inc_damage = table.clone(self.inc_damage, true)
    m.no_drops = true
    
@@ -112,17 +112,17 @@ newTalent{
    on_pre_use = function(self, t) return not necroArmyStats(self).dread end,
    callbackOnKill = function(self, t, src, death_note)
       if self:isTalentCoolingDown(t) then return end
-      t.doSummon(self, t)
-      self:startTalentCooldown(t)
+      local didSummon = t.doSummon(self, t, src.x, src.y)
+      if didSummon then self:startTalentCooldown(t) end
    end,
    thRare = function(self, t) return .4 end,
    thBoss = function(self, t) return 0.25 end,
    thEBoss = function(self, t) return 0.1 end,
-   doSummon = function(self, t)
+   doSummon = function(self, t, x, y)
       local lev = t.getLevel(self, t)
       
-      local x, y = util.findFreeGrid(self.x, self.y, 5, true, {[Map.ACTOR]=true})
-      if not x then return end
+      local x, y = util.findFreeGrid(x, y, 5, true, {[Map.ACTOR]=true})
+      if not x then return false end
       local flag = martyrSetupSummon(self, t.flag, x, y, lev, nil, true)
       if self:knowTalent(self.T_REK_MTYR_STANDARD_CONTROL) then
          local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_CONTROL))
@@ -139,9 +139,10 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[When you kill an enemy, summon a Flag of level %d where they died that magically strike nearby enemies.
-This has a cooldown.
-This effect also triggers when you have done: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.]]):format(math.max(1, self.level + t.getLevel(self, t)), t.thRare(self, t)*100, t.thBoss(self, t)*100, t.thEBoss(self, t)*100)
+      return ([[When you kill an enemy, summon a Flag of level %d where they died that magically strike nearby enemies.  This has a cooldown.
+You also summon a flag when you have done enough damage to a powerful enemy with %d turns: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
+
+Flags last until destroyed or until you leave the level, but you can only have 3 placed at a time.]]):format(math.max(1, self.level + t.getLevel(self, t)), t.thRare(self, t)*100, t.thBoss(self, t)*100, t.thEBoss(self, t)*100)
    end,
 }
 
@@ -161,12 +162,16 @@ newTalent{
       end
       return 1
    end,
+   target = function(self, t) return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
    action = function(self, t)
       if not self:knowTalent(self.T_REK_MTYR_STANDARD_IRRUPTION) then
          return false
       end
+      local tg = self:getTalentTarget(t)
+      local x, y, target = self:getTarget(tg)
+      if not x or not y then return nil end
       local t1 = self:getTalentFromId(self.T_REK_MTYR_STANDARD_IRRUPTION)
-      t1.doSummon(self, t1)
+      t1.doSummon(self, t1, x, y)
       return true
    end,
    info = function(self, t)
