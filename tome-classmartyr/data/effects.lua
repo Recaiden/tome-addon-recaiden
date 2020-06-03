@@ -215,3 +215,54 @@ newEffect{
       self:effectTemporaryValue(eff, "resists", {all = eff.resist})
    end,
 }
+
+
+newEffect{
+   name = "REK_MTYR_GUIDANCE_HEAL", image = "talents/rek_mtyr_whispers_guiding_light.png",
+   desc = "Guided to Healing",
+   long_desc = function(self, eff)
+      local str = ("A light of life shines upon the target, regenerating %0.2f life per turn."):format(eff.power)
+      if eff.aura > 0 then
+         str = str..(" and damaging nearby enemies for %d mind damage."):format(eff.aura)
+      end
+      return str
+   end,
+   type = "physical",
+   subtype = { healing=true, regeneration=true },
+   status = "beneficial",
+   parameters = { power=10, aura=0 },
+   on_gain = function(self, err) return "#Target# is healing in the light.", "+Regen" end,
+   on_lose = function(self, err) return "#Target# stops healing.", "-Regen" end,
+   activate = function(self, eff)
+      eff.tmpid = self:addTemporaryValue("life_regen", eff.power)   
+      if core.shader.active(4) then
+         eff.particle1 = self:addParticles(Particles.new("shader_shield", 1, {toback=true,  size_factor=1.5, y=-0.3, img="healarcane"}, {type="healing", time_factor=4000, noup=2.0, circleColor={0,0,0,0}, beamsCount=9}))
+         eff.particle2 = self:addParticles(Particles.new("shader_shield", 1, {toback=false, size_factor=1.5, y=-0.3, img="healarcane"}, {type="healing", time_factor=4000, noup=1.0, circleColor={0,0,0,0}, beamsCount=9}))
+      end
+   end,
+   on_timeout = function(self, eff)
+      if self:knowTalent(self.T_ANCESTRAL_LIFE) then
+         local t = self:getTalentFromId(self.T_ANCESTRAL_LIFE)
+         self:incEquilibrium(-t.getEq(self, t))
+      end
+   end,
+   deactivate = function(self, eff)
+      self:removeParticles(eff.particle1)
+      self:removeParticles(eff.particle2)
+      self:removeTemporaryValue("life_regen", eff.tmpid)
+   end,
+         }
+
+newEffect{
+   name = "REK_MTYR_GUIDANCE_AVAILABLE", image = "talents/rek_mtyr_whispers_guiding_light.png",
+   desc = "Seeking the Light",
+   long_desc = function(self, eff) return ("Somewhere nearby is a beam of light this creature is looking for"):format() end,
+   type = "other",
+   subtype = { whisper=true },
+   status = "beneficial",
+   parameters = { ground_effect='' },
+   activate = function(self, eff)
+   end,
+   deactivate = function(self, eff)
+   end,
+}

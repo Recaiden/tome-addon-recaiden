@@ -22,48 +22,43 @@ end
 local useImplicitCrit = DamageType.useImplicitCrit
 local initState = DamageType.initState
 
-
 newDamageType{
-   name = "black-hole gravity", type = "REK_FLN_GRAVITY_PULL",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      if _G.type(dam) == "number" then dam = {dam=dam} end
-      local target = game.level.map(x, y, Map.ACTOR)
-      if not target then return end
-      if target then
-	 if target:isTalentActive(target.T_GRAVITY_LOCUS) then return end
-	 if dam.slow then
-	    target:setEffect(target.EFF_SLOW, dam.dur, {power=dam.slow, apply_power=src:combatPhysicalpower(), no_ct_effect=true})
-	 end
-         if src:isTalentActive(src.T_FLN_BLACKSUN_SINGULARITY) then
-            target:setEffect(target.EFF_ANTI_GRAVITY, 2, {})
-         end
-      end
-
-      if target:checkHit(src:combatPhysicalpower(), target:combatPhysicalResist(), 0, 95, 5) and target:canBe("knockback") then
-         local source = src.__project_source or src
-	 target:pull(source.x, source.y, 2)
-	 game.logSeen(target, "%s is pulled in!", target.name:capitalize())
-      else
-	 game.logSeen(target, "%s resists the gravity!", target.name:capitalize())
-      end
-      
-      DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
-   end,
-}
-
-newDamageType{
-   name = "solar blood", type = "FLN_TEMPLAR_SIGIL",
+   name = "healing guidance", type = "REK_MTYR_GUIDE_HEAL",
    projector = function(src, x, y, type, dam, state)
       state = initState(state)
       useImplicitCrit(src, state)
       local target = game.level.map(x, y, Map.ACTOR)
-      if target then
-	 if target == src then
-	    target:setEffect(target.EFF_BLAZING_LIGHT, 1, {power = 2, no_ct_effect=true})
-	 elseif target:reactionToward(src) < 0 then
-	    target:setEffect(target.EFF_FLN_BLINDING_LIGHT, 1, {src=src, power=dam.dam, apply_power=dam.pow, no_ct_effect=true})
+      if target then         
+         -- if this is their guiding light
+         local eff = target:hasEffect(target.EFF_REK_MTYR_GUIDANCE_AVAILABLE)
+         if eff then
+            -- do the bonus
+            target:setEffect(target.EFF_REK_MTYR_GUIDANCE_HEAL, 3, {power=dam})
+            target:removeEffect(target.EFF_REK_MTYR_GUIDANCE_AVAILABLE)
+
+            -- do the upgrade
+            if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
+               local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
+            end
+            
+            if eff.ground_effect then
+               local e = eff.ground_effect
+               --pop the effect on the ground
+               	if e.particles then
+                   for j, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
+                end
+                if e.overlay then
+                   game.level.map.z_effects[e.overlay.zdepth][e] = nil
+                end
+                for i, ee in ipairs(game.level.map.effects) do
+                   if ee == e then
+                      table.remove(game.level.map.effects, i)
+                      break
+                   end
+                end
+                --engine function not yet available.
+                --game.level.map:removeEffect(e)
+            end
 	 end
       end
    end,

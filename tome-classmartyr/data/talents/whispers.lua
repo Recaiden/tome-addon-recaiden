@@ -49,13 +49,36 @@ newTalent{
    require = martyr_req2,
    points = 5,
    mode = "passive",
+   getChance = function(self, t) return 20 end,
+   getDuration = function(self, t) return 3 end,
+   callbackOnActBase = function (self, t)
+      if not rng.percent(t.getChance(self, t)) then return end
+      local _, _, gs = util.findFreeGrid(self.x, self.y, 10, true, {})
+      if gs and #gs > 0 then
+         local dur = t.getDuration(self, t)
+         
+         local DamageType = require "engine.DamageType"
+         local MapEffect = require "engine.MapEffect"
+         local x, y = gs[#gs][1], gs[#gs][2]
+         local options = {DamageType.REK_MTYR_GUIDE_HEAL}--, DamageType.REK_MTYR_GUIDE_BURN, DamageType.REK_MTYR_GUIDE_FLASH]
+         local type = options[rng.range(1, #options)]
+         local ground_effect = game.level.map:addEffect(game.player, x, y, dur, type, 5, rng.range(1, 2), 5, nil, MapEffect.new{color_br=255, color_bg=249, color_bb=60, alpha=100, effect_shader="shader_images/sun_effect.png"}, nil, true)
+         self:setEffect(self.EFF_REK_MTYR_GUIDANCE_AVAILABLE, 3, {src=self, ground_effect=ground_effect})
+         game.logSeen(self, "#YELLOW#A guiding light appears!#LAST#", self.name:capitalize())
+      end
+   end,
    info = function(self, t)
-      return ([[While in combat, zones of guiding light will appear nearby.  Entering one will ...]]):format()
+      return ([[While in combat, zones of guiding light will appear nearby, lasting %d turns.
+Entering a green light will cause you to regenerate for %d health per turn for 5 turns.
+Entering a blue light will refresh you, reducing the duration of detrimental effects and outstanding cooldowns by %d turns.
+Entering a orange light will grant you vision sevenfold, allowing you to see stealthed and invisible targets with power %d. and fight while blinded.]]):format(3, 1, 2, 3)
    end,
 }
 
+-- green light is aura of mind damage , light will imbue you with a destructive psychic aura, dealing %d mind damage per turn to enemies in range 2
+-- orange blinds light will release a brilliant flash, blinding and reducing the sight radius of enemies in range 10.
 newTalent{
-   name = "???", short_name = "REK_MTYR_WHISPERS_UNVEIL",
+   name = "Warning Lights", short_name = "REK_MTYR_WHISPERS_WARNING",
    type = {"demented/whispers", 3},
    require = martyr_req3,
    points = 5,
