@@ -254,6 +254,25 @@ newEffect{
          }
 
 newEffect{
+   name = "REK_MTYR_GUIDANCE_FLASH", image = "talents/rek_mtyr_whispers_guiding_light.png",
+   desc = _t"Guided to Vision",
+   long_desc = function(self, eff) return ("The target's ability to see stealthed and invisibled targets is improved by %d."):tformat(eff.power) end,
+   type = "mental",
+   subtype = { focus=true },
+   status = "beneficial",
+   parameters = { power=10 },
+   on_gain = function(self, err) return _t"#Target# sees precisely." end,
+   on_lose = function(self, err) return _t"#Target# sees less precisely." end,
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "see_invisible", eff.power)
+      self:effectTemporaryValue(eff, "see_stealth", eff.power)
+      self:effectTemporaryValue(eff, "see_traps", eff.power)
+   end,
+   deactivate = function(self, eff)
+   end,
+}
+
+newEffect{
    name = "REK_MTYR_GUIDANCE_AVAILABLE", image = "talents/rek_mtyr_whispers_guiding_light.png",
    desc = "Seeking the Light",
    long_desc = function(self, eff) return ("Somewhere nearby is a beam of light this creature is looking for"):format() end,

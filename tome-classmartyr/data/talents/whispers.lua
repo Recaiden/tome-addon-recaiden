@@ -60,7 +60,7 @@ newTalent{
          local DamageType = require "engine.DamageType"
          local MapEffect = require "engine.MapEffect"
          local x, y = gs[#gs][1], gs[#gs][2]
-         local options = {DamageType.REK_MTYR_GUIDE_HEAL}--, DamageType.REK_MTYR_GUIDE_BURN, DamageType.REK_MTYR_GUIDE_FLASH]
+         local options = {DamageType.REK_MTYR_GUIDE_HEAL, DamageType.REK_MTYR_GUIDE_BUFF, DamageType.REK_MTYR_GUIDE_FLASH}
          local type = options[rng.range(1, #options)]
          local ground_effect = game.level.map:addEffect(game.player, x, y, dur, type, 5, rng.range(1, 2), 5, nil, MapEffect.new{color_br=255, color_bg=249, color_bb=60, alpha=100, effect_shader="shader_images/sun_effect.png"}, nil, true)
          self:setEffect(self.EFF_REK_MTYR_GUIDANCE_AVAILABLE, 3, {src=self, ground_effect=ground_effect})
@@ -70,7 +70,7 @@ newTalent{
    info = function(self, t)
       return ([[While in combat, zones of guiding light will appear nearby, lasting %d turns.
 Entering a green light will cause you to regenerate for %d health per turn for 5 turns.
-Entering a blue light will refresh you, reducing the duration of detrimental effects and outstanding cooldowns by %d turns.
+Entering a blue light will refresh you, reducing the duration of outstanding cooldowns by %d turns.
 Entering a orange light will grant you vision sevenfold, allowing you to see stealthed and invisible targets with power %d. and fight while blinded.]]):format(3, 1, 2, 3)
    end,
 }
