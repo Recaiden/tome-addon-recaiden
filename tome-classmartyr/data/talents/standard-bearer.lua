@@ -50,6 +50,31 @@ function martyrSetupSummon(self, def, x, y, level, turns, no_control)
    return m
 end
 
+function countFlags(self)
+   local flags = {}
+   if game.party and game.party:hasMember(self) then
+      for act, def in pairs(game.party.members) do
+         if act.is_tentacle_flag then
+            flags[#flags+1] = act
+         end
+      end
+   else
+      for uid, act in pairs(game.level.entities) do
+         if act.summoner and act.summoner == self and act.is_tentacle_flag then
+            flags[#flags+1] = act
+         end
+      end
+   end
+
+   -- Find lowest health existing flag to replace if needed
+   local victim = flags[1] or nil
+   for flag, i in pairs(flags) do
+      if not victim or flag.life < victim.life then
+         victim = flag
+      end
+   end
+   return #flags, victim
+end
 
 newTalent{
    name = "Triumphant Flag", short_name = "REK_MTYR_STANDARD_IRRUPTION",
@@ -115,14 +140,22 @@ newTalent{
       local didSummon = t.doSummon(self, t, src.x, src.y)
       if didSummon then self:startTalentCooldown(t) end
    end,
+   getTimeLimit = function(self, t) return 10 end,
    thRare = function(self, t) return .4 end,
    thBoss = function(self, t) return 0.25 end,
    thEBoss = function(self, t) return 0.1 end,
+   
    doSummon = function(self, t, x, y)
       local lev = t.getLevel(self, t)
       
       local x, y = util.findFreeGrid(x, y, 5, true, {[Map.ACTOR]=true})
       if not x then return false end
+
+      local count, weakest = countFlags(self)
+      if count >= 3 then
+         weakest:die()
+      end
+      
       local flag = martyrSetupSummon(self, t.flag, x, y, lev, nil, true)
       if self:knowTalent(self.T_REK_MTYR_STANDARD_CONTROL) then
          local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_CONTROL))
@@ -139,10 +172,11 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[When you kill an enemy, summon a Flag of level %d where they died that magically strike nearby enemies.  This has a cooldown.
-You also summon a flag when you have done enough damage to a powerful enemy with %d turns: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
+      return ([[When you kill an enemy, summon a Flag of level %d where they died that magically strikes nearby enemies.
+You also summon a flag when you have done enough damage to a powerful enemy within %d turns: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
+Summoning the flag has a cooldown.
 
-Flags last until destroyed or until you leave the level, but you can only have 3 placed at a time.]]):format(math.max(1, self.level + t.getLevel(self, t)), t.thRare(self, t)*100, t.thBoss(self, t)*100, t.thEBoss(self, t)*100)
+Flags last until destroyed or until you leave the level, but you can only have 3 placed at a time.]]):format(math.max(1, self.level + t.getLevel(self, t)), t.getTimeLimit(self, t), t.thRare(self, t)*100, t.thBoss(self, t)*100, t.thEBoss(self, t)*100)
    end,
 }
 

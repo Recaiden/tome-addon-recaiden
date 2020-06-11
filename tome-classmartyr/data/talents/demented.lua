@@ -74,12 +74,25 @@ str_req_high4 = {
 	level = function(level) return 22 + (level-1)  end,
 }
 
+canLearnMirror = function(self)
+   local countVagabond = self:getTalentLevelRaw(self.T_REK_MTYR_VAGABOND_SLING_PRACTICE)
+      + self:getTalentLevelRaw(self.T_REK_MTYR_VAGABOND_STAGGER_SHOT)
+      + self:getTalentLevelRaw(self.T_REK_MTYR_VAGABOND_TAINTED_BULLETS)
+      + self:getTalentLevelRaw(self.T_REK_MTYR_VAGABOND_HOLLOW_SHELL)
+   
+   local countChivalry = self:getTalentLevelRaw(self.T_REK_MTYR_CHIVALRY_CHAMPIONS_FOCUS)
+      + self:getTalentLevelRaw(self.T_REK_MTYR_CHIVALRY_LANCERS_CHARGE)
+      + self:getTalentLevelRaw(self.T_REK_MTYR_CHIVALRY_EXECUTIONERS_ONSLAUGHT)
+      + self:getTalentLevelRaw(self.T_REK_MTYR_CHIVALRY_HEROS_RESOLVE)
+   return countChivalry < countVagabond
+end
+
 martyr_mirror_req1 = {
    stat = { str=function(level) return 12 + (level-1) * 2 end },
    level = function(level) return 0 + (level-1) end,
    special = {
-      desc="Cannot learn this talent directly",
-      fct=function(self) return false end
+      desc="Points in Vagabond talents allow you to learn Chivalry talents",
+      fct=function(self) return canLearnMirror(self) end
    },
 }
 
@@ -87,8 +100,8 @@ martyr_mirror_req2 = {
    stat = { str=function(level) return 20 + (level-1) * 2 end },
    level = function(level) return 4 + (level-1) end,
    special = {
-      desc="Cannot learn this talent directly",
-      fct=function(self) return false end
+      desc="Points in Vagabond talents allow you to learn Chivalry talents",
+      fct=function(self) return canLearnMirror(self) end
    },
 }
 
@@ -96,8 +109,8 @@ martyr_mirror_req3 = {
    stat = { str=function(level) return 28 + (level-1) * 2 end },
    level = function(level) return 8 + (level-1) end,
    special = {
-      desc="Cannot learn this talent directly",
-      fct=function(self) return false end
+      desc="Points in Vagabond talents allow you to learn Chivalry talents",
+      fct=function(self) return canLearnMirror(self) end
    },
 }
 
@@ -105,8 +118,8 @@ martyr_mirror_req4 = {
    stat = { str=function(level) return 36 + (level-1) * 2 end },
    level = function(level) return 12 + (level-1) end,
    special = {
-      desc="Cannot learn this talent directly",
-      fct=function(self) return false end
+      desc="Points in Vagabond talents allow you to learn Chivalry talents",
+      fct=function(self) return canLearnMirror(self) end
    },
 }
 

@@ -32,11 +32,11 @@ newTalent{
    end,
    info = function(self, t)
       return ([[Gain physical power as you gain insanity, up to %d (currently %d).
-Reduce incoming damage as you approach sanity, up to %d (currently %d).
+Reduce incoming damage by a flat amount as you approach sanity, up to %d per hit (currently %d).
 Both values will improve with your level.
 
-You benefit from #ORANGE#Sanity Bonus#LAST# when you have up to 40 Insanity.
-You benefit from #GREEN#Our Gift#LAST# when you have at least 60 Insanity.
+You benefit from #ORANGE#Sanity Bonus#LAST# while you have up to 40 Insanity.
+You benefit from #GREEN#Our Gift#LAST# while you have at least 60 Insanity.
 
 #{italic}#As long as I don't start thinking like #GREEN#us#LAST#, I'll be safe.#{normal}#
 ]]):format(t.getMaxPower(self, t), t.getPower(self, t), t.getMaxReduction(self, t), t.getReduction(self, t))
@@ -60,9 +60,22 @@ newTalent{
          local DamageType = require "engine.DamageType"
          local MapEffect = require "engine.MapEffect"
          local x, y = gs[#gs][1], gs[#gs][2]
-         local options = {DamageType.REK_MTYR_GUIDE_HEAL, DamageType.REK_MTYR_GUIDE_BUFF, DamageType.REK_MTYR_GUIDE_FLASH}
+         local options = {
+            {
+               dam=DamageType.REK_MTYR_GUIDE_HEAL,
+               r=60, g=255, b=60
+            },
+            {
+               dam=DamageType.REK_MTYR_GUIDE_BUFF,
+               r=20, g=100, b=255
+            },
+            {
+               dam=DamageType.REK_MTYR_GUIDE_FLASH,
+               r=255, g=210, b=60
+            }
+         }
          local type = options[rng.range(1, #options)]
-         local ground_effect = game.level.map:addEffect(game.player, x, y, dur, type, 5, rng.range(1, 2), 5, nil, MapEffect.new{color_br=255, color_bg=249, color_bb=60, alpha=100, effect_shader="shader_images/sun_effect.png"}, nil, true)
+         local ground_effect = game.level.map:addEffect(game.player, x, y, dur, type.dam, 5, rng.range(1, 2), 5, nil, MapEffect.new{color_br=type.r, color_bg=type.g, color_bb=type.b, alpha=100, effect_shader="shader_images/sun_effect.png"}, nil, true)
          self:setEffect(self.EFF_REK_MTYR_GUIDANCE_AVAILABLE, 3, {src=self, ground_effect=ground_effect})
          game.logSeen(self, "#YELLOW#A guiding light appears!#LAST#", self.name:capitalize())
       end
@@ -82,17 +95,14 @@ newTalent{
    type = {"demented/whispers", 3},
    require = martyr_req3,
    points = 5,
-   cooldown = 8,
-   getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.5, 3.2) end,
-   getExtension = function(self, t) return self:combatTalentScale(t, 3, 5) end,
-   range = 0,
-   radius = 10,
-   target = function(self, t)
-      return {type="ball", range=self:getTalentRange(t), selffire=false, radius=self:getTalentRadius(t)}
-   end,
+   mode = "passive",
+   getDamage = function(self, t) return self:combatTalentMindDamage(t, 4, 32) end,
+   getDuration = function(self, t) return 5 end,
+   radius = 2,
    info = function(self, t)
-      return ([[...
-]]):format()
+      return ([[Entering any light will imbue you with a destructive aura, dealing %d mind damage to enemies within range 2 each turn for %d turns.
+
+#{italic}#The light whispers secrets to bring about the destruction of your enemies.#{normal}#]]):format(damDesc(self, DamageType.MIND, t.getDamage(self, t)), t.getDuration(self, t))
    end,
 }
 

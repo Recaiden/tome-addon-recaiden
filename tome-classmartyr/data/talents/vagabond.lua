@@ -19,7 +19,9 @@ newTalent{
       return ([[You can't really call it 'mastery', but you've used a sling before, along with a variety of other weapons.
 This increases Physical Power by %d and weapon damage by %d%% when using a sling and increases your reload rate by %d.
 
-Whenever you hit with a ranged weapon, you will gain 5 insanity.]]):format(t.getDamage(self, t), 100*t.getPercentInc(self, t), t.getReload(self, t))
+Whenever you hit with a ranged weapon, you will gain 5 insanity.
+
+#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):format(t.getDamage(self, t), 100*t.getPercentInc(self, t), t.getReload(self, t))
    end,
 }
 
@@ -53,7 +55,9 @@ newTalent{
       return ([[You ready a sling shot with all your strength.
 This shot does %d%% weapon damage and knocks back your target by %d.
 
-Learning this talent allows you to swap to your alternate weapon set instantly.]]):
+Learning this talent allows you to swap to your alternate weapon set instantly.
+
+#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):
       format(t.getDamage(self, t) * 100, t.getDist(self, t))
    end,
 }
@@ -95,7 +99,9 @@ newTalent{
    info = function(self, t)
       return ([[You make unusual modifications to your sling bullets, causing them to deal %0.2f mind damage on hit and grant you telepathy to all similar creatures (radius 15) for 5 turns.
 
-Mindpower: increases damage.]]):format(damDesc(self, DamageType.MIND, t.getDamage(self, t)))
+                Mindpower: increases damage.
+
+               #YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):format(damDesc(self, DamageType.MIND, t.getDamage(self, t)))
    end,
 }
 
@@ -114,6 +120,8 @@ newTalent{
       return ([[Your body's vital organs are indistinct or perhaps missing.
 You take %d%% less damage from critical hits.
 
-#{italic}#Nothing's ever going to hurt me worse than #GREEN#we#LAST# already have.#{normal}#]]):format(t.getCritResist(self, t))
+#{italic}#Nothing's ever going to hurt me worse than #GREEN#we#LAST# already have.#{normal}#
+
+#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):format(t.getCritResist(self, t))
    end,
 }

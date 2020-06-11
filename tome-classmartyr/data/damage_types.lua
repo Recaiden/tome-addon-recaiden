@@ -22,6 +22,19 @@ end
 local useImplicitCrit = DamageType.useImplicitCrit
 local initState = DamageType.initState
 
+-- Mind that only hits enemies
+newDamageType{
+   name = "mind", type = "REK_MTYR_MIND_FRIENDS",
+   projector = function(src, x, y, type, dam, state)
+      state = initState(state)
+      useImplicitCrit(src, state)
+      local target = game.level.map(x, y, Map.ACTOR)
+      if target and self:reactionToward(target) < 0 then
+         DamageType:get(DamageType.MIND).projector(src, x, y, DamageType.MIND, dam, state)
+      end
+   end,
+}
+
 removeGroundEffect = function(eff)
    local e = eff
    --pop the effect on the ground
@@ -37,6 +50,26 @@ removeGroundEffect = function(eff)
          break
       end
    end
+end
+
+applyGuidanceBurn = function(target, t)
+   local dur = t.getDuration(self, t)
+   local dam = t.getDamage(self, t)
+   -- Add a lasting map effect
+   local ef = game.level.map:addEffect(target,
+                                       target.x, target.y, dur,
+                                       DamageType.REK_MTYR_MIND_FRIENDS, dam,
+                                       2,
+                                       5, nil,
+                                       {type="mindstorm", only_one=true},
+                                       function(e)
+                                          e.x = e.src.x
+                                          e.y = e.src.y
+                                          return true
+                                       end,
+                                       0, 0
+                                      )
+   ef.name = "mindstorm"
 end
 
 newDamageType{
@@ -56,6 +89,7 @@ newDamageType{
             -- do the upgrade
             if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
                local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
+               applyGuidanceBurn(target, t3)
             end
             
             if eff.ground_effect then
@@ -106,6 +140,7 @@ newDamageType{
             -- do the upgrade
             if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
                local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
+               applyGuidanceBurn(target, t3)
             end
             
             if eff.ground_effect then
@@ -133,6 +168,7 @@ newDamageType{
             -- do the upgrade
             if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
                local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
+               applyGuidanceBurn(target, t3)
             end
             
             if eff.ground_effect then
