@@ -3,6 +3,7 @@ newTalent{
    type = {"demented/unsettling", 1},
    require = martyr_req1,
    points = 5,
+   insanity = 10,   
    cooldown = 3,
    range = function(self, t)
       local weapon, ammo, offweapon, pf_weapon = self:hasArcheryWeapon()
@@ -100,6 +101,7 @@ newTalent{
    require = martyr_req3,
    points = 5,
    cooldown = 8,
+   insanity = -20,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.5, 3.2) end,
    getExtension = function(self, t) return self:combatTalentScale(t, 3, 5) end,
    range = 0,

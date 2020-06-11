@@ -36,25 +36,27 @@ newDamageType{
 }
 
 removeGroundEffect = function(eff)
+   eff.duration = 0
    local e = eff
-   --pop the effect on the ground
-   if e.particles then
-      for j, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
-   end
-   if e.overlay then
-      game.level.map.z_effects[e.overlay.zdepth][e] = nil
-   end
-   for i, ee in ipairs(game.level.map.effects) do
-      if ee == e then
-         table.remove(game.level.map.effects, i)
-         break
-      end
-   end
+   -- if not e then return end
+   -- --pop the effect on the ground
+   -- if e.particles then
+   --    for j, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
+   -- end
+   -- if e.overlay then
+   --    game.level.map.z_effects[e.overlay.zdepth][e] = nil
+   -- end
+   -- for i, ee in ipairs(game.level.map.effects) do
+   --    if ee == e then
+   --       table.remove(game.level.map.effects, i)
+   --       break
+   --    end
+   -- end
 end
 
 applyGuidanceBurn = function(target, t)
-   local dur = t.getDuration(self, t)
-   local dam = t.getDamage(self, t)
+   local dur = t.getDuration(target, t)
+   local dam = t.getDamage(target, t)
    -- Add a lasting map effect
    local ef = game.level.map:addEffect(target,
                                        target.x, target.y, dur,
@@ -94,22 +96,6 @@ newDamageType{
             
             if eff.ground_effect then
                removeGroundEffect(eff.ground_effect)
-               -- local e = eff.ground_effect
-               -- --pop the effect on the ground
-               -- 	if e.particles then
-               --     for j, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
-               --  end
-               --  if e.overlay then
-               --     game.level.map.z_effects[e.overlay.zdepth][e] = nil
-               --  end
-               --  for i, ee in ipairs(game.level.map.effects) do
-               --     if ee == e then
-               --        table.remove(game.level.map.effects, i)
-               --        break
-               --     end
-               --  end
-                --engine function not yet available.
-                --game.level.map:removeEffect(e)
             end
 	 end
       end
@@ -131,7 +117,7 @@ newDamageType{
                for tid, _ in pairs(target.talents_cd) do
                   local t = target:getTalentFromId(tid)
                   if t and not t.fixed_cooldown then
-                     target.talents_cd[tid] = math.max(0, target.talents_cd[tid] - math.ceil(power/20))
+                     target.talents_cd[tid] = math.max(0, target.talents_cd[tid] - math.ceil(dam/20))
                   end
                end
             end

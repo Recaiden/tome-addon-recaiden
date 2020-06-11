@@ -256,7 +256,7 @@ newEffect{
 newEffect{
    name = "REK_MTYR_GUIDANCE_FLASH", image = "talents/rek_mtyr_whispers_guiding_light.png",
    desc = "Guided to Vision",
-   long_desc = function(self, eff) return ("The target's ability to see stealthed and invisibled targets is improved by %d."):tformat(eff.power) end,
+   long_desc = function(self, eff) return ("The target's ability to see stealthed and invisibled targets is improved by %d."):format(eff.power) end,
    type = "mental",
    subtype = { focus=true },
    status = "beneficial",

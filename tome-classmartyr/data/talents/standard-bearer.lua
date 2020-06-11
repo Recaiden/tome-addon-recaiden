@@ -32,6 +32,7 @@ function martyrSetupSummon(self, def, x, y, level, turns, no_control)
       m.remove_from_party_on_death = true
       game.party:addMember(m, {
                               control=can_control and "full" or "no",
+                              temporary_level = true,
                               type="minion",
                               title="Flag",
                               orders = {target=true},
@@ -66,10 +67,10 @@ function countFlags(self)
       end
    end
 
-   -- Find lowest health existing flag to replace if needed
+   -- Find oldest existing flag to replace if needed
    local victim = flags[1] or nil
-   for flag, i in pairs(flags) do
-      if not victim or flag.life < victim.life then
+   for i, flag in pairs(flags) do
+      if not victim or flag.creation_turn < victim.creation_turn then
          victim = flag
       end
    end
@@ -134,7 +135,6 @@ newTalent{
    },
    
    getLevel = function(self, t) return math.floor(self:combatScale(self:getTalentLevel(t), -6, 0.9, 2, 5)) end, -- -6 @ 1, +2 @ 5, +5 @ 8
-   on_pre_use = function(self, t) return not necroArmyStats(self).dread end,
    callbackOnKill = function(self, t, src, death_note)
       if self:isTalentCoolingDown(t) then return end
       local didSummon = t.doSummon(self, t, src.x, src.y)

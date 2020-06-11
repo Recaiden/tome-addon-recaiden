@@ -1,7 +1,7 @@
 newTalent{
    name = "Sling Practice", short_name = "REK_MTYR_VAGABOND_SLING_PRACTICE",
    type = {"demented/vagabond", 1},
-   require = martyr_req1,
+   require = sling_reqMaster,
    points = 5,
    mode = "passive",
    getDamage = function(self, t) return 30 end,
@@ -28,14 +28,14 @@ Whenever you hit with a ranged weapon, you will gain 5 insanity.
 newTalent{
    name = "Stagger Shot", short_name = "REK_MTYR_VAGABOND_STAGGER_SHOT",
    type = {"demented/vagabond", 2},
-   require = martyr_req2,
+   require = sling_req2,
    points = 5,
    insanity = 5,
    cooldown = 10,
    range = archery_range,
    tactical = { ATTACK = { weapon = 1 } },
    requires_target = true,
-   on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "sling") end,
+   on_pre_use = function(self, t, silent) return martyrPreUse(self, t, silent, "sling") end,
    getDist = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 4, 8)) end,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.5, 2.8) end,
    archery_onhit = function(self, t, target, x, y)
@@ -43,9 +43,10 @@ newTalent{
       target:knockback(self.x, self.y, t.getDist(self, t))
    end,
    passives = function(self, t, p)
-      self:talentTemporaryValue(p, 'quick_weapon_swap', 1)
+      self:talentTemporaryValue(p, 'martyr_swap', 1)
    end,
    action = function(self, t)
+      doMartyrWeaponSwap(self, "sling", true)
       local targets = self:archeryAcquireTargets(nil, {one_shot=true, add_speed=self.combat_physspeed})
       if not targets then return end
       self:archeryShoot(targets, t, nil, {mult=t.getDamage(self, t)})
@@ -65,7 +66,7 @@ Learning this talent allows you to swap to your alternate weapon set instantly.
 newTalent{
    name = "Tainted Bullets", short_name = "REK_MTYR_VAGABOND_TAINTED_BULLETS",
    type = {"demented/vagabond", 3},
-   require = martyr_req3,
+   require = sling_req3,
    points = 5,
    mode = "sustained",
    cooldown = 10,
@@ -99,16 +100,16 @@ newTalent{
    info = function(self, t)
       return ([[You make unusual modifications to your sling bullets, causing them to deal %0.2f mind damage on hit and grant you telepathy to all similar creatures (radius 15) for 5 turns.
 
-                Mindpower: increases damage.
+Mindpower: increases damage.
 
-               #YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):format(damDesc(self, DamageType.MIND, t.getDamage(self, t)))
+#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):format(damDesc(self, DamageType.MIND, t.getDamage(self, t)))
    end,
 }
 
 newTalent{
    name = "Hollow Shell", short_name = "REK_MTYR_VAGABOND_HOLLOW_SHELL",
    type = {"demented/vagabond", 4},
-   require = martyr_req4,
+   require = sling_req4,
    points = 5,
    mode = "passive",
    getCritResist = function(self, t) return self:combatTalentScale(t, 15, 50, 0.75) end,

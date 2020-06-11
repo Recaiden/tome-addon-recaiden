@@ -4,6 +4,8 @@ newTalent{
    require = martyr_mirror_req1,
    points = 5,
    cooldown = 15,
+   mode = "sustained",
+   no_energy = true,
    getChance = function(self,t) return self:combatLimit(self:combatTalentStatDamage(t, "dex", 10, 90),100, 6.8, 6.8, 61, 61) end,
    getCost = function(self, t) return self:combatTalentScale(t, 5, 5) end,
    getThreshold = function(self, t) return self:combatTalentScale(t, 40, 40) end,
@@ -35,6 +37,7 @@ newTalent{
       end
    end,
    activate = function(self, t)
+      doMartyrWeaponSwap(self, "melee", true)
       local ret = {}
       
       return ret
@@ -44,10 +47,10 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Each melee attack you land on your target has a %d%% chance to trigger another, similar strike.
+      return ([[Each melee attack you land on your target has a %d%% chance to trigger another, similar strike at the cost of 5 insanity.
 This works for all blows, even those from other talents and from shield bashes, but this talent can grant at most one attack per weapon per turn.
 
-This will consume %d insanity when it triggers, and deactivate if this brings you to below %d insanity.
+This talent will deactivate if it brings you to below %d insanity.
 
 Dexterity: increases chance]]):format(t.getChance(self, t), t.getCost(self, t), t.getThreshold(self, t))
    end,
@@ -59,6 +62,8 @@ newTalent{
    require = martyr_mirror_req2,
    points = 5,
    range = 10,
+   cooldown = 18,
+   insanity = -10,
    target = function(self, t) return {type="widebeam", radius=1, range=self:getTalentRange(t), selffire=false, talent=t} end,
    getHitDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
    getSideDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
@@ -68,15 +73,16 @@ newTalent{
       local tg = self:getTalentTarget(t)
       local x, y = self:getTarget(tg)
       if not x or not y then return nil end
+      doMartyrWeaponSwap(self, "melee", true)
       local _ _, _, _, x, y = self:canProject(tg, x, y)
       if core.fov.distance(self.x, self.y, x, y) < 1 then return nil end
       
       local tgts = {}
-      local dam = self:spellCrit(t.getDamage(self, t))
+      local dam = self:Crit(t.getDamage(self, t))
       local slow = t.getSlow(self, t)
       local proj = t.getProj(self, t)
       self:project(tg, x, y, function(px, py)
-                      DamageType:get(DamageType.OCCULT).projector(self, px, py, DamageType.OCCULT, dam)
+                      DamageType:get(DamageType.PHYSICAL).projector(self, px, py, DamageType.PHYSICAL, dam)
                       local target = game.level.map(px, py, Map.ACTOR)
                       if target then tgts[target] = true end
                              end)
@@ -130,6 +136,7 @@ newTalent{
       local tg = self:getTalentTarget(t)
       local hit, x, y = self:canProject(tg, self:getTarget(tg))
       if not hit or not x or not y then return nil end
+      doMartyrWeaponSwap(self, "melee", true)
       
       self:removeEffectsFilter({subtype={stun=true, daze=true, pin=true, pinned=true, pinning=true}}, 50)
 
