@@ -30,7 +30,6 @@ newTalent{
    type = {"demented/vagabond", 2},
    require = sling_req2,
    points = 5,
-   insanity = 5,
    cooldown = 10,
    range = archery_range,
    tactical = { ATTACK = { weapon = 1 } },
@@ -39,6 +38,7 @@ newTalent{
    getDist = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 4, 8)) end,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.5, 2.8) end,
    archery_onhit = function(self, t, target, x, y)
+      self:incInsanity(5)
       if not target or not target:canBe("knockback") then return end
       target:knockback(self.x, self.y, t.getDist(self, t))
    end,
@@ -54,7 +54,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[You ready a sling shot with all your strength.
-This shot does %d%% weapon damage and knocks back your target by %d.
+This shot does %d%% weapon damage, increases your insanity by an extra 5, and knocks back your target by %d.
 
 Learning this talent allows you to swap to your alternate weapon set instantly.
 

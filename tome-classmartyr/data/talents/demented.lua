@@ -227,12 +227,6 @@ martyrPreUse = function(self, t, silent, weapon_type)
    return archeryWeaponCheck(self, weapon, ammo, silent, weapon_type)
 end
 
-archerPreUse = function(self, t, silent, weapon_type)
-	local weapon, ammo, offweapon, pf_weapon = self:hasArcheryWeapon(weapon_type)
-	weapon = weapon or pf_weapon
-	return archeryWeaponCheck(self, weapon, ammo, silent, weapon_type)
-end
-
 doMartyrPreUse = function(self, weapon, silent)
    if weapon == "sling" then
       local bow, ammo, oh, pf_bow= self:hasArcheryWeapon("sling")

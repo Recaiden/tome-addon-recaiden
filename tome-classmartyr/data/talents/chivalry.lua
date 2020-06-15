@@ -63,54 +63,75 @@ newTalent{
    points = 5,
    range = 10,
    cooldown = 18,
-   insanity = -10,
+   insanity = -15,
    target = function(self, t) return {type="widebeam", radius=1, range=self:getTalentRange(t), selffire=false, talent=t} end,
-   getHitDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
-   getSideDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
-   getDazeDuration = function(self, t) return self:combatTalentScale(t, 2, 7) end,
+   getHitDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 3.0) end,
+   getSideDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 2.0) end,
+   getDazeDuration = function(self, t) return self:combatTalentScale(t, 2, 5) end,
    getStunDuration = function(self, t) return self:combatTalentScale(t, 2, 7) end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)
       local x, y = self:getTarget(tg)
       if not x or not y then return nil end
-      doMartyrWeaponSwap(self, "melee", true)
       local _ _, _, _, x, y = self:canProject(tg, x, y)
-      if core.fov.distance(self.x, self.y, x, y) < 1 then return nil end
-      
-      local tgts = {}
-      local dam = self:Crit(t.getDamage(self, t))
-      local slow = t.getSlow(self, t)
-      local proj = t.getProj(self, t)
-      self:project(tg, x, y, function(px, py)
-                      DamageType:get(DamageType.PHYSICAL).projector(self, px, py, DamageType.PHYSICAL, dam)
-                      local target = game.level.map(px, py, Map.ACTOR)
-                      if target then tgts[target] = true end
-                             end)
-      
-      local sorted_tgts = {}
-      for target, _ in pairs(tgts) do
-         sorted_tgts[#sorted_tgts+1] = {target=target, dist=core.fov.distance(self.x, self.y, target.x, target.y)}
+      if core.fov.distance(self.x, self.y, x, y) < 3 then return nil end
+
+      -- check movement to correct space
+      local block_actor = function(_, bx, by) return game.level.map:checkEntity(bx, by, Map.TERRAIN, "block_move", self) end
+      local linestep = self:lineFOV(x, y, block_actor)
+      local tx, ty, lx, ly, is_corner_blocked
+      repeat  -- make sure each tile is passable
+         tx, ty = lx, ly
+         lx, ly, is_corner_blocked = linestep:step()
+      until is_corner_blocked or not lx or not ly or game.level.map:checkAllEntities(lx, ly, "block_move", self)
+      if not tx or core.fov.distance(self.x, self.y, tx, ty) < 1 then
+         game.logPlayer(self, "You are too close to build up momentum!")
+         return
       end
-      table.sort(sorted_tgts, "dist")
-      
-      -- Compute beam direction to knockback all targets in that direction even if they are on the sides of the beam
-      local angle = math.atan2(y - self.y, x - self.x)
-      
-      for _, tgt in ripairs(sorted_tgts) do
-         local target = tgt.target
-         if target:canBe("slow") then
-            target:setEffect(target.EFF_CONGEAL_TIME, 4, {slow=slow, proj=proj, apply_power=self:combatSpellpower()})
-         end
-         if self:getTalentLevel(t) >= 5 and target:canBe("knockback") then
-            target:pull(target.x + math.cos(angle) * 10, target.y + math.sin(angle) * 10, 3)
-         end
+      if not tx or not ty or core.fov.distance(x, y, tx, ty) > 1 then return nil end 
+
+      doMartyrWeaponSwap(self, "melee", true)
+
+      local moment = false
+      self:project(tg, x, y, function(px, py, tg, self)
+                      local target = game.level.map(px, py, Map.ACTOR)
+                      if target then
+                         local hit = false
+                         local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
+                         if (target.x == x and target.y == y) or moment then
+                            -- full attack
+                            local shield, shield_combat = self:hasShield()
+                            if not shield then
+                               hit = self:attackTarget(target, nil, t.getHitDamage(self, t), true)
+                            else
+                               _, hit = self:attackTargetWith(target, weapon, nil, t.getHitDamage(self, t))
+                               self:attackTargetWith(target, shield_combat, nil, t.getHitDamage(self, t))
+                            end
+                            if hit and target:canBe("stun") then
+                               target:setEffect(target.EFF_STUNNED, t.getStunDuration(self, t), {apply_power=self:combatPhysicalpower()})
+                            end
+                         else
+                            -- daze attack
+                            _, hit = self:attackTargetWith(target, weapon, nil, t.getSideDamage(self, t))
+                            if hit and target:canBe("stun") then
+                               target:setEffect(target.EFF_DAZED, t.getDazeDuration(self, t), {apply_power=self:combatPhysicalpower()})
+                            end
+                         end
+                      end
+                             end)
+
+      local ox, oy = self.x, self.y
+      self:move(tx, ty, true)
+      if config.settings.tome.smooth_move > 0 then
+         self:resetMoveAnim()
+         self:setMoveAnim(ox, oy, 8, 5)
       end
       
       return true
    end,
    
    info = function(self, t)
-      return ([[Hop astride your noble steed and run down a target at least 3 spaces away.  All other targets in or next to your path will be attacked with your mainhand weapon for %d%% damage and dazed for %d turns on a hit.  Your main target will be struck with all weapons for %d%% damage and stunned for %d turns.
+      return ([[Hop astride your noble steed and run down a target at least 3 spaces away, striking with all weapons for %d%% damage and stunning them for %d turns.  All other targets in or next to your path will be attacked with your mainhand weapon for %d%% damage and dazed for %d turns on a hit.
 
 If you are wielding the #MIDNIGHT#Moment#LAST# you will deal full damage to all targets.]]):format(t.getSideDamage(self, t)*100, t.getDazeDuration(self, t), t.getHitDamage(self, t)*100, t.getStunDuration(self, t))
    end,
@@ -122,7 +143,7 @@ newTalent{
    require = martyr_mirror_req3,
    points = 5,
    cooldown = 1,
-   insantity = 15,
+   insanity = -10,
    range = 1,
    radius = 0,
    tactical = { ATTACK = { weapon = 2 }, CLOSEIN = 0.5 },
@@ -144,20 +165,16 @@ newTalent{
          self:move(x, y, true)
       end
 
-      local subtargeter = {type="ball", range=0, selffire=false, radius=1}
-      x, y = self:getTarget(subtargeter)
-      if not x then return nil end
-      _, _, _, x, y = self:canProject(subtargeter, x, y)
       local targets = {}
-      self:project(subtargeter, self.x, self.y,
-                   function(px, py, tg, self)
+      self:project({type="ball", radius=1}, self.x, self.y,
+                   function(px, py)
                       local target = game.level.map(px, py, Map.ACTOR)
                       if target and self:reactionToward(target) < 0 then
                          targets[#targets+1] = target
                       end
                    end)
       
-      if #targets <= 0 then return nil end
+      if #targets <= 0 then return true end
       local damageMultiplier = t.getDamage(self, t)
       target = rng.table(targets)
       local shield, shield_combat = self:hasShield()
