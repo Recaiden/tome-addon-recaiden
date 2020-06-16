@@ -139,7 +139,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[A scorned target gathers its fellows from within range %d#SLATE#(Checks knockback resistance)#LAST# creating a dangerous feedback effect that deals %d physical damage to both.
+      return ([[A scorned target gathers its fellows from within range %d#SLATE#(checks knockback resistance)#LAST# creating a dangerous feedback effect that deals %d physical damage to both.
 
 #GREEN#Our Gift:#LAST# all targets pulled in also have Scorn applied to them.
 ]]):format(self:getTalentRadius(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)))

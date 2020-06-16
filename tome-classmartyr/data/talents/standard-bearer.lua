@@ -163,11 +163,11 @@ newTalent{
       end
       if self:knowTalent(self.T_REK_MTYR_STANDARD_TUNNELING) then
          local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_TUNNELING))
-         flag:learnTalent(flag.T_TENDRILS_ERUPTION, true, lvl)
+         flag:learnTalent(flag.T_OOZE_ROOTS, true, lvl)
       end
       if self:knowTalent(self.T_REK_MTYR_STANDARD_SYMBIOSIS) then
          local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_SYMBIOSIS))
-         flag:learnTalent(flag.T_OOZE_ROOTS, true, lvl)
+         flag:learnTalent(flag.T_TENDRILS_ERUPTION, true, lvl)
       end
       return true
    end,

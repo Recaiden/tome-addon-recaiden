@@ -49,12 +49,12 @@ newTalent{
       if target:canBe("confusion") then   
          -- Main effct
          target:setEffect(target.EFF_REK_MTYR_UNNERVE, t.getDuration(self,t), {power=t.getPower(self, t) or 30, damage=dam, powerlessness=powerlessness, src=self})
-      elseif self:knowTalent(self.T_REK_MTYR_UNSETTLING_UNHINGE) then
+      elseif self:knowTalent(self.T_REK_MTYR_UNSETTLING_UNINHIBITED) then
          local t4 = self:getTalentFromId(self.T_REK_MTYR_UNSETTLING_UNINHIBITED)
-         local diminishment = t4.getDamage(self, t4)
-         power = power * (100 - diminshment) / 100
-         dam = dam * (100 - diminshment) / 100
-         powerlessness = powerlessness * (100 - diminshment) / 100
+         local diminishment = t4.getReduction(self, t4)
+         power = power * (100 - diminishment) / 100
+         dam = dam * (100 - diminishment) / 100
+         powerlessness = powerlessness * (100 - diminishment) / 100
          target:setEffect(target.EFF_REK_MTYR_UNNERVE, t.getDuration(self,t), {power=power, damage=dam, powerlessness=powerlessness, src=self})
       else
          game.logSeen(target, "%s resists the revelation!", target.name:capitalize())

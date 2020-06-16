@@ -29,7 +29,7 @@ newDamageType{
       state = initState(state)
       useImplicitCrit(src, state)
       local target = game.level.map(x, y, Map.ACTOR)
-      if target and self:reactionToward(target) < 0 then
+      if target and src:reactionToward(target) < 0 then
          DamageType:get(DamageType.MIND).projector(src, x, y, DamageType.MIND, dam, state)
       end
    end,
