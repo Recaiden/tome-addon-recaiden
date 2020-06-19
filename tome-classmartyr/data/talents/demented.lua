@@ -278,3 +278,8 @@ if not Talents.talents_types_def["demented/standard-bearer"] then
    newTalentType{ allow_random=false, is_mind=true, type="demented/standard-bearer", name = "Standard-Bearer", description = "To he who is victorious, ever more victories will flow!" }
    load("/data-classmartyr/talents/standard-bearer.lua")
 end
+
+if not Talents.talents_types_def["demented/moment"] then
+   newTalentType{ allow_random=false, is_mind=true, type="demented/moment", name = "Final Moment", min_lev = 10, description = "Wield the blade of the ancient kings, and you will never be late nor lost." }
+   load("/data-classmartyr/talents/moment.lua")
+end
