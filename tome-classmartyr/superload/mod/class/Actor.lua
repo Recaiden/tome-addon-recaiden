@@ -1,5 +1,39 @@
 local _M = loadPrevious(...)
 
+
+local base_incFeedback = _M.incFeedback
+function _M:incFeedback(v, set)
+   if not set and self:knowTalent(self.T_REK_MTYR_CRUCIBLE_OVERFLOW) then
+      local t = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_OVERFLOW)
+      local consumed = 0
+      local overcharge = math.floor((v + self:getFeedback() - self:getMaxFeedback()))
+      if overcharge > 0 then
+         local cost = self:callTalent(self.T_REK_MTYR_CRUCIBLE_OVERFLOW, "getEfficiency")
+         local t1 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_SHARE_PAIN)
+         local t2 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_MEMENTO)
+         local t3 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_RESONATION)
+         while overcharge > 0 and self:isTalentCoolingDown(t1) do
+            self:alterTalentCoolingdown(self.T_REK_MTYR_CRUCIBLE_SHARE_PAIN, -1)
+            consumed = consumed + math.min(overcharge, cost)
+            overcharge = math.max(0, overcharge - cost)
+         end
+         while overcharge > 0 and self:isTalentCoolingDown(t2) do
+            self:alterTalentCoolingdown(self.T_REK_MTYR_CRUCIBLE_MEMENTO, -1)
+            consumed = consumed + math.min(overcharge, cost)
+            overcharge = math.max(0, overcharge - cost)
+         end
+         while overcharge > 0 and self:isTalentCoolingDown(t3) do
+            self:alterTalentCoolingdown(self.T_REK_MTYR_CRUCIBLE_RESONATION, -1)
+            consumed = consumed + math.min(overcharge, cost)
+            overcharge = math.max(0, overcharge - cost)
+         end
+         v = v - consumed
+      end
+   end
+   return base_incFeedback(self, v, set)
+end
+
+
 local base_insanityEffect = _M.insanityEffect
 function _M:insanityEffect(min, max)
    --game.logPlayer(self, "DEBUG Deeper Shadows generating insanity between %d%% and %d%%", self:insanityEffectForce(min), self:insanityEffectForce(max))

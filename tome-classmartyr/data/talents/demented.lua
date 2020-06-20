@@ -283,3 +283,8 @@ if not Talents.talents_types_def["demented/moment"] then
    newTalentType{ allow_random=false, is_mind=true, type="demented/moment", name = "Final Moment", min_lev = 10, description = "Wield the blade of the ancient kings, and you will never be late nor lost." }
    load("/data-classmartyr/talents/moment.lua")
 end
+
+if not Talents.talents_types_def["psionic/crucible"] then
+   newTalentType{ allow_random=false, is_mind=true, type="psionic/crucible", name = "crucible", min_lev = 10, description = "Pain brings clarity.  To see clearly is painful." }
+   load("/data-classmartyr/talents/crucible.lua")
+end

@@ -285,3 +285,22 @@ newEffect{
    deactivate = function(self, eff)
    end,
 }
+
+
+newEffect{
+   name = "REK_MTYR_RESONATION", image = "talents/rek_mtyr_crucible_resonation.png",
+   desc = "Runaway Resonation",
+   long_desc = function(self, eff) return ("The target's subconscious is surging with energy, guaranteeing critical mental attacks and increasing critical power by +%d."):format(eff.power) end,
+   type = "mental",
+   subtype = { psionic=true },
+   status = "beneficial",
+   parameters = { power = 1 },
+   on_gain = function(self, err) return "#Target#'s subconscious surges with power.", "+Resonation" end,
+   on_lose = function(self, err) return "#Target#'s subconscious has returned to normal.", "-Resonation" end,
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "combat_mindcrit", 100)
+      self:effectTemporaryValue(eff, "combat_critical_power", eff.power)
+   end,
+   on_timeout = function(self, eff)
+   end,
+}
