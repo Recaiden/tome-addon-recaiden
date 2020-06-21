@@ -285,6 +285,11 @@ if not Talents.talents_types_def["demented/moment"] then
 end
 
 if not Talents.talents_types_def["psionic/crucible"] then
-   newTalentType{ allow_random=false, is_mind=true, type="psionic/crucible", name = "crucible", min_lev = 10, description = "Pain brings clarity.  To see clearly is painful." }
+   newTalentType{ allow_random=false, is_mind=true, type="psionic/crucible", name = "Crucible", min_lev = 10, description = "Pain brings clarity.  To see clearly is painful." }
    load("/data-classmartyr/talents/crucible.lua")
+end
+
+if not Talents.talents_types_def["demented/revelation"] then
+   newTalentType{ allow_random=false, is_mind=true, type="demented/revelation", name = "Revelation", min_lev = 10, description = "You see the world as it truly is, Eyal in the Age of Scourge.  The world is horrid, but the truth has power." }
+   load("/data-classmartyr/talents/revelation.lua")
 end

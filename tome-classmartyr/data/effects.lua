@@ -304,3 +304,18 @@ newEffect{
    on_timeout = function(self, eff)
    end,
 }
+
+newEffect{
+   name = "REK_MTYR_SEVENFOLD_SPEED", image = "talents/rek_mtyr_revelation_speed.png",
+   desc = "Writhing Speed",
+   long_desc = function(self, eff) return ("The target's is making tentacle-assisted archery attacks very quickly."):format(eff.power) end,
+   type = "mental",
+   subtype = { physical=true },
+   status = "beneficial",
+   parameters = { power = 1, acc = 1 },
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "combat_atk", eff.acc)
+   end,
+   on_timeout = function(self, eff)
+   end,
+}
