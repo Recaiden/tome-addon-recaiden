@@ -29,8 +29,8 @@ newTalent{
    require = cursed_str_req1,
    points = 5,
    cooldown = 12,
-   positive = -4.5,
-   hate = 3,
+   positive = -5,
+   hate = 4,
    tactical = { ATTACK = 2, CLOSEIN = 1 },
    range = 8,
    requires_target = true,
@@ -49,10 +49,18 @@ newTalent{
       local tg = self:getTalentTarget(t)
       local x, y, target = self:getTarget(tg)
       if not target or not self:canProject(tg, x, y) then return nil end
+
+      -- skip teleport if already adjacent
+      if core.fov.distance(self.x, self.y, target.x, target.y) ~= 1 then
+
+         --check if landing space is avilable
+         fx, fy = util.findFreeGrid(x, y, 1, false, {[Map.ACTOR]=true})
+         if not fx or not fy then game.logSeen(self, "Nowhere to appear!") return false end
+         
+         if not self:teleportRandom(x, y, 0) then game.logSeen(self, "The bloodrush fizzles!") return true end
+         game:playSoundNear(self, "talents/teleport")
+      end
       
-      if not self:teleportRandom(x, y, 0) then game.logSeen(self, "The bloodrush fizzles!") return true end
-      
-      game:playSoundNear(self, "talents/teleport")
       -- Attack
       if target and target.x and core.fov.distance(self.x, self.y, target.x, target.y) == 1 then
 	 target:setEffect(target.EFF_FLN_RUSH_MARK, 6, {src=self})
@@ -97,13 +105,14 @@ newTalent{
    require = cursed_str_req2,
    points = 5,
    cooldown = 8,
+   fixed_cooldown = true,
    hate = 10,
-   positive = -9,
+   positive = -10,
    tactical = { ATTACK = 2 },
    range = 1,
    requires_target = true,
    is_melee = true,
-   getBleedMult = function(self, t) return self:combatTalentScale(t, 2, 4) end,
+   getBleedMult = function(self, t) return self:combatTalentScale(t, 1.4, 2.8)-1 end,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.8, 2.0) end,
    on_learn = function(self, t) self:learnTalent(self.T_FLN_BLEED_RESIST, true) end,
    on_unlearn = function(self, t) self:unlearnTalent(self.T_FLN_BLEED_RESIST) end,
@@ -144,7 +153,7 @@ newTalent{
    points = 5,
    mode = "sustained",
    sustain_positive = 20,
-   getBleed = function(self, t) return self:combatTalentScale(t, 0.3, 1) end,
+   getBleed = function(self, t) return self:combatTalentScale(t, 0.25, 0.95) end,
    on_learn = function(self, t) self:learnTalent(self.T_FLN_BLEED_RESIST, true) end,
    on_unlearn = function(self, t) self:unlearnTalent(self.T_FLN_BLEED_RESIST) end,
    activate = function(self, t)
@@ -158,7 +167,7 @@ newTalent{
       if not target then return end
       if not hitted then return end
       if target:canBe('cut') then
-	 target:setEffect(target.EFF_CUT, 5, {power=dam * t.getBleed(self, t), src=self})
+	 target:setEffect(target.EFF_CUT, 5, {power=dam * t.getBleed(self, t) / 5, src=self})
       end
    end,
    info = function(self, t)

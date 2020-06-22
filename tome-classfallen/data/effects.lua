@@ -155,10 +155,13 @@ newEffect{
    type = "magical",
    subtype = { shield=true },
    status = "beneficial",
-   parameters = { shield=50 },
+   parameters = { shield=50, cd=5 },
    callbackOnTemporaryEffectAdd = function(self, eff, eff_id, e_def, eff_incoming)
-      if e_def.status == "detrimental" and e_def.type ~= "other" and eff_incoming.src ~= self then
-         self:setEffect(self.EFF_DAMAGE_SHIELD, eff_incoming.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(eff.shield)})
+      if not self:hasProc("rek_fln_dirge_shield") then
+         if e_def.status == "detrimental" and e_def.type ~= "other" and eff_incoming.src ~= self then
+            self:setProc("rek_fln_dirge_shield", true, eff.cd)
+            self:setEffect(self.EFF_DAMAGE_SHIELD, eff_incoming.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(eff.shield)})
+         end
       end
    end,
    activate = function(self, eff)
@@ -320,5 +323,71 @@ newEffect{
    end,
    deactivate = function(self, eff)
       self:removeTemporaryValue("resists", eff.resistChangeId)
+   end,
+}
+
+
+-- type other because the original was, this is a resource mechanic.
+newEffect{
+   name = "FLN_ABSORPTION_STRIKE", image = "talents/absorption_strike.png",
+   desc = "Shadow Absorption",
+   long_desc = function(self, eff) return ("The target's light has been drained, reducing light resistance by %d%%."):format(eff.power) end,
+   type = "other",
+   subtype = { sun=true, },
+   status = "detrimental",
+   parameters = { power = 10 },
+   on_gain = function(self, err) return "#Target# is drained from light!", "+Shadow Absorption" end,
+   on_lose = function(self, err) return "#Target#'s light is back.", "-Shadow Absorption" end,
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "resists", {[DamageType.LIGHT]=-eff.power})
+   end,
+   callbackOnMeleeHit = function(self, eff, attacker, dam)
+      attacker:incHate(1)
+   end,
+         }
+
+-- type other because it's just a delayed talent.  Defend by not getting melee hit.
+newEffect{
+   name = "FLN_LIGHT_VICTIM", image = "talents/fln_shadow_mages.png",
+   desc = "Searing Mark",
+   long_desc = function(self, eff) return ("The target is marked by a shadow anorithil, and will take %d light damage if hit by the shadow's summoner."):format(eff.power) end,
+   type = "other",
+   subtype = { sun=true, },
+   status = "detrimental",
+   parameters = { power = 10 },
+   on_gain = function(self, err) return "#Target# is marked by the light!", "+Searing Mark" end,
+   on_lose = function(self, err) return "#Target#'s is free from the mark.", "-Searing Mark" end,
+   activate = function(self, eff)
+      eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=1, oversize=1.0, a=200, appear=8, speed=0, img="fln_marked", radius=0}))
+   end,
+   deactivate = function(self, eff)
+      self:removeParticles(eff.particle)
+   end,
+   callbackOnMeleeHit = function(self, eff, attacker, dam)
+      if attacker == eff.fallen then
+         --trigger the spell
+         local x = self.x
+         local y = self.y
+         local target = self
+         if not x or not y then return nil end
+
+         local projector = eff.shadow or eff.fallen
+         if target then
+            projector:project({type="hit", talent=t}, x, y, DamageType.LIGHT, eff.power, {type="light"})
+            self:removeEffect(self.EFF_FLN_LIGHT_VICTIM)
+         end
+         
+         -- Add a lasting map effect
+         game.level.map:addEffect(projector,
+                                  x, y, 4,
+                                  DamageType.LIGHT, eff.power / 2,
+                                  1,
+                                  5, nil,
+                                  {type="light_zone"},
+                                  nil, false, false
+                                 )
+         
+         game:playSoundNear(self, "talents/flame")
+      end
    end,
 }

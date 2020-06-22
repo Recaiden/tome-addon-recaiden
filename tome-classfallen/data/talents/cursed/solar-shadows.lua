@@ -52,7 +52,6 @@ newTalent{
    range = 1,
    requires_target = true,
    getWeakness = function(self, t) return self:combatTalentScale(t, 5, 20, 0.75) end,
-   getNumb = function(self, t) return math.min(30, self:combatTalentScale(t, 1, 15, 0.75)) end,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.1, 2.3) end,
    action = function(self, t)
       local tg = {type="hit", range=self:getTalentRange(t)}
@@ -61,13 +60,11 @@ newTalent{
       if core.fov.distance(self.x, self.y, x, y) > 1 then return nil end
       local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
       if hit then
-         
-         self:project({type="ball", radius=2, friendlyfire=false, selffire=false}, self.x, self.y,
+         self:project({type="ball", radius=1, friendlyfire=false, selffire=false}, self.x, self.y,
                       function(px, py)
                          local a = game.level.map(px, py, Map.ACTOR)
                          if a then
-                            -- No power check, this is essentially a defensive talent in debuff form.
-                            a:setEffect(a.EFF_ABSORPTION_STRIKE, 5, {power=t.getWeakness(self, t), numb = t.getNumb(self, t)})
+                            a:setEffect(a.EFF_FLN_ABSORPTION_STRIKE, 5, {power=t.getWeakness(self, t)})
                          end
                       end)
       end
@@ -76,8 +73,8 @@ newTalent{
    info = function(self, t)
       local damage = t.getDamage(self, t)
       return ([[You strike your foe, dealing %d%% weapon damage.
-		If the attack hits, all foes in radius 2 will have their light resistance reduced by %d%% and their damage reduced by %d%% for 5 turns.]]):
-      format(100 * damage, t.getWeakness(self, t), t.getNumb(self, t))
+		If the attack hits, all foes in radius 1 will have their light resistance reduced by %d%% and grant 1 hate when hit for 5 turns.]]):
+      format(100 * damage, t.getWeakness(self, t))
    end,
          }
 
@@ -188,26 +185,16 @@ newTalent{
    requires_target = true,
    getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 85) end,   
    action = function(self, t)
-      local tg = {type="ball", range=self:getTalentRange(t), radius=1, talent=t}
+      local tg = {type="hit", range=self:getTalentRange(t), talent=t}
       local x, y, target = self:getTarget(tg)
       if not x or not y then return nil end
       local _ _, x, y = self:canProject(tg, x, y)
       
       local dam = self:spellCrit(t.getDamage(self, t))
-      if target then self:project({type="hit", talent=t}, target.x, target.y, DamageType.LIGHT, dam, {type="light"}) end
-      
-      -- Add a lasting map effect
-      game.level.map:addEffect(self,
-                               x, y, 4,
-                               DamageType.LIGHT, dam / 2,
-                               1,
-                               5, nil,
-                               {type="light_zone"},
-                               nil, false, false
-                              )
-      
-      game:playSoundNear(self, "talents/flame")
-      return true
+      if target then
+         target:setEffect(target.EFF_FLN_LIGHT_VICTIM, 3, {power=dam, shadow=self, fallen=self.summoner})
+      end
+            return true
    end,
    info = function(self, t)
       local damage = t.getDamage(self, t)
@@ -387,7 +374,7 @@ local function createShadow(self, level, tCallShadows, tShadowWarriors, tShadowM
 end
 
 newTalent{
-   name = "Call Shadows", short_name="FLN_CALL_SHADOWS",
+   name = "Lomea Call", short_name="FLN_CALL_SHADOWS",
    type = {"cursed/solar-shadows", 1},
    mode = "sustained",
    no_energy = true,
@@ -512,17 +499,18 @@ newTalent{
    end,
    info = function(self, t)
       local maxShadows = t.getMaxShadows(self, t)
-      local level = t.getLevel(self, t)
       local healLevel = t.getHealLevel(self, t)
       local blindsideLevel = t.getBlindsideLevel(self, t)
       local avoid_master_damage = t.getAvoidMasterDamage(self, t)
-      return ([[While this ability is active, you will continually call up to %d level %d shadows to aid you in battle. Each shadow costs 5 hate to summon. Shadows are weak combatants that can: Use Healing Light to heal themselves (level %d), Blindside their opponents (level %d), and Phase Door from place to place.
-		Shadows ignore %d%% of the damage dealt to them by their master.]]):format(maxShadows, level, healLevel, blindsideLevel, avoid_master_damage)
+      return ([[While this ability is active, you will continually call up to %d shadows to aid you in battle. Each shadow costs 5 hate to summon and has a level equal to your own. Shadows are weak combatants that can: Use Healing Light to heal themselves (level %d), Blindside their opponents (level %d), and Phase Door from place to place.
+		Shadows ignore %d%% of the damage dealt to them by their master.
+
+#{italic}#'Lomea', an elvish term for shadows, refers to something worse than the simple interruption of light.#{normal}#]]):format(maxShadows, healLevel, blindsideLevel, avoid_master_damage)
    end,
          }
 
 newTalent{
-   name = "Shadow Paladins", short_name="FLN_SHADOW_WARRIORS",
+   name = "Lomea Paladins", short_name="FLN_SHADOW_WARRIORS",
    type = {"cursed/solar-shadows", 2},
    mode = "passive",
    require = cursed_wil_req2,
@@ -574,7 +562,11 @@ newTalent{
       local absorbChance = t.getAbsorbChance(self, t)
       local absorbLevel = t.getAbsorbLevel(self, t)
       local fadeCooldown = math.max(3, 8 - self:getTalentLevelRaw(t))
-      return ([[Instill hate in your shadows, strengthening their attacks. They gain %d%% extra Accuracy and %d%% extra damage. The fury of their attacks gives them the ability to try to Absorb the defenses of their foes, increasing light damage taken and reducing all damage by that foe for 4 turns (level %d, %d%% chance at range 1). They also gain the ability to Fade when hit, avoiding all damage until their next turn (%d turn cooldown).]]):format(combatAtk, incDamage, absorbLevel, absorbChance, fadeCooldown)
+      return ([[Instill hate in your shadows, strengthening their attacks. They gain %d%% extra Accuracy and %d%% extra damage.
+The fury of their attacks gives them the ability to try to Absorb the defenses of their foes, increasing light damage taken and giving you  a small amount of hate when you strike them (level %d, %d%% chance at range 1).
+They also gain the ability to Fade when hit, avoiding all damage until their next turn (%d turn cooldown).
+
+#{italic}#Remember how you used to fight side by side?#{normal}#]]):format(combatAtk, incDamage, absorbLevel, absorbChance, fadeCooldown)
 end,
 }
 
@@ -647,15 +639,17 @@ newTalent{
       local spellpowerChange = t.getSpellpowerChange(self, t)
       local lightningLevel = t.getLightningLevel(self, t)
       local flamesLevel = t.getFlamesLevel(self, t)
-      return ([[Infuse magic into your shadows to give them fearsome spells. Your shadows receive a bonus of %d to their Spellpower.
-		Your shadows can strike adjacent foes with rays of Moonlight (level %d, %d%% chance at range 1).
-		At level 3 your shadows can sear their enemies from a distance with Light (level %d, %d%% chance at range 2 to 6).
-		At level 5 when your shadows are struck down they will attempt to Reform, becoming whole again (50%% chance).]]):format(spellpowerChange, lightningLevel, closeAttackSpellChance, flamesLevel, farAttackSpellChance)
+      return ([[Infuse celestial energy into your shadows to give them fearsome spells. Your shadows receive a bonus of %d to their Spellpower.
+Your shadows can strike adjacent foes with rays of Moonlight (%d%% chance).
+At level 3 your shadows can mark their enemies (%d%% chance at range 2 to 6), triggering a Searing Light if you hit the same target.
+At level 5 when your shadows are struck down they may (50%% chance) Reform, becoming whole again.
+
+#{italic}#Remember how you used to look to them for guidance?#{normal}#]]):format(spellpowerChange, closeAttackSpellChance, farAttackSpellChance)
    end,
          }
 
 newTalent{
-   name = "Focus Shadows", short_name="FLN_FOCUS_SHADOWS",
+   name = "Lomea Focus", short_name="FLN_FOCUS_SHADOWS",
    type = {"cursed/solar-shadows", 4},
    require = cursed_wil_req4,
    points = 5,

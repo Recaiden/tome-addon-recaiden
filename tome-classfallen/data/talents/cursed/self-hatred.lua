@@ -4,7 +4,7 @@ newTalent{
    require = cursed_wil_req1,
    points = 5,
    no_energy = true,
-   hate = -10,
+   hate = -8,
    cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 5, 14, 6)) end,
    getDamage = function(self, t)
       return self.max_life / math.ceil(self:combatTalentLimit(t, 50, 10, 20))
@@ -75,6 +75,7 @@ newTalent{
    points = 5,
    no_energy = true,
    cooldown = 40,
+   drain_hate = 2,
    mode = "sustained",
    getPrice = function(self, t) return self:combatTalentLimit(t, 5, 15, 7.5) end,
    surge = function(self, t)
@@ -92,7 +93,7 @@ newTalent{
       -- Reduce cooldowns
       for tid, _ in pairs(self.talents_cd) do
 	 local t = self:getTalentFromId(tid)
-	 if t and not t.fixed_cooldown then
+	 if t and (not t.fixed_cooldown or tid == T_FLN_BLOODSTAINED_FURY) then
 	    self.talents_cd[tid] = self.talents_cd[tid] - 1
 	 end
       end
@@ -108,6 +109,12 @@ newTalent{
       self:removeParticles(p.particle)
       return true
    end,
+   callbackOnRest = function(self, t, mode)
+      if mode == "start" then
+         self:forceUseTalent(self.T_FLN_SELFHATE_DESTRUCTION, {ignore_energy=true, no_talent_fail=true})
+         return true
+      end
+   end,
    callbackOnActBase = function(self, t)
       -- Pay life
       local price = t.getPrice(self, t)
@@ -120,6 +127,7 @@ newTalent{
       return ([[Call upon your deepest reserves of strength to win no matter the cost.  
 Immediately upon activation and every turn while this talent is active, your detrimental effects expire and your talents cool down as if an extra turn had passed.  
 This bonus cooldown occurs even if your talents would not normally cool down.
+This talent deactivates automatically upon rest.
 This strength comes at a cost: you lose %d%% of your maximum life every turn.
 
 #{italic}#If you're lucky, this will take everything you've got.#{normal}#]]):format(price)

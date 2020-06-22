@@ -203,7 +203,7 @@ local function createBonusShadow(self, level, tCallShadows, tShadowWarriors, tSh
 end
 
 
--- Provides distractions, weak targets to lifesteal froim/jump to, and a renewable source of on-kills
+-- Provides distractions, weak targets to lifesteal from/jump to, and a renewable source of on-kills
 newTalent{
    name = "Shadowed Memories", short_name = "FLN_SHADOW_TWISTING_SHADOWS",
    type = {"cursed/suffering-shadows", 1},

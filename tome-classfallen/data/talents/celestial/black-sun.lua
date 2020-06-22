@@ -124,7 +124,7 @@ newTalent{
    require = str_req_high2,
    points = 5,
    cooldown = 15,
-   positive = -7,
+   positive = 10,
    getDuration = function(self,t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
    getOnhit = function(self,t) return self:combatTalentSpellDamage(t, 10, 50) end,
    action = function(self, t)

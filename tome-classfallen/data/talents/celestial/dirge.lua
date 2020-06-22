@@ -143,9 +143,13 @@ newTalent{
    sustain_slots = 'fallen_celestial_dirge',
    mode = "sustained",
    getShield = function(self, t) return self:combatTalentScale(t, 50, 200, 0.75) end,
-   callbackOnTemporaryEffectAdd = function(self, t, eff_id, e_def, eff)      
-      if e_def.status == "detrimental" and e_def.type ~= "other" and eff.src ~= self then
-         self:setEffect(self.EFF_DAMAGE_SHIELD, eff.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(t.getShield(self, t))})
+   getShieldCD = function(self, t) return 5 end,
+   callbackOnTemporaryEffectAdd = function(self, t, eff_id, e_def, eff)
+      if not self:hasProc("rek_fln_dirge_shield") then
+         if e_def.status == "detrimental" and e_def.type ~= "other" and eff.src ~= self then
+            self:setProc("rek_fln_dirge_shield", true, t.getShieldCD(self, t))
+            self:setEffect(self.EFF_DAMAGE_SHIELD, eff.dur, {color={0xff/255, 0x3b/255, 0x3f/255}, power=self:spellCrit(t.getShield(self, t))})
+         end
       end
    end,
    activate = function(self, t)      
@@ -166,14 +170,15 @@ newTalent{
       if self:knowTalent(self.T_FLN_DIRGE_ADEPT) then
 	 clearDirges(self)
 	 local t3 = self:getTalentFromId(self.T_FLN_DIRGE_ADEPT)
-	 self:setEffect(self.EFF_FLN_DIRGE_LINGER_PESTILENCE, t3.getDuration(self, t3), {src=self, heal=t.getShield(self, t)})
+	 self:setEffect(self.EFF_FLN_DIRGE_LINGER_PESTILENCE, t3.getDuration(self, t3), {src=self, shield=t.getShield(self, t), cd=t.getShieldCD(self, t)})
       end
       
       return true
    end,
    info = function(self, t)
       return ([[Sing a song of decay and defiance and sustain yourself through spite.
-Each time you suffer a detrimental effect, you gain a shield with strength %d, that lasts as long as the effect would.]]):format(t.getShield(self, t))
+Each time you suffer a detrimental effect, you gain a shield with strength %d, that lasts as long as the effect would.
+This can only trigger once every %d turns]]):format(t.getShield(self, t), t.getShieldCD(self, t))
    end,
 }
 
@@ -248,8 +253,8 @@ newTalent{
       return ([[Your dirges carry the pain within you, which threatens to swallow those who come too close.  Anyone who hits you in melee suffers %d mind damage.
 You, on the other hand, are steadied by the song.  Your dirges increase your resistance to stun and knockback by %d%%.
 
-Mindpower: increases damage.
-Level: increases damage.]]):format(damage, nostun)
+Mindpower: increases damage
+Level: increases damage]]):format(damage, nostun)
    end,
 }
 

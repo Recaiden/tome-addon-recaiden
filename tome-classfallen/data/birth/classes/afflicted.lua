@@ -39,7 +39,7 @@ newBirthDescriptor{
       ["celestial/light"]={true, 0.0},
       ["technique/combat-training"]={true, 0.3},      
    },
-   birth_example_particles = "darkness_shield",
+   birth_example_particles = "rek_dirge_shield", --"darkness_shield"
    talents = {
       [ActorTalents.T_WEAPONS_MASTERY] = 1,
       [ActorTalents.T_WEAPON_COMBAT] = 1,

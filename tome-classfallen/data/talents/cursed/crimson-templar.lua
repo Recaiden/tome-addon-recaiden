@@ -1,7 +1,7 @@
 newTalent{
    name = "Shared Agony", short_name = "FLN_TEMPLAR_SHARED_AGONY",
    type = {"cursed/crimson-templar", 1},
-   require = cursed_str_req_high1,
+   require = cursed_mag_req_high1,
    points = 5,
    mode = "sustained",
    cooldown = 10,
@@ -62,13 +62,13 @@ newTalent{
 newTalent{
    name = "Splatter Sigils", short_name = "FLN_TEMPLAR_SPLATTER_SIGILS",
    type = {"cursed/crimson-templar", 2},
-   require = cursed_str_req_high2,
+   require = cursed_mag_req_high2,
    points = 5,
    cooldown = 20,
    tactical = { DEFEND = 1, DISABLE = {SLOW = 1} },
    range = 0,
    getPrice = function(self, t) return 5 end,
-   getStrength = function(self, t) return self:combatTalentMindDamage(t, 4, 30) end,
+   getStrength = function(self, t) return self:combatTalentSpellDamage(t, 4, 30) end,
    getDuration = function(self, t) return math.min(10, math.floor(self:combatTalentScale(t, 4, 8))) end,
    radius = function(self, t) return math.min(5, math.floor(self:combatTalentScale(t, 1.5, 3))) end,
    target = function(self, t) -- for AI only
@@ -78,8 +78,8 @@ newTalent{
    makeSigil = function(self, t, x, y)
       -- Add a lasting map effect
       game.level.map:addEffect(self,
-			       x, y, self:mindCrit(t.getDuration(self, t)),
-			       DamageType.FLN_TEMPLAR_SIGIL, {dam=self:mindCrit(t.getStrength(self, t)), pow=self:combatMindpower()},
+			       x, y, self:spellCrit(t.getDuration(self, t)),
+			       DamageType.FLN_TEMPLAR_SIGIL, {dam=self:spellCrit(t.getStrength(self, t)), pow=self:combatSpellpower()},
 			       self:getTalentRadius(t),
 			       5, nil,
 			       MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, oversize=0, img="fln_celestial_circle", radius=self:getTalentRadius(t)*2}}, color_br=255, color_bg=187, color_bb=187, alpha=10, effect_shader="shader_images/sunlight_effect.png"},
@@ -103,13 +103,13 @@ newTalent{
       local burn = t.getStrength(self, t)
       local cost = t.getPrice(self, t)
       local dur = t.getDuration(self, t)
-      return ([[When you kill an enemy, their death forms a cursed magical pattern on the ground. This creates a circle of radius %d which blinds enemies (#SLATE#Mindpower vs. Magical#LAST#) and deals %d light damage while giving you %d positive energy per turn.  The circle lasts for %d turns.
+      return ([[When you kill an enemy, their death forms a cursed magical pattern on the ground. This creates a circle of radius %d which blinds enemies (#SLATE#Spellpower vs. Magical#LAST#) and deals %d light damage while giving you %d positive energy per turn.  The circle lasts for %d turns.
 
 You can activate this talent to draw the pattern in your own blood, creating it underneath you at the cost of %d%% of your maximum life.
 
-Mindpower: Improves damage
-Mental Critical: Improves damage
-Mental Critical: Improves duration
+Spellpower: Improves damage
+Spell Critical: Improves damage
+Spell Critical: Improves duration
 ]]):format(rad, damDesc(self, DamageType.LIGHT, burn), 2, dur, cost)
    end,
 }
@@ -117,10 +117,10 @@ Mental Critical: Improves duration
 newTalent{
    name = "Mark of the Vampire", short_name = "FLN_TEMPLAR_MARK_OF_THE_VAMPIRE",
    type = {"cursed/crimson-templar", 3},
-   require = cursed_str_req_high3,
+   require = cursed_mag_req_high3,
    points = 5,
    cooldown = 20,
-   hate = 30,
+   positive = 15,
    range = 10,
    radius = 2,
    tactical = { DISABLE = 1, ATTACK = {PHYSICAL = 2} },
@@ -129,17 +129,17 @@ newTalent{
    target = function(self, t)
       return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t, friendlyfire=false}
    end,
-   getPower = function(self, t) return self:combatTalentMindDamage(t, 5, 100) end,
+   getPower = function(self, t) return self:combatTalentSpellDamage(t, 5, 100) end,
    getBleedIncrease = function(self, t) return self:combatTalentScale(t, 0.15, 0.8) end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)
       local x, y = self:getTarget(tg)
       if not x or not y then return nil end
-      dam = self:mindCrit(t.getPower(self, t))
+      dam = self:spellCrit(t.getPower(self, t))
       self:project(tg, x, y, function(tx, ty)
                       local target = game.level.map(tx, ty, Map.ACTOR)
                       if not target or target == self then return end
-                      target:setEffect(target.EFF_FLN_VAMPIRE_MARK, 20, {src=self, dam=dam, power=1+t.getBleedIncrease(self, t), apply_power=self:combatMindpower()})
+                      target:setEffect(target.EFF_FLN_VAMPIRE_MARK, 20, {src=self, dam=dam, power=1+t.getBleedIncrease(self, t), apply_power=self:combatSpellpower()})
                              end)
       local _ _, _, _, x, y = self:canProject(tg, x, y)
       game.level.map:particleEmitter(x, y, tg.radius, "circle", {oversize=0.7, g=90, b=100, a=100, limit_life=8, appear=8, speed=2, img="blight_circle", radius=self:getTalentRadius(t)})
@@ -149,7 +149,7 @@ newTalent{
    info = function(self, t)
       return ([[Dooms your target and everything within a radius 2 ball around it for 20 turns. Each time an affected target uses a talent, it takes %0.2f physical damage as its life is drawn out.  In addition, any bleed applied to the target will have its power increased by %d%%.
 
-Mindpower: increases damage.]]):
+Spellpower: increases damage]]):
       format(damDesc(self, DamageType.PHYSICAL, t.getPower(self, t)), t.getBleedIncrease(self, t)*100)
    end,
 }
@@ -157,11 +157,13 @@ Mindpower: increases damage.]]):
 newTalent{
    name = "Rosebloom", short_name = "FLN_TEMPLAR_ROSEBLOOM",
    type = {"cursed/crimson-templar", 4},
-   require = cursed_str_req_high4,
+   require = cursed_mag_req_high4,
    points = 5,
    range = 0,
    radius = 10,
    cooldown = 24,
+   positive = 10,
+   hate = 10,
    direct_hit = true,
    getExtension = function(self, t) return math.floor(self:combatTalentScale(t, 0, 4)) end,
    getConversion = function(self, t) return 0.20 end,

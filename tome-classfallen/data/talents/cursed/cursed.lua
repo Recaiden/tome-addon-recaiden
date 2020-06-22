@@ -95,6 +95,27 @@ cursed_str_req_high5 = {
 	level = function(level) return 26 + (level-1)  end,
 }
 
+cursed_mag_req_high1 = {
+	stat = { mag=function(level) return 22 + (level-1) * 2 end },
+	level = function(level) return 10 + (level-1)  end,
+}
+cursed_mag_req_high2 = {
+	stat = { mag=function(level) return 30 + (level-1) * 2 end },
+	level = function(level) return 14 + (level-1)  end,
+}
+cursed_mag_req_high3 = {
+	stat = { mag=function(level) return 38 + (level-1) * 2 end },
+	level = function(level) return 18 + (level-1)  end,
+}
+cursed_mag_req_high4 = {
+	stat = { mag=function(level) return 46 + (level-1) * 2 end },
+	level = function(level) return 22 + (level-1)  end,
+}
+cursed_mag_req_high5 = {
+	stat = { mag=function(level) return 54 + (level-1) * 2 end },
+	level = function(level) return 26 + (level-1)  end,
+}
+
 function getHateMultiplier(self, min, max, cursedWeaponBonus, hate)
 	local fraction = (hate or self.hate) / 100
 	if cursedWeaponBonus then

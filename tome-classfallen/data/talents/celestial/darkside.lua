@@ -6,7 +6,7 @@ newTalent{
    require = divi_req1,
    points = 5,
    cooldown = 6,
-   positive = 5,
+   positive = 10,
    tactical = { ATTACK = { weapon = 1 }, DISABLE = { stun = 2 } },
    range = 1,
    requires_target = true,
@@ -66,8 +66,8 @@ newTalent{
    type = {"celestial/darkside", 3},
    require = divi_req3,
    points = 5,
-   positive = 20,
-   cooldown = 16,
+   positive = 25,
+   cooldown = 12,
    tactical = { CLOSEIN = 2, ESCAPE = 2 },
    range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7, 0.5, 0, 1)) end,
    requires_target = true,
@@ -125,8 +125,9 @@ newTalent{
    target = function(self, t)
       return {type="ball", range=self:getTalentRange(t), selffire=false, radius=self:getTalentRadius(t)}
    end,
+   getRadiusScale = function(self, t) return 15 end,
    radius = function(self, t)
-      return math.max(1, math.min(10, math.floor(self:getPositive() / 10)))
+      return math.max(1, math.min(10, math.floor(self:getPositive() / t.getRadiusScale(self, t))))
    end,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.5) end,
    getMult = function(self, t) return self:combatTalentScale(t, 1.0, 2.0) end,
@@ -159,6 +160,6 @@ Strike all adjacent enemies for %d%% damage and daze them (using your highest po
 
 Using this talent consumes all of your Positive Energy and prevents you from generating positive energy for 5 turns.
 Every point of positive energy increases the damage by %.2f%%.
-Every 10 points of positive energy increase the radius by 1 (up to 10).]]):format(damage, mult)
+Every %d points of positive energy increase the radius by 1 (up to 10).]]):format(damage, mult, t.getRadiusScale(self, t))
    end,
 }
