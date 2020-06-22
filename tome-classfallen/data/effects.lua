@@ -41,9 +41,9 @@ newEffect{
    parameters = { },
    on_gain = function(self, err) return "#Target# is stunned by the brutal strike!", "+Brutalized" end,
    on_lose = function(self, err) return "#Target# is not stunned anymore.", "-Brutalized" end,
-  activate = function(self, eff)
+   activate = function(self, eff)
      eff.tmpid = self:addTemporaryValue("stunned", 1)
-     eff.tcdid = self:addTemporaryValue("no_talents_cooldown", 1)
+     eff.lockid = self:addTemporaryValue("half_talents_cooldown", 1)
      eff.speedid = self:addTemporaryValue("movement_speed", -0.5)
      eff.bleedid = self:addTemporaryValue("cut_immune", -0.5)
      
@@ -52,7 +52,7 @@ newEffect{
 	local t = self:getTalentFromId(tid)
 	if t and not self.talents_cd[tid] and t.mode == "activated" and not t.innate and util.getval(t.no_energy, self, t) ~= true then tids[#tids+1] = t end
      end
-     for i = 1, 4 do
+     for i = 1, 3 do
 	local t = rng.tableRemove(tids)
 	if not t then break end
 	self:startTalentCooldown(t.id, 1)
@@ -60,7 +60,7 @@ newEffect{
   end,
   deactivate = function(self, eff)
      self:removeTemporaryValue("stunned", eff.tmpid)
-     self:removeTemporaryValue("no_talents_cooldown", eff.tcdid)
+     self:removeTemporaryValue("half_talents_cooldown", eff.lockid)
      self:removeTemporaryValue("movement_speed", eff.speedid)
      self:removeTemporaryValue("cut_immune", eff.bleedid)
   end,
@@ -191,7 +191,7 @@ newEffect{
 newEffect{
    name = "FLN_BLINDING_LIGHT", image = "talents/fln_templar_sigil.png",
    desc = "Blinding Light",
-   long_desc = function(self, eff) return ("The target is unable to see anything and burns for %0.2f light damage per turn."):format(eff.dam) end,
+   long_desc = function(self, eff) return ("The target is blinded by a magical light and unable to see anything."):format(eff.dam) end,
    type = "magical",
    subtype = { light=true, blind=true },
    status = "detrimental",
@@ -199,7 +199,7 @@ newEffect{
    on_gain = function(self, err) return "#Target# loses sight!", "+Blind" end,
    on_lose = function(self, err) return "#Target# recovers sight.", "-Blind" end,
    on_timeout = function(self, eff)
-      DamageType:get(DamageType.LIGHT).projector(eff.src, self.x, self.y, DamageType.LIGHT, eff.dam)
+      --DamageType:get(DamageType.LIGHT).projector(eff.src, self.x, self.y, DamageType.LIGHT, eff.dam)
    end,
    activate = function(self, eff)
       eff.tmpid = self:addTemporaryValue("blind", 1)

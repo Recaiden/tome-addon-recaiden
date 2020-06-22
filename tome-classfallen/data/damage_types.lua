@@ -64,6 +64,7 @@ newDamageType{
 	    target:setEffect(target.EFF_BLAZING_LIGHT, 1, {power = 2, no_ct_effect=true})
 	 elseif target:reactionToward(src) < 0 then
 	    target:setEffect(target.EFF_FLN_BLINDING_LIGHT, 1, {src=src, power=dam.dam, apply_power=dam.pow, no_ct_effect=true})
+            DamageType:get(DamageType.LIGHT).projector(src, x, y, DamageType.LIGHT, dam.dam, state)
 	 end
       end
    end,

@@ -103,7 +103,7 @@ newTalent{
       local burn = t.getStrength(self, t)
       local cost = t.getPrice(self, t)
       local dur = t.getDuration(self, t)
-      return ([[When you kill an enemy, their death forms a cursed magical pattern on the ground. This creates a circle of radius %d which blinds enemies (#SLATE#Spellpower vs. Magical#LAST#) and deals %d light damage while giving you %d positive energy per turn.  The circle lasts for %d turns.
+      return ([[When you kill an enemy, their death forms a cursed magical pattern on the ground. This creates a circle of radius %d which blinds enemies (#SLATE#Spellpower vs. Magical#LAST#) and deals them %d light damage, while giving you %d positive energy per turn.  The circle lasts for %d turns.
 
 You can activate this talent to draw the pattern in your own blood, creating it underneath you at the cost of %d%% of your maximum life.
 
