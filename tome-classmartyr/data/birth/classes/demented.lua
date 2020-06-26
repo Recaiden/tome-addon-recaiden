@@ -24,15 +24,17 @@ newBirthDescriptor{
       ["demented/whispers"]={true, 0.3},
       ["demented/scourge"]={true, 0.3},
       ["demented/standard-bearer"]={true, 0.3},
-
+      
       --advanced talents
+      ["demented/revelation"]={false, 0.3},
+      ["demented/moment"]={false, 0.3},
+      ["psionic/crucible"]={false, 0.3},
 
       --new generics
       ["demented/polarity"]={true, 0.3},
 
       --old generics
       ["technique/combat-training"]={true, 0.3},
-      --["demented/beyond-sanity"]={true, 0.3},
       ["psionic/feedback"]={true, 0.0},
       ["cunning/survival"]={true, 0.2},
    },

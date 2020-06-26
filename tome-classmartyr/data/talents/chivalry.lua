@@ -47,7 +47,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Each melee attack you land on your target has a %d%% chance to trigger another, similar strike at the cost of 5 insanity.
+      return ([[Each melee attack you land on your target has a %d%% chance to trigger another, similar strike at the cost of #INSANE_GREEN#5 insanity#LAST#.
 This works for all blows, even those from other talents and from shield bashes, but this talent can grant at most one attack per weapon per turn.
 
 This talent will deactivate if it brings you to below %d insanity.
@@ -64,6 +64,8 @@ newTalent{
    range = 10,
    cooldown = 18,
    insanity = -15,
+   requires_target = true,
+   is_melee = true,
    target = function(self, t) return {type="widebeam", radius=1, range=self:getTalentRange(t), selffire=false, talent=t} end,
    getHitDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 3.0) end,
    getSideDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 2.0) end,
@@ -74,7 +76,12 @@ newTalent{
       local x, y = self:getTarget(tg)
       if not x or not y then return nil end
       local _ _, _, _, x, y = self:canProject(tg, x, y)
-      if core.fov.distance(self.x, self.y, x, y) < 3 then return nil end
+      if core.fov.distance(self.x, self.y, x, y) < 3 then
+         game.logPlayer(self, "You are too close to build up momentum!")
+         return nil
+      end
+      local target = game.level.map(px, py, Map.ACTOR)
+      if not target then game.logPlayer(self, "You can only charge to a creature.") return nil end
 
       -- check movement to correct space
       local block_actor = function(_, bx, by) return game.level.map:checkEntity(bx, by, Map.TERRAIN, "block_move", self) end
@@ -84,10 +91,6 @@ newTalent{
          tx, ty = lx, ly
          lx, ly, is_corner_blocked = linestep:step()
       until is_corner_blocked or not lx or not ly or game.level.map:checkAllEntities(lx, ly, "block_move", self)
-      if not tx or core.fov.distance(self.x, self.y, tx, ty) < 1 then
-         game.logPlayer(self, "You are too close to build up momentum!")
-         return
-      end
       if not tx or not ty or core.fov.distance(x, y, tx, ty) > 1 then return nil end 
 
       doMartyrWeaponSwap(self, "melee", true)

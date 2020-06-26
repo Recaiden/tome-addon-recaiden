@@ -1,6 +1,17 @@
 local _M = loadPrevious(...)
 
 
+local base_incInsanity = _M.incInsanity
+function _M:incInsanity(amount, no_enemy_check)
+   base_incInsanity(self, amount, no_enemy_check)
+   if self:knowTalent(self.T_REK_MTYR_MOMENT_STOP) then
+      if self.insanity == self:getMaxInsanity() then
+         local t = self:getTalentFromId(self.T_REK_MTYR_MOMENT_STOP)
+         t.doStop(self, t)
+      end
+   end
+end
+
 local base_incFeedback = _M.incFeedback
 function _M:incFeedback(v, set)
    if not set and self:knowTalent(self.T_REK_MTYR_CRUCIBLE_OVERFLOW) then

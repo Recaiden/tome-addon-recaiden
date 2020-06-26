@@ -1,6 +1,6 @@
 
 newTalent{
-   name = "Share Pain", short_name = REK_MTYR_CRUCIBLE_SHARE_PAIN,
+   name = "Share Pain", short_name = "REK_MTYR_CRUCIBLE_SHARE_PAIN",
    type = {"psionic/crucible", 1},
    points = 5, 
    require = psi_wil_high1,
@@ -41,7 +41,7 @@ Mindpower: improves damage.]]):format(damDesc(self, DamageType.MIND, damage))
          }
 
 newTalent{
-   name = "Overflow", short_name = REK_MTYR_CRUCIBLE_OVERFLOW,
+   name = "Overflow", short_name = "REK_MTYR_CRUCIBLE_OVERFLOW",
    type = {"psionic/crucible", 2},
    points = 5, 
    require = psi_wil_high2,
@@ -64,7 +64,7 @@ newTalent{
          }
 
 newTalent{
-   name = "Memento Mori",
+   name = "Memento Mori", short_name = "REK_MTYR_CRUCIBLE_MEMENTO",
    type = {"psionic/crucible", 3},
    points = 5, 
    require = psi_wil_high3,
@@ -105,7 +105,7 @@ Mindpower: raises the cap.]]):
 }
 
 newTalent{
-   name = "Runaway Resonation", short_name = REK_MTYR_CRUCIBLE_RESONATION,
+   name = "Runaway Resonation", short_name = "REK_MTYR_CRUCIBLE_RESONATION",
    type = {"psionic/crucible", 4},
    points = 5, 
    require = psi_wil_high4,
@@ -125,7 +125,7 @@ newTalent{
    info = function(self, t)
       local duration = t.getDuration(self, t)
       local crit_bonus = t.getCritBonus(self, t)
-      return ([[Focus your feedback back on itself, setting your mind surging with unstoppable power.  For %d turns, your critical power is increased by half your mental critical rate (%d), and your mental critical rate becomes 100%.]]):format(duration, crit_bonus)
+      return ([[Focus your feedback in on itself, setting your mind surging with unstoppable power.  For %d turns, your critical power is increased by half your mental critical rate (%d), and your mental critical rate becomes 100%%.]]):format(duration, crit_bonus)
    end,
 }
 

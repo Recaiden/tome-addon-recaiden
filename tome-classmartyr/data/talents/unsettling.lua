@@ -73,7 +73,7 @@ newTalent{
    info = function(self, t)
       return ([[Inform an enemy about the true bleak vistas of reality, confusing them for %d turns (%d power).  The range of this talent will increase with the firing range of a ranged weapon in your main set or offset (but is always at least 3).
 
-#ORANGE#Sanity Bonus:#LAST# Take advantage of their moment of realization to throw a sucker punch(even at range), dealing %d%% unarmed damage.
+#ORANGE#Sanity Bonus:#LAST# Take advantage of their moment of realization to throw a sucker punch or other sneak attack, dealing %d%% unarmed damage.
 ]]):format(t.getDuration(self, t), t.getPower(self, t), 100*t.getDamage(self, t))
    end,
 }
@@ -101,7 +101,7 @@ newTalent{
    require = martyr_req3,
    points = 5,
    cooldown = 8,
-   insanity = -20,
+   insanity = 10,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.5, 3.2) end,
    getExtension = function(self, t) return self:combatTalentScale(t, 3, 5) end,
    range = 0,
@@ -117,7 +117,7 @@ newTalent{
                    function(px, py, tg, self)
 		      local target = game.level.map(px, py, Map.ACTOR)
 		      if target and target ~= self and target:hasEffect(target.EFF_REK_MTYR_UNNERVE) then
-			 self:attackTarget(target, DamageType.MIND, damage, true)
+			 self:attackTarget(target, DamageType.MIND, damage, true, true)
 		      end
                    end
                   )
@@ -133,7 +133,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Reveal a final secret and crush the psyches of your listeners, attacking all Unnerved enemies within range 10 for %d%% weapon damage (as mind damage).
+      return ([[Reveal a terrible secret and crush the psyches of your listeners, attacking all Unnerved targets within range 10 for %d%% unarmed damage (as mind damage).
 
 #ORANGE#Sanity Bonus:#LAST# And then increase the duration of their Unnerve effect by %d turns.
 ]]):format(100*t.getDamage(self, t), t.getExtension(self, t))

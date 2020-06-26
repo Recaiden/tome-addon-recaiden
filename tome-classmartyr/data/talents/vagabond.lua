@@ -19,7 +19,7 @@ newTalent{
       return ([[You can't really call it 'mastery', but you've used a sling before, along with a variety of other weapons.
 This increases Physical Power by %d and weapon damage by %d%% when using a sling and increases your reload rate by %d.
 
-Whenever you hit with a ranged weapon, you will gain 5 insanity.
+Whenever you hit with a ranged weapon, you will gain #INSANE_GREEN#5 insanity.#LAST#
 
 #YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):format(t.getDamage(self, t), 100*t.getPercentInc(self, t), t.getReload(self, t))
    end,
@@ -54,7 +54,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[You ready a sling shot with all your strength.
-This shot does %d%% weapon damage, increases your insanity by an extra 5, and knocks back your target by %d.
+This shot does %d%% weapon damage, gives you an extra #INSANE_GREEN#5 insanity#LAST#, and knocks back your target by %d.
 
 Learning this talent allows you to swap to your alternate weapon set instantly.
 

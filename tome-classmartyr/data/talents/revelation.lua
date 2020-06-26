@@ -51,7 +51,7 @@ newTalent{
    require = martyr_req_high2,
    points = 5,
    cooldown = 20,
-   insanity = 15,
+   insanity = 30,
    getDamage = function(self,t) return self:combatTalentWeaponDamage(t, 1.2, 1.6) end,
    getDuration = function(self,t) return self:combatTalentScale(t, 2, 4) end,
    range = archery_range,
@@ -59,8 +59,10 @@ newTalent{
    requires_target = true,
    on_pre_use = function(self, t, silent) return martyrPreUse(self, t, silent, "sling") end,
    archery_onhit = function(self, t, target, x, y)
-      options = {target.EFF_MTYR_ABYSSAL_LUMINOUS, target.EFF_MTYR_ABYSSAL_UMBRAL, target.EFF_MTYR_ABYSSAL_BLOATED, target.EFF_MTYR_ABYSSAL_WORMS}
-      target:setEffect(options[rng.range(1, #options)], t.getDuration(self, t), {src=self})
+      local options = {target.EFF_MTYR_ABYSSAL_LUMINOUS}--, target.EFF_MTYR_ABYSSAL_UMBRAL, target.EFF_MTYR_ABYSSAL_BLOATED, target.EFF_MTYR_ABYSSAL_WORMS}
+      local horror_type = target.mtyr_horror_type or options[rng.range(1, #options)]
+      target.mtyr_horror_type = horror_type
+      target:setEffect(horror_type, t.getDuration(self, t), {src=self})
    end,
    action = function(self, t)
       doMartyrWeaponSwap(self, "sling", true)
@@ -70,13 +72,11 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[While in combat, zones of guiding light will appear nearby, lasting %d turns.
-Entering a green light will cause you to regenerate for %d health per turn for 5 turns.
-Entering a blue light will refresh you, reducing the duration of outstanding cooldowns by %d turns.
-Entering a orange light will grant you vision sevenfold, allowing you to see stealthed and invisible targets with power %d. and fight while blinded.]]):format(3, t.getPower(self,t), math.ceil(t.getPower(self,t)/20), t.getPower(self,t)/2)
+      return ([[Fire a shot through your own perceptions to shatter the disguise of the target, dealing %d%% damage and revealing its true nature as a horror!
+The horror will resume its disguise after %f turns.
+While in combat, zones of guiding light will appear nearby, lasting %d turns.]]):format(t.getDamage(self,t) * 100, t.getDuration(self, t))
    end,
 }
-
 
 newTalent{
    name = "Writhing Speed", short_name = "REK_MTYR_REVELATION_SPEED",
@@ -85,11 +85,10 @@ newTalent{
    points = 5,
    insanity = -5,
    cooldown = 20,
-   getDuration = function(self) return 5 end,
-   getAmmo = function(self) return math.floor(self:combatTalentScale(t, 2, 5)) end,
-   getSpeed = function(self) return self:combatTalentScale(t, 0.42, 0.84, 0.75) end,
-   getAccuracy = function(self) return self:combatTalentScale(t, 40, 100, 0.75) end,
-
+   getDuration = function(self, t) return 5 end,
+   getAmmo = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
+   getSpeed = function(self, t) return self:combatTalentScale(t, 0.42, 0.84, 0.75) end,
+   getAccuracy = function(self, t) return self:combatTalentScale(t, 40, 100, 0.75) end,
    activate = function(self, t)
       local c = 0
       while c < t.getAmmot(self, t) do
@@ -114,7 +113,7 @@ newTalent{
       return ([[Immediately reload %d times.  For the next %d turns, your ranged attack speed increases by %d%% and your accuracy by %d.
 
 #{italic}#Harmonize with the world of horror all around you, letting the eyestalks guide your shots and the tentacles be your hands.#{normal}#
-]]):format(t.getDuration(self, t), t.getSpeed(self, t)*100, t.getAccuracy(self, t))
+]]):format(t.getAmmo(self, t), t.getDuration(self, t), t.getSpeed(self, t)*100, t.getAccuracy(self, t))
    end,
 }
 
@@ -126,7 +125,7 @@ newTalent{
    no_energy = true,
    insanity = -35,
    cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 47, 35)) end,
-   getDuration = function(self) return math.floor(self:combatTalentScale(t, 5, 14)) end,
+   getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 5, 14)) end,
    range = 4,
    no_npc_use = true,
    requires_target = true,
@@ -136,24 +135,23 @@ newTalent{
       local x, y, target = self:getTargetLimited(tg)
       if not x or not y then return nil end
       if not target or target.dead or target == self then return end
-      if not target:attr("confused") then return end
-      if game.party:hasMember(target) then return end
-      if target.instakill_immune and target.instakill_immune >= 1 then
-         game.logSeen(target, "%s is immune to instakill and mind control effects!", target.name:capitalize())
+      if not target:attr("confused") then
+         game.logSeen(target, "%s must be confused to be controlled!", target.name:capitalize())
          return
       end
-      if target.rank > 3 and ((target.life / target.max_life) >= 0.8) then
-         game.logSeen(target, "%s must be below 80%% of their max life to be controlled!", target.name:capitalize())
+      if game.party:hasMember(target) then
+         game.logSeen(target, "%s is already part of your party!", target.name:capitalize())
+         return
+      end
+      if target.instakill_immune and target.instakill_immune >= 1 then
+         game.logSeen(target, "%s is immune to mind control!", target.name:capitalize())
          return
       end
       self:project(tg, x, y, function(px, py)
                       local target = game.level.map(px, py, Map.ACTOR)
                       if target:canBe("instakill") then
-                         target:takeHit(1, self)
-                         target:takeHit(1, self)
-                         target:takeHit(1, self)
                          if target.rank > 3 then
-                            target:setEffect(target.EFF_DOMINANT_WILL_BOSS, 3, {src=self})
+                            target:setEffect(target.EFF_DOMINANT_WILL_BOSS, 2+self:getTalentLevelRaw(t), {src=self})
                          else
                             target:setEffect(target.EFF_DOMINANT_WILL, t.getDuration(self), {src=self})
                          end
@@ -167,8 +165,8 @@ newTalent{
    info = function(self, t)
       return ([[#{italic}#Don't you remember?  #GREEN#We#LAST#'ve already absorbed that one.#{normal}# 
 Remind a Confused target that it is under your full control. 
-Rare and stronger targets must be below 80%% of their maximum life to be controlled, will be invulnerable for the duration, and will break free of the effect without dying after 3 turns.
+Rare and stronger targets will be invulnerable for the duration, and will break free of the effect without dying after %d turns.
 Other creatures can be controlled for %d turns and will die from the strain afterward.
-This effect checks instakill immunity.]]):format(t.getDuration(self))
+This effect checks instakill immunity.]]):format(2+self:getTalentLevelRaw(t), t.getDuration(self, t))
    end,
 }

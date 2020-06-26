@@ -319,3 +319,40 @@ newEffect{
    on_timeout = function(self, eff)
    end,
 }
+
+newEffect{
+   name = "REK_MTYR_MOMENT_COUNTER", image = "talents/rek_mtyr_moment_block.png",
+   desc = "Implacable Blade",
+   long_desc = function(self, eff) return ("The target is countering all attacks, preventing %d damage."):format(eff.power) end,
+   type = "other",
+   subtype = { temporal=true, block=true },
+   status = "beneficial",
+   parameters = { power = 1, dam = 1.0 },
+   activate = function(self, eff)
+      --self:effectTemporaryValue(p, "flat_damage_armor", {all=eff.power})
+   end,
+   callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, tmp)
+      if not self.turn_procs.rek_martyr_moment_counter[src.uid] then
+         self.turn_procs.rek_martyr_moment_counter[src.uid] = true
+         local t = self:getTalentFromId(self.T_REK_MTYR_MOMENT_BLOCK)
+         if t and src ~= self then
+            self:attackTargetWith(src, t.getFinalMoment(self, t), nil, eff.dam)
+         end
+      end
+
+      return {dam=math.max(0, dam-eff.power)}
+   end,
+}
+
+newEffect{
+   name = "REK_MTYR_MOMENT_WIELD", image = "talents/rek_mtyr_moment_stop.png",
+   desc = "Implacable Blade",
+   long_desc = function(self, eff) return ("The target is wielding the Final Moment as a sword."):format() end,
+   type = "other",
+   subtype = { temporal=true, weapon=true },
+   status = "beneficial",
+   parameters = { power=0 },
+   activate = function(self, eff)
+   end,
+
+}

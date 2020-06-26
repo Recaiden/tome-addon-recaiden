@@ -6,19 +6,19 @@ newTalent{
    mode = "passive",
    getPower = function(self, t)
       input = self:getInsanity() * self.level * self:getTalentLevel(t)
-      return self:combatScale(input, 3, 100, 25, 25000)
+      return self:combatScale(input, 0, 100, 25, 25000)
    end,
    getMaxPower = function(self, t)
       input = 100 * self.level * self:getTalentLevel(t)
-      return self:combatScale(input, 3, 100, 25, 25000)
+      return self:combatScale(input, 0, 100, 25, 25000)
    end,
    getReduction = function(self, t)
       input = (100-self:getInsanity()) * self.level * self:getTalentLevel(t)
-      return self:combatScale(input, 6, 100, 60, 25000)
+      return self:combatScale(input, 0, 100, 60, 25000)
    end,
    getMaxReduction = function(self, t)
       input = 100 * self.level * self:getTalentLevel(t)
-      return self:combatScale(input, 6, 100, 60, 25000)
+      return self:combatScale(input, 0, 100, 60, 25000)
    end,
    passives = function(self, t, p)
       self:talentTemporaryValue(p, "flat_damage_armor", {all=t.getReduction(self, t)})
