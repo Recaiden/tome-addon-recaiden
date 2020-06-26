@@ -74,7 +74,9 @@ newTalent{
 
 			 self:attackTargetWith(target, useFinalMoment(self), nil, t.getDamage(self, t))
 		      end
-      end)
+                                       end)
+      game:playSoundNear(self, "talents/rek_triple_tick")
+
 
       return true
    end,
@@ -142,7 +144,8 @@ newTalent{
       game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(ox-self.x), math.abs(oy-self.y)), "psionicbeam", {tx=ox-self.x, ty=oy-self.y})
 
       -- TODO leave a lingering marker that will come to you 2 turns later, repeating the damage
-      game:playSoundNear(self, "talents/warp")
+      game:playSoundNear(self, "talents/frog_speedup")
+      --game:playSoundNear(self, "talents/warp")
       return true
    end,
    info = function(self, t)
@@ -176,7 +179,7 @@ newTalent{
    getGain = function(self, t) return math.min(5, self:combatTalentMindDamage(t, 1.0, 2.2)) end,
    doStop = function(self, t)
       if self:isTalentCoolingDown(t) then return end
-
+      game:playSoundNear(self, "talents/roat_luna_dial")
       self.energy.value = self.energy.value + game.energy_to_act * t.getGain(self, t)
       self:startTalentCooldown(t)
       self:setEffect(self.EFF_REK_MTYR_MOMENT_WIELD, 1, {src=self})
