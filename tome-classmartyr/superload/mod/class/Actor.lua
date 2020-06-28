@@ -44,6 +44,24 @@ function _M:incFeedback(v, set)
    return base_incFeedback(self, v, set)
 end
 
+-- prevent horror-transformed enemies using any talents except the approved horror ones
+local base_preUseTalent = _M.preUseTalent
+function _M:preUseTalent(ab, silent, fake)
+   local eff = self:hasEffect(self.EFF_REK_MTYR_ABYSSAL_LUMINOUS)
+   if eff then --and util.getval(ab.no_energy, self, ab) ~= (true or "fake") then
+      game.logPlayer(self, "DEBUG testing abyssal talent %s", ab.id)
+      for k, v in pairs(eff.allow_talent) do
+         game.logPlayer(self, "DEBUG vs %s: %s", k, v)
+      end
+      
+      if not eff.allow_talent[ab.id] then
+         return false
+      end
+   end
+
+   local ret = base_preUseTalent(self, ab, silent, fake)
+   return ret
+end
 
 local base_insanityEffect = _M.insanityEffect
 function _M:insanityEffect(min, max)

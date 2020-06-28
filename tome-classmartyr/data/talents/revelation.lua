@@ -51,15 +51,15 @@ newTalent{
    require = martyr_req_high2,
    points = 5,
    cooldown = 20,
-   insanity = 30,
+   insanity = -30,
    getDamage = function(self,t) return self:combatTalentWeaponDamage(t, 1.2, 1.6) end,
-   getDuration = function(self,t) return self:combatTalentScale(t, 2, 4) end,
+   getDuration = function(self,t) return self:combatTalentScale(t, 3, 5) end,
    range = archery_range,
    tactical = { ATTACK = { weapon = 1 } },
    requires_target = true,
    on_pre_use = function(self, t, silent) return martyrPreUse(self, t, silent, "sling") end,
    archery_onhit = function(self, t, target, x, y)
-      local options = {target.EFF_MTYR_ABYSSAL_LUMINOUS}--, target.EFF_MTYR_ABYSSAL_UMBRAL, target.EFF_MTYR_ABYSSAL_BLOATED, target.EFF_MTYR_ABYSSAL_WORMS}
+      local options = {target.EFF_REK_MTYR_ABYSSAL_LUMINOUS}--, target.EFF_MTYR_ABYSSAL_UMBRAL, target.EFF_MTYR_ABYSSAL_BLOATED, target.EFF_MTYR_ABYSSAL_WORMS}
       local horror_type = target.mtyr_horror_type or options[rng.range(1, #options)]
       target.mtyr_horror_type = horror_type
       target:setEffect(horror_type, t.getDuration(self, t), {src=self})
@@ -69,12 +69,12 @@ newTalent{
       local targets = self:archeryAcquireTargets(nil, {one_shot=true, add_speed=self.combat_physspeed})
       if not targets then return end
       self:archeryShoot(targets, t, nil, {mult=t.getDamage(self, t)})
+
       return true
    end,
    info = function(self, t)
-      return ([[Fire a shot through your own perceptions to shatter the disguise of the target, dealing %d%% damage and revealing its true nature as a horror!
-The horror will resume its disguise after %f turns.
-While in combat, zones of guiding light will appear nearby, lasting %d turns.]]):format(t.getDamage(self,t) * 100, t.getDuration(self, t))
+      return ([[Fire a shot into the mindscape to shatter the disguise of the target, dealing %d%% damage and revealing its true nature as a horror!
+The horror will resume its disguise after %d turns.]]):format(t.getDamage(self,t) * 100, t.getDuration(self, t))
    end,
 }
 

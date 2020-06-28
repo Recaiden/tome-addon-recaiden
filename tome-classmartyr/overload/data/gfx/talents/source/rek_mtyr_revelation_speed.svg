@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   style="height: 512px; width: 512px;"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="rek_mtyr_revelation_speed.svg"
+   inkscape:export-filename="D:\Games\SteamLibrary\steamapps\common\TalesMajEyal\game\addons\tome-classmartyr\overload\data\gfx\talents\rek_mtyr_revelation_speed.png"
+   inkscape:export-xdpi="12"
+   inkscape:export-ydpi="12"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <metadata
+     id="metadata14">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs12" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1057"
+     id="namedview10"
+     showgrid="false"
+     inkscape:zoom="0.4609375"
+     inkscape:cx="256"
+     inkscape:cy="256"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg8" />
+  <path
+     d="M 0 0 L 0 512 L 512 512 L 512 0 L 0 0 z M 256 54.279297 L 256 54.28125 C 380.603 54.28125 482 155.67925 482 280.28125 C 482 328.14525 467.02416 372.57425 441.53516 409.15625 L 411.74609 389.29688 C 428.93309 364.75187 440.45245 335.9347 444.43945 304.7207 L 416 304.7207 L 416 286.7207 L 445.88477 286.7207 C 445.95577 284.5837 446 282.4372 446 280.2832 C 446 234.9032 430.18367 193.31359 403.76367 160.68359 L 386.36328 178.08398 L 373.63672 165.35742 L 391.76953 147.22461 C 359.26453 114.05961 314.665 92.802 265 90.5 L 265 119.71875 L 247 119.71875 L 247 90.498047 C 197.335 92.800047 152.73547 114.05766 120.23047 147.22266 L 138.36328 165.35352 L 125.63672 178.08008 L 108.23633 160.68164 C 81.816328 193.30964 66 234.9013 66 280.2793 C 66 282.4353 66.045234 284.57875 66.115234 286.71875 L 96 286.71875 L 96 304.71875 L 67.558594 304.71875 C 71.546594 335.93375 83.067859 364.75188 100.25586 389.29688 L 70.464844 409.15625 C 44.974844 372.57325 30 328.1433 30 280.2793 C 30 155.6773 131.397 54.279297 256 54.279297 z M 271.83008 120.50977 A 160 160 0 0 1 358.69141 157.23438 L 350.8418 165.10938 L 356.60156 170.85547 L 386.96875 201.14453 L 392.10352 195.99219 A 160 160 0 0 1 396.4043 203.00391 L 346.4375 220.57227 A 144 160 0 0 0 271.83008 120.50977 z M 427.98047 210.35352 L 273.47266 313.51172 C 268.94966 317.95572 262.77 320.7207 256 320.7207 C 242.3 320.7207 231 309.4207 231 295.7207 C 231 283.1557 240.50544 272.61712 252.64844 270.95312 L 427.98047 210.35352 z M 411.4668 242.67578 A 160 160 0 0 1 415.50195 270.63281 L 398.48047 270.63281 L 398.48047 323.14648 L 409.97461 323.14648 A 160 160 0 0 1 370.21094 391.71875 L 294.1543 391.71875 A 144 160 0 0 0 350.75391 283.39648 L 411.4668 242.67578 z M 128 421.7207 L 384 421.7207 L 384 457.7207 L 128 457.7207 L 128 421.7207 z "
+     id="path2" />
+</svg>

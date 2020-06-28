@@ -354,5 +354,78 @@ newEffect{
    parameters = { power=0 },
    activate = function(self, eff)
    end,
+}
 
+
+newEffect{
+   name = "REK_MTYR_ABYSSAL_LUMINOUS", image = "talents/rek_mtyr_revelation_abyssal_shot.png",
+   desc = "Abyssal Form: Luminous",
+   long_desc = function(self, eff) return ("The target is revealed as a luminous horror!"):format() end,
+   type = "other",
+   subtype = { horror=true, morph=true },
+   status = "detrimental",
+   parameters = { talent_power=1 },
+   on_gain = function(self, err) return "#PURPLE##Target# is revealed to have been a luminous horror all along!", true end,
+   on_lose = function(self, err) return "#Target# returns to their normal guise.", true end,
+   activate = function(self, eff)
+      eff.allow_talent = {
+         [self.T_CHANT_OF_FORTITUDE] = true,
+         [self.T_SEARING_LIGHT] = true,
+         [self.T_FIREBEAM] = true,
+         [self.T_PROVIDENCE] = true,
+         [self.T_HEALING_LIGHT] = true,
+         [self.T_BARRIER] = true,
+         [self.T_ATTACK] = true,
+      }
+      -- luminous passives
+      self:effectTemporaryValue(eff, "resists", {[DamageType.LIGHT]=100, [DamageType.FIRE]=100, [DamageType.DARKNESS]=-50})
+      self:effectTemporaryValue(eff, "damage_affinity", {[DamageType.LIGHT]=50, [DamageType.FIRE]=50})
+      self:effectTemporaryValue(eff, "blind_immune", 1)
+
+      -- luminous talents
+      self:learnTalent(self.T_CHANT_OF_FORTITUDE, true, eff.talent_power)
+      if not self:isTalentActive(self.T_CHANT_OF_FORTITUDE) then
+         self:forceUseTalent(self.T_CHANT_OF_FORTITUDE, {ignore_energy=true})
+      end
+      self:learnTalent(self.T_SEARING_LIGHT, true, eff.talent_power)
+      self:learnTalent(self.T_FIREBEAM, true, eff.talent_power)
+      self:learnTalent(self.T_PROVIDENCE, true, eff.talent_power)
+      self:learnTalent(self.T_HEALING_LIGHT, true, math.max(1, eff.talent_power-2))
+      self:learnTalent(self.T_BARRIER, true, math.max(1, eff.talent_power-2))
+
+      self:alterTalentCoolingdown(self.T_SEARING_LIGHT, -1000)
+      self:alterTalentCoolingdown(self.T_FIREBEAM, -1000)
+      self:alterTalentCoolingdown(self.T_PROVIDENCE, -1000)
+      self:alterTalentCoolingdown(self.T_HEALING_LIGHT, -1000)
+      self:alterTalentCoolingdown(self.T_BARRIER, -1000)
+      self:incPositive(self:getMaxPositive())
+
+      -- general horrifyingness
+      eff.typeid = self.type
+      self.type = "horror"
+      self:project({type="ball", radius=10}, self.x, self.y, function(px, py)
+                      local act = game.level.map(px, py, Map.ACTOR)
+                      if not act or self:reactionToward(act) <= 0 then return end
+                      if act == eff.src or act:resolveSource() == eff.src then return end  -- Pseudofaction to avoid anything directly linked to the effect source
+                      act:setTarget(nil)
+                                                             end)
+      self:effectTemporaryValue(eff, "hated_by_everybody", 1)
+      self.replace_display = mod.class.Actor.new{image="npc/horror_eldritch_luminous_horror.png",}
+      self:removeAllMOs()
+      game.level.map:updateMap(self.x, self.y)
+   end,
+   deactivate = function(self, eff)
+      self.replace_display = nil
+      self:removeAllMOs()
+      game.level.map:updateMap(self.x, self.y)
+
+      self.type = eff.typeid
+
+      self:unlearnTalent(self.T_CHANT_OF_FORTITUDE, eff.talent_power)
+      self:unlearnTalent(self.T_SEARING_LIGHT, eff.talent_power)
+      self:unlearnTalent(self.T_FIREBEAM, eff.talent_power)
+      self:unlearnTalent(self.T_PROVIDENCE, eff.talent_power)
+      self:unlearnTalent(self.T_HEALING_LIGHT, math.max(1, eff.talent_power-2))
+      self:unlearnTalent(self.T_BARRIER, math.max(1, eff.talent_power-2))
+   end,
 }
