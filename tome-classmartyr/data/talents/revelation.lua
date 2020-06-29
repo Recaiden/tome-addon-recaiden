@@ -163,10 +163,12 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[#{italic}#Don't you remember?  #GREEN#We#LAST#'ve already absorbed that one.#{normal}# 
-Remind a Confused target that it is under your full control. 
-Rare and stronger targets will be invulnerable for the duration, and will break free of the effect without dying after %d turns.
-Other creatures can be controlled for %d turns and will die from the strain afterward.
-This effect checks instakill immunity.]]):format(2+self:getTalentLevelRaw(t), t.getDuration(self, t))
+      return ([[Take control of a Confused target, bringing it onto your side.
+Rare and stronger targets will be invulnerable for the duration, and will break free of the effect after %d turns.
+Weaker targets can be controlled for %d turns and will die from the strain afterward.
+
+This effect checks instakill immunity.
+
+#{italic}#Don't you remember?  #GREEN#We#LAST#'ve already absorbed that one.#{normal}# ]]):format(2+self:getTalentLevelRaw(t), t.getDuration(self, t))
    end,
 }

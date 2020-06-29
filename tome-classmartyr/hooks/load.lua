@@ -7,8 +7,9 @@ local Zone = require "engine.Zone"
 local Map = require "engine.Map"
 local Colors = require "engine.colors"
 
-defineColor('MIDNIGHT', 25, 25, 112)
-class:bindHook("ToME:load", function(self, data)
+if Game:isAddonActive("cults") then
+   defineColor('MIDNIGHT', 25, 25, 112)
+   class:bindHook("ToME:load", function(self, data)
                   Talents:loadDefinition('/data-classmartyr/talents/demented.lua')
                   ActorTemporaryEffects:loadDefinition('/data-classmartyr/effects.lua')
                   Birther:loadDefinition("/data-classmartyr/birth/classes/demented.lua")
@@ -21,16 +22,17 @@ class:bindHook("ToME:load", function(self, data)
 -- 		  end
 -- end)
 
-class:bindHook(
-   "Actor:getSpeed",
-   function(self, hd)
-      local speed_type = hd.speed_type
-      local speed = hd.speed
-      if speed_type == "archery" then
-         local eff = self:hasEffect(self.EFF_REK_MTYR_SEVENFOLD_SPEED)
-         if eff then
-            speed = speed / (1+eff.power)
+   class:bindHook(
+      "Actor:getSpeed",
+      function(self, hd)
+         local speed_type = hd.speed_type
+         local speed = hd.speed
+         if speed_type == "archery" then
+            local eff = self:hasEffect(self.EFF_REK_MTYR_SEVENFOLD_SPEED)
+            if eff then
+               speed = speed / (1+eff.power)
+            end
          end
-      end
-      return hd
-   end)
+         return hd
+      end)
+end

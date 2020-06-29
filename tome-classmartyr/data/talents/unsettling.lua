@@ -84,7 +84,7 @@ newTalent{
    require = martyr_req2,
    points = 5,
    mode = "passive",
-   getDamage = function(self, t) return self:combatTalentMindDamage(t, 5, 135) end,
+   getDamage = function(self, t) return self:combatTalentMindDamage(t, 5, 58) end,
    getPowerDrain = function(self, t) return self:combatTalentMindDamage(t, 5, 36) end,
    info = function(self, t)
       return ([[Your Unnerve effect tears at the victim's mind, dealing %d mind damage per turn.

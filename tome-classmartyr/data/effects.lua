@@ -79,7 +79,7 @@ newEffect{
       return str
    end,
    type = "mental",
-   subtype = { confusion=true, },
+   subtype = { disease=true, },
    status = "detrimental",
    parameters = { damage=10, ramp=1, lifesteal=0, fail=0 },
    activate = function(self, eff)

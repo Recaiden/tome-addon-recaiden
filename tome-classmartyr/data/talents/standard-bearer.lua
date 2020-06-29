@@ -135,10 +135,38 @@ newTalent{
    },
    
    getLevel = function(self, t) return math.floor(self:combatScale(self:getTalentLevel(t), -6, 0.9, 2, 5)) end, -- -6 @ 1, +2 @ 5, +5 @ 8
+   callbackOnRest = function(self, t) self.rek_mtyr_flag_progress = nil end,
+   callbackOnRun = function(self, t) self.rek_mtyr_flag_progress = nil end,
    callbackOnKill = function(self, t, src, death_note)
       if self:isTalentCoolingDown(t) then return end
       local didSummon = t.doSummon(self, t, src.x, src.y)
       if didSummon then self:startTalentCooldown(t) end
+   end,
+   callbackOnDealDamage = function(self, t, val, target, dead, death_note)
+      if dead then return end
+      
+      local threshold = 0
+      if target.rank < 3.2 then return
+      elseif target.rank >= 5 then
+         threshold = target.max_life * t.thEBoss(self, t)
+      elseif target.rank >= 4 then
+         threshold = target.max_life * t.thBoss(self, t)
+      else
+         threshold = target.max_life * t.thRare(self, t)
+      end
+      local amt = 0
+
+      self.rek_mtyr_flag_progress = self.rek_mtyr_flag_progress or {}
+      
+      local stored = self.rek_mtyr_flag_progress[target.uid] or 0
+      if stored + val >= threshold then
+         if self:isTalentCoolingDown(t) then return end
+         local didSummon = t.doSummon(self, t, target.x, target.y)
+         if didSummon then self:startTalentCooldown(t) end
+         self.rek_mtyr_flag_progress[target.uid] = 0
+      else
+         self.rek_mtyr_flag_progress[target.uid] = stored + val
+      end
    end,
    getTimeLimit = function(self, t) return 10 end,
    thRare = function(self, t) return .4 end,
@@ -173,7 +201,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[When you kill an enemy, summon a Flag of level %d where they died that magically strikes nearby enemies.
-You also summon a flag when you have done enough damage to a powerful enemy within %d turns: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
+You also summon a flag when you have done enough damage to a powerful enemy within: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
 Summoning the flag has a cooldown.
 
 Flags last until destroyed or until you leave the level, but you can only have 3 placed at a time.]]):format(math.max(1, self.level + t.getLevel(self, t)), t.getTimeLimit(self, t), t.thRare(self, t)*100, t.thBoss(self, t)*100, t.thEBoss(self, t)*100)
@@ -209,7 +237,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[With incredible boldness, you plant a flag next to you!
+      return ([[With incredible boldness, you plant a flag nearby before defeating an enemy!
 
 Levels in this talent grant your flags the ability to pull enemies closer and reduce the cooldown between automatic flag placements by %d turns.]]):
       format(t.getCDReduce(self, t))

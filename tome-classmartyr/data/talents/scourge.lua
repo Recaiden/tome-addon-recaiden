@@ -12,12 +12,14 @@ newTalent{
    target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
    getHitDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
-   getDotDamage = function(self, t) return self:combatTalentMindDamage(t, 4, 25) end,
+   getDotDamage = function(self, t) return self:combatTalentMindDamage(t, 4, 52) end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)
       local x, y, target = self:getTarget(tg)
       if not target or not self:canProject(tg, x, y) then return nil end
       if not target then return end
+
+      doMartyrWeaponSwap(self, "melee", true)
 
       local dam = self:mindCrit(t.getDotDamage(self, t))
       local ramp = 1

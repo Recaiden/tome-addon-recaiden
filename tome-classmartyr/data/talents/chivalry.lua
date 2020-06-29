@@ -16,6 +16,7 @@ newTalent{
       end
       return true
    end,
+   deactivate_on = {no_combat=true, run=true, rest=true},
    callbackOnMeleeAttack = function(self, t, target, hitted, crit, weapon, damtype, mult, dam, hd)
       -- checks self.turn_procs._no_melee_recursion just in case
       if hitted and weapon and not (self.turn_procs._rek_mtyr_focus_active or self.turn_procs._no_melee_recursion or target.dead) then
@@ -50,7 +51,7 @@ newTalent{
       return ([[Each melee attack you land on your target has a %d%% chance to trigger another, similar strike at the cost of #INSANE_GREEN#5 insanity#LAST#.
 This works for all blows, even those from other talents and from shield bashes, but this talent can grant at most one attack per weapon per turn.
 
-This talent will deactivate if it brings you to below %d insanity.
+This talent will deactivate if it brings you to below %d insanity, or upon resting.
 
 Dexterity: increases chance]]):format(t.getChance(self, t), t.getCost(self, t), t.getThreshold(self, t))
    end,
