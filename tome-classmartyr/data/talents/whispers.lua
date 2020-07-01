@@ -6,19 +6,22 @@ newTalent{
    mode = "passive",
    getPower = function(self, t)
       input = self:getInsanity() * self.level * self:getTalentLevel(t)
-      return self:combatScale(input, 0, 100, 25, 25000)
+      return self:combatTalentScale(t, 3, 20)
+         * (self:getInsanity() / 100)
+         * self:combatScale(self.level, 1, 1, 2, 50)
    end,
    getMaxPower = function(self, t)
-      input = 100 * self.level * self:getTalentLevel(t)
-      return self:combatScale(input, 0, 100, 25, 25000)
+      return self:combatTalentScale(t, 3, 20)
+         * self:combatScale(self.level, 1, 1, 2, 50)
    end,
    getReduction = function(self, t)
-      input = (100-self:getInsanity()) * self.level * self:getTalentLevel(t)
-      return self:combatScale(input, 0, 100, 60, 25000)
+      return self:combatTalentScale(t, 5, 30)
+         * ((self:getMaxInsanity() - self:getInsanity()) / 100)
+         * self:combatScale(self.level, 1, 1, 2, 50)
    end,
    getMaxReduction = function(self, t)
-      input = 100 * self.level * self:getTalentLevel(t)
-      return self:combatScale(input, 0, 100, 60, 25000)
+      return self:combatTalentScale(t, 5, 30)
+         * self:combatScale(self.level, 1, 1, 2, 50)
    end,
    passives = function(self, t, p)
       self:talentTemporaryValue(p, "flat_damage_armor", {all=t.getReduction(self, t)})
@@ -49,9 +52,9 @@ newTalent{
    require = martyr_req2,
    points = 5,
    mode = "passive",
-   getPower = function(self,t) return self:combatTalentScale(t, 5, 120) end,
+   getPower = function(self,t) return self:combatTalentScale(t, 20, 120) end,
    getChance = function(self, t) return 20 end,
-   getDuration = function(self, t) return 3 end,
+   getDuration = function(self, t) return 4 end,
    callbackOnActBase = function (self, t)
       if not self.in_combat then return end
       if not rng.percent(t.getChance(self, t)) then return end
@@ -86,12 +89,10 @@ newTalent{
       return ([[While in combat, zones of guiding light will appear nearby, lasting %d turns.
 Entering a green light will cause you to regenerate for %d health per turn for 5 turns.
 Entering a blue light will refresh you, reducing the duration of outstanding cooldowns by %d turns.
-Entering a orange light will grant you vision sevenfold, allowing you to see stealthed and invisible targets with power %d. and fight while blinded.]]):format(3, t.getPower(self,t), math.ceil(t.getPower(self,t)/20), t.getPower(self,t)/2)
+Entering a orange light will grant you vision sevenfold, allowing you to see stealthed and invisible targets with power %d and fight while blinded.]]):format(t.getDuration(self, t), t.getPower(self,t), math.max(1, math.floor(t.getPower(self,t)/25)), t.getPower(self,t)/2)
    end,
 }
 
--- green light is aura of mind damage , light will imbue you with a destructive psychic aura, dealing %d mind damage per turn to enemies in range 2
--- orange blinds light will release a brilliant flash, blinding and reducing the sight radius of enemies in range 10.
 newTalent{
    name = "Warning Lights", short_name = "REK_MTYR_WHISPERS_WARNING",
    type = {"demented/whispers", 3},

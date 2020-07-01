@@ -33,7 +33,7 @@ newTalent{
       return true
    end,
    getMinSteps = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
-   getMaxSteps = function(self, t) return math.max(t.getMinSteps(self, t) + 1, math.floor(self:combatTalentScale(t, 6, 8))  end,
+   getMaxSteps = function(self, t) return math.max(t.getMinSteps(self, t) + 1, math.floor(self:combatTalentScale(t, 6, 8)))  end,
    action = function(self, t)
       self:setEffect(self.EFF_REK_MTYR_MANIC_SPEED, 1, {min_steps=t.getMinSteps(self, t), max_steps=t.getMaxSteps(self, t), src=self})
       return true

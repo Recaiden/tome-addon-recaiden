@@ -63,6 +63,21 @@ applyGuidanceBurn = function(target, t)
                                        DamageType.REK_MTYR_MIND_FRIENDS, dam,
                                        2,
                                        5, nil,
+                                       nil,
+                                       function(e)
+                                          e.x = e.src.x
+                                          e.y = e.src.y
+                                          return true
+                                       end,
+                                       0, 0
+                                      )
+    ef.name = "mindstorm"
+
+    game.level.map:addEffect(target,
+                                       target.x, target.y, dur,
+                                       DamageType.COSMETIC, 0,
+                                       0,
+                                       5, nil,
                                        {type="mindstorm", only_one=true},
                                        function(e)
                                           e.x = e.src.x
@@ -71,7 +86,8 @@ applyGuidanceBurn = function(target, t)
                                        end,
                                        0, 0
                                       )
-   ef.name = "mindstorm"
+                
+  
 end
 
 newDamageType{
@@ -97,13 +113,14 @@ newDamageType{
             if eff.ground_effect then
                removeGroundEffect(eff.ground_effect)
             end
+            game:playSoundNear(target, "talents/heal")
 	 end
       end
    end,
 }
 
 newDamageType{
-   name = "healing guidance", type = "REK_MTYR_GUIDE_BUFF",
+   name = "energizing guidance", type = "REK_MTYR_GUIDE_BUFF",
    projector = function(src, x, y, type, dam, state)
       state = initState(state)
       useImplicitCrit(src, state)
@@ -117,7 +134,7 @@ newDamageType{
                for tid, _ in pairs(target.talents_cd) do
                   local t = target:getTalentFromId(tid)
                   if t and not t.fixed_cooldown then
-                     target.talents_cd[tid] = math.max(0, target.talents_cd[tid] - math.ceil(dam/20))
+                     target.talents_cd[tid] = math.max(0, target.talents_cd[tid] - math.max(1, math.floor(dam/25)))
                   end
                end
             end
@@ -132,6 +149,7 @@ newDamageType{
             if eff.ground_effect then
                removeGroundEffect(eff.ground_effect)
             end
+            game:playSoundNear(target, "talents/distortion")
 	 end
       end
    end,
@@ -160,6 +178,7 @@ newDamageType{
             if eff.ground_effect then
                removeGroundEffect(eff.ground_effect)
             end
+            game:playSoundNear(target, "talents/tidalwave")
 	 end
       end
    end,

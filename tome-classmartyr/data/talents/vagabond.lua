@@ -54,9 +54,11 @@ newTalent{
    end,
    info = function(self, t)
       return ([[You ready a sling shot with all your strength.
-This shot does %d%% weapon damage, gives you an extra #INSANE_GREEN#5 insanity#LAST#, and knocks back your target by %d.
+This shot does %d%% weapon damage, gives you an extra #INSANE_GREEN#5 insanity#LAST#, and knocks back your target by %d space.
 
 Learning this talent allows you to swap to your alternate weapon set instantly.
+
+#{italic}#Keep your distance!  It's...for your own good.#{normal}#
 
 #YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):
       format(t.getDamage(self, t) * 100, t.getDist(self, t))
@@ -72,24 +74,12 @@ newTalent{
    cooldown = 10,
    tactical = { BUFF = 2 },
    getDamage = function(self, t) return self:combatTalentMindDamage(t, 5, 40) end,
-   callbackOnArcheryAttack = function(self, t, target, hitted)
-      if not hitted then return end
-      if not game.player or self:getTalentLevel(t) < 5 then return end
-      if self:hasEffect(self.EFF_REK_MTYR_OVERSEER) then
-         self:removeEffect(self.EFF_REK_MTYR_OVERSEER)
-      end
-      self:setEffect(self.EFF_REK_MTYR_OVERSEER, 5, {type=tostring(target.type), subtype=tostring(target.subtype)})
-   end,
    activate = function(self, t)
       game:playSoundNear(self, "talents/fire")
       local ret = {
          particle = particle,
          dam = self:addTemporaryValue("ranged_project", {[DamageType.MIND] = t.getDamage(self, t)}),
       }
-      if core.shader.active(4) then
-         local slow = rng.percent(50)
-         local h1x, h1y = self:attachementSpot("hand1", true) if h1x then ret.particle1 = self:addParticles(Particles.new("shader_shield", 1, {img="fireball", a=0.7, size_factor=0.4, x=h1x, y=h1y-0.1}, {type="flamehands", time_factor=slow and 700 or 1000})) end
-      end
       return ret
    end,
    deactivate = function(self, t, p)
@@ -98,7 +88,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[You make unusual modifications to your sling bullets, causing them to deal %0.2f mind damage on hit and grant you telepathy to all similar creatures (radius 15) for 5 turns.
+      return ([[You make unusual modifications to your sling bullets, causing them to deal %0.2f mind damage on hit.
 
 Mindpower: increases damage.
 

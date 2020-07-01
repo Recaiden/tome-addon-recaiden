@@ -79,7 +79,7 @@ martyrPreUse = function(self, t, silent, weapon_type)
    local weapon, ammo, offweapon, pf_weapon = self:hasArcheryWeapon(weapon_type)
    weapon = weapon or pf_weapon
    if self:attr("martyr_swap") and not weapon and weapon_type == nil or weapon_type == "sling" then
-      weapon, ammo = doMartyrPreUse(self, "sling")
+      weapon, ammo = doMartyrPreUse(self, "sling", silent)
    end
    return archeryWeaponCheck(self, weapon, ammo, silent, weapon_type)
 end
@@ -102,7 +102,7 @@ doMartyrPreUse = function(self, weapon, silent)
 end
 
 base_preuse = Talents.talents_def.T_SHOOT.on_pre_use
-Talents.talents_def.T_SHOOT.on_pre_use = function(self, t)
+Talents.talents_def.T_SHOOT.on_pre_use = function(self, t, silent)
    if self:attr("martyr_swap") then
       return martyrPreUse(self, t, silent, "sling")
    end

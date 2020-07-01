@@ -5,6 +5,7 @@ version = {1,6,0}
 addon_version = {0, 1, 0}
 weight = 27661
 author = { 'recaiden' }
+require_addons = {'cults'}
 description = [[A new demented class.]]
 tags = {'demented', 'class', 'recaiden', 'insane', 'insanity', 'martyr', 'scourge'} -- tags MUST immediately follow description
 
