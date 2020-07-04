@@ -31,7 +31,7 @@ newTalent{
 
             self:incInsanity(-1*t.getCost(self, t))
             if self:getInsanity() < t.getThreshold(self, t) then
-               self:forceUseTalent(self.T_MTYR_CHIVALRY_CHAMPIONS_FOCUS, {ignore_energy=true})
+               self:forceUseTalent(self.T_REK_MTYR_CHIVALRY_CHAMPIONS_FOCUS, {ignore_energy=true})
             end
             
          end
@@ -51,7 +51,8 @@ newTalent{
       return ([[Each melee attack you land on your target has a %d%% chance to trigger another, similar strike at the cost of #INSANE_GREEN#5 insanity#LAST#.
 This works for all blows, even those from other talents and from shield bashes, but this talent can grant at most one attack per weapon per turn.
 
-This talent will deactivate if it brings you to below %d insanity, or upon resting.
+Minimum Insanity: %d.
+This talent will deactivate if it brings you to below its minimum insanity, or upon resting.
 
 Dexterity: increases chance]]):format(t.getChance(self, t), t.getCost(self, t), t.getThreshold(self, t))
    end,
@@ -64,7 +65,7 @@ newTalent{
    points = 5,
    range = 10,
    cooldown = 18,
-   insanity = -15,
+   insanity = 15,
    requires_target = true,
    is_melee = true,
    target = function(self, t) return {type="widebeam", radius=1, range=self:getTalentRange(t), selffire=false, talent=t} end,
@@ -81,7 +82,7 @@ newTalent{
          game.logPlayer(self, "You are too close to build up momentum!")
          return nil
       end
-      local target = game.level.map(px, py, Map.ACTOR)
+      local target = game.level.map(x, y, Map.ACTOR)
       if not target then game.logPlayer(self, "You can only charge to a creature.") return nil end
 
       -- check movement to correct space
@@ -92,14 +93,14 @@ newTalent{
          tx, ty = lx, ly
          lx, ly, is_corner_blocked = linestep:step()
       until is_corner_blocked or not lx or not ly or game.level.map:checkAllEntities(lx, ly, "block_move", self)
-      if not tx or not ty or core.fov.distance(x, y, tx, ty) > 1 then return nil end 
+      if not tx or not ty or core.fov.distance(x, y, tx, ty) > 1 then game.logPlayer(self, "Something is blocking your path.") return nil end 
 
       doMartyrWeaponSwap(self, "melee", true)
 
       local moment = false
       self:project(tg, x, y, function(px, py, tg, self)
                       local target = game.level.map(px, py, Map.ACTOR)
-                      if target then
+                      if target and self:reactionToward(target) < 0 then
                          local hit = false
                          local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
                          if (target.x == x and target.y == y) or moment then
@@ -111,8 +112,11 @@ newTalent{
                                _, hit = self:attackTargetWith(target, weapon, nil, t.getHitDamage(self, t))
                                self:attackTargetWith(target, shield_combat, nil, t.getHitDamage(self, t))
                             end
-                            if hit and target:canBe("stun") then
-                               target:setEffect(target.EFF_STUNNED, t.getStunDuration(self, t), {apply_power=self:combatPhysicalpower()})
+                            if hit then
+                               self:incInsanity(15)
+                               if target:canBe("stun") then
+                                  target:setEffect(target.EFF_STUNNED, t.getStunDuration(self, t), {apply_power=self:combatPhysicalpower()})
+                               end
                             end
                          else
                             -- daze attack
@@ -135,11 +139,10 @@ newTalent{
    end,
    
    info = function(self, t)
-      return ([[Hop astride your noble steed and run down a target at least 3 spaces away, striking with all weapons for %d%% damage and stunning them for %d turns.  All other targets in or next to your path will be attacked with your mainhand weapon for %d%% damage and dazed for %d turns on a hit.
-
-If you are wielding the #MIDNIGHT#Moment#LAST# you will deal full damage to all targets.]]):format(t.getSideDamage(self, t)*100, t.getDazeDuration(self, t), t.getHitDamage(self, t)*100, t.getStunDuration(self, t))
+      return ([[Hop astride your noble steed and run down a target at least 3 spaces away, striking with all weapons for %d%% damage. A hit will stunn them for %d turns and grant you an additional #INSANE_GREEN#15 insanity#LAST#.  All other targets in or next to your path will be attacked with your mainhand weapon for %d%% damage and dazed for %d turns on a hit.]]):format(t.getSideDamage(self, t)*100, t.getDazeDuration(self, t), t.getHitDamage(self, t)*100, t.getStunDuration(self, t))
    end,
 }
+--If you are wielding the #MIDNIGHT#Moment#LAST# you will deal full damage to all targets.
 
 newTalent{
    name = "Executioner's Onslaught", short_name = "REK_MTYR_CHIVALRY_EXECUTIONERS_ONSLAUGHT",

@@ -218,7 +218,7 @@ newEffect{
 
 
 newEffect{
-   name = "REK_MTYR_GUIDANCE_HEAL", image = "talents/rek_mtyr_whispers_guiding_light.png",
+   name = "REK_MTYR_GUIDANCE_HEAL", image = "effects/rek_mtyr_whispers_guiding_light_heal.png",
    desc = "Guided to Healing",
    long_desc = function(self, eff)
       local str = ("A light of life shines upon the target, regenerating %0.2f life per turn."):format(eff.power)
@@ -254,7 +254,7 @@ newEffect{
          }
 
 newEffect{
-   name = "REK_MTYR_GUIDANCE_FLASH", image = "talents/rek_mtyr_whispers_guiding_light.png",
+   name = "REK_MTYR_GUIDANCE_FLASH", image = "effects/rek_mtyr_whispers_guiding_light_eyes.png",
    desc = "Guided to Vision",
    long_desc = function(self, eff) return ("The target's ability to see stealthed and invisibled targets is improved by %d."):format(eff.power) end,
    type = "mental",

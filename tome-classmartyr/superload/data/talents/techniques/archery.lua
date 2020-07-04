@@ -106,7 +106,7 @@ Talents.talents_def.T_SHOOT.on_pre_use = function(self, t, silent)
    if self:attr("martyr_swap") then
       return martyrPreUse(self, t, silent, "sling")
    end
-   return base_preuse(self, t)
+   return base_preuse(self, t, silent)
 end
 
 base_action = Talents.talents_def.T_SHOOT.action

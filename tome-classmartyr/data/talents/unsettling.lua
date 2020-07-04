@@ -23,8 +23,8 @@ newTalent{
    requires_target = true,
    tactical = { DISABLE = { confusion = 2 } },
    target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
-   getPower = function(self, t) return self:combatTalentScale(t, 20, 50, 0.75) end,
-   getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
+   getPower = function(self, t) return math.min(50, self:combatTalentScale(t, 20, 50, 0.75)) end,
+   getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5.5)) end,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.5, 2.1) end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)

@@ -56,7 +56,7 @@ end
 
 applyGuidanceBurn = function(target, t)
    local dur = t.getDuration(target, t)
-   local dam = t.getDamage(target, t)
+   local dam = target:mindCrit(t.getDamage(target, t))
    -- Add a lasting map effect
    local ef = game.level.map:addEffect(target,
                                        target.x, target.y, dur,
@@ -96,25 +96,21 @@ newDamageType{
       state = initState(state)
       useImplicitCrit(src, state)
       local target = game.level.map(x, y, Map.ACTOR)
-      if target then         
-         -- if this is their guiding light
-         local eff = target:hasEffect(target.EFF_REK_MTYR_GUIDANCE_AVAILABLE)
-         if eff then
-            -- do the bonus
-            target:setEffect(target.EFF_REK_MTYR_GUIDANCE_HEAL, 3, {power=dam})
-            target:removeEffect(target.EFF_REK_MTYR_GUIDANCE_AVAILABLE)
-
-            -- do the upgrade
-            if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
-               local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
-               applyGuidanceBurn(target, t3)
-            end
-            
-            if eff.ground_effect then
-               removeGroundEffect(eff.ground_effect)
-            end
-            game:playSoundNear(target, "talents/heal")
-	 end
+      if target and target == src then         
+         -- do the bonus
+         target:setEffect(target.EFF_REK_MTYR_GUIDANCE_HEAL, 3, {power=dam})
+         
+         -- do the upgrade
+         if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
+            local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
+            applyGuidanceBurn(target, t3)
+         end
+         
+         local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_HEAL)
+         if geff then
+            removeGroundEffect(geff)
+         end
+         game:playSoundNear(target, "talents/heal")
       end
    end,
 }
@@ -125,35 +121,31 @@ newDamageType{
       state = initState(state)
       useImplicitCrit(src, state)
       local target = game.level.map(x, y, Map.ACTOR)
-      if target then         
-         -- if this is their guiding light
-         local eff = target:hasEffect(target.EFF_REK_MTYR_GUIDANCE_AVAILABLE)
-         if eff then
-            -- do the bonus
-            if not target:attr("no_talents_cooldown") then
-               for tid, _ in pairs(target.talents_cd) do
-                  local t = target:getTalentFromId(tid)
-                  if t and not t.fixed_cooldown then
-                     target.talents_cd[tid] = math.max(0, target.talents_cd[tid] - math.max(1, math.floor(dam/25)))
-                  end
+      if target and target == src then         
+         -- do the bonus
+         if not target:attr("no_talents_cooldown") then
+            for tid, _ in pairs(target.talents_cd) do
+               local t = target:getTalentFromId(tid)
+               if t and not t.fixed_cooldown then
+                  target.talents_cd[tid] = math.max(0, target.talents_cd[tid] - math.max(1, math.floor(dam/25)))
                end
             end
-            target:removeEffect(target.EFF_REK_MTYR_GUIDANCE_AVAILABLE)
-
-            -- do the upgrade
-            if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
-               local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
-               applyGuidanceBurn(target, t3)
-            end
-            
-            if eff.ground_effect then
-               removeGroundEffect(eff.ground_effect)
-            end
-            game:playSoundNear(target, "talents/distortion")
-	 end
+         end
+         
+         -- do the upgrade
+         if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
+            local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
+            applyGuidanceBurn(target, t3)
+         end
+         
+         local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_BUFF)
+         if geff then
+            removeGroundEffect(geff)
+         end
+         game:playSoundNear(target, "talents/distortion")
       end
    end,
-             }
+}
 
 newDamageType{
    name = "visionary guidance", type = "REK_MTYR_GUIDE_FLASH",
@@ -161,25 +153,21 @@ newDamageType{
       state = initState(state)
       useImplicitCrit(src, state)
       local target = game.level.map(x, y, Map.ACTOR)
-      if target then         
-         -- if this is their guiding light
-         local eff = target:hasEffect(target.EFF_REK_MTYR_GUIDANCE_AVAILABLE)
-         if eff then
-            -- do the bonus
-            target:setEffect(target.EFF_REK_MTYR_GUIDANCE_FLASH, 3, {power=dam*0.5})
-            target:removeEffect(target.EFF_REK_MTYR_GUIDANCE_AVAILABLE)
-
-            -- do the upgrade
-            if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
-               local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
-               applyGuidanceBurn(target, t3)
-            end
-            
-            if eff.ground_effect then
-               removeGroundEffect(eff.ground_effect)
-            end
-            game:playSoundNear(target, "talents/tidalwave")
-	 end
+      if target and target == src then         
+         -- do the bonus
+         target:setEffect(target.EFF_REK_MTYR_GUIDANCE_FLASH, 3, {power=dam*0.5})
+         
+         -- do the upgrade
+         if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
+            local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
+            applyGuidanceBurn(target, t3)
+         end
+         
+         local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_FLASH)
+         if geff then
+            removeGroundEffect(geff)
+         end
+         game:playSoundNear(target, "talents/tidalwave")
       end
    end,
 }

@@ -56,7 +56,7 @@ newTalent{
       return ([[You ready a sling shot with all your strength.
 This shot does %d%% weapon damage, gives you an extra #INSANE_GREEN#5 insanity#LAST#, and knocks back your target by %d space.
 
-Learning this talent allows you to swap to your alternate weapon set instantly.
+Learning this talent allows martyr talents to instantly and automatically swap to your alternate weapon set when needed.
 
 #{italic}#Keep your distance!  It's...for your own good.#{normal}#
 

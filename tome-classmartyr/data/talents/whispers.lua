@@ -5,7 +5,6 @@ newTalent{
    points = 5,
    mode = "passive",
    getPower = function(self, t)
-      input = self:getInsanity() * self.level * self:getTalentLevel(t)
       return self:combatTalentScale(t, 3, 20)
          * (self:getInsanity() / 100)
          * self:combatScale(self.level, 1, 1, 2, 50)
@@ -15,12 +14,12 @@ newTalent{
          * self:combatScale(self.level, 1, 1, 2, 50)
    end,
    getReduction = function(self, t)
-      return self:combatTalentScale(t, 5, 30)
+      return self:combatTalentScale(t, 2, 20)
          * ((self:getMaxInsanity() - self:getInsanity()) / 100)
          * self:combatScale(self.level, 1, 1, 2, 50)
    end,
    getMaxReduction = function(self, t)
-      return self:combatTalentScale(t, 5, 30)
+      return self:combatTalentScale(t, 2, 20)
          * self:combatScale(self.level, 1, 1, 2, 50)
    end,
    passives = function(self, t, p)
@@ -32,6 +31,42 @@ newTalent{
    end,
    callbackOnTalentPost = function(self, t, ab, ret, silent)
       self:updateTalentPassives(t.id)
+   end,
+   -- odd terrain
+   callbackOnChangeLevel = function(self, t, action, zone, level)
+      if action ~= "enter" then return end
+      if not game.level or not game.level.data then return end
+      if game.level and game.level.data and game.level.data.rek_mtyr_tentacles_placed then
+         return nil
+      end
+      game.level.data.rek_mtyr_tentacles_placed = true
+      local chance = (game.calendar.rek_mtyr_infestation_progress or 0) + 1
+      game.calendar.rek_mtyr_infestation_progress = (game.calendar.rek_mtyr_infestation_progress or 0) + 2 
+   end,
+   doRevealTentacles = function(self, t)
+      local chance = game.calendar.rek_mtyr_infestation_progress or 20
+      local tg = {type="ball", range=0, selffire=false, radius=20, talent=t, no_restrict=true}
+      self:project(
+         tg, self.x, self.y,
+         function(px, py, tg, self)
+            if not rng.percent(chance) then return end
+            local oe = game.level.map(px, py, Map.TERRAIN)
+            if oe and not oe:attr("temporary") and not oe.special
+               and game.level.map:checkAllEntities(px, py, "block_move")
+            then
+               if oe.rek_swap_mos then
+                  local temp = oe.add_mos
+                  oe.add_mos = oe.rek_swap_mos
+                  oe.rek_swap_mos = temp
+               else
+                  oe.rek_swap_mod = oe.add_mos
+                  oe.add_mos = {{image="terrain/stair_down.png"}}
+               end
+               game.nicer_tiles:updateAround(game.level, self.x, self.y)
+               --game.level.map(px, py, Map.TERRAIN, e)
+            end
+         end)
+      game.level.map:scheduleRedisplay()
    end,
    info = function(self, t)
       return ([[Gain physical power as you gain insanity, up to %d (currently %d).
@@ -80,8 +115,8 @@ newTalent{
             }
          }
          local type = options[rng.range(1, #options)]
-         local ground_effect = game.level.map:addEffect(game.player, x, y, dur, type.dam, t.getPower(self, t), rng.range(1, 2), 5, nil, MapEffect.new{color_br=type.r, color_bg=type.g, color_bb=type.b, alpha=100, effect_shader="shader_images/sun_effect.png"}, nil, true)
-         self:setEffect(self.EFF_REK_MTYR_GUIDANCE_AVAILABLE, 3, {src=self, ground_effect=ground_effect})
+         local ground_effect = game.level.map:
+         addEffect(game.player, x, y, dur, type.dam, t.getPower(self, t), rng.range(1, 2), 5, nil, MapEffect.new{color_br=type.r, color_bg=type.g, color_bb=type.b, alpha=100, effect_shader="shader_images/sun_effect.png"}, nil, true)
          game.logSeen(self, "#YELLOW#A guiding light appears!#LAST#", self.name:capitalize())
       end
    end,
@@ -99,11 +134,12 @@ newTalent{
    require = martyr_req3,
    points = 5,
    mode = "passive",
-   getDamage = function(self, t) return self:combatTalentMindDamage(t, 4, 32) end,
+   getDamage = function(self, t) return self:combatTalentMindDamage(t, 15, 60) end,
    getDuration = function(self, t) return 5 end,
    radius = 2,
    info = function(self, t)
       return ([[Entering any light will imbue you with a destructive aura, dealing %d mind damage to enemies within range 2 each turn for %d turns.
+Mindpower: increases damage.
 
 #{italic}#The light whispers secrets to bring about the destruction of your enemies.#{normal}#]]):format(damDesc(self, DamageType.MIND, t.getDamage(self, t)), t.getDuration(self, t))
    end,

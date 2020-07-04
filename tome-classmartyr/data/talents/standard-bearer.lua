@@ -174,35 +174,40 @@ newTalent{
    thEBoss = function(self, t) return 0.1 end,
    
    doSummon = function(self, t, x, y)
-      local lev = t.getLevel(self, t)
-      
-      local x, y = util.findFreeGrid(x, y, 5, true, {[Map.ACTOR]=true})
-      if not x then return false end
-
-      local count, weakest = countFlags(self)
-      if count >= 3 then
-         weakest:die()
+      game:onTickEnd(function()
+			if self:attr("dead") then return end
+                        local lev = t.getLevel(self, t)
+                        
+                        local x, y = util.findFreeGrid(x, y, 5, true, {[Map.ACTOR]=true})
+                        if not x then return false end
+                        
+                        local count, weakest = countFlags(self)
+                        if count >= 3 then
+                           weakest:die()
+                        end
+                        
+                        local flag = martyrSetupSummon(self, t.flag, x, y, lev, nil, true)
+                        if self:knowTalent(self.T_REK_MTYR_STANDARD_CONTROL) then
+                           local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_CONTROL))
+                           flag:learnTalent(flag.T_TENTACLE_CONSTRICT, true, lvl)
       end
-      
-      local flag = martyrSetupSummon(self, t.flag, x, y, lev, nil, true)
-      if self:knowTalent(self.T_REK_MTYR_STANDARD_CONTROL) then
-         local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_CONTROL))
-         flag:learnTalent(flag.T_TENTACLE_CONSTRICT, true, lvl)
-      end
-      if self:knowTalent(self.T_REK_MTYR_STANDARD_TUNNELING) then
-         local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_TUNNELING))
-         flag:learnTalent(flag.T_OOZE_ROOTS, true, lvl)
-      end
-      if self:knowTalent(self.T_REK_MTYR_STANDARD_SYMBIOSIS) then
-         local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_SYMBIOSIS))
-         flag:learnTalent(flag.T_TENDRILS_ERUPTION, true, lvl)
-      end
+                        if self:knowTalent(self.T_REK_MTYR_STANDARD_TUNNELING) then
+                           local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_TUNNELING))
+                           flag:learnTalent(flag.T_OOZE_ROOTS, true, lvl)
+                        end
+                        if self:knowTalent(self.T_REK_MTYR_STANDARD_SYMBIOSIS) then
+                           local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_SYMBIOSIS))
+                           flag:learnTalent(flag.T_TENDRILS_ERUPTION, true, lvl)
+                        end
+                     end)
       return true
    end,
    info = function(self, t)
       return ([[When you kill an enemy, summon a Flag of level %d where they died that magically strikes nearby enemies.
-You also summon a flag when you have done enough damage to a powerful enemy within: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
-Summoning the flag has a cooldown.
+
+You also summon a flag when you have done enough damage to a powerful enemy: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
+
+Summoning a flag has a cooldown.
 
 Flags last until destroyed or until you leave the level, but you can only have 3 placed at a time.]]):format(math.max(1, self.level + t.getLevel(self, t)), t.getTimeLimit(self, t), t.thRare(self, t)*100, t.thBoss(self, t)*100, t.thEBoss(self, t)*100)
    end,
@@ -230,16 +235,16 @@ newTalent{
          return false
       end
       local tg = self:getTalentTarget(t)
-      local x, y, target = self:getTarget(tg)
+      local x, y, target = self:getTargetLimitedWallStop(tg)
       if not x or not y then return nil end
       local t1 = self:getTalentFromId(self.T_REK_MTYR_STANDARD_IRRUPTION)
       t1.doSummon(self, t1, x, y)
       return true
    end,
    info = function(self, t)
-      return ([[With incredible boldness, you plant a flag nearby before defeating an enemy!
+      return ([[With incredible boldness, you plant a flag nearby without needing to defeat an enemy!
 
-Levels in this talent grant your flags the ability to pull enemies closer and reduce the cooldown between automatic flag placements by %d turns.]]):
+Levels in this talent grant your flags the ability to pull enemies closer to them and reduce the cooldown between automatic flag placements by %d turns.]]):
       format(t.getCDReduce(self, t))
    end,
 }

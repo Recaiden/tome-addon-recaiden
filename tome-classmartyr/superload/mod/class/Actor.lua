@@ -3,6 +3,12 @@ local _M = loadPrevious(...)
 
 local base_incInsanity = _M.incInsanity
 function _M:incInsanity(amount, no_enemy_check)
+   -- if self:knowTalent(self.T_REK_MTYR_WHISPERS_SLIPPING_PSYCHE) then
+   --    game.logPlayer(self, "DEBUG insanity alter %s + %s", self.insanity, amount)
+   --    if self.insanity > 40 and self.insanity+amount < 40 then
+   --       self:callTalent(self.T_REK_MTYR_WHISPERS_SLIPPING_PSYCHE, "doRevealTentacles")
+   --    end
+   -- end
    base_incInsanity(self, amount, no_enemy_check)
    if self:knowTalent(self.T_REK_MTYR_MOMENT_STOP) then
       if self.insanity == self:getMaxInsanity() then

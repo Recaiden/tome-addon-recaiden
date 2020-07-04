@@ -4,8 +4,8 @@ newTalent{
    require = martyr_req1,
    points = 5,
    mode = "passive",
-   getMinBonus = function(self, t) return self:combatTalentScale(t, 5, 15) end,
-   getMinPenalty = function(self, t) return self:combatTalentScale(t, 10, 25) end,
+   getMinBonus = function(self, t) return math.min(40, self:combatTalentScale(t, 5, 15)) end,
+   getMinPenalty = function(self, t) return math.min(45, self:combatTalentScale(t, 10, 25)) end,
    info = function(self, t)
       return ([[You learn to intensify chaotic forces to your advantage.
 Positive insanity effects will have at least %d / 50 power and be more common.
@@ -41,7 +41,7 @@ newTalent{
    info = function(self, t)
       return ([[Step into the time between seconds and move at infinite speed.  This will last for a random number of steps between %d and %d, or for one turn, whichever comes sooner.
 
-Requires 10 insanity or higher, but has no cost.
+Minimum Insanity: 10
 
 #{italic}#Perfection is not 'going faster'.  Perfection is 'already being there'.#{normal}#]]):format(t.getMinSteps(self, t), t.getMaxSteps(self, t))
    end,

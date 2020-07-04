@@ -19,24 +19,45 @@ end
 
 sling_req1 = function(self, t) local stat = self:getStr() >= self:getDex() and "str" or "dex"; return {
       stat = { [stat]=function(level) return 10 + (level-1) * 6 end },
-      level = function(level) return 0 + (level-1)  end,                                                                                                } end
+      level = function(level) return 0 + (level-1)  end,
+      special = {
+         desc="Uses the higher of your Strength or Dexterity",
+         fct=function(self) return true end
+      },
+   } end
 
 sling_req2 = function(self, t) local stat = self:getStr() >= self:getDex() and "str" or "dex"; return { 
       stat = { [stat]=function(level) return 20 + (level-1) * 2 end },
       level = function(level) return 4 + (level-1)  end,
-                                                                                                      }end
+      special = {
+         desc="Uses the higher of your Strength or Dexterity",
+         fct=function(self) return true end
+      },
+}end
 sling_req3 = function(self, t) local stat = self:getStr() >= self:getDex() and "str" or "dex"; return { 
 	stat = { [stat]=function(level) return 28 + (level-1) * 2 end },
 	level = function(level) return 8 + (level-1)  end,
+        special = {
+           desc="Uses the higher of your Strength or Dexterity",
+           fct=function(self) return true end
+        },
 }end
 sling_req4 = function(self, t) local stat = self:getStr() >= self:getDex() and "str" or "dex"; return {
       stat = { [stat]=function(level) return 36 + (level-1) * 2 end },
       level = function(level) return 12 + (level-1)  end,
-                                                                                                      } end
+      special = {
+         desc="Uses the higher of your Strength or Dexterity",
+         fct=function(self) return true end
+      },
+} end
 sling_reqMaster = function(self, t) local stat = self:getStr() >= self:getDex() and "str" or "dex"; return {      
       stat = { [stat]=function(level) return 10 + (level-1) * 6 end },
       level = function(level) return 0 + (level-1)  end,
-                                                                                                           }end
+      special = {
+         desc="Uses the higher of your Strength or Dexterity",
+         fct=function(self) return true end
+      },
+}end
 
 martyr_req1 = {
 	stat = { cun=function(level) return 12 + (level-1) * 2 end },
@@ -95,6 +116,23 @@ str_req_high4 = {
 	level = function(level) return 22 + (level-1)  end,
 }
 
+wil_req_high1 = {
+	stat = { wil=function(level) return 22 + (level-1) * 2 end },
+	level = function(level) return 10 + (level-1)  end,
+}
+wil_req_high2 = {
+	stat = { wil=function(level) return 30 + (level-1) * 2 end },
+	level = function(level) return 14 + (level-1)  end,
+}
+wil_req_high3 = {
+	stat = { wil=function(level) return 38 + (level-1) * 2 end },
+	level = function(level) return 18 + (level-1)  end,
+}
+wil_req_high4 = {
+	stat = { wil=function(level) return 46 + (level-1) * 2 end },
+	level = function(level) return 22 + (level-1)  end,
+}
+
 canLearnMirror = function(self)
    local countVagabond = self:getTalentLevelRaw(self.T_REK_MTYR_VAGABOND_SLING_PRACTICE)
       + self:getTalentLevelRaw(self.T_REK_MTYR_VAGABOND_STAGGER_SHOT)
@@ -112,6 +150,11 @@ martyr_mirror_req1 = function(self, t) local stat = self:getStr() >= self:getDex
    stat = { [stat]=function(level) return 12 + (level-1) * 2 end },
    level = function(level) return 0 + (level-1) end,
    special = {
+      desc=[[Uses the higher of your Strength or Dexterity
+Points in Vagabond talents allow you to learn Chivalry talents]],
+      fct=function(self) return canLearnMirror(self) end
+   },
+   special2 = {
       desc="Points in Vagabond talents allow you to learn Chivalry talents",
       fct=function(self) return canLearnMirror(self) end
    },
@@ -121,16 +164,25 @@ martyr_mirror_req2 = function(self, t) local stat = self:getStr() >= self:getDex
    stat = { [stat]=function(level) return 20 + (level-1) * 2 end },
    level = function(level) return 4 + (level-1) end,
    special = {
+      desc=[[Uses the higher of your Strength or Dexterity
+Points in Vagabond talents allow you to learn Chivalry talents]],
+      fct=function(self) return canLearnMirror(self) end
+   },
+   special2 = {
       desc="Points in Vagabond talents allow you to learn Chivalry talents",
       fct=function(self) return canLearnMirror(self) end
    },
 }end
 
 martyr_mirror_req3 = function(self, t) local stat = self:getStr() >= self:getDex() and "str" or "dex"; return {      
-
    stat = { [stat]=function(level) return 28 + (level-1) * 2 end },
    level = function(level) return 8 + (level-1) end,
    special = {
+      desc=[[Uses the higher of your Strength or Dexterity
+Points in Vagabond talents allow you to learn Chivalry talents]],
+      fct=function(self) return canLearnMirror(self) end
+   },
+   special2 = {
       desc="Points in Vagabond talents allow you to learn Chivalry talents",
       fct=function(self) return canLearnMirror(self) end
    },
@@ -140,6 +192,11 @@ martyr_mirror_req4 = function(self, t) local stat = self:getStr() >= self:getDex
    stat = { [stat]=function(level) return 36 + (level-1) * 2 end },
    level = function(level) return 12 + (level-1) end,
    special = {
+      desc=[[Uses the higher of your Strength or Dexterity
+Points in Vagabond talents allow you to learn Chivalry talents]],
+      fct=function(self) return canLearnMirror(self) end
+   },
+   special2 = {
       desc="Points in Vagabond talents allow you to learn Chivalry talents",
       fct=function(self) return canLearnMirror(self) end
    },
