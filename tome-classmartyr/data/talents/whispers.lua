@@ -124,7 +124,7 @@ newTalent{
       return ([[While in combat, zones of guiding light will appear nearby, lasting %d turns.
 Entering a green light will cause you to regenerate for %d health per turn for 5 turns.
 Entering a blue light will refresh you, reducing the duration of outstanding cooldowns by %d turns.
-Entering a orange light will grant you vision sevenfold, allowing you to see stealthed and invisible targets with power %d and fight while blinded.]]):format(t.getDuration(self, t), t.getPower(self,t), math.max(1, math.floor(t.getPower(self,t)/25)), t.getPower(self,t)/2)
+Entering a orange light will grant you terrible strength, giving you +%d%% to all damage for 3 turns.]]):format(t.getDuration(self, t), t.getPower(self,t), math.max(1, math.floor(t.getPower(self,t)/25)), t.getPower(self,t)/4)
    end,
 }
 
@@ -157,7 +157,10 @@ newTalent{
          cb.value = 0
 
          self:forceUseTalent(self.T_REK_MTYR_WHISPERS_JOLT, {ignore_energy=true})
+         game:playSoundNear(self, "talents/rek_false_death")
          game.logSeen(self, "#YELLOW#%s awakens from a terrible dream!#LAST#", self.name:capitalize())
+         if self == game.player then game.bignews:say(80, "#GREEN#"..string.format("You die in the dream!")) end
+
          self:incInsanity(-1 * self:getInsanity())
          self:setEffect(self.EFF_REK_MTYR_JOLT_SHIELD, 1, {src=self})
       end

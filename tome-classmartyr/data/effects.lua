@@ -157,12 +157,16 @@ newEffect{
    on_gain = function(self, err) return "#Target# accelerates out of sight!", "+Infinite Speed" end,
    on_lose = function(self, err) return "#Target# has lost their manic speed.", "-Infinite Speed" end,
    activate = function(self, eff)
-      -- absurd hack, please replace 
-      --self:effectTemporaryValue(eff, "move_stamina_instead_of_energy", -0.00001)
       self.did_energy = true
       eff.steps = 0
+      eff.ox = self.x
+      eff.oy = self.y
    end,
    deactivate = function(self, eff)
+      if self:attr("defense_on_teleport") or self:attr("resist_all_on_teleport") or self:attr("effect_reduction_on_teleport") then
+         self:setEffect(self.EFF_OUT_OF_PHASE, 4, {})
+      end
+      self:fireTalentCheck("callbackOnTeleport", true, eff.ox, eff.oy, self.x, self.y)
    end,
    callbackOnMove = function(self, eff, moved, force, ox, oy, x, y)
       if not moved then return end
@@ -181,6 +185,7 @@ newEffect{
       local remaining = eff.max_steps - eff.steps +1
       if eff.steps >= eff.max_steps or (eff.steps > eff.min_steps and rng.percent(100/remaining)) then
          self:removeEffect(self.EFF_REK_MTYR_MANIC_SPEED)
+         game:playSoundNear(self, "talents/rek_warp_off")
       end
    end,
          }
@@ -255,18 +260,14 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_GUIDANCE_FLASH", image = "effects/rek_mtyr_whispers_guiding_light_eyes.png",
-   desc = "Guided to Vision",
-   long_desc = function(self, eff) return ("The target's ability to see stealthed and invisibled targets is improved by %d."):format(eff.power) end,
+   desc = "Guided to Destroy",
+   long_desc = function(self, eff) return ("The target's damage is improved by +%d%%."):format(eff.power) end,
    type = "mental",
    subtype = { focus=true },
    status = "beneficial",
    parameters = { power=10 },
-   on_gain = function(self, err) return "#Target# sees precisely." end,
-   on_lose = function(self, err) return "#Target# sees less precisely." end,
    activate = function(self, eff)
-      self:effectTemporaryValue(eff, "see_invisible", eff.power)
-      self:effectTemporaryValue(eff, "see_stealth", eff.power)
-      self:effectTemporaryValue(eff, "see_traps", eff.power)
+      self:effectTemporaryValue(eff, "inc_damage", {all = eff.power})
    end,
    deactivate = function(self, eff)
    end,

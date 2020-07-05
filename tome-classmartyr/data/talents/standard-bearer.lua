@@ -255,7 +255,7 @@ newTalent{
    require = martyr_req3,
    points = 5,
    mode = "passive",
-   range = function(self, t) return self:combatTalentScale(t, 2, 5) end,
+   range = function(self, t) return self:combatTalentScale(t, 3, 6) end,
    info = function(self, t)
       return ([[When you place a flag yourself, it can go anywhere within range %d.
 

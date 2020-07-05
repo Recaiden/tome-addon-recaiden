@@ -118,15 +118,11 @@ newTalent{
 		      local target = game.level.map(px, py, Map.ACTOR)
 		      if target and target ~= self and target:hasEffect(target.EFF_REK_MTYR_UNNERVE) then
 			 self:attackTarget(target, DamageType.MIND, damage, true, true)
-		      end
-                   end
-                  )
-      self:project(tg, self.x, self.y,
-                   function(px, py, tg, self)
-		      local target = game.level.map(px, py, Map.ACTOR)
-		      if target and target ~= self and target:hasEffect(target.EFF_REK_MTYR_UNNERVE) then
-                         local e2 = target.tmp[target.EFF_REK_MTYR_UNNERVE]
-                         e2.dur = e2.dur + t.getExtension(self, t)
+                         -- sanityBonus
+                         if amSane(self) then
+                            local e2 = target.tmp[target.EFF_REK_MTYR_UNNERVE]
+                            e2.dur = e2.dur + t.getExtension(self, t)
+                         end
 		      end
                    end
                   )

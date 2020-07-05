@@ -29,20 +29,28 @@ function _M:incFeedback(v, set)
          local t1 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_SHARE_PAIN)
          local t2 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_MEMENTO)
          local t3 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_RESONATION)
-         while overcharge > 0 and self:isTalentCoolingDown(t1) do
-            self:alterTalentCoolingdown(self.T_REK_MTYR_CRUCIBLE_SHARE_PAIN, -1)
-            consumed = consumed + math.min(overcharge, cost)
-            overcharge = math.max(0, overcharge - cost)
-         end
-         while overcharge > 0 and self:isTalentCoolingDown(t2) do
-            self:alterTalentCoolingdown(self.T_REK_MTYR_CRUCIBLE_MEMENTO, -1)
-            consumed = consumed + math.min(overcharge, cost)
-            overcharge = math.max(0, overcharge - cost)
-         end
-         while overcharge > 0 and self:isTalentCoolingDown(t3) do
-            self:alterTalentCoolingdown(self.T_REK_MTYR_CRUCIBLE_RESONATION, -1)
-            consumed = consumed + math.min(overcharge, cost)
-            overcharge = math.max(0, overcharge - cost)
+         local talents = {
+            self.T_REK_MTYR_CRUCIBLE_SHARE_PAIN,
+            self.T_REK_MTYR_CRUCIBLE_MEMENTO,
+            self.T_REK_MTYR_CRUCIBLE_RESONATION,
+            self.T_RESONANCE_FIELD,
+            self.T_CONVERSION,
+            self.T_FOCUSED_WRATH,
+            self.T_K_CHARGED_SHOT,
+            self.T_K_DOMINATION_SHOT,
+            self.T_K_RESONANCE_LINK
+         }
+         local idxT = 1
+         while overcharge do
+            if self:isTalentCoolingDown(self:getTalentFromId(talents[idxT])) then
+               self:alterTalentCoolingdown(talents[idxT], -1)
+               consumed = consumed + math.min(overcharge, cost)
+               overcharge = math.max(0, overcharge - cost)
+            elseif idxT > #talents then
+               break
+            else
+               idxT = idxT + 1
+            end
          end
          v = v - consumed
       end

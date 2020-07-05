@@ -139,7 +139,7 @@ newTalent{
    end,
    
    info = function(self, t)
-      return ([[Hop astride your noble steed and run down a target at least 3 spaces away, striking with all weapons for %d%% damage. A hit will stunn them for %d turns and grant you an additional #INSANE_GREEN#15 insanity#LAST#.  All other targets in or next to your path will be attacked with your mainhand weapon for %d%% damage and dazed for %d turns on a hit.]]):format(t.getSideDamage(self, t)*100, t.getDazeDuration(self, t), t.getHitDamage(self, t)*100, t.getStunDuration(self, t))
+      return ([[Hop astride your noble steed and run down a target at least 3 spaces away, striking with all weapons for %d%% damage. A hit will stun them for %d turns and grant you an additional #INSANE_GREEN#15 insanity#LAST#.  All other targets in or next to your path will be attacked with your mainhand weapon for %d%% damage and dazed for %d turns on a hit.]]):format(t.getSideDamage(self, t)*100, t.getDazeDuration(self, t), t.getHitDamage(self, t)*100, t.getStunDuration(self, t))
    end,
 }
 --If you are wielding the #MIDNIGHT#Moment#LAST# you will deal full damage to all targets.

@@ -6,7 +6,7 @@ newBirthDescriptor{
    desc = {
       "You are a hero of the old ways, a noble #GREEN#monster#LAST# of honor. You stand alone against overwhelming odds, living by your code. You face the monsters and darkness of the world #GREEN#to pave our way#LAST#.",
       "Grind enemies down with #GREEN#our flesh#LAST# before finishing them with a flash of steel.",
-      "#GREEN#Our#LAST# most important stats are Willpower and Strength.",
+      "#GREEN#Our#LAST# most important stats are Cunning and Strength.",
       "#GOLD#Stat modifiers:",
       "#LIGHT_BLUE# * +3 Strength, +0 Dexterity, +0 Constitution",
       "#LIGHT_BLUE# * +0 Magic, +5 Willpower, +3 Cunning",

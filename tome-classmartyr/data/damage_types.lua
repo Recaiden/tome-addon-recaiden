@@ -148,14 +148,14 @@ newDamageType{
 }
 
 newDamageType{
-   name = "visionary guidance", type = "REK_MTYR_GUIDE_FLASH",
+   name = "destructive guidance", type = "REK_MTYR_GUIDE_FLASH",
    projector = function(src, x, y, type, dam, state)
       state = initState(state)
       useImplicitCrit(src, state)
       local target = game.level.map(x, y, Map.ACTOR)
       if target and target == src then         
          -- do the bonus
-         target:setEffect(target.EFF_REK_MTYR_GUIDANCE_FLASH, 3, {power=dam*0.5})
+         target:setEffect(target.EFF_REK_MTYR_GUIDANCE_FLASH, 3, {power=dam*0.25})
          
          -- do the upgrade
          if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then

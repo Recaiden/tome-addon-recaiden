@@ -36,10 +36,12 @@ newTalent{
    getMaxSteps = function(self, t) return math.max(t.getMinSteps(self, t) + 1, math.floor(self:combatTalentScale(t, 6, 8)))  end,
    action = function(self, t)
       self:setEffect(self.EFF_REK_MTYR_MANIC_SPEED, 1, {min_steps=t.getMinSteps(self, t), max_steps=t.getMaxSteps(self, t), src=self})
+      game:playSoundNear(self, "talents/rek_warp_on")
       return true
    end,
    info = function(self, t)
-      return ([[Step into the time between seconds and move at infinite speed.  This will last for a random number of steps between %d and %d, or for one turn, whichever comes sooner.
+      return ([[Step into the time between seconds and move at infinite speed.  This will last for a random number of steps between %d and %d, or for one turn, whichever comes sooner.  
+Moving at this speed triggers Out of Phase effects, as if you had teleported.
 
 Minimum Insanity: 10
 
