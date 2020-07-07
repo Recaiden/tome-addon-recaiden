@@ -62,12 +62,7 @@ end
 local base_preUseTalent = _M.preUseTalent
 function _M:preUseTalent(ab, silent, fake)
    local eff = self:hasEffect(self.EFF_REK_MTYR_ABYSSAL_LUMINOUS)
-   if eff then --and util.getval(ab.no_energy, self, ab) ~= (true or "fake") then
-      game.logPlayer(self, "DEBUG testing abyssal talent %s", ab.id)
-      for k, v in pairs(eff.allow_talent) do
-         game.logPlayer(self, "DEBUG vs %s: %s", k, v)
-      end
-      
+   if eff and util.getval(ab.no_energy, self, ab) ~= (true or "fake") then      
       if not eff.allow_talent[ab.id] then
          return false
       end
@@ -79,36 +74,60 @@ end
 
 local base_insanityEffect = _M.insanityEffect
 function _M:insanityEffect(min, max)
-   --game.logPlayer(self, "DEBUG Deeper Shadows generating insanity between %d%% and %d%%", self:insanityEffectForce(min), self:insanityEffectForce(max))
+
    local madness = base_insanityEffect(self, max, min)
    if self:knowTalent(self.T_REK_MTYR_POLARITY_DEEPER_SHADOWS) then
+      -- reroll negative effects once
+      if madness < 0 then
+         game.logPlayer(self, "DEBUG Deeper Shadows avoiding effect of strength %d", madness)
+
+         madness = base_insanityEffect(self, max, min)
+      end
       local minUp = self:callTalent(self.T_REK_MTYR_POLARITY_DEEPER_SHADOWS, "getMinBonus")
       local minDown = -1 * self:callTalent(self.T_REK_MTYR_POLARITY_DEEPER_SHADOWS, "getMinPenalty")
-      --game.logPlayer(self, "DEBUG Deeper Shadows Check with madness %d, %d%% < x < %d%%", madness, minDown, minUp)
-      -- make sure you're insane enough to trigger Deeper Shadows so we don't get caught in an infinite loop
-      local canUp = minUp < self:insanityEffectForce(max)
-      local canDown = minDown > self:insanityEffectForce(min)
-      if not canUp and not canDown then return 0 end
-      if canUp and not canDown then
-         madness = rng.range(minUp, self:insanityEffectForce(max))
-         --game.logPlayer(self, "DEBUG Deeper Shadows succeeded with power %d", madness)
-         return madness
-      elseif not canUp and canDown then
-         madness = rng.range(self:insanityEffectForce(min), minDown)
-         --game.logPlayer(self, "DEBUG Deeper Shadows succeeded with power %d", madness)
-         return madness
-      end
-      local count = 0
-      while madness > minDown and madness < minUp do
-         --game.logPlayer(self, "DEBUG Deeper Shadows rerolling %d - try: %d", madness, count)
-         madness = base_insanityEffect(self, max, min)
-         count = count + 1
-         if count >= 50 then return 0 end
+      if madness < 0 and madness > minDown then
+         game.logPlayer(self, "DEBUG Deeper Shadows intensifying penalty from %d => %d", madness, minDown)
+         madness = minDown
+      elseif madness > 0 and madness < minUp then
+         game.logPlayer(self, "DEBUG Deeper Shadows intensifying bonus from %d => %d", madness, minUp)
+         madness = minUp
       end
    end
-   --game.logPlayer(self, "DEBUG Deeper Shadows succeeded with power %d", madness)
    return madness
 end
+
+-- old version that suppressed insanity
+-- function _M:insanityEffect(min, max)
+--    --game.logPlayer(self, "DEBUG Deeper Shadows generating insanity between %d%% and %d%%", self:insanityEffectForce(min), self:insanityEffectForce(max))
+--    local madness = base_insanityEffect(self, max, min)
+--    if self:knowTalent(self.T_REK_MTYR_POLARITY_DEEPER_SHADOWS) then
+--       local minUp = self:callTalent(self.T_REK_MTYR_POLARITY_DEEPER_SHADOWS, "getMinBonus")
+--       local minDown = -1 * self:callTalent(self.T_REK_MTYR_POLARITY_DEEPER_SHADOWS, "getMinPenalty")
+--       --game.logPlayer(self, "DEBUG Deeper Shadows Check with madness %d, %d%% < x < %d%%", madness, minDown, minUp)
+--       -- make sure you're insane enough to trigger Deeper Shadows so we don't get caught in an infinite loop
+--       local canUp = minUp < self:insanityEffectForce(max)
+--       local canDown = minDown > self:insanityEffectForce(min)
+--       if not canUp and not canDown then return 0 end
+--       if canUp and not canDown then
+--          madness = rng.range(minUp, self:insanityEffectForce(max))
+--          --game.logPlayer(self, "DEBUG Deeper Shadows succeeded with power %d", madness)
+--          return madness
+--       elseif not canUp and canDown then
+--          madness = rng.range(self:insanityEffectForce(min), minDown)
+--          --game.logPlayer(self, "DEBUG Deeper Shadows succeeded with power %d", madness)
+--          return madness
+--       end
+--       local count = 0
+--       while madness > minDown and madness < minUp do
+--          --game.logPlayer(self, "DEBUG Deeper Shadows rerolling %d - try: %d", madness, count)
+--          madness = base_insanityEffect(self, max, min)
+--          count = count + 1
+--          if count >= 50 then return 0 end
+--       end
+--    end
+--    --game.logPlayer(self, "DEBUG Deeper Shadows succeeded with power %d", madness)
+--    return madness
+--end
 
 local base_getTalentCooldown = _M.getTalentCooldown
 function _M:getTalentCooldown(t, base)

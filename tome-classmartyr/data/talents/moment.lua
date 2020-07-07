@@ -85,12 +85,16 @@ newTalent{
       local weapon_stats = Object:descCombat(self, {combat=useFinalMoment(self)}, {}, "combat")
       return ([[
 You think of the sword.  
-					The world stands still. 
-You are holding a sword.
-					The sword slices through everyone around you (%d%%). 
-You are not holding the sword.
-					The world is in motion.
 
+					The world stands still. 
+
+You are holding a sword.
+
+					The sword slices through everyone around you (%d%%). 
+
+You are not holding the sword.
+
+					The world is in motion.
 
 The base power, Accuracy, Armour penetration, and critical strike chance of the Final Moment will scale with your Mindpower.
 		Current Final Moment Stats:
@@ -121,6 +125,7 @@ newTalent{
       end
       return base_atk + t.getAttack(self, t)
    end,
+   getDurSword = function(self, t) return 4 end,
    getFinalMoment = function(self, t) return useFinalMoment(self) end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)
@@ -143,31 +148,67 @@ newTalent{
          end)
       game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(ox-self.x), math.abs(oy-self.y)), "psionicbeam", {tx=ox-self.x, ty=oy-self.y})
 
-      -- TODO leave a lingering marker that will come to you 2 turns later, repeating the damage
+      --create sword at ox, oy
+      local map_eff = game.level.map:addEffect(
+         self, ox, oy, t.getDurSword(self, t), DamageType.NULL_TYPE, 
+         {dam = t.getDamage(self, t), radius = 0, self = self, talent = t}, 
+         0, 5, nil, 
+         {type="sunstrike_warning", args ={radius = 1}},
+         function(e, update_shape_only)
+            if not update_shape_only and e.duration == 1 then
+               local DamageType = require("engine.DamageType") --block_path means that it will always hit the tile we've targeted here
+               local aoe = {type="ball", radius = e.dam.radius, friendlyfire=true, selffire=true, talent=e.dam.talent, block_path = function(self, t) return false, true, true end}
+               if e.src then
+                  e.src.__project_source = e
+                  local grids = e.src:project(
+                     {type="beam", range=100}, ox, oy,
+                     function(px, py)
+                        local tmp_target = game.level.map(px, py, engine.Map.ACTOR)
+                        local t = e.src:getTalentFromId(e.src.T_REK_MTYR_MOMENT_DASH)
+                        if tmp_target and tmp_target ~= e.src then
+                           e.src:attackTargetWith(tmp_target, t.getFinalMoment(e.src, t), nil, t.getDamage(e.src, t))
+                        end
+                     end)
+                  game.level.map:particleEmitter(e.x, e.y, 1, "sunburst", {radius=1 * 0.92, grids=grids, tx=e.x, ty=e.y, max_alpha=80})
+               end
+               --e.src:project(aoe, e.x, e.y, DamageType.LITE_LIGHT, e.dam.dam)
+               e.src.__project_source = nil
+               e.duration = 0
+               for _, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
+               e.particles = nil
+               game:playSoundNear(self, "talents/frog_speedup")
+            end
+         end)
+      map_eff.name = t.name
+      
       game:playSoundNear(self, "talents/frog_speedup")
-      --game:playSoundNear(self, "talents/warp")
       return true
    end,
    info = function(self, t)
       return ([[
 The sword goes out before you, %d paces.
-					The sword cuts all in its path (%d%% damage).
+
+					The sword cuts all in its path (%d%%).
 					You come to the blade.
+
 The sword is behind you.
+
 					It waits.
 					It waits.
+
 The sword comes to you.
+
 					The sword cuts all in its path once more.
 					You are together.
-You are not holding a sword.                                        
 
+You are not holding a sword.                                        
 
 Learning this talent increases the Accuracy of the Final Moment by %d.]]):format(self:getTalentRange(t), t.getDamage(self, t) * 100, t.getAttack(self, t))
    end,
          }
 
 newTalent{
-   name = "Knight of Hours", short_name = "REK_MTYR_MOMENT_STOP",
+   name = "Cut Fate", short_name = "REK_MTYR_MOMENT_STOP",
    type = {"demented/moment", 3},
    points = 5,
    require = str_req_high3,
@@ -206,7 +247,7 @@ Learning this talent grants attacks with the Final Moment a %d%% chance of givin
          }
 
 newTalent{
-   name = "Implacable Blade", short_name = "REK_MTYR_MOMENT_BLOCK",
+   name = "Cut the Attack", short_name = "REK_MTYR_MOMENT_BLOCK",
    type = {"demented/moment", 4},
    points = 5,
    require = str_req_high4,

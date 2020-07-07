@@ -48,7 +48,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Each melee attack you land on your target has a %d%% chance to trigger another, similar strike at the cost of #INSANE_GREEN#5 insanity#LAST#.
+      return ([[Each melee attack you land on your target has a %d%% chance to trigger another, similar strike at the cost of #INSANE_GREEN#%d insanity#LAST#.
 This works for all blows, even those from other talents and from shield bashes, but this talent can grant at most one attack per weapon per turn.
 
 Minimum Insanity: %d.

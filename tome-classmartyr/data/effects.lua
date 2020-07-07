@@ -323,7 +323,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_MOMENT_COUNTER", image = "talents/rek_mtyr_moment_block.png",
-   desc = "Implacable Blade",
+   desc = "Cutting the Attack",
    long_desc = function(self, eff) return ("The target is countering all attacks, preventing %d damage."):format(eff.power) end,
    type = "other",
    subtype = { temporal=true, block=true },
@@ -333,6 +333,7 @@ newEffect{
       --self:effectTemporaryValue(p, "flat_damage_armor", {all=eff.power})
    end,
    callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, tmp)
+      self.turn_procs.rek_martyr_moment_counter = self.turn_procs.rek_martyr_moment_counter or {}
       if not self.turn_procs.rek_martyr_moment_counter[src.uid] then
          self.turn_procs.rek_martyr_moment_counter[src.uid] = true
          local t = self:getTalentFromId(self.T_REK_MTYR_MOMENT_BLOCK)
@@ -347,7 +348,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_MOMENT_WIELD", image = "talents/rek_mtyr_moment_stop.png",
-   desc = "Implacable Blade",
+   desc = "Cutting Fate",
    long_desc = function(self, eff) return ("The target is wielding the Final Moment as a sword."):format() end,
    type = "other",
    subtype = { temporal=true, weapon=true },

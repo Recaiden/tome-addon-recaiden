@@ -4,8 +4,8 @@ newTalent{
    require = martyr_req1,
    points = 5,
    mode = "passive",
-   getMinBonus = function(self, t) return math.min(40, self:combatTalentScale(t, 5, 15)) end,
-   getMinPenalty = function(self, t) return math.min(45, self:combatTalentScale(t, 10, 25)) end,
+   getMinBonus = function(self, t) return self:combatTalentLimit(t, 40, 5, 15) end,
+   getMinPenalty = function(self, t) return self:combatTalentLimit(t, 45, 10, 25) end,
    info = function(self, t)
       return ([[You learn to intensify chaotic forces to your advantage.
 Positive insanity effects will have at least %d / 50 power and be more common.
