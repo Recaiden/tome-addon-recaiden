@@ -6,7 +6,7 @@ newTalent{
    cooldown = 15,
    mode = "sustained",
    no_energy = true,
-   getChance = function(self,t) return self:combatLimit(self:combatTalentStatDamage(t, "dex", 10, 90),100, 6.8, 6.8, 61, 61) end,
+   getChance = function(self,t) return math.min(100, self:combatTalentStatDamage(t, "dex", 10, 40)) end,
    getCost = function(self, t) return self:combatTalentScale(t, 5, 5) end,
    getThreshold = function(self, t) return self:combatTalentScale(t, 40, 40) end,
    on_pre_use = function(self, t, silent)
@@ -69,8 +69,8 @@ newTalent{
    requires_target = true,
    is_melee = true,
    target = function(self, t) return {type="widebeam", radius=1, range=self:getTalentRange(t), selffire=false, talent=t} end,
-   getHitDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 3.0) end,
-   getSideDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 2.0) end,
+   getHitDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.2, 1.2) end,
+   getSideDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.6, 1.0) end,
    getDazeDuration = function(self, t) return self:combatTalentScale(t, 2, 5) end,
    getStunDuration = function(self, t) return self:combatTalentScale(t, 2, 7) end,
    action = function(self, t)
@@ -149,7 +149,7 @@ newTalent{
    type = {"demented/chivalry", 3},
    require = martyr_mirror_req3,
    points = 5,
-   cooldown = 1,
+   cooldown = 8,
    insanity = -10,
    range = 1,
    radius = 0,
@@ -166,7 +166,7 @@ newTalent{
       if not hit or not x or not y then return nil end
       doMartyrWeaponSwap(self, "melee", true)
       
-      self:removeEffectsFilter({subtype={stun=true, daze=true, pin=true, pinned=true, pinning=true}}, 50)
+      self:removeEffectsFilter({subtype={stun=true, daze=true, pin=true, pinned=true, pinning=true}}, 1)
 
       if self:canMove(x, y) then
          self:move(x, y, true)
@@ -199,7 +199,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Throw off any stun, daze, or pin that would stop you from moving and then lunge forward, striking a random adjacent enemy for %d%% damage.
+      return ([[Throw off a stun, daze, or pin that might stop you from moving and then lunge forward, striking a random adjacent enemy for %d%% damage.
 This will also attack with your shield if you have one equipped.
 ]]):format(t.getDamage(self, t)*100)
    end,

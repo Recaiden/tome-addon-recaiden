@@ -78,6 +78,81 @@ function countFlags(self)
 end
 
 newTalent{
+   name = "Tendrils Eruption", short_name = REK_MTYR_FLAG_ERUPTION,
+   type = {"demented/other", 1},
+   require = dementedreq3,
+   points = 5,
+   cooldown = function(self, t)
+      if self:isTalentActive(self.T_TENTACLE_CONSTRICT) then return 10 end
+      return 18
+   end,
+   range = 7,
+   radius = 3,
+   tactical = { ATTACKAREA = {weapon = 2}, DISABLE = 3 },
+   requires_target = true,
+   on_pre_use = function(self, t, silent)
+      if not self:callTalent(self.T_MUTATED_HAND, "canTentacleCombat") then
+         if not silent then
+            game.logPlayer(self, "You require an empty offhand to use your tentacle hand.")
+         end
+         return false
+      end
+      return true
+   end,
+   getDamageTentacle = function(self, t) return self:combatTalentWeaponDamage(t, 1.8, 3) end,
+   getInsanity = function(self, t) return 20 end,
+   action = function(self, t)
+      local tentacle = self:callTalent(self.T_MUTATED_HAND, "getTentacleCombat")
+      if not tentacle then
+         game.logPlayer(self, "You require a weapon and an empty offhand!")
+         return nil
+      end
+      
+      local x, y = nil, nil
+      local dam = t.getDamageTentacle(self, t)
+      local radius = self:getTalentRadius(t)
+      local hit = false
+      if self:isTalentActive(self.T_TENTACLE_CONSTRICT) then
+         local tc = self:isTalentActive(self.T_TENTACLE_CONSTRICT)
+         radius = 0
+         dam = dam * 1.5
+         x, y = tc.target.x, tc.target.y
+         local target = game.level.map(x, y, Map.ACTOR)
+         local weapon = self:hasWeaponType(nil)
+         if target and weapon and core.fov.distance(self.x, self.y, x, y) <= 1 then self:attackTargetWith(target, weapon.combat, nil, 1) end
+      end
+      local tg = {type="ball", range=self:getTalentRange(t), radius=radius, friendlyfire=false}
+      if not x then x, y = self:getTargetLimited(tg) end
+      if not x or not y then return nil end
+      
+      self:project(tg, x, y, function(px, py)
+                      local target = game.level.map(px, py, engine.Map.ACTOR)
+                      if not target or (self:reactionToward(target) >= 0) then return end
+                      if self:attackTargetWith(target, tentacle, nil, dam) then hit = true end
+                      if target:checkHit(self:combatSpellpower(), target:combatSpellResist(), 0, 95, 15) then
+                         target:setEffect(self.EFF_SLIMY_TENDRIL, 5, {power=t.getNumb(self, t)})
+                      else
+                         game.logSeen(target, "%s resists the slimy tendril!", target.name:capitalize())
+                      end
+                             end)
+      game.level.map:particleEmitter(x, y, tg.radius, "tentacle_field", {img="tentacle_black", radius=tg.radius})
+      game:playSoundNear(self, "talents/slime")
+      if hit then self:incInsanity(t.getInsanity(self, t)) end
+      
+      return true
+   end,
+   info = function(self, t)
+      return ([[You plant your tentacle hand in the ground where it splits up and extends to a target zone of radius %d.
+		The zone will erupt with many black tendrils to hit all foes caught inside dealing %d%% tentacle damage.
+
+		If at least one enemy is hit you gain %d insanity.
+
+		#YELLOW_GREEN#When constricting:#WHITE#The tendrils pummel your constricted target for %d%% tentacle damage and if adjacent you make an additional mainhand weapon attack.  Talent cooldown reduced to 10.]]):
+      format(self:getTalentRadius(t), t.getDamageTentacle(self, t) * 100, t.getInsanity(self, t), t.getDamageTentacle(self, t) * 1.5 * 100)
+   end,
+}
+
+newTalent{
    name = "Triumphant Flag", short_name = "REK_MTYR_STANDARD_IRRUPTION",
    type = {"demented/standard-bearer", 1},
    require = martyr_req1,
@@ -197,15 +272,13 @@ newTalent{
                         end
                         if self:knowTalent(self.T_REK_MTYR_STANDARD_SYMBIOSIS) then
                            local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_SYMBIOSIS))
-                           flag:learnTalent(flag.T_TENDRILS_ERUPTION, true, lvl)
+                           flag:learnTalent(flag.T_REK_MTYR_FLAG_ERUPTION, true, lvl)
                         end
                      end)
       return true
    end,
    info = function(self, t)
-      return ([[When you kill an enemy, summon a Flag of level %d where they died that magically strikes nearby enemies.
-
-You also summon a flag when you have done enough damage to a powerful enemy: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
+      return ([[When you kill an enemy, summon a Flag of level %d where they died that magically strikes nearby enemies. You also summon a flag when you have done enough damage to a powerful enemy: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
 
 Summoning a flag has a cooldown.
 
@@ -244,7 +317,7 @@ newTalent{
    info = function(self, t)
       return ([[With incredible boldness, you plant a flag nearby without needing to defeat an enemy!
 
-Levels in this talent grant your flags the ability to pull enemies closer to them and reduce the cooldown between automatic flag placements by %d turns.]]):
+Levels in this talent grant your flags the ability to slowly pull enemies closer to them and reduce the cooldown between automatic flag placements by %d turns.]]):
       format(t.getCDReduce(self, t))
    end,
 }
@@ -256,11 +329,13 @@ newTalent{
    points = 5,
    mode = "passive",
    range = function(self, t) return self:combatTalentScale(t, 3, 6) end,
+   getFlagRange = function(self, t) return math.floor(self:combatTalentScale(t, 4.5, 6.5)) end,
+   getFlagRadius = function(self, t) return util.bound(4 - self:getTalentLevel(t) / 2, 1, 4) end,
    info = function(self, t)
       return ([[When you place a flag yourself, it can go anywhere within range %d.
 
-Levels in this talent grant your flags the ability to move around of their own volition.
-]]):format(self:getTalentRange(t))
+Levels in this talent grant your flags the ability to move around of their own volition: travelling in range %d with accuracy %d.
+]]):format(self:getTalentRange(t), t.getFlagRange(self, t), t.getFlagRadius(self, t))
    end,
 }
 
@@ -272,6 +347,7 @@ newTalent{
    mode = "passive",
    getRange = function(self, t) return 3 end,
    getResist = function(self, t) return math.floor(self:combatTalentScale(t, 15, 25)) end,
+   getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.8, 3) end,
    callbackOnActBase = function(self, t)
       local list = {}
       --Near the player
@@ -294,6 +370,6 @@ newTalent{
    info = function(self, t)
       return ([[Whenever you start a turn within range 3 of one of your flags, each of you gains %d%% all resistance for 5 turns.
 
-Levels in this talent grant your flags a magical numbing attack.]]):format(t.getResist(self, t))
+Levels in this talent grant your flags an area attack doing %d%% of their normal damage.]]):format(t.getResist(self, t), t.getDamage(self,t))
    end,
 }
