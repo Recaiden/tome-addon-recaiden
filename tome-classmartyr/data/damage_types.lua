@@ -109,6 +109,7 @@ newDamageType{
          local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_HEAL)
          if geff then
             removeGroundEffect(geff)
+            game.level.map:particleEmitter(x, y, 2, "generic_sploom", {rm=20, rM=20, gm=160, gM=180, bm=20, bM=20, am=35, aM=90, radius=2, basenb=30})
          end
          game:playSoundNear(target, "talents/heal")
       end
@@ -141,6 +142,7 @@ newDamageType{
          local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_BUFF)
          if geff then
             removeGroundEffect(geff)
+            game.level.map:particleEmitter(x, y, 2, "generic_sploom", {rm=10, rM=30, gm=90, gM=110, bm=235, bM=255, am=35, aM=90, radius=2, basenb=30})
          end
          game:playSoundNear(target, "talents/distortion")
       end
@@ -166,6 +168,7 @@ newDamageType{
          local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_FLASH)
          if geff then
             removeGroundEffect(geff)
+            game.level.map:particleEmitter(x, y, 2, "generic_sploom", {rm=235, rM=255, gm=200, gM=220, bm=50, bM=70, am=35, aM=90, radius=2, basenb=30})
          end
          game:playSoundNear(target, "talents/tidalwave")
       end

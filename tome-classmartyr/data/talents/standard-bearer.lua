@@ -78,9 +78,8 @@ function countFlags(self)
 end
 
 newTalent{
-   name = "Tendrils Eruption", short_name = REK_MTYR_FLAG_ERUPTION,
+   name = "Flag Eruption", short_name = REK_MTYR_FLAG_ERUPTION,
    type = {"demented/other", 1},
-   require = dementedreq3,
    points = 5,
    cooldown = function(self, t)
       if self:isTalentActive(self.T_TENTACLE_CONSTRICT) then return 10 end
@@ -370,6 +369,6 @@ newTalent{
    info = function(self, t)
       return ([[Whenever you start a turn within range 3 of one of your flags, each of you gains %d%% all resistance for 5 turns.
 
-Levels in this talent grant your flags an area attack doing %d%% of their normal damage.]]):format(t.getResist(self, t), t.getDamage(self,t))
+Levels in this talent grant your flags an area attack doing %d%% of their normal damage.]]):format(t.getResist(self, t), t.getDamage(self,t)*100)
    end,
 }

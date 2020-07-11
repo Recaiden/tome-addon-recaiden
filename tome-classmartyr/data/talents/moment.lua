@@ -65,7 +65,9 @@ newTalent{
    action = function(self, t)
       local tg = self:getTalentTarget(t)
 
-      game.level.map:particleEmitter(self.x, self.y, 1, "dreamhammer", {tile="shockbolt/object/dream_hammer", tx=self.x, ty=self.y, sx=self.x, sy=self.y})
+      game.level.map:particleEmitter(self.x, self.y, 2, "circle", {oversize=0, appear=8, limit_life=24, base_rot=0, img="mtyr_clock_face", speed=0, radius=2})
+      game.level.map:particleEmitter(self.x, self.y, 2, "circle", {oversize=0, appear=8, limit_life=24, img="mtyr_hour_hand", speed=1.0, radius=2})
+      game.level.map:particleEmitter(self.x, self.y, 2, "circle", {oversize=0, appear=8, limit_life=24, img="mtyr_minute_hand", speed=12.0, radius=2})
 
       self:project(tg, self.x, self.y, function(px, py, tg, self)
 		      local target = game.level.map(px, py, Map.ACTOR)
@@ -77,7 +79,7 @@ newTalent{
                                        end)
       game:playSoundNear(self, "talents/rek_triple_tick")
 
-
+      
       return true
    end,
    info = function(self, t)
@@ -96,8 +98,8 @@ You are not holding the sword.
 
 					The world is in motion.
 
-The base power, Accuracy, Armour penetration, and critical strike chance of the Final Moment will scale with your Mindpower.
-		Current Final Moment Stats:
+Mindpower: improves damage, accuracy, armor penetration, critical chance.
+		Behold the sword:
 		%s]]):format(damage * 100, tostring(weapon_stats))
    end,
          }
@@ -202,7 +204,7 @@ The sword comes to you.
 
 You are not holding a sword.                                        
 
-Learning this talent increases the Accuracy of the Final Moment by %d.]]):format(self:getTalentRange(t), t.getDamage(self, t) * 100, t.getAttack(self, t))
+Strikes with the sword grow more accurate (%d).]]):format(self:getTalentRange(t), t.getDamage(self, t) * 100, t.getAttack(self, t))
    end,
          }
 
@@ -216,7 +218,7 @@ newTalent{
    mode = "passive",
    getFinalMoment = function(self, t) return useFinalMoment(self) end,
    getChance = function(self, t) return self:combatTalentLimit(t, 50, 10, 30) end,
-   getGain = function(self, t) return math.min(5, self:combatTalentMindDamage(t, 1.0, 2.2)) end,
+   getGain = function(self, t) return math.min(5, 1+self:combatTalentMindDamage(t, 0.1, 2.2)) end,
    doStop = function(self, t)
       if self:isTalentCoolingDown(t) then return end
       game:playSoundNear(self, "talents/roat_luna_dial")
@@ -236,21 +238,21 @@ Your mind or body breaks.
 					The world stands still.
 You are holding a sword.
 					The world remains still.
-You have %d hundredths of a breath.
+You have %0.2f breaths.
 
 This effect has a cooldown.
 Mindpower: improves turn gain.
 
-Learning this talent grants attacks with the Final Moment a %d%% chance of giving you %d%% of a turn.]]):format(t.getGain(self, t)*100, t.getChance(self, t), 10)
+Strikes with the sword may grant you a tenth of a breath (%d%%).]]):format(t.getGain(self, t), t.getChance(self, t))
    end,
          }
 
 newTalent{
-   name = "Cut the Attack", short_name = "REK_MTYR_MOMENT_BLOCK",
+   name = "Cut Danger", short_name = "REK_MTYR_MOMENT_BLOCK",
    type = {"demented/moment", 4},
    points = 5,
    require = str_req_high4,
-   cooldown = 24,
+   cooldown = 8,
    insanity = -15,
    tactical = { ATTACK = {[moment_tactical] = 1}, ATTACKAREA = { TEMPORAL = 1} },
    getFinalMoment = function(self, t) return useFinalMoment(self) end,
@@ -270,6 +272,6 @@ Danger approaches.
 The danger strikes you, weakened by %d.
 					Your sword strikes back (%d%%).
 
-Strikes with the sword may strike again, with levels for every level here.]]):format(t.getBlock(self, t), damage * 100, damDesc(self, DamageType.MIND, project))
+Strikes with the sword may strike again.]]):format(t.getBlock(self, t), damage * 100, damDesc(self, DamageType.MIND, project))
    end,
          }

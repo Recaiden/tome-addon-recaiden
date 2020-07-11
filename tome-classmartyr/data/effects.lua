@@ -9,11 +9,11 @@ local Level = require "engine.Level"
 newEffect{
    name = "REK_MTYR_UNNERVE", image = "talents/rek_mtyr_unnerve.png",
    desc = "Unnerved",
-   long_desc = function(self, eff) return ("Unable to handle the truth, giving them a %d chance to act randomly, suffering %d damage, and losing %d power."):format(eff.power, eff.damage, eff.powerlessness) end,
+   long_desc = function(self, eff) return ("Unable to handle the truth, giving them a %d chance to act randomly, suffering %d damage, and losing %d power, with a %d%% chance for longer cooldowns"):format(eff.power, eff.damage, eff.powerlessness, eff.pitilessness) end,
    type = "mental",
    subtype = { confusion=true, },
    status = "detrimental",
-   parameters = { power = 20, damage=0, powerlessness=0 },
+   parameters = { power = 20, damage=0, powerlessness=0, pitilessness=0 },
    
    activate = function(self, eff)
       eff.power = math.floor(util.bound(eff.power, 0, 50))
@@ -33,6 +33,25 @@ newEffect{
          self:removeTemporaryValue("combat_dam", eff.physical)
       end
       if self == game.player and self.updateMainShader then self:updateMainShader() end
+   end,
+   callbackOnAct = function(self, eff)
+      if eff.src and eff.src:knowTalent(self.T_REK_MTYR_UNSETTLING_UNVEIL) and eff.src:getInsanity() <= 40 then
+         if rng.percent(self:attr("confused")) then
+            eff.src:incInsanity(1)
+         end
+      end
+      if rng.percent(eff.pitilessness) then
+         local tids = {}
+         for tid, lev in pairs(self.talents) do
+            local t = self:getTalentFromId(tid)
+            if t and self.talents_cd[tid] and not t.fixed_cooldown then tids[#tids+1] = t end
+         end
+         while #tids > 0 do
+            local tt = rng.tableRemove(tids)
+            if not tt then break end
+            self.talents_cd[tt.id] = self.talents_cd[tt.id] + 1
+         end
+      end
    end,
    on_timeout = function(self, eff)
       if eff.damage > 0 then
@@ -91,14 +110,25 @@ newEffect{
    end,
    on_timeout = function(self, eff)
       if eff.damage > 0 then
-         local realdam = DamageType:get(DamageType.MIND).projector(eff.src, self.x, self.y, DamageType.MIND, eff.damage)
+         local damCurrent = eff.damage
+         --t2 insanity bonus
+         if eff.src and eff.src:knowTalent(self.T_REK_MTYR_SCOURGE_SHARED_FEAST) and eff.src:getInsanity() >= 60 then
+            damCurrent = damCurrent * (1 + (eff.src:getInsanity()-50) / 100)
+            if rng.percent(self:attr("confused")) then
+               eff.src:incInsanity(1)
+            end
+         end
+         
+         local realdam = DamageType:get(DamageType.MIND).projector(eff.src, self.x, self.y, DamageType.MIND, damCurrent, {from_disease=true})
          if eff.src and realdam > 0 and not eff.src:attr("dead") then
             eff.src:heal(realdam * eff.lifesteal, self)
          end
       end
-      eff.damage = eff.damage*eff.ramp
+      if eff.src and eff.src.x and eff.src.y and core.fov.distance(self.x, self.y, eff.src.x, eff.src.y) <= 3 then
+         eff.damage = eff.damage*eff.ramp
+      end
    end,
-         }
+}
 
 newEffect{
    name = "REK_MTYR_INSPIRED", image = "talents/rek_mtyr_polarity_rebound.png",
@@ -323,7 +353,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_MOMENT_COUNTER", image = "talents/rek_mtyr_moment_block.png",
-   desc = "Cutting the Attack",
+   desc = "Cut Danger",
    long_desc = function(self, eff) return ("The target is countering all attacks, preventing %d damage."):format(eff.power) end,
    type = "other",
    subtype = { temporal=true, block=true },
@@ -355,6 +385,9 @@ newEffect{
    status = "beneficial",
    parameters = { power=0 },
    activate = function(self, eff)
+      self:effectParticles(eff, {type="circle", args={oversize=0, appear=12, base_rot=0, img="mtyr_clock_face", speed=0, radius=2}})
+      self:effectParticles(eff, {type="circle", args={oversize=0, appear=12, img="mtyr_minute_hand", speed=3.6, radius=2}})
+      self:effectParticles(eff, {type="circle", args={oversize=0, appear=12, img="mtyr_hour_hand", speed=0.3, radius=2}})
    end,
 }
 

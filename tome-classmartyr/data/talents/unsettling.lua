@@ -4,7 +4,7 @@ newTalent{
    require = martyr_req1,
    points = 5,
    insanity = 10,   
-   cooldown = 3,
+   cooldown = 4,
    range = function(self, t)
       local weapon, ammo, offweapon, pf_weapon = self:hasArcheryWeapon()
       if not (weapon and weapon.combat) and not (pf_weapon and pf_weapon.combat) then 
@@ -20,9 +20,19 @@ newTalent{
          pf_weapon and pf_weapon.combat and br + pf_weapon.combat.range or 0,
          self:attr("archery_range_override") or 0)
    end,
+   radius = function(self, t)
+      if amSane(self) and self:knowTalent(self.T_REK_MTYR_UNSETTLING_UNINHIBITED) then
+         local t4 = self:getTalentFromId(self.T_REK_MTYR_UNSETTLING_UNINHIBITED)
+         return t4.getRadius(self, t)
+      end
+      return 0
+   end,
+   target = function(self, t)
+      return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t, selffire=self:spellFriendlyFire()}
+   end,
+   --target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
    requires_target = true,
    tactical = { DISABLE = { confusion = 2 } },
-   target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
    getPower = function(self, t) return math.min(50, self:combatTalentScale(t, 20, 50, 0.75)) end,
    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5.5)) end,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.5, 2.1) end,
@@ -31,12 +41,13 @@ newTalent{
       local x, y = self:getTarget(tg)
       if not x or not y then return nil end
       local _ _, x, y = self:canProject(tg, x, y)
-      local target = game.level.map(x, y, Map.ACTOR)
-      if not target then return end
+      --local target = game.level.map(x, y, Map.ACTOR)
+      --if not target then return end
 
       local power = t.getPower(self, t)
       local dam = 0
       local powerlessness = 0
+      local pitilessness = 0
       --DoT
       if self:knowTalent(self.T_REK_MTYR_UNSETTLING_UNHINGE) then
          local t2 = self:getTalentFromId(self.T_REK_MTYR_UNSETTLING_UNHINGE)
@@ -45,28 +56,39 @@ newTalent{
             powerlessness = t2.getPowerDrain(self, t2)
          end
       end
-      
-      if target:canBe("confusion") then   
-         -- Main effct
-         target:setEffect(target.EFF_REK_MTYR_UNNERVE, t.getDuration(self,t), {power=t.getPower(self, t) or 30, damage=dam, powerlessness=powerlessness, src=self})
-      elseif self:knowTalent(self.T_REK_MTYR_UNSETTLING_UNINHIBITED) then
-         local t4 = self:getTalentFromId(self.T_REK_MTYR_UNSETTLING_UNINHIBITED)
-         local diminishment = t4.getReduction(self, t4)
-         power = power * (100 - diminishment) / 100
-         dam = dam * (100 - diminishment) / 100
-         powerlessness = powerlessness * (100 - diminishment) / 100
-         target:setEffect(target.EFF_REK_MTYR_UNNERVE, t.getDuration(self,t), {power=power, damage=dam, powerlessness=powerlessness, src=self})
-      else
-         game.logSeen(target, "%s resists the revelation!", target.name:capitalize())
+
+      if self:knowTalent(self.T_REK_MTYR_UNSETTLING_UNVEIL) then
+         local t3 = self:getTalentFromId(self.T_REK_MTYR_UNSETTLING_UNVEIL)
+         pitlessness = t3.getPitiless(self, t3)
       end
 
-      -- sanityBonus
-      if amSane(self) then
-         if target and target:hasEffect(target.EFF_REK_MTYR_UNNERVE) then
-            self:attackTarget(target, nil, t.getDamage(self, t), true, true)
-         end
-      end
-      
+      self:project(
+         tg, x, y,
+         function(px, py)
+            local target = game.level.map(px, py, Map.ACTOR)
+            if not target then return end
+            if target == self then return end
+
+            if target:canBe("confusion") then   
+               -- Main effct
+               target:setEffect(target.EFF_REK_MTYR_UNNERVE, t.getDuration(self,t), {power=t.getPower(self, t) or 30, damage=dam, powerlessness=powerlessness, pitilessness=pitilessness, src=self})
+            elseif self:knowTalent(self.T_REK_MTYR_UNSETTLING_UNINHIBITED) then
+               -- same effect but weaker when bypassing immunity
+               local t4 = self:getTalentFromId(self.T_REK_MTYR_UNSETTLING_UNINHIBITED)
+               local diminishment = t4.getReduction(self, t4)
+               target:setEffect(target.EFF_REK_MTYR_UNNERVE, t.getDuration(self,t), {power=power * (100 - diminishment) / 100, damage=dam * (100 - diminishment) / 100, powerlessness= powerlessness * (100 - diminishment) / 100, pitilessness=pitilessness * (100 - diminishment) / 100, src=self})
+            else
+               game.logSeen(target, "%s resists the revelation!", target.name:capitalize())
+            end
+
+            -- sanityBonus
+            if amSane(self) then
+               if target and target:hasEffect(target.EFF_REK_MTYR_UNNERVE) then
+                  self:attackTarget(target, nil, t.getDamage(self, t), true, true)
+               end
+            end
+         end)
+
       return true
    end,
    
@@ -100,39 +122,13 @@ newTalent{
    type = {"demented/unsettling", 3},
    require = martyr_req3,
    points = 5,
-   cooldown = 8,
-   insanity = 10,
-   getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.5, 3.2) end,
-   getExtension = function(self, t) return self:combatTalentScale(t, 3, 5) end,
-   range = 0,
-   radius = 10,
-   target = function(self, t)
-      return {type="ball", range=self:getTalentRange(t), selffire=false, radius=self:getTalentRadius(t)}
-   end,
-   action = function(self, t)
-      local tg = self:getTalentTarget(t)
-      local damage = t.getDamage(self, t)
-      
-      self:project(tg, self.x, self.y,
-                   function(px, py, tg, self)
-		      local target = game.level.map(px, py, Map.ACTOR)
-		      if target and target ~= self and target:hasEffect(target.EFF_REK_MTYR_UNNERVE) then
-			 self:attackTarget(target, DamageType.MIND, damage, true, true)
-                         -- sanityBonus
-                         if amSane(self) then
-                            local e2 = target.tmp[target.EFF_REK_MTYR_UNNERVE]
-                            e2.dur = e2.dur + t.getExtension(self, t)
-                         end
-		      end
-                   end
-                  )
-      return true
-   end,
+   mode = "passive",
+   getPitiless = function(self, t) return self:combatTalentLimit(t, 50, 10, 25) end,
    info = function(self, t)
-      return ([[Reveal a terrible secret and crush the psyches of your listeners, attacking all Unnerved targets within range 10 for %d%% unarmed damage (as mind damage).
+      return ([[The truth weighs heavily on the mind.  Each turn, unnerved targets have a %d%% chance that their cooling down talents will increase in cooldown.
 
-#ORANGE#Sanity Bonus:#LAST# And then increase the duration of their Unnerve effect by %d turns.
-]]):format(100*t.getDamage(self, t), t.getExtension(self, t))
+#ORANGE#Sanity Bonus:#LAST# Whenever an Unnerved character acts, you may gain a small amount of insanity (based on how Confused they are).
+]]):format(t.getPitiless(self, t))
    end,
 }
 
@@ -143,8 +139,10 @@ newTalent{
    points = 5,
    mode = "passive",
    getReduction = function(self, t) return math.max(10, self:combatTalentScale(t, 70, 25)) end,
+   getRadius = function(self, t) return math.min(10, self:combatTalentScale(t, 1, 3)) end,
    info = function(self, t)
       return ([[Your Unnerve ability can penetrate confusion immunity, with %d%% reduced effectiveness. 
-]]):format(t.getReduction(self, t))
+
+#ORANGE#Sanity Bonus:#LAST# Your Unnerve affects a %d radius ball rather than a single target.]]):format(t.getReduction(self, t), t.getRadius(self, t))
    end,
 }

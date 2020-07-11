@@ -24,7 +24,7 @@ newTalent{
    end,
    passives = function(self, t, p)
       self:talentTemporaryValue(p, "flat_damage_armor", {all=t.getReduction(self, t)})
-      self:talentTemporaryValue(p, "combat_dam", t.getPower(self, t))
+      --self:talentTemporaryValue(p, "combat_dam", t.getPower(self, t))
    end,
    callbackOnAct = function (self, t)
       self:updateTalentPassives(t.id)
@@ -69,7 +69,7 @@ newTalent{
       game.level.map:scheduleRedisplay()
    end,
    info = function(self, t)
-      return ([[Gain physical power as you gain insanity, up to %d (currently %d).
+      return ([[Gain melee damage as you gain insanity, up to %d (currently %d).
 Reduce incoming damage by a flat amount as you approach sanity, up to %d per hit (currently %d).
 Both values will improve with your level.
 
@@ -79,7 +79,18 @@ You benefit from #GREEN#Our Gift#LAST# while you have at least 60 Insanity.
 #{italic}#As long as I don't start thinking like #GREEN#us#LAST#, I'll be safe.#{normal}#
 ]]):format(t.getMaxPower(self, t), t.getPower(self, t), t.getMaxReduction(self, t), t.getReduction(self, t))
    end,
-}
+         }
+
+--local hd = {"Combat:attackTargetWith:attackerBonuses", target=target, weapon=weapon, damtype=damtype, mult=mult, dam=dam, apr=apr, atk=atk, def=def, armor=armor}
+	
+class:bindHook(
+   "Combat:attackTargetWith:attackerBonuses",
+   function(self, hd)
+      if not self:knowTalent(self.T_REK_MTYR_WHISPERS_SLIPPING_PSYCHE) then return hd end
+      hd.dam = hd.dam + self:callTalent(self.T_REK_MTYR_WHISPERS_SLIPPING_PSYCHE, "getPower")
+      return hd
+end)
+
 
 newTalent{
    name = "Guiding Light", short_name = "REK_MTYR_WHISPERS_GUIDING_LIGHT",

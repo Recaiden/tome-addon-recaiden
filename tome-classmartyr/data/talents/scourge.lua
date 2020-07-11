@@ -3,12 +3,12 @@ newTalent{
    type = {"demented/scourge", 1},
    require = martyr_req1,
    points = 5,
-   cooldown = 6,
+   cooldown = 5,
    range = 1,
    insanity = -5,
    is_melee = true,
    requires_target = true,
-   tactical = { ATTACK = 1 },
+   tactical = { ATTACK = 1, DISEASE = 1 },
    target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
    getHitDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
@@ -43,8 +43,8 @@ newTalent{
          target:setEffect(target.EFF_REK_MTYR_SCORN, 5, {damage=dam, ramp=ramp, fail=fail, lifesteal=lifesteal, src=self, apply_power=self:combatMindpower()})
          -- insanityBonus
          if amInsane(self) then
-            if target:canBe("stun") then
-               target:setEffect(target.EFF_STUNNED, t.getDuration(self, t), {apply_power=self:combatMindpower()})
+            if target:canBe("slow") then
+               target:setEffect(target.EFF_CRIPPLE, t.getDuration(self, t), {apply_power=self:combatMindpower()})
             end
          end
       end
@@ -56,7 +56,7 @@ newTalent{
       return ([[Strike an enemy in melee, and, if you hit, afflict the target with Scorn, which does %d mind damage per turn for %d turns (#SLATE#No save#LAST#).  Scorn ignores immunity but is otherwise treated as a disease.
 Mindpower: increases damage.
 
-#GREEN#Our Gift:#LAST# The target will be stunned (#SLATE#Mindpower vs. Physical#LAST#) for %d turns.
+#GREEN#Our Gift:#LAST# The target will be crippled (#SLATE#Mindpower vs. Physical#LAST#) for %d turns.
 ]]):format(t.getDotDamage(self, t), 5, t.getDuration(self, t))
    end,
 }
@@ -70,14 +70,14 @@ newTalent{
    getRamp = function(self, t) return self:combatTalentScale(t, 0.08, 0.3) end,
    getFail = function(self, t) return math.min(33, self:combatTalentScale(t, 10, 20)) end,
    info = function(self, t)
-      return ([[The knowledge of their failure compounds over time, increasing the mind damage by %d%% each turn.
+      return ([[The knowledge of their failure compounds over time, increasing the mind damage by %d%% each turn as long as you are within 3 spaces of them.
 
 #GREEN#Our Gift:#LAST# Scorn also gives the victim a %d%% chance to fail to use talents.]]):format(t.getRamp(self, t)*100, t.getFail(self, t))
    end,
 }
 
 newTalent{
-   name = "Mass Hysteria", short_name = "REK_MTYR_SCOURGE_GRASPING_TENDRILS",
+   name = "Challenging Call", short_name = "REK_MTYR_SCOURGE_GRASPING_TENDRILS",
    type = {"demented/scourge", 3},
    require = martyr_req3,
    points = 5,
@@ -85,66 +85,49 @@ newTalent{
    insanity = 10,
    getDamage = function(self, t) return self:combatTalentMindDamage(t, 20, 180) end,
    range = 10,
-   radius = 3,
+   requires_target = true,
    target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
+   range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 8)) end,
+   target = function(self, t) return {type="cone", range=0, radius=self:getTalentRange(t)} end,
+   tactical = { CLOSEIN = 2 },
    action = function(self, t)
-       local tg = self:getTalentTarget(t)
-       local x, y = self:getTarget(tg)
-       if not x or not y then return nil end
-       local _ _, x, y = self:canProject(tg, x, y)
-       local target = game.level.map(x, y, Map.ACTOR)
-       if not target then return nil end
-       if not target:hasEffect(target.EFF_REK_MTYR_SCORN) then return nil end
-
-       local DT = require("engine.DamageType")
-       local dam = self:mindCrit(t.getDamage(self, t))
-       local tgts = {}
-       local gift = amInsane(self) and self:knowTalent(self.T_REK_MTYR_SCOURGE_INFEST)
-       local t1 = self:getTalentFromId(self.T_REK_MTYR_SCOURGE_INFEST)
-       local ramp = 1
-       local fail = 0
-       local lifesteal = 0
-       if self:knowTalent(self.T_REK_MTYR_SCOURGE_SPROUTING) then
-          local t2 = self:getTalentFromId(self.T_REK_MTYR_SCOURGE_SPROUTING)
-          ramp = ramp + t2.getRamp(self, t)
-          if amInsane(self) then
-            fail = t2.getFail(self, t2)
-         end
-       end
-       if self:knowTalent(self.T_REK_MTYR_SCOURGE_SHARED_FEAST) then
-          local t4 = self:getTalentFromId(self.T_REK_MTYR_SHARED_FEAST)
-          lifesteal = lifesteal + t4.getDrain(self, t4)
-       end
-       self:project({type="ball", radius=self:getTalentRadius(t), x=target.x, y=target.y}, target.x, target.y,
-                    function(px, py)
-                       local tgt = game.level.map(px, py, engine.Map.ACTOR)
-                       if (px ~= target.x or py ~= target.y) and tgt and self:reactionToward(tgt) < 0 then tgts[#tgts+1] = {tgt=tgt, dist=core.fov.distance(target.x, target.y, px, py)} end
-                    end)
-       if #tgts > 0 then
-          table.sort(tgts, "dist")
-          for i, d in ipairs(tgts) do
-             if d.tgt:canBe("knockback") then
-                d.tgt:pull(target.x, target.y, self:getTalentRadius(t)+1,
-                           function(a)
-                              game.logSeen(d.tgt, "%s is pulled into %s!", d.tgt.name, target.name)
-                              DT:get(DT.PHYSICAL).projector(self, d.tgt.x, d.tgt.y, DT.PHYSICAL, dam)
-                              DT:get(DT.PHYSICAL).projector(self, target.x, target.y, DT.PHYSICAL, dam)
-                              if gift then
-                                 d.tgt:setEffect(target.EFF_REK_MTYR_SCORN, t1.getDuration(self, t1), {damage=t1.getDotDamage(self, t1), ramp=ramp, fail=fail, lifesteal=lifesteal, src=self})
-                                 
-                              end
-                           end
-                          )
-             end
-          end
-       end
+      local tg = self:getTalentTarget(t)
+      local x, y = self:getTarget(tg)
+      if not x or not y then return nil end
+      
+      local weapondam = t.getDamage(self, t)
+      self:project(
+         tg, x, y,
+         function(px, py)
+            local act = game.level.map(px, py, Map.ACTOR)
+            if act and self:reactionToward(act) < 0 then
+               local hit = false
+               for eff_id, p in pairs(act.tmp) do
+                  local e = act.tempeffect_def[eff_id]
+                  if e.subtype.disease then hit = true break end
+               end               
+               if hit and act:canBe("knockback") then
+                  act:pull(self.x, self.y, self:getTalentRange(t))
+                  if amSane(self) then
+                     self:addParticles(Particles.new("tentacle_pull", 1, {range=core.fov.distance(self.x, self.y, px, py), dir=math.deg(math.atan2(py-self.y, px-self.x)+math.pi/2)}))
+                  else
+                     game.level.map:particleEmitter(px, py, 1, "shout", {additive=true, life=10, size=3, distorion_factor=0.5, radius=1, nb_circles=8, rm=0.8, rM=1, gm=0.4, gM=0.5, bm=0.1, bM=0.2, am=0.4, aM=0.6})
+                  end
+                  -- insanity bonus
+                  if amInsane(self) then
+                     act:setEffect(act.EFF_PINNED, 1, {src=self})
+                  end
+               end
+            end
+         end)
+      
       return true
    end,
    info = function(self, t)
-      return ([[A scorned target gathers its fellows from within range %d#SLATE#(checks knockback resistance)#LAST# creating a dangerous feedback effect that deals %d physical damage to both.
+      return ([[Demand that your foes return to face you rather than flee!  All diseased enemies in a cone of radius %d are pulled towards you #SLATE#(checks knockback resistance)#LAST#.
 
-#GREEN#Our Gift:#LAST# all targets pulled in also have Scorn applied to them.
-]]):format(self:getTalentRadius(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)))
+#GREEN#Our Gift:#LAST# All targets pulled in are then pinned for 1 turn #SLATE#(no save)#LAST#]]):
+      format(self:getTalentRange(t), damDesc(self, DamageType.BLIGHT, t.getDamage(self, t) * 100))
    end,
 }
 
@@ -157,6 +140,7 @@ newTalent{
    getDrain = function(self, t) return math.min(1.0, self:combatTalentScale(t, 0.2, 0.45)) end,
    info = function(self, t)
       return ([[Whenever your Scorn effect deals damage, you heal for %d%% of the damage done.  
-]]):format(100*t.getDrain(self, t))
+
+#GREEN#Our Gift:#LAST# The damage dealt by Scorn is increased by 10-50%% based on your current insanity.]]):format(100*t.getDrain(self, t))
    end,
 }
