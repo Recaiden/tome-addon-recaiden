@@ -54,7 +54,7 @@ newTalent{
    requires_target = true,
    radius = function(self, t) return 1 end,
    tactical = { ATTACK = { [moment_tactical] = 1 } },
-   getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.4, 2.1) end,
+   getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.2, 1.8) end,
    getBaseDamage = function(self, t) return self:combatTalentMindDamage(t, 0, 60) end,
    getBaseAtk = function(self, t) return self:combatTalentMindDamage(t, 0, 20) end,
    getBaseApr = function(self, t) return self:combatTalentMindDamage(t, 0, 20) end,
@@ -110,12 +110,12 @@ newTalent{
    points = 5,
    require = str_req_high2,
    cooldown = 18,
-   insanity = 15,
+   insanity = 11,
    tactical = { ATTACKAREA = { [moment_tactical] = 1 } },
    range = function(self, t) return math.floor(self:combatTalentScale(t, 6, 10)) end,
    requires_target = true,
    proj_speed = 10,
-   target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
+   target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t, nolock=true} end,
    getChance = function(self, t) return self:combatTalentLimit(t, 50, 10, 30) end,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1, 1.5) end,
    getAttack = function(self, t) return self:getTalentLevel(t) * 10 end,
@@ -134,7 +134,8 @@ newTalent{
       local tx, ty, target = self:getTargetLimited(tg)
       if not tx or not ty then return nil end
       if not self:canProject(tg, tx, ty) then return nil end
-      
+      if game.level.map(tx, ty, engine.Map.ACTOR) then return nil end
+      if game.level.map:checkEntity(tx, ty, Map.TERRAIN, "block_move") then return nil end
       local ox, oy = self.x, self.y
       self:move(tx, ty, true)
       if ox == self.x and oy == self.y then return end
@@ -155,15 +156,15 @@ newTalent{
          self, ox, oy, t.getDurSword(self, t), DamageType.NULL_TYPE, 
          {dam = t.getDamage(self, t), radius = 0, self = self, talent = t}, 
          0, 5, nil, 
-         {type="sunstrike_warning", args ={radius = 1}},
+         {type="warning_ring", args ={radius = 1, r=45, g=15, b=110, nb=10, size=8}},
+
          function(e, update_shape_only)
             if not update_shape_only and e.duration == 1 then
                local DamageType = require("engine.DamageType")
-               local aoe = {type="ball", radius = e.dam.radius, friendlyfire=true, selffire=true, talent=e.dam.talent, block_path = function(self, t) return false, true, true end}
                if e.src then
                   e.src.__project_source = e
                   local grids = e.src:project(
-                     {type="beam", range=100}, ox, oy,
+                     {type="beam", range=100}, e.x, e.y,
                      function(px, py)
                         local tmp_target = game.level.map(px, py, engine.Map.ACTOR)
                         local t = e.src:getTalentFromId(e.src.T_REK_MTYR_MOMENT_DASH)
@@ -171,7 +172,8 @@ newTalent{
                            e.src:attackTargetWith(tmp_target, t.getFinalMoment(e.src, t), nil, t.getDamage(e.src, t))
                         end
                      end)
-                  game.level.map:particleEmitter(e.x, e.y, 1, "sunburst", {radius=1 * 0.92, grids=grids, tx=e.x, ty=e.y, max_alpha=80})
+                  game.level.map:particleEmitter(e.x, e.y, math.max(math.abs(e.src.x-e.x), math.abs(e.src.y-e.y)), "psionicbeam", {tx=e.src.x-e.x, ty=e.src.y-e.y})
+
                end
                e.src.__project_source = nil
                e.duration = 0
@@ -226,7 +228,7 @@ newTalent{
       self:startTalentCooldown(t)
       self:setEffect(self.EFF_REK_MTYR_MOMENT_WIELD, 1, {src=self})
    end,
-   callbackOnHit = function(self, eff, cb, src)
+   callbackOnHit = function(self, t, cb, src)
       if cb.value >= (self.life) then
          t.doStop(self, t)
       end

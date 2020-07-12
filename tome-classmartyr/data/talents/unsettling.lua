@@ -28,7 +28,7 @@ newTalent{
       return 0
    end,
    target = function(self, t)
-      return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t, selffire=self:spellFriendlyFire()}
+      return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t, friendlyfire=false, selffire=false}
    end,
    --target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
    requires_target = true,

@@ -71,8 +71,8 @@ function _M:insanityEffect(min, max)
 
    local madness = base_insanityEffect(self, max, min)
    if self:knowTalent(self.T_REK_MTYR_POLARITY_DEEPER_SHADOWS) then
-      -- reroll negative effects once
-      if madness < 0 then
+      -- reroll negative effects up to once
+      if madness < 0 and rng.percent(self:callTalent(self.T_REK_MTYR_POLARITY_DEEPER_SHADOWS, "getRerollChance")) then
          madness = base_insanityEffect(self, max, min)
       end
       local minUp = self:callTalent(self.T_REK_MTYR_POLARITY_DEEPER_SHADOWS, "getMinBonus")

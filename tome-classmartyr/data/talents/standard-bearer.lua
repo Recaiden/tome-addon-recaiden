@@ -78,7 +78,7 @@ function countFlags(self)
 end
 
 newTalent{
-   name = "Flag Eruption", short_name = REK_MTYR_FLAG_ERUPTION,
+   name = "Tendril Eruption", short_name = "REK_MTYR_FLAG_ERUPTION",
    type = {"demented/other", 1},
    points = 5,
    cooldown = function(self, t)
@@ -128,11 +128,6 @@ newTalent{
                       local target = game.level.map(px, py, engine.Map.ACTOR)
                       if not target or (self:reactionToward(target) >= 0) then return end
                       if self:attackTargetWith(target, tentacle, nil, dam) then hit = true end
-                      if target:checkHit(self:combatSpellpower(), target:combatSpellResist(), 0, 95, 15) then
-                         target:setEffect(self.EFF_SLIMY_TENDRIL, 5, {power=t.getNumb(self, t)})
-                      else
-                         game.logSeen(target, "%s resists the slimy tendril!", target.name:capitalize())
-                      end
                              end)
       game.level.map:particleEmitter(x, y, tg.radius, "tentacle_field", {img="tentacle_black", radius=tg.radius})
       game:playSoundNear(self, "talents/slime")

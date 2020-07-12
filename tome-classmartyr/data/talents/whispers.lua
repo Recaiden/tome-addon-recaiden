@@ -188,7 +188,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[If you suffer damage that would kill you, you instead awake from a dream of dying, setting your insanity to zero and becoming immune to damage until the end of your next action.
+      return ([[If you suffer damage that would kill you, you instead awake from a dream of dying, setting your insanity to zero and becoming immune to damage for the rest of the turn.
 ]]):format()
    end,
 }

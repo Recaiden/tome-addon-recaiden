@@ -61,7 +61,7 @@ newEffect{
 }
 
 newEffect{
-   name = "REK_MTYR_JOLT_SHIELD", image = "talents/rek_mtyr_whispers_shield.png",
+   name = "REK_MTYR_JOLT_SHIELD", image = "talents/rek_mtyr_whispers_jolt.png",
    desc = "Recently Awakened",
    long_desc = function(self, eff) return ("Just woke up and is immune to all damage."):format() end,
    type = "other",
@@ -73,7 +73,7 @@ newEffect{
    end,
    deactivate = function(self, eff)
    end,
-   callbackOnAct = function(self, t)
+   callbackOnActBase = function(self, t)
       self:removeEffect(self.EFF_REK_MTYR_JOLT_SHIELD)
    end,
 }
@@ -114,9 +114,6 @@ newEffect{
          --t2 insanity bonus
          if eff.src and eff.src:knowTalent(self.T_REK_MTYR_SCOURGE_SHARED_FEAST) and eff.src:getInsanity() >= 60 then
             damCurrent = damCurrent * (1 + (eff.src:getInsanity()-50) / 100)
-            if rng.percent(self:attr("confused")) then
-               eff.src:incInsanity(1)
-            end
          end
          
          local realdam = DamageType:get(DamageType.MIND).projector(eff.src, self.x, self.y, DamageType.MIND, damCurrent, {from_disease=true})

@@ -63,7 +63,7 @@ newTalent{
    type = {"demented/chivalry", 2},
    require = martyr_mirror_req2,
    points = 5,
-   range = 10,
+   range = function(self, t) return math.min(14, math.floor(self:combatTalentScale(t, 6, 10))) end,
    cooldown = 18,
    insanity = 15,
    requires_target = true,
