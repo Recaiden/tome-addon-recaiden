@@ -57,9 +57,10 @@ newTalent{
    range = archery_range,
    tactical = { ATTACK = { weapon = 1 } },
    requires_target = true,
+   speed = "archery",
    on_pre_use = function(self, t, silent) return martyrPreUse(self, t, silent, "sling") end,
    archery_onhit = function(self, t, target, x, y)
-      local options = {target.EFF_REK_MTYR_ABYSSAL_LUMINOUS}--, target.EFF_MTYR_ABYSSAL_UMBRAL, target.EFF_MTYR_ABYSSAL_BLOATED, target.EFF_MTYR_ABYSSAL_WORMS}
+      local options = {target.EFF_REK_MTYR_ABYSSAL_LUMINOUS, target.EFF_MTYR_ABYSSAL_UMBRAL}-- , target.EFF_MTYR_ABYSSAL_BLOATED, target.EFF_MTYR_ABYSSAL_WORMS}
       local horror_type = target.mtyr_horror_type or options[rng.range(1, #options)]
       target.mtyr_horror_type = horror_type
       target:setEffect(horror_type, t.getDuration(self, t), {src=self})
@@ -129,6 +130,7 @@ newTalent{
    range = 4,
    no_npc_use = true,
    requires_target = true,
+   speed = "archery",
    target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)

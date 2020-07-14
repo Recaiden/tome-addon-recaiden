@@ -149,10 +149,10 @@ newTalent{
    getDuration = function(self, t) return 5 end,
    radius = 2,
    info = function(self, t)
-      return ([[Entering any light will imbue you with a destructive aura, dealing %d mind damage to enemies within range 2 each turn for %d turns.
+      return ([[Entering any light will imbue you with a destructive aura, dealing %d - %d mind damage to enemies within range 2 each turn for %d turns.  The damage will increase with your current insanity.
 Mindpower: increases damage.
 
-#{italic}#The light whispers secrets to bring about the destruction of your enemies.#{normal}#]]):format(damDesc(self, DamageType.MIND, t.getDamage(self, t)), t.getDuration(self, t))
+#{italic}#The light whispers secrets to bring about the destruction of your enemies.#{normal}#]]):format(damDesc(self, DamageType.MIND, t.getDamage(self, t)), 2*damDesc(self, DamageType.MIND, t.getDamage(self, t)), t.getDuration(self, t))
    end,
 }
 

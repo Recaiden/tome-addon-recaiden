@@ -32,6 +32,7 @@ newTalent{
    points = 5,
    cooldown = 10,
    range = archery_range,
+   speed = "archery",
    tactical = { ATTACK = { weapon = 1 } },
    requires_target = true,
    on_pre_use = function(self, t, silent) return martyrPreUse(self, t, silent, "sling") end,

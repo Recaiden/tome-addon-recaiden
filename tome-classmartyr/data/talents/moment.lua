@@ -12,7 +12,7 @@ function useFinalMoment(self)
       apr = 0,
       atk = 0,
       physcrit = 0,
-      dammod = {cun=1.3},
+      dammod = {str=1.0, cun=0.3},
       melee_project = {},
    }
    if self:knowTalent(self.T_REK_MTYR_MOMENT_CUT) then
@@ -115,6 +115,7 @@ newTalent{
    range = function(self, t) return math.floor(self:combatTalentScale(t, 6, 10)) end,
    requires_target = true,
    proj_speed = 10,
+   speed = "combat",
    target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t, nolock=true} end,
    getChance = function(self, t) return self:combatTalentLimit(t, 50, 10, 30) end,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1, 1.5) end,
@@ -256,6 +257,7 @@ newTalent{
    require = str_req_high4,
    cooldown = 8,
    insanity = -15,
+   speed = "combat",
    tactical = { ATTACK = {[moment_tactical] = 1}, ATTACKAREA = { TEMPORAL = 1} },
    getFinalMoment = function(self, t) return useFinalMoment(self) end,
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1, 1.5) end,

@@ -68,6 +68,7 @@ newTalent{
    insanity = 15,
    requires_target = true,
    is_melee = true,
+   speed = "combat",
    target = function(self, t) return {type="widebeam", radius=1, range=self:getTalentRange(t), selffire=false, talent=t} end,
    getHitDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.2, 1.2) end,
    getSideDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.6, 1.0) end,
@@ -156,6 +157,7 @@ newTalent{
    tactical = { ATTACK = { weapon = 2 }, CLOSEIN = 0.5 },
    requires_target = true,
    is_melee = true,
+   speed = "combat",
    target = function(self, t) return {type="hitball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), simple_dir_request=true} end,
    getDamage = function(self, t, hate)
       return self:combatTalentIntervalDamage(t, "str", 0.25, 0.8, 0.4)

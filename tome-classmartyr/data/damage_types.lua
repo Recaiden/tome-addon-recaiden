@@ -28,6 +28,9 @@ newDamageType{
    projector = function(src, x, y, type, dam, state)
       state = initState(state)
       useImplicitCrit(src, state)
+      if src and src:getInsanity() then
+         dam = dam * (1 + src:getInsanity()/100)
+      end
       local target = game.level.map(x, y, Map.ACTOR)
       if target and src:reactionToward(target) < 0 then
          DamageType:get(DamageType.MIND).projector(src, x, y, DamageType.MIND, dam, state)

@@ -460,4 +460,81 @@ newEffect{
       self:unlearnTalent(self.T_HEALING_LIGHT, math.max(1, eff.talent_power-2))
       self:unlearnTalent(self.T_BARRIER, math.max(1, eff.talent_power-2))
    end,
+         }
+
+newEffect{
+   name = "REK_MTYR_ABYSSAL_UMBRAL", image = "talents/rek_mtyr_revelation_abyssal_shot.png",
+   desc = "Abyssal Form: Umbral",
+   long_desc = function(self, eff) return ("The target is revealed as an umbral horror!"):format() end,
+   type = "other",
+   subtype = { horror=true, morph=true },
+   status = "detrimental",
+   parameters = { talent_power=1 },
+   on_gain = function(self, err) return "#PURPLE##Target# is revealed to have been an umbral horror all along!", true end,
+   on_lose = function(self, err) return "#Target# returns to their normal guise.", true end,
+   activate = function(self, eff)
+      eff.allow_talent = {
+         [self.T_CALL_SHADOWS] = true,
+         [self.T_FOCUS_SHADOWS] = true,
+         [self.T_SHADOW_WARRIORS] = true,
+         [self.T_BLINDSIDE] = true,
+         [self.T_DARK_TORRENT] = true,
+         [self.T_CREEPING_DARKNESS] = true,
+         [self.T_DARK_VISION] = true,
+         [self.T_ATTACK] = true,
+      }
+      
+      -- umbral passives
+      self:effectTemporaryValue(eff, "resists", {[DamageType.DARKNESS]=100, [DamageType.LIGHT]=-50})
+      self:effectTemporaryValue(eff, "combat_physspeed", 1.0)
+      self:effectTemporaryValue(eff, "all_damage_convert", DamageType.DARKNESS)
+      self:effectTemporaryValue(eff, "all_damage_convert_percent", 50)
+
+      -- umbral talents
+      self:learnTalent(self.T_CALL_SHADOWS, true, eff.talent_power)
+      if not self:isTalentActive(self.T_CALL_SHADOWS) then
+         self:forceUseTalent(self.T_CALL_SHADOWS, {ignore_energy=true})
+      end
+      self:learnTalent(self.T_FOCUS_SHADOWS, true, eff.talent_power)
+      self:learnTalent(self.T_CREEPING_DARKNESS, true, eff.talent_power)
+      self:learnTalent(self.T_DARK_VISION, true, eff.talent_power)
+      self:learnTalent(self.T_DARK_TORRENT, true, eff.talent_power)
+      self:learnTalent(self.T_BLINDSIDE, true, math.max(1, eff.talent_power-2))
+      self:learnTalent(self.T_SHADOW_WARRIORS, true, math.max(1, eff.talent_power-2))
+
+      self:alterTalentCoolingdown(self.T_FOCUS_SHADOWS, -1000)
+      self:alterTalentCoolingdown(self.T_CREEPING_DARKNESS, -1000)
+      self:alterTalentCoolingdown(self.T_DARK_TORRENT, -1000)
+      self:alterTalentCoolingdown(self.T_BLINDSIDE, -1000)
+      self:incHate(self:getMaxHate())
+
+      -- general horrifyingness
+      eff.typeid = self.type
+      self.type = "horror"
+      self:project({type="ball", radius=10}, self.x, self.y, function(px, py)
+                      local act = game.level.map(px, py, Map.ACTOR)
+                      if not act or self:reactionToward(act) <= 0 then return end
+                      if act == eff.src or act:resolveSource() == eff.src then return end  -- Pseudofaction to avoid anything directly linked to the effect source
+                      act:setTarget(nil)
+                                                             end)
+      self:effectTemporaryValue(eff, "hated_by_everybody", 1)
+      self.replace_display = mod.class.Actor.new{image="npc/horror_eldritch_umbral_horror.png",}
+      self:removeAllMOs()
+      game.level.map:updateMap(self.x, self.y)
+   end,
+   deactivate = function(self, eff)
+      self.replace_display = nil
+      self:removeAllMOs()
+      game.level.map:updateMap(self.x, self.y)
+
+      self.type = eff.typeid
+
+      self:unlearnTalent(self.T_FOCUS_SHADOWS, eff.talent_power)
+      self:unlearnTalent(self.T_CREEPING_DARKNESS, eff.talent_power)
+      self:unlearnTalent(self.T_SEARING_LIGHT, eff.talent_power)
+      self:unlearnTalent(self.T_DARK_TORRENT, eff.talent_power)
+      self:unlearnTalent(self.T_DARK_TORRENT, eff.talent_power)
+      self:unlearnTalent(self.T_BLINDSIDE, math.max(1, eff.talent_power-2))
+      self:unlearnTalent(self.T_SHADOW_WARRIORS, math.max(1, eff.talent_power-2))
+   end,
 }
