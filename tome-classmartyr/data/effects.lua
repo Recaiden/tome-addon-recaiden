@@ -537,4 +537,67 @@ newEffect{
       self:unlearnTalent(self.T_BLINDSIDE, math.max(1, eff.talent_power-2))
       self:unlearnTalent(self.T_SHADOW_WARRIORS, math.max(1, eff.talent_power-2))
    end,
-}
+         }
+
+
+newEffect{
+   name = "REK_MTYR_ABYSSAL_BLOATED", image = "talents/rek_mtyr_revelation_abyssal_shot.png",
+   desc = "Abyssal Form: Bloated",
+   long_desc = function(self, eff) return ("The target is revealed as a bloated horror!"):format() end,
+   type = "other",
+   subtype = { horror=true, morph=true },
+   status = "detrimental",
+   parameters = { talent_power=1 },
+   on_gain = function(self, err) return "#PURPLE##Target# is revealed to have been a bloated horror all along!", true end,
+   on_lose = function(self, err) return "#Target# returns to their normal guise.", true end,
+   activate = function(self, eff)
+      eff.allow_talent = {
+         [self.T_MIND_DISRUPTION] = true,
+         [self.T_MIND_SEAR] = true,
+         [self.T_TELEKINETIC_BLAST] = true,
+         [self.T_ATTACK] = true,
+      }
+      -- bloated passives
+      self:effectTemporaryValue(eff, "resists", {[DamageType.LIGHT]=-10})
+      self:effectTemporaryValue(eff, "never_move", 1)
+      self:effectTemporaryValue(eff, "levitation", 1)
+
+      [Talents.T_MIND_DISRUPTION]={base=2, every=6, max=7},
+      [Talents.T_MIND_SEAR]={base=2, every=6, max=7},
+      [Talents.T_TELEKINETIC_BLAST]={base=2, every=6, max=7},
+      -- bloated talents
+      self:learnTalent(self.T_MIND_DISRUPTION, true, eff.talent_power)
+      self:learnTalent(self.T_MIND_SEAR, true, eff.talent_power)
+      self:learnTalent(self.T_TELEKINETIC_BLAST, true, eff.talent_power)
+
+      self:alterTalentCoolingdown(self.T_MIND_DISRUPTION, -1000)
+      self:alterTalentCoolingdown(self.T_MIND_SEAR, -1000)
+      self:alterTalentCoolingdown(self.T_TELEKINETIC_BLAST, -1000)
+      self:incPsi(self:getMaxPsi())
+
+      -- general horrifyingness
+      eff.typeid = self.type
+      self.type = "horror"
+      self:project({type="ball", radius=10}, self.x, self.y, function(px, py)
+                      local act = game.level.map(px, py, Map.ACTOR)
+                      if not act or self:reactionToward(act) <= 0 then return end
+                      if act == eff.src or act:resolveSource() == eff.src then return end  -- Pseudofaction to avoid anything directly linked to the effect source
+                      act:setTarget(nil)
+                                                             end)
+      self:effectTemporaryValue(eff, "hated_by_everybody", 1)
+      self.replace_display = mod.class.Actor.new{image="npc/horror_eldritch_bloated_horror.png",}
+      self:removeAllMOs()
+      game.level.map:updateMap(self.x, self.y)
+   end,
+   deactivate = function(self, eff)
+      self.replace_display = nil
+      self:removeAllMOs()
+      game.level.map:updateMap(self.x, self.y)
+
+      self.type = eff.typeid
+
+      self:unlearnTalent(self.T_MIND_DISRUPTION, eff.talent_power)
+      self:unlearnTalent(self.T_MIND_SEAR, eff.talent_power)
+      self:unlearnTalent(self.T_TELEKINETIC_BLAST, eff.talent_power)
+   end,
+         }
