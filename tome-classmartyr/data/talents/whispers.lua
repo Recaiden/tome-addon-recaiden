@@ -24,50 +24,52 @@ newTalent{
    end,
    passives = function(self, t, p)
       self:talentTemporaryValue(p, "flat_damage_armor", {all=t.getReduction(self, t)})
-      --self:talentTemporaryValue(p, "combat_dam", t.getPower(self, t))
    end,
    callbackOnAct = function (self, t)
       self:updateTalentPassives(t.id)
+      if self:getInsanity() <= 40 and not self:hasEffect(self.EFF_REK_MTYR_SANE) then
+         self:setEffect(self.EFF_REK_MTYR_SANE, 1, {})
+      end
    end,
    callbackOnTalentPost = function(self, t, ab, ret, silent)
       self:updateTalentPassives(t.id)
    end,
    -- odd terrain
-   callbackOnChangeLevel = function(self, t, action, zone, level)
-      if action ~= "enter" then return end
-      if not game.level or not game.level.data then return end
-      if game.level and game.level.data and game.level.data.rek_mtyr_tentacles_placed then
-         return nil
-      end
-      game.level.data.rek_mtyr_tentacles_placed = true
-      local chance = (game.calendar.rek_mtyr_infestation_progress or 0) + 1
-      game.calendar.rek_mtyr_infestation_progress = (game.calendar.rek_mtyr_infestation_progress or 0) + 2 
-   end,
-   doRevealTentacles = function(self, t)
-      local chance = game.calendar.rek_mtyr_infestation_progress or 20
-      local tg = {type="ball", range=0, selffire=false, radius=20, talent=t, no_restrict=true}
-      self:project(
-         tg, self.x, self.y,
-         function(px, py, tg, self)
-            if not rng.percent(chance) then return end
-            local oe = game.level.map(px, py, Map.TERRAIN)
-            if oe and not oe:attr("temporary") and not oe.special
-               and game.level.map:checkAllEntities(px, py, "block_move")
-            then
-               if oe.rek_swap_mos then
-                  local temp = oe.add_mos
-                  oe.add_mos = oe.rek_swap_mos
-                  oe.rek_swap_mos = temp
-               else
-                  oe.rek_swap_mod = oe.add_mos
-                  oe.add_mos = {{image="terrain/stair_down.png"}}
-               end
-               game.nicer_tiles:updateAround(game.level, self.x, self.y)
-               --game.level.map(px, py, Map.TERRAIN, e)
-            end
-         end)
-      game.level.map:scheduleRedisplay()
-   end,
+   -- callbackOnChangeLevel = function(self, t, action, zone, level)
+   --    if action ~= "enter" then return end
+   --    if not game.level or not game.level.data then return end
+   --    if game.level and game.level.data and game.level.data.rek_mtyr_tentacles_placed then
+   --       return nil
+   --    end
+   --    game.level.data.rek_mtyr_tentacles_placed = true
+   --    local chance = (game.calendar.rek_mtyr_infestation_progress or 0) + 1
+   --    game.calendar.rek_mtyr_infestation_progress = (game.calendar.rek_mtyr_infestation_progress or 0) + 2 
+   -- end,
+   -- doRevealTentacles = function(self, t)
+   --    local chance = game.calendar.rek_mtyr_infestation_progress or 20
+   --    local tg = {type="ball", range=0, selffire=false, radius=20, talent=t, no_restrict=true}
+   --    self:project(
+   --       tg, self.x, self.y,
+   --       function(px, py, tg, self)
+   --          if not rng.percent(chance) then return end
+   --          local oe = game.level.map(px, py, Map.TERRAIN)
+   --          if oe and not oe:attr("temporary") and not oe.special
+   --             and game.level.map:checkAllEntities(px, py, "block_move")
+   --          then
+   --             if oe.rek_swap_mos then
+   --                local temp = oe.add_mos
+   --                oe.add_mos = oe.rek_swap_mos
+   --                oe.rek_swap_mos = temp
+   --             else
+   --                oe.rek_swap_mod = oe.add_mos
+   --                oe.add_mos = {{image="terrain/stair_down.png"}}
+   --             end
+   --             game.nicer_tiles:updateAround(game.level, self.x, self.y)
+   --             --game.level.map(px, py, Map.TERRAIN, e)
+   --          end
+   --       end)
+   --    game.level.map:scheduleRedisplay()
+   -- end,
    info = function(self, t)
       return ([[Gain melee damage as you gain insanity, up to %d (currently %d).
 Reduce incoming damage by a flat amount as you approach sanity, up to %d per hit (currently %d).
@@ -80,8 +82,6 @@ You benefit from #GREEN#Our Gift#LAST# while you have at least 60 Insanity.
 ]]):format(t.getMaxPower(self, t), t.getPower(self, t), t.getMaxReduction(self, t), t.getReduction(self, t))
    end,
          }
-
---local hd = {"Combat:attackTargetWith:attackerBonuses", target=target, weapon=weapon, damtype=damtype, mult=mult, dam=dam, apr=apr, atk=atk, def=def, armor=armor}
 	
 class:bindHook(
    "Combat:attackTargetWith:attackerBonuses",

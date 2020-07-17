@@ -60,21 +60,24 @@ newTalent{
    speed = "archery",
    on_pre_use = function(self, t, silent) return martyrPreUse(self, t, silent, "sling") end,
    archery_onhit = function(self, t, target, x, y)
-      local options = {target.EFF_REK_MTYR_ABYSSAL_LUMINOUS, target.EFF_MTYR_ABYSSAL_UMBRAL}-- , target.EFF_MTYR_ABYSSAL_BLOATED, target.EFF_MTYR_ABYSSAL_WORMS}
+      local options = {target.EFF_REK_MTYR_ABYSSAL_LUMINOUS, target.EFF_MTYR_ABYSSAL_UMBRAL, target.EFF_MTYR_ABYSSAL_BLOATED, target.EFF_MTYR_ABYSSAL_WORMS}
+      if targetattr("hates_arcane") then
+         options = {target.EFF_MTYR_ABYSSAL_UMBRAL, target.EFF_MTYR_ABYSSAL_WORMS}
+      end
       local horror_type = target.mtyr_horror_type or options[rng.range(1, #options)]
       target.mtyr_horror_type = horror_type
       target:setEffect(horror_type, t.getDuration(self, t), {src=self})
    end,
    action = function(self, t)
       doMartyrWeaponSwap(self, "sling", true)
-      local targets = self:archeryAcquireTargets(nil, {one_shot=true, add_speed=self.combat_physspeed})
+      local targets = self:archeryAcquireTargets(nil, {one_shot=true})
       if not targets then return end
       self:archeryShoot(targets, t, nil, {mult=t.getDamage(self, t)})
 
       return true
    end,
    info = function(self, t)
-      return ([[Fire a shot into the mindscape to shatter the disguise of the target, dealing %d%% damage and revealing its true nature as a horror!
+      return ([[Fire a shot into the mindscape to shatter the worldly guise of the target, dealing %d%% damage and revealing its true nature as a horror!
 The horror will resume its disguise after %d turns.]]):format(t.getDamage(self,t) * 100, t.getDuration(self, t))
    end,
 }

@@ -48,7 +48,7 @@ newTalent{
    end,
    action = function(self, t)
       doMartyrWeaponSwap(self, "sling", true)
-      local targets = self:archeryAcquireTargets(nil, {one_shot=true, add_speed=self.combat_physspeed})
+      local targets = self:archeryAcquireTargets(nil, {one_shot=true})
       if not targets then return end
       self:archeryShoot(targets, t, nil, {mult=t.getDamage(self, t)})
       return true
@@ -75,6 +75,9 @@ newTalent{
    cooldown = 10,
    tactical = { BUFF = 2 },
    getDamage = function(self, t) return self:combatTalentMindDamage(t, 5, 40) end,
+   passives = function(self, t, p)
+      self:talentTemporaryValue(p, "archery_pass_friendly", 1)
+   end,
    activate = function(self, t)
       game:playSoundNear(self, "talents/fire")
       local ret = {
@@ -89,7 +92,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[You make unusual modifications to your sling bullets, causing them to deal %0.2f mind damage on hit.
+      return ([[You make unusual modifications to your sling bullets, causing them to deal %0.2f mind damage on hit.  All your shots, including bullets from Shoot and other talents, now travel around friendly targets without causing them harm (regardless of whether this talent is sustained).
 
 Mindpower: increases damage.
 
