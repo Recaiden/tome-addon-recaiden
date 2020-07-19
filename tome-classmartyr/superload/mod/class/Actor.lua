@@ -55,7 +55,7 @@ end
 -- prevent horror-transformed enemies using any talents except the approved horror ones
 local base_preUseTalent = _M.preUseTalent
 function _M:preUseTalent(ab, silent, fake)
-   local eff = self:hasEffect(self.EFF_REK_MTYR_ABYSSAL_LUMINOUS)
+   local eff = self:hasEffect(self.EFF_REK_MTYR_ABYSSAL_LUMINOUS) or self:hasEffect(self.EFF_REK_MTYR_ABYSSAL_UMBRAL) or self:hasEffect(self.EFF_REK_MTYR_ABYSSAL_BLOATED) or self:hasEffect(self.EFF_REK_MTYR_ABYSSAL_PARASITIC)
    if eff and util.getval(ab.no_energy, self, ab) ~= (true or "fake") then      
       if not eff.allow_talent[ab.id] then
          return false

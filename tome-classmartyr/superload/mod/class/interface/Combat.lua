@@ -13,6 +13,18 @@ function _M:attackTargetWith(target, weapon, damtype, mult, force_dam)
       end
    end
    return base_attackTargetWith(self, target, weapon, damtype, mult, force_dam)
-end 
+end
+
+local base_combatSpeed = _M.combatSpeed
+function _M:combatSpeed(weapon, add)
+   local speed = base_combatSpeed(self, weapon, add)
+   if weapon and weapon.range and weapon.range > 1 then
+      local eff = self:hasEffect(self.EFF_REK_MTYR_SEVENFOLD_SPEED)
+      if eff then
+         speed = speed / (1+eff.power)
+      end
+   end
+   return speed
+end
 
 return _M

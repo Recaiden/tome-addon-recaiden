@@ -51,7 +51,7 @@ newTalent{
    require = martyr_req_high2,
    points = 5,
    cooldown = 20,
-   insanity = -30,
+   insanity = -22,
    getDamage = function(self,t) return self:combatTalentWeaponDamage(t, 1.2, 1.6) end,
    getDuration = function(self,t) return self:combatTalentScale(t, 3, 5) end,
    range = archery_range,
@@ -60,11 +60,14 @@ newTalent{
    speed = "archery",
    on_pre_use = function(self, t, silent) return martyrPreUse(self, t, silent, "sling") end,
    archery_onhit = function(self, t, target, x, y)
-      local options = {target.EFF_REK_MTYR_ABYSSAL_LUMINOUS, target.EFF_MTYR_ABYSSAL_UMBRAL, target.EFF_MTYR_ABYSSAL_BLOATED, target.EFF_MTYR_ABYSSAL_WORMS}
-      if targetattr("hates_arcane") then
-         options = {target.EFF_MTYR_ABYSSAL_UMBRAL, target.EFF_MTYR_ABYSSAL_WORMS}
+      if target.type == "horror" then return end
+      local options = {target.EFF_REK_MTYR_ABYSSAL_LUMINOUS, target.EFF_REK_MTYR_ABYSSAL_UMBRAL, target.EFF_REK_MTYR_ABYSSAL_BLOATED, target.EFF_REK_MTYR_ABYSSAL_PARASITIC}
+      if target:attr("hates_arcane") then
+         options = {target.EFF_MTYR_ABYSSAL_UMBRAL, target.EFF_MTYR_ABYSSAL_PARASITIC}
       end
-      local horror_type = target.mtyr_horror_type or options[rng.range(1, #options)]
+      local choice = rng.range(1, #options)
+      local horror_type = target.mtyr_horror_type or options[choice]
+
       target.mtyr_horror_type = horror_type
       target:setEffect(horror_type, t.getDuration(self, t), {src=self})
    end,
@@ -93,9 +96,9 @@ newTalent{
    getAmmo = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
    getSpeed = function(self, t) return self:combatTalentScale(t, 0.42, 0.84, 0.75) end,
    getAccuracy = function(self, t) return self:combatTalentScale(t, 40, 100, 0.75) end,
-   activate = function(self, t)
+   action = function(self, t)
       local c = 0
-      while c < t.getAmmot(self, t) do
+      while c < t.getAmmo(self, t) do
          local reloaded = self:reload()
          if not reloaded and self.reloadQS then
             self:reloadQS()
@@ -105,12 +108,6 @@ newTalent{
       self:setEffect(self.EFF_REK_MTYR_SEVENFOLD_SPEED, t.getDuration(self, t), {src=self, power=t.getSpeed(self, t), acc=t.getAccuracy(self, t)})
 
       game:playSoundNear(self, "talents/dispel")
-      local ret = {}
-      
-      return ret
-   end,
-   deactivate = function(self, t, p)
-      --self:removeParticles(p.particle)
       return true
    end,
    info = function(self, t)
@@ -158,7 +155,7 @@ newTalent{
                          if target.rank > 3 then
                             target:setEffect(target.EFF_DOMINANT_WILL_BOSS, 2+self:getTalentLevelRaw(t), {src=self})
                          else
-                            target:setEffect(target.EFF_DOMINANT_WILL, t.getDuration(self), {src=self})
+                            target:setEffect(target.EFF_DOMINANT_WILL, t.getDuration(self, t), {src=self})
                          end
                       else
                          game.logSeen(target, "%s resists the mental assault!", target.name:capitalize())

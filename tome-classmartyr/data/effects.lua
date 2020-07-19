@@ -617,7 +617,7 @@ newEffect{
          [self.T_ATTACK] = true,
       }
       -- Parasitic passives
-      self:effectTemporaryValue(eff, "resists", [DamageType.LIGHTNING] = -50, [DamageType.ACID] = 100, [DamageType.NATURE] = 50, [DamageType.BLIGHT] = 50)
+      self:effectTemporaryValue(eff, "resists", {[DamageType.LIGHTNING] = -50, [DamageType.ACID] = 100, [DamageType.NATURE] = 50, [DamageType.BLIGHT] = 50})
       self:effectTemporaryValue(eff, "damage_affinity", {[DamageType.ACID]=50})
       self:effectTemporaryValue(eff, "movement_speed", 1.0)
       self:effectTemporaryValue(eff, "blind_immune", 1)
@@ -672,10 +672,10 @@ newEffect{
    type = "other",
    subtype = { insanity=true },
    status = "beneficial",
-   decrease = 0,
+   decrease = 0, no_player_remove = true,
    parameters = {thresh=60},
    callbackOnAct = function(self, eff)
-      if self:getInsanity() >= thresh then
+      if self:getInsanity() >= eff.thresh then
          self:removeEffect(self.EFF_REK_MTYR_SANE)
          self:setEffect(self.EFF_REK_MTYR_INSANE, 1, {})
       end
@@ -693,10 +693,10 @@ newEffect{
    type = "other",
    subtype = { insanity=true },
    status = "beneficial",
-   decrease = 0,
+   decrease = 0, no_player_remove = true,
    parameters = {thresh=40},
    callbackOnAct = function(self, eff)
-      if self:getInsanity() <= thresh then
+      if self:getInsanity() <= eff.thresh then
          self:removeEffect(self.EFF_REK_MTYR_INSANE)
          self:setEffect(self.EFF_REK_MTYR_SANE, 1, {})
       end
