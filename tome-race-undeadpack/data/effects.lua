@@ -274,3 +274,22 @@ newEffect{
       self:removeTemporaryValue("resists", eff.tmpid)
    end,
 }
+
+
+newEffect{
+   name = "REK_DREAD_MALEDICTION", image = "talents/rek_dread_silence.png",
+   desc = "Dread Malediction",
+   long_desc = function(self, eff) return ("The target's supernatural forces have been disrupted, giving them a %d%% to fail to use many talents."):format(eff.power) end,
+   type = "magical",
+   subtype = { nature=true, mind=true, blight=true },
+   status = "detrimental",
+   parameters = { power = 66, acc=50 },
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "spell_failure", eff.power)
+      self:effectTemporaryValue(eff, "nature_failure", eff.power)
+      self:effectTemporaryValue(eff, "mind_failure", eff.power)
+      self:effectTemporaryValue(eff, "combat_atk", eff.acc * -1)
+   end,
+   deactivate = function(self, eff)
+   end,
+}

@@ -1,4 +1,166 @@
+newTalent{
+   name = "Walking Blasphemy", short_name="REK_DREAD_STEALTH",
+   type = {"undead/dreadlord", 1},
+   mode = "sustained",
+   require = high_undeads_req1,
+   points = 5,
+   cooldown = 10,
+   tactical = { BUFF = 2 },
+   getDefense = function(self, t) return self:combatTalentScale(t, 28.6, 267, 0.75) end,
+   getStealth = function(self, t) return self:combatTalentScale(t, 15, 64) end,
+   getDamage = function(self, t) return self:combatTalentScale(t, 20, 40) end,
+   activate = function(self, t)
+      game:playSoundNear(self, "talents/heal")
+      self:talentTemporaryValue(t, "stealth", t.getStealth(self, t))
+      self:talentTemporaryValue(t, "stealthed_prevents_targetting", 1)
+      self:talentTemporaryValue(t, "combat_def", t.getDefense(self, t)),
 
+      local p = {}
+      if not self.shader then
+         p.set_shader = true
+         self.shader = "frog_shadow"
+         self.shader_args = { a_min = 0, a_max = 0.8, base = 0.1 }
+         self:removeAllMOs()
+         game.level.map:updateMap(self.x, self.y)
+      end
+      
+      return p
+   end,
+   deactivate = function(self, t, p)
+      self:resetCanSeeCacheOf()
+      if p.set_shader then
+         self.shader = nil
+         self:removeAllMOs()
+         game.level.map:updateMap(self.x, self.y)
+      end
+      return true
+   end,
+
+   callbackOnActBase = function(self, t)
+      local tg = {type="ball", friendlyfire=false, range=0, radius=self:getTalentRadius(t), talent=t}     
+      local damage = self:mindCrit(t.getDamage(self, t))
+      
+      self:project(
+         tg, self.x, self.y,
+         function(tx, ty)
+            local target = game.level.map(tx, ty, Map.ACTOR)
+            if target and not target:canSee(self) then
+               DamageType:get(DamageType.MIND).projector(self, target.x, target.y, DamageType.MIND, damage)
+               end
+            end
+         end)
+   end,
+   info = function(self, t)
+      return ([[You are shrouded in unholy darkness, granting a %d bonus to Defense and placing you in stealth with %d power.  Actions that normally break stealth do #{bold}#not#{normal}# disrupt this effect.
+
+Anyone who manages to glimpse your terrible form suffers %d mind damage (uses mental critical rate).
+
+#{italic}#Your appearance flickers, black and twisted. The very universe tries to banish you...but it lacks the strength.#{normal}#]]):format(t.getDefense(self, t), t.getStealth(self, t), damDesc(self, DamageType.MIND, t.getDamage(self, t)))
+   end,
+   }
+
+newTalent{
+   name = "Black Gate", short_name="REK_DREAD_TELEPORT",
+   type = {"undead/dreadlord", 3},
+   require = high_undeads_req2,
+   points = 5,
+   cooldown = function(self, t) return 10 end,
+   tactical = teleport_tactical,
+   range = function(self, t) return self:combatLimit(self:combatTalentSpellDamage(t, 10, 15), 40, 4, 0, 13.4, 9.4) end, -- Limit to range 40
+   getRadius = function(self, t) return math.floor(self:combatTalentLimit(t, 0, 6, 2)) end,
+   is_teleport = true,
+   radius = function(self, t) return math.max(0, 7 - math.floor(self:getTalentLevel(t))) end,
+   target = function(self, t)
+      local tg = {type="beam", nolock=true, pass_terrain=false, nowarning=true, range=self:getTalentRange(t)}
+      if not self.player then
+         tg.grid_params = {want_range=self.ai_state.tactic == "escape" and self:getTalentCooldown(t) + 11 or self.ai_tactic.safe_range or 0, max_delta=-1}
+      end
+      return tg
+   end,
+   direct_hit = true,
+   is_teleport = true,
+   action = function(self, t)
+      local tg = self:getTalentTarget(t)
+      local x, y, target = self:getTarget(tg)
+      if not x or not y then return nil end
+
+      -- Check LOS
+      if not self:hasLOS(x, y) and rng.percent(35 + (game.level.map.attrs(self.x, self.y, "control_teleport_fizzle") or 0)) then
+         game.logPlayer(self, "The gate fizzles and works randomly!")
+         x, y = self.x, self.y
+         range = t.getRange(self, t)
+      end
+      if game.level.map:checkEntity(x, y, Map.TERRAIN, "block_move") then
+         game.logPlayer(self, "You may only gate to an open space.")
+         return nil
+      end
+      local __, x, y = self:canProject(tg, x, y)
+      local teleport = self:getTalentRadius(t)
+      target = game.level.map(x, y, Map.ACTOR)
+      if target and target:canSee(self) then
+         teleport = 0
+      end
+
+      game.level.map:particleEmitter(x, y, 1, "generic_teleport", {rm=0, rM=0, gm=180, gM=255, bm=180, bM=255, am=35, aM=90})
+      
+      if not self:teleportRandom(x, y, teleport) then
+         game.logSeen(self, "Your gate fails!")
+      elseif self:isTalentActive(self.T_REK_DREAD_STEALTH) then
+         local tg = {type="ball", range=self:getTalentRange(t), radius=10, friendlyfire=false, talent=t}
+         self:project(
+            tg, self.x, self.y,
+            function(tx, ty)
+               local a = game.level.map(tx, ty, Map.ACTOR)
+               if a and a:reactionToward(self) < 0 then
+                  a:setTarget(nil)
+               end
+            end)
+      end
+      
+      game.level.map:particleEmitter(self.x, self.y, 1, "generic_teleport", {rm=0, rM=0, gm=180, gM=255, bm=180, bM=255, am=35, aM=90})
+      game:playSoundNear(self, "talents/teleport")
+      
+      return true
+   end,
+   info = function(self, t)
+      local radius = t.getRadius(self, t)
+      local range = t.getRange(self, t)
+      return ([[Teleports you randomly within a range of up to %d.  You arrive right next to a creature that can see you, or within %d grids of a targeted space.
+If the target area is not in line of sight, there is a chance you will instead teleport randomly.
+If Walking Blasphemy is active, all enemies will lose track of you.]]):format(range, radius)
+   end,
+}
+
+newTalent{
+   name = "Dread Malediction", short_name="REK_DREAD_SILENCE",
+   type = {"undead/dreadlord", 4},
+   points = 5,
+   cooldown = 12,
+   range = 10,
+   requires_target = true,
+   tactical = { DISABLE = { silence = 3 } },
+   range = function(self, t) return 7 end,
+   target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
+   getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
+   getMiss = function(self, t) return self:combatTalentScale(t, 50, 50) end,
+   getPower = function(self, t) return self:combatTalentScale(t, 66, 66) end,
+      action = function(self, t)
+      local tg = self:getTalentTarget(t)
+      local x, y = self:getTarget(tg)
+      if not x or not y then return nil end
+      local _ _, x, y = self:canProject(tg, x, y)
+      local target = game.level.map(x, y, Map.ACTOR)
+      if not target then return end
+      local power = math.max(src:combatSpellpower(), src:combatMindpower(), src:combatPhysicalpower())
+      if src.combatSteampower then power = math.max(power, src:combatSteampower()) end
+      target:setEffect(target.EFF_REK_DREAD_MALEDICTION, t.getDuration(self, t), {src=self, apply_power=power})    
+      game:playSoundNear(self, "talents/warp")
+      return true
+   end,
+   info = function(self, t)
+      return ([[Lay a errible curse on a foe, cutting off their powers (#SLATE#Highest Power vs. Spell#LAST#).  For the next %d turns, their accuracy will be lowered by %d, and they will have a %d%% chance to fail to activate any spell, mental ability, or gift.]]):format(t.getDuration(self, t), t.getMiss(self, t), t.getPower(self, t))
+   end,
+}
 
 -- Class talents for summoning lesser dreads
 function dreadSetupSummon(self, def, x, y, level)
