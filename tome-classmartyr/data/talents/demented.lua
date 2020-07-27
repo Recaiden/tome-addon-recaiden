@@ -150,8 +150,7 @@ martyr_mirror_req1 = function(self, t) local stat = self:getStr() >= self:getDex
    stat = { [stat]=function(level) return 12 + (level-1) * 2 end },
    level = function(level) return 0 + (level-1) end,
    special = {
-      desc=[[Uses the higher of your Strength or Dexterity
-Points in Vagabond talents allow you to learn Chivalry talents]],
+      desc=[[Uses the higher of your Strength or Dexterity]],
       fct=function(self) return canLearnMirror(self) end
    },
    special2 = {
@@ -164,8 +163,7 @@ martyr_mirror_req2 = function(self, t) local stat = self:getStr() >= self:getDex
    stat = { [stat]=function(level) return 20 + (level-1) * 2 end },
    level = function(level) return 4 + (level-1) end,
    special = {
-      desc=[[Uses the higher of your Strength or Dexterity
-Points in Vagabond talents allow you to learn Chivalry talents]],
+      desc=[[Uses the higher of your Strength or Dexterity]],
       fct=function(self) return canLearnMirror(self) end
    },
    special2 = {
@@ -178,8 +176,7 @@ martyr_mirror_req3 = function(self, t) local stat = self:getStr() >= self:getDex
    stat = { [stat]=function(level) return 28 + (level-1) * 2 end },
    level = function(level) return 8 + (level-1) end,
    special = {
-      desc=[[Uses the higher of your Strength or Dexterity
-Points in Vagabond talents allow you to learn Chivalry talents]],
+      desc=[[Uses the higher of your Strength or Dexterity]],
       fct=function(self) return canLearnMirror(self) end
    },
    special2 = {
@@ -192,8 +189,7 @@ martyr_mirror_req4 = function(self, t) local stat = self:getStr() >= self:getDex
    stat = { [stat]=function(level) return 36 + (level-1) * 2 end },
    level = function(level) return 12 + (level-1) end,
    special = {
-      desc=[[Uses the higher of your Strength or Dexterity
-Points in Vagabond talents allow you to learn Chivalry talents]],
+      desc=[[Uses the higher of your Strength or Dexterity]],
       fct=function(self) return canLearnMirror(self) end
    },
    special2 = {

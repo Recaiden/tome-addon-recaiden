@@ -678,6 +678,17 @@ newEffect{
       if self:getInsanity() >= eff.thresh then
          self:removeEffect(self.EFF_REK_MTYR_SANE)
          self:setEffect(self.EFF_REK_MTYR_INSANE, 1, {})
+
+         --flag graphics
+         if game.party and game.party:hasMember(self) then
+            for flag, def in pairs(game.party.members) do
+               if flag.is_tentacle_flag then
+                  flag.replace_display = mod.class.Actor.new{image="npc/rek_mtyr_banner.png",}
+                  flag:removeAllMOs()
+                  game.level.map:updateMap(flag.x, flag.y)
+               end
+            end
+         end
       end
    end,
    activate = function(self, eff)
@@ -699,6 +710,17 @@ newEffect{
       if self:getInsanity() <= eff.thresh then
          self:removeEffect(self.EFF_REK_MTYR_INSANE)
          self:setEffect(self.EFF_REK_MTYR_SANE, 1, {})
+
+         --flag graphics
+         if game.party and game.party:hasMember(self) then
+            for flag, def in pairs(game.party.members) do
+               if flag.is_tentacle_flag then
+                  flag.replace_display = nil
+                  flag:removeAllMOs()
+                  game.level.map:updateMap(flag.x, flag.y)
+               end
+            end
+         end
       end
    end,
    activate = function(self, eff)

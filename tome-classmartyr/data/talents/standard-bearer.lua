@@ -136,7 +136,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[You plant your tentacle hand in the ground where it splits up and extends to a target zone of radius %d.
+      return ([[You plant your tentacle in the ground where it splits up and extends to a target zone of radius %d.
 		The zone will erupt with many black tendrils to hit all foes caught inside dealing %d%% tentacle damage.
 
 		If at least one enemy is hit you gain %d insanity.
@@ -159,24 +159,17 @@ newTalent{
       blood_color = colors.BLUE,
       name = "glorious flag",
       display = "G", color=colors.ORANGE,
-      image="terrain/sprouting_tentacles_nest_base.png",
-      embed_particles = {
-         {name="tentacle_tree2", rad=1, args={tentacle_id=id, force_tf=0}},
-      },
-
-      sound={"creatures/ghost/attack%d", 1, 2},
-      sound_moam = {"creatures/ghost/on_hit%d", 1, 2},
-      sound_die = {"creatures/ghost/death%d", 1, 1},
-      sound_random = {"creatures/ghost/random%d", 1, 1},
+      image="npc/sprouting_tentacles_mtyr_flag.png",
+      sound_moam = {"creatures/rek_flag/on_hit%d", 1, 1},
+      sound_random = {"creatures/rek_flag/random%d", 1, 1},
 
       level_range = {1, nil}, exp_worth = 0,
       temporary_level = true, -- don't follow you to new levels
       is_tentacle_tree = 1,
       is_tentacle_flag = 1,
       combat_armor = resolvers.levelup(30, 1, 1.5), combat_def = 0,
-      combat = { dam=resolvers.levelup(resolvers.mbonus(100, 15), 1, 2.2), atk=500, apr=10 },
+      combat = { dam=resolvers.levelup(resolvers.mbonus(100, 15), 1, 2.2), atk=500, apr=10, damtype=DamageType.DARKNESS },
       never_move = 1,
-      -- cant_be_moved = 1,
       body = { MAINHAND=1, OFFHAND=1, INVEN = 10 },
       force_tentacle_hand = 1,
       autolevel = "warriormage",
@@ -192,7 +185,6 @@ newTalent{
       
       confusion_immune = 1,
       fear_immune = 1,
-      teleport_immune = 0.5,
       knockback_immune = 1,
       stun_immune = 1,
       blind_immune = 1,
@@ -200,7 +192,7 @@ newTalent{
       resolvers.sustains_at_birth(),
       
       resolvers.talents{T_MUTATED_HAND={base=1, every=5}},
-      max_life = resolvers.rngavg(90,100),
+      max_life = resolvers.rngavg(95,95),
    },
    
    getLevel = function(self, t) return math.floor(self:combatScale(self:getTalentLevel(t), -6, 0.9, 2, 5)) end, -- -6 @ 1, +2 @ 5, +5 @ 8
@@ -267,6 +259,12 @@ newTalent{
                         if self:knowTalent(self.T_REK_MTYR_STANDARD_SYMBIOSIS) then
                            local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_SYMBIOSIS))
                            flag:learnTalent(flag.T_REK_MTYR_FLAG_ERUPTION, true, lvl)
+                        end
+
+                        if amInsane(self) then
+                           flag.replace_display = mod.class.Actor.new{image="npc/rek_mtyr_banner.png",}
+                           flag:removeAllMOs()
+                           game.level.map:updateMap(flag.x, flag.y)
                         end
                      end)
       return true
