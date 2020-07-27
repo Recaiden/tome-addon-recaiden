@@ -90,7 +90,7 @@ newTalent{
    type = {"demented/revelation", 3},
    require = martyr_req_high3,
    points = 5,
-   insanity = -5,
+   insanity = -20,
    cooldown = 20,
    getDuration = function(self, t) return 5 end,
    getAmmo = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,

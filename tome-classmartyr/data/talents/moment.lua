@@ -238,9 +238,13 @@ newTalent{
    info = function(self, t)
       return ([[
 Your mind or body breaks.
+
 					The world stands still.
+
 You are holding a sword.
+
 					The world remains still.
+
 You have %0.2f breaths.
 
 This effect has a cooldown.
@@ -272,8 +276,11 @@ newTalent{
       local project = t.getProject(self, t)
       return ([[
 Danger approaches.
+
 					Your sword is your shield.
+
 The danger strikes you, weakened by %d.
+
 					Your sword strikes back (%d%%).
 
 Strikes with the sword may strike again.]]):format(t.getBlock(self, t), damage * 100, damDesc(self, DamageType.MIND, project))

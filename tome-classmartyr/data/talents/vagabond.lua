@@ -55,7 +55,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[You ready a sling shot with all your strength.
-This shot does %d%% weapon damage, gives you an extra #INSANE_GREEN#5 insanity#LAST#, and knocks back your target by %d space.
+This shot does %d%% weapon damage, gives you an extra #INSANE_GREEN#5 insanity#LAST#, and knocks back your target %d spaces.
 
 Learning this talent allows martyr talents to instantly and automatically swap to your alternate weapon set when needed.
 
