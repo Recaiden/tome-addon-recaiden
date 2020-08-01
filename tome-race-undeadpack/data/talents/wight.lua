@@ -127,9 +127,7 @@ newTalent{
    type = {"undead/wight", 3},
    require = undeads_req3,
    points = 5,
-   cooldown = 10,
    mode = "passive",
-   --TODO make it a sustain
    getEvasion = function(self, t)
       return math.min(self:combatTalentScale(t, 4, 18, 0.75), 30)
    end,

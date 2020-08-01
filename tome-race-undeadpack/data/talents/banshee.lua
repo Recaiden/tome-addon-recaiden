@@ -15,7 +15,7 @@ newTalent{
    direct_hit = true,
    requires_target = true,
    tactical = { DISABLE = { confusion = 3 } },
-   target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
+   target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t, friendlyfire=false} end,
 
    passives = function(self, t, p)
       self:talentTemporaryValue(p, "inc_stats", {[self.STAT_DEX]=t.statBonus(self, t)})

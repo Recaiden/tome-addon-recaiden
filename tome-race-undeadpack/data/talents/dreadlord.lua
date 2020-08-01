@@ -6,14 +6,14 @@ newTalent{
    points = 5,
    cooldown = 10,
    tactical = { BUFF = 2 },
-   getDefense = function(self, t) return self:combatTalentScale(t, 28.6, 267, 0.75) end,
+   getDefense = function(self, t) return math.max(self:getMag(), self:getCun()) * 0.7 end,
    getStealth = function(self, t) return self:combatTalentScale(t, 15, 64) end,
    getDamage = function(self, t) return self:combatTalentScale(t, 20, 40) end,
    activate = function(self, t)
       game:playSoundNear(self, "talents/heal")
       self:talentTemporaryValue(t, "stealth", t.getStealth(self, t))
       self:talentTemporaryValue(t, "stealthed_prevents_targetting", 1)
-      self:talentTemporaryValue(t, "combat_def", t.getDefense(self, t)),
+      self:talentTemporaryValue(t, "combat_def", t.getDefense(self, t))
 
       local p = {}
       if not self.shader then
@@ -37,37 +37,120 @@ newTalent{
    end,
 
    callbackOnActBase = function(self, t)
-      local tg = {type="ball", friendlyfire=false, range=0, radius=self:getTalentRadius(t), talent=t}     
-      local damage = self:mindCrit(t.getDamage(self, t))
-      
+      local tg = {type="ball", friendlyfire=false, range=0, radius=self:getTalentRadius(t), talent=t}
+      local has_targets = false
       self:project(
          tg, self.x, self.y,
          function(tx, ty)
             local target = game.level.map(tx, ty, Map.ACTOR)
-            if target and not target:canSee(self) then
-               DamageType:get(DamageType.MIND).projector(self, target.x, target.y, DamageType.MIND, damage)
-               end
+            if target then
+               has_targets = true
             end
          end)
+
+      if has_targets then
+         local damage = self:mindCrit(t.getDamage(self, t))
+      
+         self:project(
+            tg, self.x, self.y,
+            function(tx, ty)
+               local target = game.level.map(tx, ty, Map.ACTOR)
+               if target and not target:canSee(self) then
+                  DamageType:get(DamageType.MIND).projector(self, target.x, target.y, DamageType.MIND, damage)
+               end
+            end)
+      end
    end,
    info = function(self, t)
       return ([[You are shrouded in unholy darkness, granting a %d bonus to Defense and placing you in stealth with %d power.  Actions that normally break stealth do #{bold}#not#{normal}# disrupt this effect.
+
+The stealth will increase with talent level.
+The defense will increase with your Magic or Cunning (whichever is higher).
 
 Anyone who manages to glimpse your terrible form suffers %d mind damage (uses mental critical rate).
 
 #{italic}#Your appearance flickers, black and twisted. The very universe tries to banish you...but it lacks the strength.#{normal}#]]):format(t.getDefense(self, t), t.getStealth(self, t), damDesc(self, DamageType.MIND, t.getDamage(self, t)))
    end,
-   }
+}
+
+newTalent{
+   name = "Corrupting Touch", short_name="REK_DREAD_DISPERSE",
+   type = {"undead/dreadlord", 2},
+   require = high_undeads_req2,
+   points = 5,
+   cooldown = function(self, t) return 2 end,
+   tactical = {
+      DISABLE = function(self, t, aitarget)
+         local nb = 0
+         for eff_id, p in pairs(aitarget.tmp) do
+            local e = self.tempeffect_def[eff_id]
+            if e.status == "beneficial" then nb = nb + 1 end
+         end
+         for tid, act in pairs(aitarget.sustain_talents) do
+            nb = nb + 1
+         end
+         return nb^0.5
+      end},
+   requires_target = true,
+   range = 1,
+   getRemoveCount = function(self, t) return math.floor(self:combatTalentScale(t, 1, 5, "log")) end,
+   action = function(self, t)
+      local tg = {type="hit", range=self:getTalentRange(t)}
+      local tx, ty = self:getTarget(tg)
+      if not tx or not ty or not game.level.map(tx, ty, Map.ACTOR) then return nil end
+      local _ _, tx, ty = self:canProject(tg, tx, ty)
+      if not tx then return nil end
+      local target = game.level.map(tx, ty, Map.ACTOR)
+      if not target then return nil end
+      
+      local effs = {}
+
+      -- effects
+      for eff_id, p in pairs(target.tmp) do
+         local e = target.tempeffect_def[eff_id]
+         if e.status == "beneficial" then
+            effs[#effs+1] = {"effect", eff_id}
+         end
+      end
+      -- sustains
+      for tid, act in pairs(target.sustain_talents) do
+         if act then
+            local talent = target:getTalentFromId(tid)
+            effs[#effs+1] = {"talent", tid}
+         end
+      end
+      
+      for i = 1, t.getRemoveCount(self, t) do
+         if #effs == 0 then break end
+         local eff = rng.tableRemove(effs)
+         
+         if eff[1] == "effect" then
+            target:removeEffect(eff[2])
+         else
+            target:forceUseTalent(eff[2], {ignore_energy=true})
+         end
+      end
+      if self:knowTalent(self.T_REK_DREAD_STEP) then
+         self:setEffect(self.EFF_REK_DREAD_GHOSTLY, self:callTalent(self.T_REK_DREAD_STEP, "getDuration"), {src=self}) 
+      end
+      game:playSoundNear(self, "talents/spell_generic")
+      return true
+   end,
+   info = function(self, t)
+      return ([[Reach out to an adjacent enemy, removing up to %d positive effects or sustains.
+
+#{italic}#At your touch, rock crumbles, flesh withers, and magic fails.#{normal}#]]):format(t.getRemoveCount(self, t))
+   end,
+}
 
 newTalent{
    name = "Black Gate", short_name="REK_DREAD_TELEPORT",
    type = {"undead/dreadlord", 3},
-   require = high_undeads_req2,
+   require = high_undeads_req3,
    points = 5,
-   cooldown = function(self, t) return 10 end,
+   cooldown = function(self, t) return 12 end,
    tactical = teleport_tactical,
-   range = function(self, t) return self:combatLimit(self:combatTalentSpellDamage(t, 10, 15), 40, 4, 0, 13.4, 9.4) end, -- Limit to range 40
-   getRadius = function(self, t) return math.floor(self:combatTalentLimit(t, 0, 6, 2)) end,
+   range = function(self, t) return self:combatTalentScale(t, 5, 15) end,
    is_teleport = true,
    radius = function(self, t) return math.max(0, 7 - math.floor(self:getTalentLevel(t))) end,
    target = function(self, t)
@@ -97,7 +180,7 @@ newTalent{
       local __, x, y = self:canProject(tg, x, y)
       local teleport = self:getTalentRadius(t)
       target = game.level.map(x, y, Map.ACTOR)
-      if target and target:canSee(self) then
+      if target then
          teleport = 0
       end
 
@@ -116,6 +199,10 @@ newTalent{
                end
             end)
       end
+
+      if self:knowTalent(self.T_REK_DREAD_STEP) then
+         self:setEffect(self.EFF_REK_DREAD_GHOSTLY, self:callTalent(self.T_REK_DREAD_STEP, "getDuration"), {src=self}) 
+      end
       
       game.level.map:particleEmitter(self.x, self.y, 1, "generic_teleport", {rm=0, rM=0, gm=180, gM=255, bm=180, bM=255, am=35, aM=90})
       game:playSoundNear(self, "talents/teleport")
@@ -123,44 +210,64 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      local radius = t.getRadius(self, t)
-      local range = t.getRange(self, t)
-      return ([[Teleports you randomly within a range of up to %d.  You arrive right next to a creature that can see you, or within %d grids of a targeted space.
+      local radius = self:getTalentRadius(t)
+      local range = self:getTalentRange(t)
+      return ([[Teleports you randomly within a range of up to %d.  You arrive right next to a targeted creature, or within %d grids of a targeted space.
 If the target area is not in line of sight, there is a chance you will instead teleport randomly.
-If Walking Blasphemy is active, all enemies will lose track of you.]]):format(range, radius)
+If Walking Blasphemy is sustained, all enemies will lose track of you.]]):format(range, radius)
    end,
-}
+         }
 
 newTalent{
-   name = "Dread Malediction", short_name="REK_DREAD_SILENCE",
+   name = "Phantasmal Step", short_name="REK_DREAD_STEP",
    type = {"undead/dreadlord", 4},
    points = 5,
-   cooldown = 12,
-   range = 10,
-   requires_target = true,
-   tactical = { DISABLE = { silence = 3 } },
-   range = function(self, t) return 7 end,
-   target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
-   getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
-   getMiss = function(self, t) return self:combatTalentScale(t, 50, 50) end,
-   getPower = function(self, t) return self:combatTalentScale(t, 66, 66) end,
-      action = function(self, t)
-      local tg = self:getTalentTarget(t)
-      local x, y = self:getTarget(tg)
-      if not x or not y then return nil end
-      local _ _, x, y = self:canProject(tg, x, y)
-      local target = game.level.map(x, y, Map.ACTOR)
-      if not target then return end
-      local power = math.max(src:combatSpellpower(), src:combatMindpower(), src:combatPhysicalpower())
-      if src.combatSteampower then power = math.max(power, src:combatSteampower()) end
-      target:setEffect(target.EFF_REK_DREAD_MALEDICTION, t.getDuration(self, t), {src=self, apply_power=power})    
+   require = high_undeads_req4,
+   cooldown = 18,
+   no_energy = true,
+   tactical = { ESCAPE = 1, CLOSEIN = 1 },
+   getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
+   action = function(self, t)
+      self:setEffect(self.EFF_REK_DREAD_GHOSTLY, t.getDuration(self, t), {src=self}) 
       game:playSoundNear(self, "talents/warp")
       return true
    end,
    info = function(self, t)
-      return ([[Lay a errible curse on a foe, cutting off their powers (#SLATE#Highest Power vs. Spell#LAST#).  For the next %d turns, their accuracy will be lowered by %d, and they will have a %d%% chance to fail to activate any spell, mental ability, or gift.]]):format(t.getDuration(self, t), t.getMiss(self, t), t.getPower(self, t))
+      return ([[Physical barriers are no obstacle to a spirit.  After using this or any other talent in this tree, you'll be able to walk through walls for the next %d turns.  If you are inside a wall when the effect ends, you will move to the nearest open space.]])
+:format(t.getDuration(self, t))
    end,
 }
+
+-- newTalent{
+--    name = "Dread Malediction", short_name="REK_DREAD_SILENCE",
+--    type = {"undead/dreadlord", 4},
+--    points = 5,
+--    cooldown = 12,
+--    range = 10,
+--    requires_target = true,
+--    tactical = { DISABLE = { silence = 3 } },
+--    range = function(self, t) return 7 end,
+--    target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
+--    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
+--    getMiss = function(self, t) return self:combatTalentScale(t, 50, 50) end,
+--    getPower = function(self, t) return self:combatTalentScale(t, 66, 66) end,
+--       action = function(self, t)
+--       local tg = self:getTalentTarget(t)
+--       local x, y = self:getTarget(tg)
+--       if not x or not y then return nil end
+--       local _ _, x, y = self:canProject(tg, x, y)
+--       local target = game.level.map(x, y, Map.ACTOR)
+--       if not target then return end
+--       local power = math.max(self:combatSpellpower(), self:combatMindpower(), self:combatPhysicalpower())
+--       if self.combatSteampower then power = math.max(power, self:combatSteampower()) end
+--       target:setEffect(target.EFF_REK_DREAD_MALEDICTION, t.getDuration(self, t), {src=self, apply_power=power})    
+--       game:playSoundNear(self, "talents/warp")
+--       return true
+--    end,
+--    info = function(self, t)
+--       return ([[Lay a frightful curse on a foe, cutting off their powers (#SLATE#Highest Power vs. Spell#LAST#).  For the next %d turns, their accuracy will be lowered by %d, and they will have a %d%% chance to fail to activate any spell, mental ability, or gift.]]):format(t.getDuration(self, t), t.getMiss(self, t), t.getPower(self, t))
+--    end,
+-- }
 
 -- Class talents for summoning lesser dreads
 function dreadSetupSummon(self, def, x, y, level)
@@ -195,7 +302,7 @@ function dreadSetupSummon(self, def, x, y, level)
    -- Leave this for necromancers
    if self:isTalentActive(self.T_NECROTIC_AURA) then
       local t = self:getTalentFromId(self.T_NECROTIC_AURA)
-      local perc = t:_getInherit(self) / 100
+      local perc = t.getInherit(self, t) / 100
       
       -- Damage
       m.combat_generic_crit = (m.combat_generic_crit or 0) + math.floor(self:combatSpellCrit() * perc)
@@ -248,7 +355,7 @@ function dreadSetupSummon(self, def, x, y, level)
       game.party:addMember(m, {
                               control=can_control and "full" or "order",
                               type="minion",
-                              title=_t"Necrotic Minion",
+                              title="Necrotic Minion",
                               orders = {target=true, dismiss=true},
                               })
    end
@@ -317,12 +424,13 @@ newTalent{
 
          resolvers.talents{
             T_BLUR_SIGHT={base=3, every=5},
-            T_PHASE_DOOR={base=1, every=6},
+            T_PHASE_DOOR={base=1, max=3, every=6},
                           },
          max_life = resolvers.rngavg(90,100),
       },
    },
    getLevel = function(self, t) return math.floor(self:combatScale(self:getTalentLevel(t), -6, 0.9, 2, 5)) end,
+   getMaxSummons = function(self, t) return math.min(5, math.floor(self:combatTalentScale(t, 1, 3))) end,
    on_pre_use = function(self, t, silent)
       local count = 0
       if game.party and game.party:hasMember(self) then
@@ -332,7 +440,7 @@ newTalent{
 	    end
 	 end
       end
-      if count < 3 then return true end
+      if count < t.getMaxSummons(self, t) then return true end
       if not silent then game.logPlayer(self, "You have too many dreads already.") end
       return false
    end,
@@ -342,7 +450,7 @@ newTalent{
       local x, y = util.findFreeGrid(self.x, self.y, 5, true, {[Map.ACTOR]=true})
       if not x then return end
       local dread = dreadSetupSummon(self, t.minions_list.dread, x, y, lev)
-      if self:knowTalent(self.T_DREADMASTER) then
+      if self:knowTalent(self.T_REK_DREAD_HEXES) then
          local lvl = math.floor(self:getTalentLevel(self.T_REK_DREAD_HEXES))
          if lvl >= 1 then
             dread:learnTalent(dread.T_BURNING_HEX, true, lvl)
@@ -363,7 +471,8 @@ newTalent{
    end,
    info = function(self, t)
       return ([[Summon a Dread of level %d that will annoyingly blink around, attacking your foes.
-Dreads last until destroyed, and you can maintain up to %d dreads at a time.]]):format(math.max(1, self.level + t:_getLevel(self)), t.getMaxSummons(self, t))
+Dreads last until destroyed, and you can maintain up to %d dreads at a time.
+You always know where your dreads are.]]):format(math.max(1, self.level + t.getLevel(self, t)), t.getMaxSummons(self, t))
    end,
          }
 
@@ -379,7 +488,7 @@ newTalent{
 Level 1: Burning Hex
 Level 3: Empathic Hex
 Level 5: Pacification Hex
-Level 7: Curse of Impotence]]):format(self:getTalentLevel(t), t:_getSP(self))
+Level 7: Curse of Impotence]]):format(self:getTalentLevel(t), t.getSP(self, t))
    end,
 }
 
@@ -391,22 +500,26 @@ newTalent{
    mode = "passive",
    getHeal = function(self, t) return 10 + self:combatTalentSpellDamage(t, 30, 200) end,
    getCD = function(self, t) return math.floor(self:combatTalentScale(t, 1, 4)) end,
-   getFoes = function(self, t) return math.floor(self:combatTalentScale(t, 2, 8)) end,
    doCallback = function(self, t)
       if game.party and game.party:hasMember(self) then
 	 for dread, def in pairs(game.party.members) do
 	    if dread.summoner and dread.summoner == self and dread.is_dreadlord_minion then
-               dread:heal(t:_getHeal(self), dread)
-               for tid, _ in pairs(dread.talents) do dread:alterTalentCoolingdown(tid, -t:_getCD(self)) end
+               dread:heal(t.getHeal(self, t), dread)
+               for tid, _ in pairs(dread.talents) do dread:alterTalentCoolingdown(tid, -t.getCD(self, t)) end
             end
          end
       end
+      self:heal(t.getHeal(self, t), dread)
+      self:alterTalentCoolingdown(self.T_REK_DREAD_DISPERSE, -t.getCD(self, t))
+      self:alterTalentCoolingdown(self.T_REK_DREAD_TELEPORT, -t.getCD(self, t))
+      self:alterTalentCoolingdown(self.T_REK_DREAD_STEP, -t.getCD(self, t))
+      self:alterTalentCoolingdown(self.T_REK_DREAD_SUMMON_DREAD, -t.getCD(self, t))
    end,
    thRare = function(self, t) return .4 end,
    thBoss = function(self, t) return 0.25 end,
    thEBoss = function(self, t) return 0.1 end,
-   callbackOnSummonKill = function(self, t, src, self, death_note) t.doCallback(self, t) end,
-   callbackOnKill = function(self, t, src, self, death_note) t.doCallback(self, t) end,
+   callbackOnSummonKill = function(self, t, src, death_note) t.doCallback(self, t) end,
+   callbackOnKill = function(self, t, src, death_note) t.doCallback(self, t) end,
    callbackOnDealDamage = function(self, t, val, target, dead, death_note)
       if dead then return end
       
@@ -434,7 +547,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[You and your minions feed on death and destruction.  Any time you or your minions kill something (or you do a large chunk of damage to a rare or stronger enemy), your dreads absorb a fragment of its soul to feed on.
-Each time they feed, each dreads heals for %d and reduces the remaining cooldown of their spells by %d.]]):format(t:_getHeal(self), t:_getCD(self))
+Each time they feed, each dread heals for %d and reduces the remaining cooldown of their spells by %d.  This also applies to you and your dread abilities.]]):format(t.getHeal(self, t), t.getCD(self, t))
    end,
 }
 
@@ -459,7 +572,7 @@ newTalent{
    end,
    action = function(self, t)
       local apply = function(dread)
-         dread:setEffect(dread.EFF_NEVERENDING_PERIL, t.getTurns(self, t), {src=self})
+         dread:setEffect(dread.EFF_REK_DREAD_NEVERENDING_PERIL, t.getTurns(self, t), {src=self})
       end
       if game.party and game.party:hasMember(self) then
 	 for act, def in pairs(game.party.members) do

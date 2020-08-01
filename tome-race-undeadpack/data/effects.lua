@@ -293,3 +293,43 @@ newEffect{
    deactivate = function(self, eff)
    end,
 }
+
+newEffect{
+   name = "REK_DREAD_GHOSTLY", image = "talents/rek_dread_step.png",
+   desc = "Phantasmal Step",
+   long_desc = function(self, eff) return ("The target is able to walk through walls"):format(eff.power) end,
+   type = "magical",
+   subtype = { darkness=true },
+   status = "beneficial",
+   parameters = { },
+   activate = function(self, eff)
+      eff.pass = self:addTemporaryValue("can_pass", {pass_wall=70})
+   end,
+   deactivate = function(self, eff)
+      self:removeTemporaryValue("can_pass", eff.pass)
+      if not self:canMove(self.x, self.y, true) then
+	 local free = false
+	 local dist = 1
+	 while not free and dist < 50 do
+	    local x, y = util.findFreeGrid(self.x, self.y, dist, false, {[Map.ACTOR]=true})
+	    free = self:teleportRandom(x, y, 0)
+	    dist = dist + 1
+	 end
+      end
+   end,
+         }
+
+newEffect{
+   name = "REK_DREAD_NEVERENDING_PERIL", image = "talents/rek_dread_neverending_peril.png",
+   desc = "Neverending Peril",
+   long_desc = function(self, eff) return "Invulnerable." end,
+   type = "magical",
+   subtype = { necrotic=true, invulnerable=true },
+   status = "beneficial",
+   parameters = {},
+   on_gain = function(self, err) return nil, true end,
+   on_lose = function(self, err) return nil, true end,
+   activate = function(self, eff)
+      self:effectTemporaryValue(eff, "invulnerable", 1)
+   end,
+}

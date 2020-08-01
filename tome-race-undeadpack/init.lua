@@ -10,7 +10,7 @@ Banshee
 Muumy
 Wight
 And adds a new evolution prodigy for any undead: Dreadlord]]
-tags = {'undead', 'banshee', 'race', 'ghost', 'recaiden', 'wight' 'mummy', 'dread'} -- tags MUST immediately follow description
+tags = {'undead', 'banshee', 'race', 'ghost', 'recaiden', 'wight', 'mummy', 'dread'} -- tags MUST immediately follow description
 
 hooks = true
 overload = true
