@@ -5,6 +5,7 @@ newTalent{
    require = high_undeads_req1,
    points = 5,
    cooldown = 10,
+   radius = 10,
    tactical = { BUFF = 2 },
    getDefense = function(self, t) return math.max(self:getMag(), self:getCun()) * 0.7 end,
    getStealth = function(self, t) return self:combatTalentScale(t, 15, 64) end,
@@ -482,9 +483,9 @@ newTalent{
    require = dreads_req2,
    points = 5,
    mode = "passive",
-   getSP = function(self, t) return self:combatTalentSpellDamage(t, 6, 50, 1.0) end,
+   getSP = function(self, t) return 5+self:combatSpellpower()*0.5 end,
    info = function(self, t)
-      return ([[Weave magic into your dreads, teaching them terrible hexes and curses (at talent level %d) and increasing their spellpower by %d.
+      return ([[Weave magic into your dreads, teaching them terrible hexes and curses (at talent level %d) and increasing their spellpower by %d (based on your spellpower).
 Level 1: Burning Hex
 Level 3: Empathic Hex
 Level 5: Pacification Hex

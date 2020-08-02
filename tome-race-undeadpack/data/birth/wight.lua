@@ -86,7 +86,7 @@ newBirthDescriptor {
   },
   copy = {
      type = "undead", subtype="wight",
-     default_wilderness = {"playerpop", "mid-undead"},
+     default_wilderness = {"playerpop", "forest-undead"},
      life_rating=11,
      poison_immune = 1,
      cut_immune = 1,

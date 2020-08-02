@@ -20,7 +20,8 @@ class:bindHook('ToME:load', load)
 
 class:bindHook("MapGeneratorStatic:subgenRegister", function(self, data)
 		  if data.mapfile ~= "wilderness/eyal" then return end
-		  
+
+                  -- defines where player appears after starter dungeon
 		  data.list[#data.list+1] = {
 		     x = 23, y = 19, w = 1, h = 1, overlay = true,
 		     generator = "engine.generator.map.Static",
@@ -29,6 +30,7 @@ class:bindHook("MapGeneratorStatic:subgenRegister", function(self, data)
 		     },
 		  }
 
+                  -- persistent dungeon zone, where the mummy can return to their spawn point
                   data.list[#data.list+1] = {
 		     x = 15, y = 49, w = 1, h = 1, overlay = true,
 		     generator = "engine.generator.map.Static",
@@ -37,11 +39,12 @@ class:bindHook("MapGeneratorStatic:subgenRegister", function(self, data)
 		     },
 		  }
 
+                  -- defines where player appears after starter dungeon
                   data.list[#data.list+1] = {
 		     x = 24, y = 23, w = 1, h = 1, overlay = true,
 		     generator = "engine.generator.map.Static",
 		     data = {
-			map = "race-wight+battleground-overlay",
+			map = "race-undeadpack+battleground-overlay",
 		     },
 		  }
 end)

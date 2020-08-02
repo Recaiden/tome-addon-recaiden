@@ -106,7 +106,7 @@ newBirthDescriptor {
      default_cosmetics = { {"hairs", "Dark Hair 1"} },
      copy = {
         type = "undead", subtype="banshee",
-        default_wilderness = {"playerpop", "mid-undead"},
+        default_wilderness = {"playerpop", "derth-undead"},
         life_rating=9,
         silence_immune = 1,
         cut_immune = 1,

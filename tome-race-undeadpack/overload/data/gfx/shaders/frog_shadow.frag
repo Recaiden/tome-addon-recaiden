@@ -9,17 +9,6 @@ void main(void)
 	if (frag[1] > lum) lum = frag[1];
 	if (frag[2] > lum) lum = frag[2];
 	
-	//lum = lum * sin(tick/500) + .5;
-	/*float invlum = sin(tick/500) * .5 + .5;
-	
-	lum = invlum + lum - 2*invlum*lum;
-	
-	if (lum < 0.3) lum = 0;
-	if (lum > 0.4) {
-		lum = 2*(.4) - lum;
-	}
-	if (lum < 0) lum = 0;*/
-	
 	lum = lum * 4;
 	lum += 3 * sin(tick/500);
 	
@@ -47,10 +36,9 @@ void main(void)
 	filterlum = invfilter + filterlum - 2*filterlum*invfilter;
 	
 	float flt_R = filterlum;
-	float flt_B = 1 - filterlum;
 	
 	gl_FragColor.r = lum * (.1 + flt_R*.3);
 	gl_FragColor.g = lum * .1;
-	gl_FragColor.b = lum * (.1 + flt_B*.3);
+	gl_FragColor.b = lum * .1;
 	gl_FragColor.a = frag[3];
 }
