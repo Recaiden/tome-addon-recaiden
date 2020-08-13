@@ -88,6 +88,13 @@ class:bindHook("Entity:loadList",
 			if masteryList[obj.name] then
                            insertMastery(obj, masteryList[obj.name])
 			end
+                        if obj.define_as == "GREATER_MUMMY_LORD" then
+                           obj.name = "[DEBUG] Greater Mummy Lord"
+                           obj.on_die = function(self, who)
+                              world:gainAchievement("MUMMY_TRANSIENT_NIGHT", game.player)
+                              game:setAllowedBuild("undead_mummy", true)
+                           end
+                        end
                         if cooldownsList[obj.name] then
                            if obj.wielder then
                               local reductions = obj.wielder.talent_cd_reduction or {}

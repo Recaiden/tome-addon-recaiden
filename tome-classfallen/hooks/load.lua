@@ -9,6 +9,7 @@ local Map = require "engine.Map"
 class:bindHook("ToME:load", function(self, data)
   Talents:loadDefinition('/data-classfallen/talents/cursed/cursed.lua')
   Talents:loadDefinition('/data-classfallen/talents/celestial/celestial.lua')
+  Talents:loadDefinition('/data-classfallen/talents/uber.lua')
   ActorTemporaryEffects:loadDefinition('/data-classfallen/effects.lua')
   Birther:loadDefinition("/data-classfallen/birth/classes/afflicted.lua")
   DamageType:loadDefinition("/data-classfallen/damage_types.lua")
@@ -20,9 +21,31 @@ end)
 -- 		  end
 -- end)
 
+
+local masteryList = {
+   ["Sanguine Shield"] = {["cursed/bloodstained"]=0.3},
+}
+local function insertMastery(obj,mastery)
+   if not obj.wielder then
+      obj.wielder = {}
+   end
+   if obj.wielder.talents_types_mastery then
+      for typ,amt in pairs(mastery) do
+         obj.wielder.talents_types_mastery[typ] = amt
+      end
+   else
+      obj.wielder.talents_types_mastery = mastery
+   end
+end
+
+
 -- Give Solar Shadows mastery to anything with Shadows mastery
+-- Give equivalent mastery to evolution-swapped categories
 local masteryEquivalents = {
    ["cursed/shadows"] = "cursed/solar-shadows",
+   ["celestial/radiance"] = "cursed/gloom",
+   ["celestial/guardian"] = "cursed/crimson-templar",
+   ["celestial/crusader"] = "celestial/black-sun",
 }
 class:bindHook("Entity:loadList",
                function(self, data)
@@ -36,6 +59,9 @@ class:bindHook("Entity:loadList",
                                  end
                               end
                            end
+			end
+                        if masteryList[obj.name] then
+                           insertMastery(obj,masteryList[obj.name])
 			end
                      end
                   end

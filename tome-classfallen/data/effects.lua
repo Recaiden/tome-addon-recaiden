@@ -258,7 +258,6 @@ newEffect{
    end,
          }
 
-
 newEffect{
    name = "FLN_VAMPIRE_MARK", image = "talents/fln_templar_mark_of_the_vampire.png",
    desc = "Mark of the Vampire",
@@ -326,8 +325,7 @@ newEffect{
    end,
 }
 
-
--- type other because the original was, this is a resource mechanic.
+-- type other because the original was and this is a resource mechanic.
 newEffect{
    name = "FLN_ABSORPTION_STRIKE", image = "talents/absorption_strike.png",
    desc = "Shadow Absorption",

@@ -280,9 +280,6 @@ newTalent{
    points = 5,
    mode = "passive",
    getArmor = function(self, t) return self:combatTalentSpellDamage(t, 2, 40) end,
-   action = function(self, t)
-      return true
-   end,
    info = function(self, t)
       return ([[Your dirges deaden you to the outside world, reducing all incoming damage by %d.
 

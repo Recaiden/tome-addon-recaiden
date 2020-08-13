@@ -11,12 +11,13 @@ newTalent{
    getStealth = function(self, t) return self:combatTalentScale(t, 15, 64) end,
    getDamage = function(self, t) return self:combatTalentScale(t, 20, 40) end,
    activate = function(self, t)
-      game:playSoundNear(self, "talents/heal")
-      self:talentTemporaryValue(t, "stealth", t.getStealth(self, t))
+      game:playSoundNear(self, "talents/heal")    
       self:talentTemporaryValue(t, "stealthed_prevents_targetting", 1)
-      self:talentTemporaryValue(t, "combat_def", t.getDefense(self, t))
 
       local p = {}
+      p.def = self:addTemporaryValue("combat_def", t.getDefense(self, t))
+      p.stealth = self:addTemporaryValue("stealth", t.getStealth(self, t))
+
       if not self.shader then
          p.set_shader = true
          self.shader = "frog_shadow"
@@ -28,6 +29,8 @@ newTalent{
       return p
    end,
    deactivate = function(self, t, p)
+      self:removeTemporaryValue("combat_def", p.def)
+      self:removeTemporaryValue("stealth", p.stealth)
       self:resetCanSeeCacheOf()
       if p.set_shader then
          self.shader = nil
@@ -79,7 +82,7 @@ newTalent{
    type = {"undead/dreadlord", 2},
    require = high_undeads_req2,
    points = 5,
-   cooldown = function(self, t) return 2 end,
+   cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 5, 45, 25)) end,
    tactical = {
       DISABLE = function(self, t, aitarget)
          local nb = 0
@@ -172,7 +175,7 @@ newTalent{
       if not self:hasLOS(x, y) and rng.percent(35 + (game.level.map.attrs(self.x, self.y, "control_teleport_fizzle") or 0)) then
          game.logPlayer(self, "The gate fizzles and works randomly!")
          x, y = self.x, self.y
-         range = t.getRange(self, t)
+         range = self:getTalentRange(t)
       end
       if game.level.map:checkEntity(x, y, Map.TERRAIN, "block_move") then
          game.logPlayer(self, "You may only gate to an open space.")
@@ -239,37 +242,6 @@ newTalent{
    end,
 }
 
--- newTalent{
---    name = "Dread Malediction", short_name="REK_DREAD_SILENCE",
---    type = {"undead/dreadlord", 4},
---    points = 5,
---    cooldown = 12,
---    range = 10,
---    requires_target = true,
---    tactical = { DISABLE = { silence = 3 } },
---    range = function(self, t) return 7 end,
---    target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
---    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
---    getMiss = function(self, t) return self:combatTalentScale(t, 50, 50) end,
---    getPower = function(self, t) return self:combatTalentScale(t, 66, 66) end,
---       action = function(self, t)
---       local tg = self:getTalentTarget(t)
---       local x, y = self:getTarget(tg)
---       if not x or not y then return nil end
---       local _ _, x, y = self:canProject(tg, x, y)
---       local target = game.level.map(x, y, Map.ACTOR)
---       if not target then return end
---       local power = math.max(self:combatSpellpower(), self:combatMindpower(), self:combatPhysicalpower())
---       if self.combatSteampower then power = math.max(power, self:combatSteampower()) end
---       target:setEffect(target.EFF_REK_DREAD_MALEDICTION, t.getDuration(self, t), {src=self, apply_power=power})    
---       game:playSoundNear(self, "talents/warp")
---       return true
---    end,
---    info = function(self, t)
---       return ([[Lay a frightful curse on a foe, cutting off their powers (#SLATE#Highest Power vs. Spell#LAST#).  For the next %d turns, their accuracy will be lowered by %d, and they will have a %d%% chance to fail to activate any spell, mental ability, or gift.]]):format(t.getDuration(self, t), t.getMiss(self, t), t.getPower(self, t))
---    end,
--- }
-
 -- Class talents for summoning lesser dreads
 function dreadSetupSummon(self, def, x, y, level)
    local m = require("mod.class.NPC").new(def)
@@ -295,9 +267,11 @@ function dreadSetupSummon(self, def, x, y, level)
    m.no_drops = true
    m.minion_be_nice = 1
    m.heal = function(self, amt, src)
-      if not src or src == self or src.necrotic_minion then return mod.class.NPC.heal(self, amt, src) end
+      if not src or src == self or src.necrotic_minion or src == self.summoner then return mod.class.NPC.heal(self, amt, src) end
       if src.getCurrentTalent and src:getCurrentTalent() and src:getTalentFromId(src:getCurrentTalent()) and not src:getTalentFromId(src:getCurrentTalent()).is_nature then return mod.class.NPC.heal(self, amt, src) end
-      game.logSeen(self, "#GREY#%s can not be healed this way!", self:getName():capitalize())
+      if self.getName then
+         game.logSeen(self, "#GREY#%s can not be healed this way!", self:getName():capitalize())
+      end
    end
 
    -- Leave this for necromancers
@@ -445,6 +419,39 @@ newTalent{
       if not silent then game.logPlayer(self, "You have too many dreads already.") end
       return false
    end,
+   relearnHexes = function(self, t, dread)
+      if dread:knowTalent(dread.T_BURNING_HEX) then
+         dread.combat_spellpower = 0
+         dread:unlearnTalent(dread.T_BURNING_HEX, dread:getTalentLevelRaw(dread.T_BURNING_HEX), nil, {no_unlearn=true})
+      end
+      if dread:knowTalent(dread.T_EMPATHIC_HEX) then
+         dread:unlearnTalent(dread.T_EMPATHIC_HEX, dread:getTalentLevelRaw(dread.T_EMPATHIC_HEX), nil, {no_unlearn=true})
+      end
+      if dread:knowTalent(dread.T_PACIFICATION_HEX) then
+         dread:unlearnTalent(dread.T_PACIFICATION_HEX, dread:getTalentLevelRaw(dread.T_PACIFICATION_HEX), nil, {no_unlearn=true})
+      end
+      if dread:knowTalent(dread.T_CURSE_OF_IMPOTENCE) then
+         dread:unlearnTalent(dread.T_CURSE_OF_IMPOTENCE, dread:getTalentLevelRaw(dread.T_CURSE_OF_IMPOTENCE), nil, {no_unlearn=true})
+      end
+
+      t.learnHexes(self, t, dread)
+   end,
+   learnHexes = function(self, t, dread)
+      local lvl = math.floor(self:getTalentLevel(self.T_REK_DREAD_HEXES))
+      if lvl >= 1 then
+         dread:learnTalent(dread.T_BURNING_HEX, true, lvl)
+         dread.combat_spellpower = self:callTalent(self.T_REK_DREAD_HEXES, "getSP")
+      end
+      if lvl >= 3 then
+         dread:learnTalent(dread.T_EMPATHIC_HEX, true, lvl)
+      end
+      if lvl >= 5 then
+         dread:learnTalent(dread.T_PACIFICATION_HEX, true, lvl)
+      end
+      if lvl >= 7 then
+         dread:learnTalent(dread.T_CURSE_OF_IMPOTENCE, true, lvl)
+      end
+   end,
    action = function(self, t)
       local lev = t.getLevel(self, t)
 
@@ -452,20 +459,7 @@ newTalent{
       if not x then return end
       local dread = dreadSetupSummon(self, t.minions_list.dread, x, y, lev)
       if self:knowTalent(self.T_REK_DREAD_HEXES) then
-         local lvl = math.floor(self:getTalentLevel(self.T_REK_DREAD_HEXES))
-         if lvl >= 1 then
-            dread:learnTalent(dread.T_BURNING_HEX, true, lvl)
-            dread.combat_spellpower = self:callTalent(self.T_REK_DREAD_HEXES, "getSP")
-         end
-         if lvl >= 3 then
-            dread:learnTalent(dread.T_EMPATHIC_HEX, true, lvl)
-         end
-         if lvl >= 5 then
-            dread:learnTalent(dread.T_PACIFICATION_HEX, true, lvl)
-         end
-         if lvl >= 7 then
-            dread:learnTalent(dread.T_CURSE_OF_IMPOTENCE, true, lvl)
-         end
+         t.learnHexes(self, t, dread)
       end
       game:playSoundNear(self, "creatures/ghost/random1")
       return true
@@ -484,6 +478,20 @@ newTalent{
    points = 5,
    mode = "passive",
    getSP = function(self, t) return 5+self:combatSpellpower()*0.5 end,
+   on_levelup_close = function(self, t, lvl, old_lvl, lvl_raw, old_lvl_raw)
+      if lvl_raw ~= old_lvl_raw then
+         if self:knowTalent(self.T_REK_DREAD_SUMMON_DREAD) then
+            local t1 = self:getTalentFromId(self.T_REK_DREAD_SUMMON_DREAD)
+            if game.party and game.party:hasMember(self) then
+               for act, def in pairs(game.party.members) do
+                  if act.summoner and act.summoner == self and act.is_dreadlord_minion then
+                     t1.relearnHexes(self, t1, act)
+                  end
+               end
+            end
+      end
+      end
+   end,
    info = function(self, t)
       return ([[Weave magic into your dreads, teaching them terrible hexes and curses (at talent level %d) and increasing their spellpower by %d (based on your spellpower).
 Level 1: Burning Hex
@@ -577,7 +585,7 @@ newTalent{
       end
       if game.party and game.party:hasMember(self) then
 	 for act, def in pairs(game.party.members) do
-	    if act.summoner and act.summoner == self and act.is_dreadlord_minion then
+	    if act.summoner and act.summoner == self and (act.is_dreadlord_minion or act.dread_minion) then
 	       apply(act)
 	    end
 	 end

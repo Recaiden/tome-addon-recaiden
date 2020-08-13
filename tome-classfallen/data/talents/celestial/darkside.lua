@@ -46,9 +46,8 @@ newTalent{
    points = 5,
    require = divi_req2,
    -- called in _M:combatSpellpower in mod\class\interface\Combat.lua
-   getSpellpower = function(self, t) return self:combatTalentScale(t, 15, 30, 0.75) end,
-   getMindpower = function(self, t) return self:combatTalentScale(t, 15, 30, 0.75) end,
-   
+   getSpellpower = function(self, t) return self:combatTalentScale(t, 20, 40, 0.75) end,
+   getMindpower = function(self, t) return self:combatTalentScale(t, 25, 50, 0.75) end,
    info = function(self, t)
       local spellpower = t.getSpellpower(self, t)
       local mindpower = t.getMindpower(self, t)
@@ -56,7 +55,7 @@ newTalent{
 You gain a bonus to Spellpower equal to %d%% of your Willpower.
 You gain a bonus to Mindpower equal to %d%% of your Magic.
 
-#{italic}#Something is not quite right inside you.  Your holy spells are somehow twisted.  Your bloody rites are somehow sacred.#{normal}#]]):format(spellpower, mindpower)
+#{italic}#Something is not quite right inside you.  Your solar spells are somehow twisted, but your bloody rites make things clear as day.#{normal}#]]):format(spellpower, mindpower)
    end,
 }
 

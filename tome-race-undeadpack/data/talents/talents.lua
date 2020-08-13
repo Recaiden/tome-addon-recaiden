@@ -37,7 +37,12 @@ mummy_req4 = {
 	level = function(level) return 12 + (level-1)  end,
 }
 mummy_req5 = {
-	level = function(level) return 16 + (level-1)  end,
+   level = function(level) return 16 + (level-1)  end,
+   special={
+      desc="Know two Canopic Jar talents",
+      fct=function(self)
+         return (self:knowTalent(self.T_JAR_STOMACH) and 1 or 0) + (self:knowTalent(self.T_JAR_INTESTINE) and 1 or 0) + (self:knowTalent(self.T_JAR_LIVER) and 1 or 0) + (self:knowTalent(self.T_JAR_LUNG) and 1 or 0) >= 2
+      end}
 }
 
 high_undeads_req1 = { level = function(level) return 25 + (level-1)  end }

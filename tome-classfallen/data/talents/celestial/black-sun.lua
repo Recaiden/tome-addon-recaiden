@@ -12,7 +12,7 @@ newTalent{
    requires_target = true,
    --target = function(self, t) return {type="ball", radius=getMaxRadius(self,t), range=self:getTalentRange(t), talent=t} end,
    target = function(self, t) return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
-   getDamage = function(self, t) return self:combatTalentSpellDamage(t, 12, 45) end,
+   getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 75) end,
    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 5.6)) end,
    getMaxRadius = function(self, t) return math.floor(self:combatTalentLimit(t, 5, 1, 3)) end,
    action = function(self, t)
@@ -150,7 +150,7 @@ newTalent{
    getConversion= function(self, t) return self:combatTalentLimit(t, 80, 10, 40) end,
    activate = function(self, t)
       game:playSoundNear(self, "talents/heal")
-      local particle = Particles.new("ultrashield", 1, {rm=204, rM=220, gm=102, gM=120, bm=0, bM=0, am=35, aM=90, radius=0.5, density=10, life=28, instop=100})
+      local particle = Particles.new("ultrashield", 1, {rm=204, rM=220, gm=102, gM=120, bm=0, bM=0, am=15, aM=60, radius=0.5, density=10, life=28, instop=100})
       return {
          converttype = self:addTemporaryValue("all_damage_convert", DamageType.PHYSICAL),
          convertamount = self:addTemporaryValue("all_damage_convert_percent", t.getConversion(self, t)),

@@ -16,14 +16,14 @@ uberTalent{
       special={
          desc="Is a standard undead creature (not a Lich or Exarch)",
          fct=function(self)
-            return self:attr("undead") and not self:attr("greater_undead")
+            return self:attr("undead") and (self:attr("true_undead") or self:knowTalent(self.T_RAKSHOR_CUNNING)) and not self:attr("greater_undead")
          end
       },
       stat = {wil=25, mag=25},
    },
    is_race_evolution = function(self, t)
       if self:knowTalent(t.id) then return true end
-      return self:attr("undead") and not self:attr("greater_undead")
+      return self:attr("undead") and (self:attr("true_undead") or self:knowTalent(self.T_RAKSHOR_CUNNING)) and not self:attr("greater_undead")
    end,
    cant_steal = true,
    is_spell = true,
@@ -43,11 +43,16 @@ uberTalent{
       
       self:attr("undead", 1)
       self:attr("true_undead", 1)
+
+      self:attr("forbid_nature", 1)
+      self.inscription_forbids = self.inscription_forbids or {}
+      self.inscription_forbids["inscriptions/infusions"] = true
       
       self:learnTalentType("undead/dreadlord", true)
       self:learnTalentType("undead/dreadmaster", true)
       self:learnTalent(self.T_REK_DREAD_STEALTH, true, 1)
       self:learnTalent(self.T_REK_DREAD_SUMMON_DREAD, true, 1)
+      game.log("#RED#DEBUG: talents_granted.")
 
       self:forceUseTalent(self.T_REK_DREAD_STEALTH, {ignore_energy=true})
       
@@ -59,9 +64,11 @@ uberTalent{
       game.level.map:particleEmitter(self.x, self.y, 1, "demon_teleport")
    end,
    on_learn = function(self, t)
+      self:attr("greater_undead", 1)
       t.becomeDread(self, t)
    end,
    on_unlearn = function(self, t)
+      self:attr("greater_undead", -1)
    end,
    info = function(self, t)
       return ([[Embrace death and destruction to become a creature of pure spirit, a mighty Dreadmaster!

@@ -4,7 +4,7 @@ newTalent{
    require = { },
    points = 5,
    cooldown = 20,
-   range = 4,
+   range = 6,
    tactical = { DISABLE = 4 },
    getDuration = function(self, t)
       return 3 + math.floor(math.pow(self:getTalentLevel(t), 0.5) * 2.2)
@@ -23,8 +23,8 @@ newTalent{
             if actor and self:reactionToward(actor) < 0 and actor ~= self then
                if not actor:canBe("fear") then
                   game.logSeen(actor, "#F53CBE#%s ignores the panic!", actor.name:capitalize())
-               elseif actor:checkHit(self:combatMindpower(), actor:combatMentalResist(), 0, 95) then
-                  actor:setEffect(actor.EFF_PANICKED, duration, {src=self, range=10, chance=chance, tyrantPower=tyrantPower, maxStacks=maxStacks, tyrantDur=tyrantDur})
+               elseif actor:checkHit(self.summoner:combatMindpower(), actor:combatMentalResist(), 0, 95) then
+                  actor:setEffect(actor.EFF_PANICKED, duration, {src=self, range=10, chance=chance, maxStacks=maxStacks})
                else
                   game.logSeen(actor, "#F53CBE#%s resists the panic!", actor.name:capitalize())
                end
@@ -37,7 +37,7 @@ newTalent{
       local range = self:getTalentRange(t)
       local duration = t.getDuration(self, t)
       local chance = t.getChance(self, t)
-      return ([[Panic your enemies within a range of %d for %d turns. Anyone who fails to make a mental save against your Mindpower has a %d%% chance each turn of trying to run away from you.]]):format(range, duration, chance)
+      return ([[Panic your enemies within a range of %d for %d turns. Anyone who fails to make a mental save against your summoner's Mindpower has a %d%% chance each turn of trying to run away from you.]]):format(range, duration, chance)
    end,
 }
 
@@ -140,12 +140,12 @@ local function createBonusShadow(self, level, tCallShadows, tShadowWarriors, tSh
          self:useTalent(self.T_FLN_SHADOW_HEAL)
       end,
       closeAttackSpell = function(self)
-         if self:knowTalent(self.T_FLN_SHADOW_PANIC) and not self:isTalentCoolingDown(self.T_FLN_SHADOW_PANIC) then
-            return self:useTalent(self.T_FLN_SHADOW_PANIC)
-         end
          return self:useTalent(self.T_FLN_SHADOW_LIGHTNING)
       end,
       farAttackSpell = function(self)
+         if self:knowTalent(self.T_FLN_SHADOW_PANIC) and not self:isTalentCoolingDown(self.T_FLN_SHADOW_PANIC) then
+            return self:useTalent(self.T_FLN_SHADOW_PANIC)
+         end
          if self:knowTalent(self.T_EMPATHIC_HEX) and not self:isTalentCoolingDown(self.T_EMPATHIC_HEX) and rng.percent(50) then
             return self:useTalent(self.T_EMPATHIC_HEX)
          else
@@ -385,10 +385,9 @@ newTalent{
    range = 3,
    cooldown = 14,
    hate = 6,
-   getDuration = function(self, t) return self:combatTalentScale(t, 2, 6) end,
+   getDuration = function(self, t) return self:combatTalentScale(t, 3, 7) end,
    on_pre_use = function(self, t, silent)
       local tgts = {}
-      local seen = {}
 
       -- Collect all enemies within range of any shadow
       if game.level then
@@ -396,9 +395,8 @@ newTalent{
             if actor.summoner and actor.summoner == self and actor.subtype == "shadow" then
                self:project({type="ball", radius=self:getTalentRange(t)}, actor.x, actor.y, function(px, py)
                                local tgt = game.level.map(px, py, Map.ACTOR)
-                               if tgt and self:reactionToward(tgt) < 0 and not seen[tgt.uid] then
+                               if tgt and self:reactionToward(tgt) < 0 then
                                   tgts[#tgts+1] = tgt
-                                  seen[tgt.uid] = true
                                end
                                                                                             end)   
             end
@@ -413,16 +411,14 @@ newTalent{
    end,
    action = function(self, t)
       local tgts = {}
-      local seen = {}
 
       -- Collect all enemies within range of any shadow
       for _, actor in pairs(game.level.entities) do
 	 if actor.summoner and actor.summoner == self and actor.subtype == "shadow" then
 	    self:project({type="ball", radius=self:getTalentRange(t)}, actor.x, actor.y, function(px, py)
 		  local tgt = game.level.map(px, py, Map.ACTOR)
-		  if tgt and self:reactionToward(tgt) < 0 and not seen[tgt.uid] then
+		  if tgt and self:reactionToward(tgt) < 0  then
 		     tgts[#tgts+1] = tgt
-		     seen[tgt.uid] = true
 		  end
 	    end)   
 	 end
@@ -439,18 +435,24 @@ newTalent{
 	       -- confusion
 	       if target:canBe("confusion") and not target:hasEffect(target.EFF_GLOOM_CONFUSED) then
 		  target:setEffect(target.EFF_GLOOM_CONFUSED, t.getDuration(self, t), {power=70})
+               else
+                  effect = 3
 	       end
-	    elseif effect == 2 then
-	       -- stun
-	       if target:canBe("stun") and not target:hasEffect(target.EFF_GLOOM_STUNNED) then
-		  target:setEffect(target.EFF_GLOOM_STUNNED, t.getDuration(self, t), {})
-	       end
-	    elseif effect == 3 then
+            end
+            if effect == 3 then
 	       -- slow
 	       if target:canBe("slow") and not target:hasEffect(target.EFF_GLOOM_SLOW) then
 		  target:setEffect(target.EFF_GLOOM_SLOW, t.getDuration(self, t), {power=0.3})
+               else
+                  effect = 2
 	       end
 	    end
+            if effect == 2 then
+	       -- stun
+	       if target:canBe("stun") then
+		  target:setEffect(target.EFF_GLOOM_STUNNED, t.getDuration(self, t), {})
+	       end
+            end
 	 end
       end
       
@@ -466,7 +468,7 @@ newTalent{
    end,
    info = function(self, t)
       local dur = t.getDuration(self, t)
-      return ([[Channel your raw anguish through your shadows, causing enemies near them to be overcome by gloom (#SLATE#Mindpower vs. Mental#LAST#) for %d turns, inflicting stun, slow, or confusion at random.]]):format(dur)
+      return ([[Channel your raw anguish through your shadows, causing enemies near them (range 3) to be overcome by gloom (#SLATE#Mindpower vs. Mental#LAST#) for %d turns, inflicting stun, slow, or confusion at random.  Enemies near multiple shadows can be struck by multiple effects.]]):format(dur)
    end,
 }
 
@@ -481,7 +483,7 @@ newTalent{
    requires_target = true,
    tactical = { ATTACK = 2 },
    target = function(self, t) return {type="hit", range=self:getTalentRange(t)} end,
-   getDuration = function(self, t) return 10 end,
+   getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 8, 18)) end,
    getResist = function(self, t) return math.ceil(self:combatTalentScale(t, 8, 35)) end,
    getTalentLevel = function(self, t)
       return self:getTalentLevelRaw(t)

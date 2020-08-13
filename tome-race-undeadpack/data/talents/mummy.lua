@@ -61,7 +61,7 @@ newTalent{
 
 newTalent{
    short_name = "JAR_STOMACH",
-   name = "Canopic-Stomach",
+   name = "Canopic Jar: Stomach",
    type = {"undead/mummified", 1},
    require = mummy_req3,
    points = 1,
@@ -102,6 +102,8 @@ newTalent{
       local ret = [[Draw upon your stomach, preserved in a canopic jar, and remember what it is to hunger.  The memories fill your mind, removing 1 detrimental mental effect.]]
       if not self:knowTalent(self.T_MUMMY_JAR) then
          ret = ret..[[
+
+
 Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]
       end
 
@@ -111,7 +113,7 @@ Activating a jar is instant but places other jar talents on cooldown for 3 turns
 
 newTalent{
    short_name = "JAR_INTESTINE",
-   name = "Canopic-Gut",
+   name = "Canopic Jar: Gut",
    type = {"undead/mummified", 1},
    require = mummy_req3,
    points = 1,
@@ -152,6 +154,8 @@ newTalent{
       local ret = [[Draw upon your intestines, preserved in a canopic jar, to remember living weighted by flesh and blood. This grounds you in the physical and real, removing 1 detrimental magical effect.]]
       if not self:knowTalent(self.T_MUMMY_JAR) then
          ret = ret..[[
+
+
 Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]
       end
 
@@ -161,7 +165,7 @@ Activating a jar is instant but places other jar talents on cooldown for 3 turns
 
 newTalent{
    short_name = "JAR_LIVER",
-   name = "Canopic-Blood",
+   name = "Canopic Jar: Blood",
    type = {"undead/mummified", 1},
    require = mummy_req3,
    points = 1,
@@ -202,8 +206,10 @@ newTalent{
       local ret = [[Draw upon your liver, sealed in a canopic jar, and remember being whole and hale.  The memories purify your body, removing 1 detrimental physical effect.]]
       if not self:knowTalent(self.T_MUMMY_JAR) then
          ret = ret..[[
+                        
 Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]
       end
+
 
       return ret
    end,
@@ -211,7 +217,7 @@ Activating a jar is instant but places other jar talents on cooldown for 3 turns
 
 newTalent{
    short_name = "JAR_LUNG", 
-   name = "Canopic-Breath",
+   name = "Canopic Jar: Breath",
    type = {"undead/mummified", 1},
    require = mummy_req4,
    points = 1,
@@ -252,14 +258,15 @@ newTalent{
    info = function(self, t)
       local data = t.getData(self, t)
 
-      local ret = ([[Call upon your lungs, preserved in a canopic jar, and remember what it is like to breathe. The memories fill you with energy, healing you for %d life, and restoring %d stamina, %d mana,  %d positive and negative energies, %d psi energy, and %d hate.
+      local ret = ([[Call upon your lungs, preserved in a canopic jar, and remember what it is like to breathe. The memories fill you with energy, healing you for %d life, and restoring %d stamina, %d mana, %d positive and negative energies, %d psi energy, and %d hate.
 This effect cannot be a critical hit.
 Willpower or Constitution: improves heal and resource gain.]]):format(data.heal, data.stamina, data.mana, data.positive, data.psi, data.hate)
       if not self:knowTalent(self.T_MUMMY_JAR) then
          ret = ret..[[
+                        
 Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]
       end
-
+      
       return ret
 end,
 }

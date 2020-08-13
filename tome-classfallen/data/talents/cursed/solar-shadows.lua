@@ -60,20 +60,16 @@ newTalent{
       if core.fov.distance(self.x, self.y, x, y) > 1 then return nil end
       local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
       if hit then
-         self:project({type="ball", radius=1, friendlyfire=false, selffire=false}, self.x, self.y,
-                      function(px, py)
-                         local a = game.level.map(px, py, Map.ACTOR)
-                         if a then
-                            a:setEffect(a.EFF_FLN_ABSORPTION_STRIKE, 5, {power=t.getWeakness(self, t)})
-                         end
-                      end)
+         if target and not target.dead then
+            target:setEffect(target.EFF_FLN_ABSORPTION_STRIKE, 5, {power=t.getWeakness(self, t)})
+         end
       end
       return true
    end,
    info = function(self, t)
       local damage = t.getDamage(self, t)
       return ([[You strike your foe, dealing %d%% weapon damage.
-		If the attack hits, all foes in radius 1 will have their light resistance reduced by %d%% and grant 1 hate when hit for 5 turns.]]):
+		If the attack hits, the target will have their light resistance reduced by %d%% and grant 1 hate when hit for 5 turns.]]):
       format(100 * damage, t.getWeakness(self, t))
    end,
          }

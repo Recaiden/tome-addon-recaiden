@@ -1,8 +1,8 @@
 newBirthDescriptor{
    type = "subclass",
    name = "Fallen",
-   locked = function() return profile.mod.allow_build.divine end,
-   locked_desc = "....",
+   locked = function() return profile.mod.allow_build.divine_sun_paladin end,
+   locked_desc = "The sun rises in the east in full glory, but in the end passes west, into darkness",
    desc = {
       "Once, they had a code, a calling.  They carried the light into the darkness.",
       "In the darkness, they faltered.  Whether it was greed, for love, or simple cowardice, they broke the oath; now they are Fallen from grace.",

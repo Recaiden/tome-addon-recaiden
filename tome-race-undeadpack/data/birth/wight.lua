@@ -102,3 +102,23 @@ newBirthDescriptor {
 }
 
 getBirthDescriptor("race", "Undead").descriptor_choices.subrace['Wight'] = "allow"
+
+local orcs_def = getBirthDescriptor("world", "Orcs")
+if orcs_def then
+   local old_start = orcs_def.copy.before_starting_zone
+   getBirthDescriptor("race", "MinotaurUndead").descriptor_choices.subrace['Wight'] = "allow"
+   
+   local function new_start(self)
+      if self.descriptor.subrace == "Wight" then
+         self.faction = 'free-whitehooves'
+
+         self.default_wilderness = {"playerpop", "yeti"}
+         self.starting_zone = "orcs+vaporous-emporium"
+         self.starting_quest = "orcs+start-orc"
+         self.starting_intro = "orcs-wight"
+      end
+      if old_start then old_start(self) end
+   end
+   
+   orcs_def.copy.before_starting_zone = new_start
+end
