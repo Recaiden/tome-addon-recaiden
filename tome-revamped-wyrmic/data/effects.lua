@@ -206,6 +206,7 @@ newEffect{
    subtype = { cold=true, shield=true },
    status = "beneficial",
    parameters = { defend=0.25, absorb=0.50, stored=0 }, no_ct_effect = true,
+   charges = function(self, eff) return math.floor(eff.stored) end,
    on_gain = function(self, err) return "#Target# gathers ice and snow." end,
    on_lose = function(self, err) return "#Target#'s unleashes an avalanche." end,
 

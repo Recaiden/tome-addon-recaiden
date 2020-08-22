@@ -91,69 +91,28 @@ newTalent{
    name = "Scaled Skin", short_name = "REK_WYRMIC_COMBAT_SCALES",
    type = {"wild-gift/draconic-combat", 2},
    require = techs_req2,
-   mode = "sustained",
+   mode = "passive",
    points = 5,
-   cooldown = 10,
-   sustain_equilibrium = 10,
-   range = 10,
-   tactical = { ATTACK = { COLD = 1 }, DEFEND = 2 },
    getArmor = function(self, t) return self:combatTalentMindDamage(t, 5, 25) end,
-   getArmorHardiness = function(self, t)
-      return self:combatTalentLimit(t, 30, 10, 22)
-   end,
-   getLightArmorHardiness = function(self, t)
-      return self:combatTalentLimit(t, 20, 5, 17)
-   end,
-   activate = function(self, t)
-      local hardi = t.getArmorHardiness(self, t)
-
+   getArmorHardiness = function(self, t) return self:combatTalentLimit(t, 30, 10, 22) end,
+   getLightArmorHardiness = function(self, t) return 15 end,
+   passives = function(self, t)
+      self:talentTemporaryValue("combat_armor", t.getArmor(self, t))
+      local hardi = 0
       if not self:hasHeavyArmor() then
 	 hardi = hardi + t.getLightArmorHardiness(self, t)
       end
-      
-      local ret = 
-	 {
-	    hardiness = self:addTemporaryValue("combat_armor_hardiness", hardi),
-	    armor = self:addTemporaryValue("combat_armor", t.getArmor(self, t)),
-	 }
-      
-      return ret
+      self:talentTemporaryValue("combat_armor_hardiness", hardi)
    end,
-
-   updateHardiness = function(self, t) -- Turn it off and on again
-      self:forceUseTalent(self.T_REK_WYRMIC_COMBAT_SCALES,
-			  {
-			     ignore_energy=true,
-			     ignore_ressources=true,
-			     silent=true,
-			     ignore_cd=true
-			  }
-      )
-      self:forceUseTalent(self.T_REK_WYRMIC_COMBAT_SCALES,
-			  {
-			     ignore_energy=true,
-			     ignore_ressources=true,
-			     silent=true,
-			     ignore_cd=true
-			  }
-      )
-   end,
-
+   updateHardiness = function(self, t)  self:updateTalentPassives(t.id)  end,
    callbackOnWear = function(self, t, o, bypass_set) t.updateHardiness(self, t) end,
-   callbackOnTakeoff = function(self, t, o, bypass_set) t.updateHardiness(self, t) end,
-   
-   deactivate = function(self, t, p)
-      self:removeTemporaryValue("combat_armor_hardiness", p.hardiness)
-      self:removeTemporaryValue("combat_armor", p.armor)
-      
-      return true
-   end,
+   callbackOnTakeoff = function(self, t, o, bypass_set) t.updateHardiness(self, t) end,  
    
    info = function(self, t)
-      return ([[Your skin forms a coat of scales and your flesh toughens, increasing your Armor Hardiness by %d%%, your Armour by %d.
+      return ([[Your skin forms a coat of scales and your flesh toughens, increasing your Armour by %d.
 If you're wearing leather armor or lighter, your armor hardiness is increased by an additional %d%%.
 
-Mindpower: improves Armour.
+Mindpower: improves Armour bonus.
 ]]):format(t.getArmorHardiness(self, t), t.getArmor(self, t), t.getLightArmorHardiness(self, t))
    end,
 }

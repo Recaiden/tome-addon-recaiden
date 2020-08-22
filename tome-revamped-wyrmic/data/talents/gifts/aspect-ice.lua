@@ -65,7 +65,7 @@ newTalent{
 
 While sustained, this talent protects you with a layer of cold, increasing your resistance to damge by %d%% and causing you to deal %0.2f cold damage as retaliation to any enemies that physically strike you.
 
-Ice is Cold damage that can inflict Slow(20%% global, no save) and Freeze (#SLATE#Mindpower vs. Physical#LAST#).
+Ice is Cold damage that can inflict Slow (20%% global, no save) and Freeze (#SLATE#Mindpower vs. Physical#LAST#).
 
 Each point in Ice Wyrm talents lets you pierce through ice blocks, reducing the damage they absorb by a total of %d%%.]]):format(resist, t.getAllRes(self, t), damDesc(self, DamageType.COLD, retal), self:attr("iceblock_pierce") or 0)
    end,
@@ -103,7 +103,7 @@ newTalent{
       local block = function(_, lx, ly)
 	 return game.level.map:checkAllEntities(lx, ly, "block_move")
       end
-      return {type="wall", range=self:getTalentRange(t), halflength=halflength, talent=t, halfmax_spots=halflength+1, block_radius=block} 
+      return {type="wall", range=self:getTalentRange(t), halflength=halflength, talent=t, halfmax_spots=halflength+1, nolock=true, block_radius=block} 
    end,
    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 4, 8)) end,
    getStats = function(self, t) return self:getWil()*0.5 end,
@@ -186,9 +186,7 @@ newTalent{
    info = function(self, t)
       local icerad = t.getIceRadius(self, t)
       local icedam = t.getIceDamage(self, t)
-      local desc = ([[Summons an icy barrier of %d length for %d turns. Each empty space will be filled with an Ice Wall, durable but immobile summon.
-
-		Ice walls emit freezing cold, dealing %0.2f damage to enemies within radius %d with a 25%% chance to freeze.
+      local desc = ([[Summons an icy barrier of %d length for %d turns. Each empty space will be filled with a destructible but durable Ice Wall. Ice walls emit freezing cold, dealing %0.1f damage to enemies within radius %d with a 25%% chance to freeze.
 
 Mindpower: improves damage
 Willpower: improves ice wall life
@@ -210,7 +208,7 @@ newTalent{
    require = gifts_req_high2,
    mode = "passive",
    points = 5,
-   getArmor = function(self, t) return self:combatTalentMindDamage(t, 2, 40) end,
+   getArmor = function(self, t) return self:combatTalentMindDamage(t, 2, 50) end,
    getDamage = function(self, t) return self:combatTalentMindDamage(t, 50, 200) end,
    passives = function(self, t, p)
       self:talentTemporaryValue(p, "iceblock_pierce", math.floor(4*self:getTalentLevel(t)))
@@ -236,7 +234,7 @@ newTalent{
    end,
    
    info = function(self, t)
-      return ([[Coat yourself in plates of ice, providing %d damage reduction against all attacks.  When you take damage greater than eight times this amount in a single hit, your armor shatters, dealing %d ice damage to the attacker but reducing your damage reduction for 5 turns.
+      return ([[Coat yourself in plates of ice, providing %d damage reduction against all attacks.  When you take damage greater than eight times this amount in a single hit, your ice plating cracks, reducing the protection it provides by 5 for 5 turns. If it was not already cracked, this deals %d ice damage to the attacker.
 
 Mindpower: Improves damage reduction and armor]]):format(t.getArmor(self, t), damDesc(self, DamageType.COLD, t.getDamage(self, t)))
    end,
@@ -255,14 +253,13 @@ newTalent{
    passives = function(self, t, p)
       self:talentTemporaryValue(p, "iceblock_pierce", math.floor(4*self:getTalentLevel(t)))
    end,
-   getReduction = function(self, t) return self:combatTalentMindDamage(t, .30, .60) end,
+   getReduction = function(self, t) return self:combatTalentMindDamage(t, .20, .60) end,
    getDamage = function(self, t) return self:combatTalentMindDamage(t, 40, 400) end,
    getAbsorb = function(self, t) return self:combatTalentMindDamage(t, 0.66, 1.50) end,
-
    action = function(self, t)
       self:setEffect(self.EFF_REK_WYRMIC_AVALANCHE, 3,
 		     {
-			defend=t.getReduction(self, t),
+			defend = t.getReduction(self, t),
 			conversion = t.getAbsorb(self, t),
 			stored = t.getDamage(self, t)
 		     }

@@ -242,7 +242,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      local threshold = t.getLifePercent(self, t)
+      local threshold = t.getLifePercent(self, t) * 100
       local turn = t.getTurn(self, t)
       return ([[The Fire Wyrm is driven into a frenzy by violence and danger.
 		At the start of each turn in which you have lost at least %d%% of your maximum life since your last turn, you will gain %d%% of a turn and Flickering Embers will recharge immediately.]]):
