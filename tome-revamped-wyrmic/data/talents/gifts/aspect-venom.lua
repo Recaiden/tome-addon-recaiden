@@ -12,9 +12,9 @@ newTalent{
       level = function(level) return 0 + (level-1) * 3 end,
       special =
 	 {
-	    desc="One level in Prismatic Blood per additional aspect",
-	    fct=function(self) 
-	       return self:getTalentLevelRaw(self.T_REK_WYRMIC_MULTICOLOR_BLOOD) > numAspects(self) or self:knowTalent(self.T_REK_WYRMIC_VENM)
+         desc="You can learn a new aspect every 6 levels",
+         fct=function(self)
+            return self:knowTalent(self.T_REK_WYRMIC_VENM) or self.level >= numAspectsKnown(self)*6
 	    end
 	 },
    },
@@ -64,7 +64,7 @@ newTalent{
    callbackOnMeleeAttack = function(self, t, target, hitted, crit, weapon, damtype, mult, dam)
       local chance = t.getChance(self,t)
       if self:hasDualWeapon() then
-	 chance = chance * 0.5
+	 chance = chance * 0.75
       end
       if target and hitted and rng.percent(chance) then
 	 t.ApplyPoisons(self, t, target, weapon)
@@ -91,16 +91,14 @@ newTalent{
    info = function(self, t)
       local resist = t.getResists(self, t)
       local dam = t.getDamageStinger(self, t)
-      return ([[You can take on the power of Venom Wyrms using Prismatic Blood.  You will gain %d%% nature resistance. 
+      return ([[You can take on the power of Venom Wyrms, giving you %d%% nature resistance. 
 
-While sustained, you coat your weapons and ammo in venom, giving them a %d%% chance to expose enemies to a deadly poison (%d damage per turn for %d turns (#SLATE#Accuracy vs. Physical#LAST#), stacking up to 5 times).  The chance is reduced to 75%% if you have a shield, 50%% if you are wielding 2 weapons.
-
-Venom is Nature damage that can inflict Crippling Poison (#SLATE#Mindpower vs. Physical#LAST#).  
-Venom deals 25%% bonus damage. 
-60%% of Venom damage is applied as a poison over the next three turns.
-
+While sustained, you coat your weapons and ammo in venom, giving them a %d%% chance to expose enemies to a deadly poison (%d damage per turn for %d turns (#SLATE#Accuracy vs. Physical#LAST#), stacking up to 5 times).  The chance is reduced by 25%% if you are wielding 2 weapons.
 Cunning: Improves on-hit poison damage
-]]):format(resist, t.getChance(self,t), damDesc(self, DamageType.NATURE, dam), t.getDuration(self, t))
+
+Venom is Nature damage that can inflict Crippling Poison (#SLATE#Mindpower vs. Physical#LAST#).
+Venom deals 25%% bonus damage. 
+60%% of Venom damage is applied as a poison over the next three turns.]]):format(resist, t.getChance(self,t), damDesc(self, DamageType.NATURE, dam), t.getDuration(self, t))
    end,
 }
 
@@ -112,28 +110,23 @@ newTalent{
       level = function(level) return 10 + (level-1) end,
       special =
 	 {
-	    desc="Higher Aspect Abilities unlocked",
+	    desc="Advanced aspect talents learnable",
 	    fct=function(self) 
-	       return self:knowTalent(self.T_REK_WYRMIC_FIRE_HEAL)
-		  or self:knowTalent(self.T_REK_WYRMIC_COLD_WALL)
-		  or self:knowTalent(self.T_REK_WYRMIC_ELEC_SHOCK)
-		  or self:knowTalent(self.T_REK_WYRMIC_SAND_BURROW)
-		  or self:knowTalent(self.T_REK_WYRMIC_ACID_AURA)
-		  or self:knowTalent(self.T_REK_WYRMIC_VENM_PIN)
+	       return self:knowTalent(self.T_REK_WYRMIC_VENM_PIN)
 		  or self.unused_talents_types >= 1
 	    end
 	 },
    },
    points = 5,
    equilibrium = 15,
-   cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 40, 15)) end,
+   cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 30, 14)) end,
    range = 0,
    requires_target = true,
    tactical = { DISABLE = 2 },
    getIntensify = function(self, t) return self:combatTalentMindDamage(t, 0.5, 1.8) end,
    getDur = function(self, t) return math.ceil(self:combatTalentScale(t, 3, 5)) end,
-   on_learn = function(self, t) onLearnHigherAbility(self) end,
-   on_unlearn = function(self, t) onUnLearnHigherAbility(self) end,
+   on_learn = function(self, t) onLearnHigherAbility(self, t) end,
+   on_unlearn = function(self, t) onUnLearnHigherAbility(self, t) end,
    action = function(self, t)
       local tg = {type="ball", nolock=true, range=0, radius = 5, friendlyfire=false}     
       self:project(tg, self.x, self.y,
@@ -160,17 +153,12 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      local desc = ([[Trigger a slow-acting paralytic within your venom.  Poisoned foes within range 5 are pinned for %d turns (no save) and have the remaining damage of their poisons increased by %d%%.
+      local notice = (self:getTalentLevelRaw(t) == 1000 or (self:getTalentLevelRaw(t) < 2)) and [[
 
-Mindpower: Improves poison intensification
-]]):format(t.getDur(self, t), t.getIntensify(self, t)*100)
-      if not hasHigherAbility(self) then
-	 return desc..[[
 
-#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
-      else
-	 return desc
-      end 
+#YELLOW#Learning the advanced venom talents costs a category point.#LAST#]] or ""
+      return ([[Trigger a slow-acting paralytic within your venom.  Poisoned foes within range 5 are pinned for %d turns (no save) and have the remaining damage of their poisons increased by %d%%.
+Mindpower: Improves poison intensification%s]]):format(t.getDur(self, t), t.getIntensify(self, t)*100, notice)
    end,
 }
 
@@ -200,7 +188,7 @@ newTalent{
 When the remaining damage of their poison is at least %d %% of their remaining health, they suffer toxic shock.
 All enemies have their resistance to damage reduced by 20%%.
 Unique enemies and weaker are also stunned for %d turns.
-Normal and weaker enemies may also be instantly slain.]]):format(threshold, dur)
+Normal enemies and critters may also be instantly slain.]]):format(threshold, dur)
    end,
 }
 
@@ -214,7 +202,7 @@ newTalent{
       return self:combatTalentScale(t, 25, 50)
    end,
    info = function(self, t)
-      return ([[Whenever you would apply your Venom, you add a destabilizing agent that makes the target vulnerable to poison. This reduces nature damage resistance by 10%% and poison immunity by %d%%.]]):
+      return ([[Whenever you try to apply your Venom, you add a destabilizing agent that makes the target vulnerable to poison. This reduces nature damage resistance by 10%% and poison immunity by %d%%.]]):
 	 format(t.getReduction(self, t))
    end,
 }

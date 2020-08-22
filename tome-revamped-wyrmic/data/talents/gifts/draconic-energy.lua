@@ -67,14 +67,12 @@ newTalent{
 	    damtype = source.damtype
 	    nameStatus = source.nameStatus
 	 end
-	 return ([[Launch forth a glob of elemental matter at your enemy, dealing damage and applying detrimental effects based on your primary aspect.
-		The target will take %0.2f %s damage.
-		Enemies struck have a 25%% chance to be %s for three turns.
+	 return ([[Breathe forth a glob of elemental energy at your enemy, dealing damage and applying detrimental effects based on your primary aspect.  The target will take %0.1f %s damage and have a 25%% chance to be %s for three turns.
 
-Passively increases Mindpower by %d
 Mindpower: improves damage
 At Talent Level 5: becomes a piercing line of energy.
-]]):format(damDesc(self, damtype, damage), name, nameStatus, power)
+
+Passively increases Mindpower by %d]]):format(damDesc(self, damtype, damage), name, nameStatus, power)
       end,
 }
 
@@ -96,13 +94,6 @@ newTalent{
    tactical = { DEFEND = 1, ATTACK = { PHYSICAL = 1, COLD = 1, FIRE = 1, LIGHTNING = 1, ACID = 1 } },
    requires_target = true,
    action = function(self, t)
-      -- If electrocuting
-      local static_tg = self:getTalentTarget(t)
-      --self:rekWyrmicElectrocute(static_tg)
-      -- if self:knowTalent(self.T_REK_WYRMIC_ELEC) then
-      -- 	 game.level.map:particleEmitter(self.x, self.y, self:getTalentRadius(t), "shout", {additive=true, life=10, size=3, distorion_factor=0.5, radius=self:getTalentRadius(t), nb_circles=8, rm=0, rM=0, gm=0, gM=0, bm=0.7, bM=0.9, am=0.4, aM=0.6})
-      -- end
-
       -- Main crash
       local damtype = DamageType.REK_WYRMIC_NULL
       local vistype = DamageType.PHYSICAL
@@ -123,7 +114,6 @@ newTalent{
       local nameBall = "rek_wyrmic_"..DamageType:get(vistype).name.."_ball"
       game.level.map:particleEmitter(self.x, self.y, self:getTalentRadius(t), nameBall, {tx=self.x, ty=self.y, radius=self:getTalentRadius(t)})
       game:playSoundNear(self, "talents/tidalwave")
-      --game.level.map:particleEmitter(self.x, self.y, self:getTalentRadius(t), "shout", {additive=true, life=10, size=3, distorion_factor=0.5, radius=self:getTalentRadius(t), nb_circles=8, rm=0.8, rM=1, gm=0, gM=0, bm=0.1, bM=0.2, am=0.4, aM=0.6})
       return true
    end,
    info = function(self, t)
@@ -138,7 +128,8 @@ newTalent{
 	 nameStatus = source.nameStatus
       end
       return ([[You let out a wave of primal energy in a radius of %d.
-		Your foes take %0.2f %s damage and will be %s for 3 turns.
+		Your foes take %0.1f %s damage and will be %s for 3 turns.
+
 Mindpower: improves damage
 ]]):format(radius, damDesc(self, damtpye, damage), name, nameStatus)
    end,
@@ -183,8 +174,6 @@ newTalent{
       end
 
       local nameStorm = "rek_wyrmic_"..DamageType:get(vistype).name.."_storm"
-
-
       
       game.level.map:addEffect(self,
 			       x, y, duration,
@@ -216,10 +205,10 @@ newTalent{
 	 damtype = source.damtype
 	 nameStatus = source.nameStatus
       end
-      return ([[Spit a swirling cloud of elemental energy, doing %0.2f %s damage in a radius of %d each turn for %d turns.  Enemies within have a 15%% chance each turn to be %s.
+      return ([[Exhale a swirling cloud of elemental energy  based on your primary aspect that fills a space of radius %d and lasts for %d turns. Each turn, enemies in the cloud take %0.1f %s damage with a 15%% chance to be %s.
 Mindpower: improves damage
 Mind Crit: affects duration
-]]):format(damDesc(self, damtpye, dam), name, radius, duration, nameStatus)
+]]):format(radius, duration, damDesc(self, damtpye, dam), name, nameStatus)
    end,
 }
 
@@ -243,8 +232,9 @@ newTalent{
       return {type="cone", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, talent=t}
    end,
    getDamage = function(self, t)
-      return math.max(self:combatTalentStatDamage(t, "str", 100, 620),
-		      self:combatTalentStatDamage(t, "wil", 100, 620) )
+      return self:combatTalentStatDamage(t, "str", 50, 320) + self:combatTalentMindDamage(t, 50, 320)
+      --return math.max(self:combatTalentStatDamage(t, "str", 100, 620),
+	--	      self:combatTalentStatDamage(t, "wil", 100, 620) )
    end,
    action = function(self, t)
       local damtype = DamageType.REK_WYRMIC_NULL
@@ -326,8 +316,9 @@ newTalent{
 	 nameStatus = source.nameStatus
       end
       return ([[You gain the breath of a dragon, unleashing destructive energy in a cone of radius %d.
-		Your foes take %0.2f %s damage and will be %s for 3 turns.
-Strength or Willpower: Improves damage
+		Your foes take %0.1f %s damage and will be %s for 3 turns.
+Strength: Improves damage
+Mindpower: Improves damage
 Talent Level: Improves Radius and Cooldown
 ]]):format(radius, damDesc(self, damtpye, damage), name, nameStatus)
    end, 

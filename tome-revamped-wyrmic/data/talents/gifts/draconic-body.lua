@@ -52,7 +52,7 @@ Passively increases Movement Speed by %d%%
 
 newTalent{
    name = "Drakeheart", short_name = "REK_WYRMIC_BODY_HEART",
-   type = {"wild-gift/draconic-body", 2},
+   type = {"wild-gift/other", 1},
    require = gifts_req2,
    mode = "passive",
    points = 5,
@@ -71,6 +71,36 @@ newTalent{
       return ([[Your body is as strong and resilient as the great wyrms.  Your healing factor is increased by %d%% (at 100%% health) to %d%% (at 0 health), growing stronger the lower your health is as you desperately cling to life.
 
 Mindpower: improves healing factor.]]):format(t.getHealing(self, t) / 2, t.getHealing(self, t))
+   end,
+         }
+
+newTalent{
+   name = "Scaled Skin", short_name = "REK_WYRMIC_COMBAT_SCALES",
+   type = {"wild-gift/draconic-body", 2},
+   require = techs_req2,
+   mode = "passive",
+   points = 5,
+   getArmor = function(self, t) return self:combatTalentMindDamage(t, 5, 25) end,
+   getArmorHardiness = function(self, t) return self:combatTalentLimit(t, 30, 10, 22) end,
+   getLightArmorHardiness = function(self, t) return 15 end,
+   passives = function(self, t)
+      self:talentTemporaryValue("combat_armor", t.getArmor(self, t))
+      local hardi = 0
+      if not self:hasHeavyArmor() then
+	 hardi = hardi + t.getLightArmorHardiness(self, t)
+      end
+      self:talentTemporaryValue("combat_armor_hardiness", hardi)
+   end,
+   updateHardiness = function(self, t)  self:updateTalentPassives(t.id)  end,
+   callbackOnWear = function(self, t, o, bypass_set) t.updateHardiness(self, t) end,
+   callbackOnTakeoff = function(self, t, o, bypass_set) t.updateHardiness(self, t) end,  
+   
+   info = function(self, t)
+      return ([[Your skin forms a coat of scales and your flesh toughens, increasing your Armour by %d.
+If you are wearing leather armor or lighter, your armor hardiness is increased by +%d%%.
+
+Mindpower: improves Armour bonus.
+]]):format(t.getArmorHardiness(self, t), t.getArmor(self, t), t.getLightArmorHardiness(self, t))
    end,
 }
 
@@ -161,7 +191,7 @@ newTalent{
    cooldown = 10,
    sustain_equilibrium = 8,
    tactical = { ATTACK = { COLD = 1 }, DEFEND = 2 },
-   getPowerBonus = function(self, t) return self:combatTalentMindDamage(t, 3, 80) end,
+   getPowerBonus = function(self, t) return self:combatTalentMindDamage(t, 5, 50) end,
 
    callbackOnMeleeAttack = function(self, t, target, hitted, crit, weapon, damtype, mult, dam)
       if hitted then
@@ -181,7 +211,6 @@ newTalent{
    end,
    info = function(self, t)
       return ([[A dragon's twisting tail helps them manipulate the flow of a fight.  Whenever you deal damage in melee, you attempt to throw an enemy Off-Balance, using %d additional physical power.
-
 Mindpower: improves the power bonus.]]):format(t.getPowerBonus(self, t))
    end,
 }

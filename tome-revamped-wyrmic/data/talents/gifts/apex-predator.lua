@@ -39,9 +39,13 @@ newTalent{
    mode = "passive",
    no_npc_use = true,
    no_unlearn_last = true,
+   getGemBonus = function(self, t)
+      if self:getTalentLevel(t) <= 5 then return 0 end
+      return self:combatScale(self:getTalentLevel(t), 0.01, 5, 0.3, 10)
+   end,
    on_learn = function(self, t)
       -- Reinitializing body will smash any existing gems in the slots, so unequip
-      local gem = self:getInven("REK_WYRMIC_GEM") and self:getInven("REK_WYRMIC_GEM")[1] or false 
+      local gem = self:getInven("REK_WYRMIC_GEM") or false 
       if gem and self:getTalentLevel(t) < 6 then
 	 return true
       end
@@ -54,16 +58,16 @@ newTalent{
 	 self.body = { REK_WYRMIC_GEM = 1 }
       end
       
-      if self:getTalentLevel(t) >= 6 then
-	 if gem then
-	    self:doTakeoff("REK_WYRMIC_GEM", 1, gem, false, self)
-	 end
-	 if self.body then
-	    self.body.REK_WYRMIC_GEM = 2
-	 else
-	    self.body = { REK_WYRMIC_GEM = 2 }
-	 end
-      end
+      -- if self:getTalentLevel(t) >= 6 then
+      --    if gem then
+      --       self:doTakeoff("REK_WYRMIC_GEM", 1, gem, false, self)
+      --    end
+      --    if self.body then
+      --       self.body.REK_WYRMIC_GEM = 2
+      --    else
+      --       self.body = { REK_WYRMIC_GEM = 2 }
+      --    end
+      -- end
       self:initBody()
    end,
    
@@ -102,8 +106,10 @@ newTalent{
       return ([[As the dragons plate their underbellies with coats of crystal, so do you imbue yourself with the power of gems.
 You can equip a gem (up to tier %d), activating its powers.
 
+Talent levels higher than 5 increase the stats of equipped gems, currently %d%%.
+
 At talent level 6, you can equip a second gem.
-Warning: Ranking up to talent level 6 will unequip any currently equipped gems]]):format(math.floor(math.min(5,self:getTalentLevel(t))))
+Warning: Ranking up to talent level 6 will unequip any currently equipped gems]]):format(math.floor(math.min(5,self:getTalentLevel(t))), t.getGemBonus(self, t)*100)
    end,
 }
 

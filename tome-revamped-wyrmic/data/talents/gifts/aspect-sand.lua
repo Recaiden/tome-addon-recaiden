@@ -12,9 +12,9 @@ newTalent{
       level = function(level) return 0 + (level-1) * 3 end,
       special =
 	 {
-	    desc="One level in Prismatic Blood per additional aspect",
-	    fct=function(self) 
-	       return self:getTalentLevelRaw(self.T_REK_WYRMIC_MULTICOLOR_BLOOD) > numAspects(self) or self:knowTalent(self.T_REK_WYRMIC_SAND)
+         desc="You can learn a new aspect every 6 levels",
+         fct=function(self)
+            return self:knowTalent(self.T_REK_WYRMIC_SAND) or self.level >= numAspectsKnown(self)*6
 	    end
 	 },
    },
@@ -44,19 +44,12 @@ newTalent{
    end,
    info = function(self, t)
       local resist = t.getResists(self, t) / 2
-      return ([[You can take on the power of Sand Wyrms using Prismatic Blood.  You will gain %d%% physical resistance. 
-
-This talent passively improves your Draconic Combat talents, causing them to reduce enemy armor by %d for 3 turns (#SLATE#Physical vs. Physical#LAST#).
+      return ([[You can take on the power of Sand Wyrms, giving you %d%% physical resistance. When you attack with Draconic Combat or Sand Wyrm talents, you will reduce the target's armor by %d for 3 turns (#SLATE#Physical vs. Physical#LAST#).
 
 Sand Damage can inflict Blind (#SLATE#Mindpower vs. Physical#LAST#).
 ]]):format(resist, t.getPenetration(self, t))
    end,
 }
-
---{
---	stat = { wil=function(level) return 22 + (level-1) * 2 end },
---	level = function(level) return 10 + (level-1)  end,
---}
 
 newTalent{
    name = "Burrow", short_name = "REK_WYRMIC_SAND_BURROW",
@@ -66,14 +59,9 @@ newTalent{
       level = function(level) return 10 + (level-1) end,
       special =
 	 {
-	    desc="Higher Aspect Abilities unlocked",
+	    desc="Advanced aspect talents learnable",
 	    fct=function(self) 
-	       return self:knowTalent(self.T_REK_WYRMIC_FIRE_HEAL)
-		  or self:knowTalent(self.T_REK_WYRMIC_COLD_WALL)
-		  or self:knowTalent(self.T_REK_WYRMIC_ELEC_SHOCK)
-		  or self:knowTalent(self.T_REK_WYRMIC_SAND_BURROW)
-		  or self:knowTalent(self.T_REK_WYRMIC_ACID_AURA)
-		  or self:knowTalent(self.T_REK_WYRMIC_VENM_PIN)
+	       return self:knowTalent(self.T_REK_WYRMIC_SAND_BURROW)
 		  or self.unused_talents_types >= 1
 	    end
 	 },
@@ -81,14 +69,10 @@ newTalent{
    points = 5,
    equilibrium = 15,
    cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 40, 15)) end,
-   range = 1,
-   requires_target = true,
    no_energy = true,
    tactical = { CLOSEIN = 0.5, ESCAPE = 0.5 },
-   
-   on_learn = function(self, t) onLearnHigherAbility(self) end,
-   on_unlearn = function(self, t) onUnLearnHigherAbility(self) end,
-   
+   on_learn = function(self, t) onLearnHigherAbility(self, t) end,
+   on_unlearn = function(self, t) onUnLearnHigherAbility(self, t) end,
    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 9, 0.5, 0, 2)) end,
    action = function(self, t)
       self:setEffect(self.EFF_BURROW, t.getDuration(self, t), {power=0})
@@ -96,15 +80,11 @@ newTalent{
    end,
    info = function(self, t)
       local duration = t.getDuration(self, t)
-      local desc = ([[You break through the earth as easily as a sandworm, allowing you to burrow through earthen walls for %d turns.
-]]):format(duration)
-      if not hasHigherAbility(self) then
-	 return desc..[[
+      local notice = (self:getTalentLevelRaw(t) == 1000 or (self:getTalentLevelRaw(t) < 2)) and [[
 
-#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
-      else
-	 return desc
-      end 
+
+#YELLOW#Learning the advanced sand talents costs a category point.#LAST#]] or ""
+      return ([[You break through the earth as easily as a sandworm, allowing you to burrow through earthen walls for %d turns.%s]]):format(duration, notice)
    end,
 }
 
@@ -161,6 +141,7 @@ newTalent{
    requires_target = true,
    is_melee = true,
    is_teleport = true,
+   speed = "weapon",
    target = function(self, t) return {type="hit", pass_terrain = true, range=self:getTalentRange(t)} end,
    getDamage = function(self, t)
       return self:callTalent(self.T_REK_WYRMIC_SAND_TREMOR, "getDamage")
@@ -178,14 +159,11 @@ newTalent{
       -- Attack ?
       if target and target.x and core.fov.distance(self.x, self.y, target.x, target.y) == 1 then
 	 local multiplier = t.getDamage(self, t)
-         --local shield, shield_combat = self:hasShield()
-         --local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
-         --if not shield then
          self:attackTarget(target, nil, multiplier, true)
-         --else
-         --   self:attackTargetWith(target, weapon, nil, damagemultiplier)
-         --   self:attackTargetWith(target, shield_combat, nil, multiplier)
-         --end
+      end
+      -- Slash armor if in physical aspect
+      if self:knowTalent(self.T_REK_WYRMIC_SAND) then
+	 target:setEffect(target.EFF_SUNDER_ARMOUR, 3, {power=self:callTalent(self.T_REK_WYRMIC_SAND, "getPenetration"), apply_power=self:combatPhysicalpower()})
       end
 
       if self:hasEffect(self.EFF_REK_WYRMIC_TREMORSENSE) then
@@ -210,6 +188,7 @@ newTalent{
    message = "@Source@ shakes the ground!",
    equilibrium = 10,
    cooldown = 20,
+   speed = "weapon",
    tactical = { ATTACKAREA = { PHYSICAL = 2 }, DISABLE = { knockback = 2 } },
    range = 1,
    radius = function(self, t) return math.floor(self:combatTalentScale(t, 2.5, 4.5)) end,
@@ -228,6 +207,10 @@ newTalent{
 		      local target = game.level.map(px, py, Map.ACTOR)
 		      if target and target ~= self then
 			 local hit = self:attackTarget(target, DamageType.PHYSKNOCKBACK, self:combatTalentWeaponDamage(t, 1.3, 2.1), true)
+                         -- Slash armor if in physical aspect
+                         if self:knowTalent(self.T_REK_WYRMIC_SAND) then
+                            target:setEffect(target.EFF_SUNDER_ARMOUR, 3, {power=self:callTalent(self.T_REK_WYRMIC_SAND, "getPenetration"), apply_power=self:combatPhysicalpower()})
+                         end
 		      end
       end)
 

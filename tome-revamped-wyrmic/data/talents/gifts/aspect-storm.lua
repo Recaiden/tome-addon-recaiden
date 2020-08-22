@@ -12,9 +12,9 @@ newTalent{
       level = function(level) return 0 + (level-1) * 3 end,
       special =
 	 {
-	    desc="One level in Prismatic Blood per additional aspect",
-	    fct=function(self) 
-	       return self:getTalentLevelRaw(self.T_REK_WYRMIC_MULTICOLOR_BLOOD) > numAspects(self) or self:knowTalent(self.T_REK_WYRMIC_ELEC)
+         desc="You can learn a new aspect every 6 levels",
+         fct=function(self)
+            return self:knowTalent(self.T_REK_WYRMIC_ELEC) or self.level >= numAspectsKnown(self)*6
 	    end
 	 },
    },
@@ -48,11 +48,13 @@ newTalent{
    info = function(self, t)
       local resist = t.getResists(self, t)
       local rad = self:getTalentRadius(t)
-      return ([[You can take on the power of Storm Wyrms using Prismatic Blood.  You will gain %d%% lightning resistance.
+      return ([[You can take on the power of Storm Wyrms, giving you %d%% lightning resistance.
 
-This talent passively causes your primary element to Electrocute enemies (#SLATE#Mindpower vs. Physical#LAST#) for %d%% of their current life (2/3 as much vs. Elites and Rares, 2/4 as much vs. Uniques or Bosses, and 2/5 as much vs. Elite Bosses and above).  Enemies can only be electrocuted once every 20 turns.
+Dealing damage with your primary element will Electrocute enemies (#SLATE#Mindpower vs. Physical#LAST#) for %d%% of their current life (2/3 as much vs. Elites and Rares, 2/4 as much vs. Uniques or Bosses, and 2/5 as much vs. Elite Bosses and above).  Enemies can only be electrocuted once every 20 turns.
 
-Storm damage will fluctuate between 60%% and 140%% of the listed damage and can inflict Daze (#SLATE#Mindpower vs. Physical#LAST#).  If the target is already dazed, the chance to reapply daze is greatly increased.
+Storm damage can inflict Daze (#SLATE#Mindpower vs. Physical#LAST#).
+If the target is already dazed, the chance to reapply daze is greatly increased.
+Storm damage will fluctuate between 60%% and 140%% of the listed damage.
 ]]):format(resist, t.getPercent(self, t))
    end,
 }
@@ -65,21 +67,16 @@ newTalent{
       level = function(level) return 10 + (level-1) end,
       special =
 	 {
-	    desc="Higher Aspect Abilities unlocked",
+	    desc="Advanced aspect talents learnable",
 	    fct=function(self) 
-	       return self:knowTalent(self.T_REK_WYRMIC_FIRE_HEAL)
-		  or self:knowTalent(self.T_REK_WYRMIC_COLD_WALL)
-		  or self:knowTalent(self.T_REK_WYRMIC_ELEC_SHOCK)
-		  or self:knowTalent(self.T_REK_WYRMIC_SAND_BURROW)
-		  or self:knowTalent(self.T_REK_WYRMIC_ACID_AURA)
-		  or self:knowTalent(self.T_REK_WYRMIC_VENM_PIN)
+	       return self:knowTalent(self.T_REK_WYRMIC_ELEC_SHOCK)
 		  or self.unused_talents_types >= 1
 	    end
 	 },
    },
    points = 5,
    equilibrium = 10,
-   cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 40, 15)) end,
+   cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 5, 20, 8)) end,
    range = 0,
    requires_target = true,
    direct_hit = true,
@@ -89,8 +86,8 @@ newTalent{
    target = function(self, t)
       return {type="cone", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, talent=t}
    end,
-   on_learn = function(self, t) onLearnHigherAbility(self) end,
-   on_unlearn = function(self, t) onUnLearnHigherAbility(self) end,
+   on_learn = function(self, t) onLearnHigherAbility(self, t) end,
+   on_unlearn = function(self, t) onUnLearnHigherAbility(self, t) end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)
       local x, y = self:getTarget(tg)
@@ -106,15 +103,11 @@ newTalent{
    
    info = function(self, t)
       local rad = self:getTalentRadius(t)
-      local desc =  ([[Produce a disorienting electrical pulse, shocking(halved daze/stun/pin resist) your foes (#SLATE#Mindpower vs. Spell#LAST#) within a radius %d cone.
-]]):format(rad)
-      if not hasHigherAbility(self) then
-	 return desc..[[
+      local notice = (self:getTalentLevelRaw(t) == 1000 or (self:getTalentLevelRaw(t) < 2)) and [[
 
-#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
-      else
-	 return desc
-      end 
+
+#YELLOW#Learning the advanced storm talents costs a category point.#LAST#]] or ""
+      return ([[Produce a disorienting electrical pulse, shocking(halved daze/stun/pin resist) your foes (#SLATE#Mindpower vs. Spell#LAST#) within a radius %d cone for 3 turns.%s]]):format(rad, notice)
    end,
 }
 
@@ -136,8 +129,8 @@ newTalent{
    info = function(self, t)
       local diminish = t.getPercent(self, t)
       local targets = t.getNumChain(self, t)
-      return ([[Your wyrmic lightning attacks leap between enemies with range 5. Each jump, the lightning does %d%% of the previous damage.  It can leap to up to %d enemies and never strikes the same enemy twice.  Secondary targets will not be dazed.
-]]):format(diminish, targets)
+      return ([[Your wyrmic lightning attacks leap between enemies with range 5. It can leap to up to %d enemies and never strikes the same enemy twice.  The second target takes %d%% of the original damage.  Subsequent targets take 75%% as much damage as the previous target.   Secondary targets will not be dazed.
+]]):format(targets, diminish)
    end,
 }
 
@@ -219,8 +212,8 @@ newTalent{
    info = function(self, t)
       local rad = t.getRadius(self, t)
       return ([[Summons a tornado that moves slowly toward its target, following it if it changes position.
-Each time it moves every foe within radius 2 takes %0.2f lightning damage and is knocked back 2 spaces.
-		When it reaches its target, it explodes in a radius of %d for %0.2f lightning damage. All affected creatures will be knocked back. The blast will ignore the talent user.
+Each time it moves every foe within radius 2 takes %0.1f storm damage and is knocked back 2 spaces.
+		When it reaches its target, it explodes in a radius of %d for %0.1f storm damage. All affected creatures will be knocked back. The blast will ignore the talent user.
 		The tornado will last for %d turns, or until it reaches its target.
 		Damage will increase with your Mindpower, and the stun chance is based on your Mindpower vs target Physical Save.]]):format(
 	    damDesc(self, DamageType.LIGHTNING, t.getMoveDamage(self, t)),

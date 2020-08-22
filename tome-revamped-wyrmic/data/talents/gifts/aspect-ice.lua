@@ -12,9 +12,9 @@ newTalent{
       level = function(level) return 0 + (level-1) * 3 end,
       special =
 	 {
-	    desc="One level in Prismatic Blood per additional aspect",
-	    fct=function(self) 
-	       return self:getTalentLevelRaw(self.T_REK_WYRMIC_MULTICOLOR_BLOOD) > numAspects(self) or self:knowTalent(self.T_REK_WYRMIC_COLD)
+         desc="You can learn a new aspect every 6 levels",
+         fct=function(self)
+            return self:knowTalent(self.T_REK_WYRMIC_COLD) or self.level >= numAspectsKnown(self)*6
 	    end
 	 },
    },
@@ -35,16 +35,23 @@ newTalent{
    
    mode = "sustained",
    cooldown = 8,
-   sustain_equilibrium = 0,
+   sustain_equilibrium = 5,
    -- Get resists for use in Prismatic Blood
-   getResists = getAspectResists,
-   -- Scaly Skin setup
+   getResists = getAspectResists, 
    getDamageOnMeleeHit = function(self, t) return 10 +  self:combatTalentMindDamage(t, 10, 30) end,
    getAllRes = function(self, t) return self:combatTalentScale(t, 4, 15, 0.75, 0, 0, true) end,
+   getIcepen = function(self, t)
+      local pen = self:combatScale(
+         self:getTalentLevel(t) + self:getTalentLevel(self.T_REK_WYRMIC_COLD_WALL) + self:getTalentLevel(self.T_REK_WYRMIC_COLD_SHIELD) + self:getTalentLevel(self.T_REK_WYRMIC_COLD_COUNTER),
+         0, 0, 100, 20)
+      return math.min(100, pen)
+   end,
    passives = function(self, t, p)
       local resist = t.getResists(self, t)
       self:talentTemporaryValue(p, "resists", {[DamageType.COLD] = resist, all = t.getAllRes(self, t)})
-      self:talentTemporaryValue(p, "iceblock_pierce", math.floor(4*self:getTalentLevel(t)))
+      
+      --self:talentTemporaryValue(p, "iceblock_pierce", math.floor(4*self:getTalentLevel(t)))
+      self:talentTemporaryValue(p, "iceblock_pierce", t.getIcepen(self, t))
    end,
    activate = function(self, t )
       --Ice Aspect
@@ -61,13 +68,13 @@ newTalent{
    info = function(self, t)
       local resist = t.getResists(self, t)
       local retal = t.getDamageOnMeleeHit(self, t)
-      return ([[You can take on the power of Ice Wyrms using Prismatic Blood.  You gain %d%% cold resistance. 
-
-While sustained, this talent protects you with a layer of cold, increasing your resistance to damge by %d%% and causing you to deal %0.2f cold damage as retaliation to any enemies that physically strike you.
+      local icepen = math.min(100, t.getIcepen(self, t))
+      return ([[You can take on the power of Ice Wyrms, giving you %d%% cold resistance. 
+While sustained, this talent protects you with a layer of cold, increasing your resistance to damge by %d%% and causing you to deal %0.1f cold damage as retaliation to any enemies that physically strike you.
 
 Ice is Cold damage that can inflict Slow (20%% global, no save) and Freeze (#SLATE#Mindpower vs. Physical#LAST#).
 
-Each point in Ice Wyrm talents lets you pierce through ice blocks, reducing the damage they absorb by a total of %d%%.]]):format(resist, t.getAllRes(self, t), damDesc(self, DamageType.COLD, retal), self:attr("iceblock_pierce") or 0)
+Each point in Ice Wyrm talents lets you pierce through ice blocks, reducing the damage they absorb by %d%%.]]):format(resist, t.getAllRes(self, t), damDesc(self, DamageType.COLD, retal), icepen)
    end,
 }
 
@@ -79,14 +86,9 @@ newTalent{
       level = function(level) return 10 + (level-1) end,
       special =
 	 {
-	    desc="Higher Aspect Abilities unlocked",
+	    desc="Advanced aspect talents learnable",
 	    fct=function(self) 
-	       return self:knowTalent(self.T_REK_WYRMIC_FIRE_HEAL)
-		  or self:knowTalent(self.T_REK_WYRMIC_COLD_WALL)
-		  or self:knowTalent(self.T_REK_WYRMIC_ELEC_SHOCK)
-		  or self:knowTalent(self.T_REK_WYRMIC_SAND_BURROW)
-		  or self:knowTalent(self.T_REK_WYRMIC_ACID_AURA)
-		  or self:knowTalent(self.T_REK_WYRMIC_VENM_PIN)
+	       return self:knowTalent(self.T_REK_WYRMIC_COLD_WALL)
 		  or self.unused_talents_types >= 1
 	    end
 	 },
@@ -114,8 +116,8 @@ newTalent{
    passives = function(self, t, p)
       self:talentTemporaryValue(p, "iceblock_pierce", math.floor(4*self:getTalentLevel(t)))
    end,
-   on_learn = function(self, t) onLearnHigherAbility(self) end,
-   on_unlearn = function(self, t) onUnLearnHigherAbility(self) end,
+   on_learn = function(self, t) onLearnHigherAbility(self, t) end,
+   on_unlearn = function(self, t) onUnLearnHigherAbility(self, t) end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)
       local x, y = self:getTarget(tg)
@@ -186,18 +188,16 @@ newTalent{
    info = function(self, t)
       local icerad = t.getIceRadius(self, t)
       local icedam = t.getIceDamage(self, t)
-      local desc = ([[Summons an icy barrier of %d length for %d turns. Each empty space will be filled with a destructible but durable Ice Wall. Ice walls emit freezing cold, dealing %0.1f damage to enemies within radius %d with a 25%% chance to freeze.
+      local icepen = self:callTalent(self.T_REK_WYRMIC_COLD, "getIcepen")
+      local notice = (self:getTalentLevelRaw(t) == 1000 or (self:getTalentLevelRaw(t) < 2)) and [[
 
+
+#YELLOW#Learning the advanced ice talents costs a category point.#LAST#]] or ""
+      return ([[Summons an icy barrier of %d length for %d turns. Each empty space will be filled with a destructible but durable Ice Wall. Ice walls emit freezing cold, dealing %0.1f damage to enemies within radius %d with a 25%% chance to freeze.
 Mindpower: improves damage
 Willpower: improves ice wall life
-]]):format(3 + math.floor(self:getTalentLevel(t) / 2) * 2, t.getDuration(self, t), damDesc(self, DamageType.COLD, icedam),  icerad)
-      if not hasHigherAbility(self) then
-	 return desc..[[
 
-#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
-      else
-	 return desc
-      end 
+Each point in Ice Wyrm talents lets you pierce through ice blocks, reducing the damage they absorb by %d%%.%s]]):format(3 + math.floor(self:getTalentLevel(t) / 2) * 2, t.getDuration(self, t), damDesc(self, DamageType.COLD, icedam),  icerad, icepen, notice)
    end,
 }
 
@@ -234,9 +234,12 @@ newTalent{
    end,
    
    info = function(self, t)
+      local icepen = self:callTalent(self.T_REK_WYRMIC_COLD, "getIcepen")
       return ([[Coat yourself in plates of ice, providing %d damage reduction against all attacks.  When you take damage greater than eight times this amount in a single hit, your ice plating cracks, reducing the protection it provides by 5 for 5 turns. If it was not already cracked, this deals %d ice damage to the attacker.
 
-Mindpower: Improves damage reduction and armor]]):format(t.getArmor(self, t), damDesc(self, DamageType.COLD, t.getDamage(self, t)))
+Mindpower: Improves damage reduction and armor
+
+Each point in Ice Wyrm talents lets you pierce through ice blocks, reducing the damage they absorb by %d%%.]]):format(t.getArmor(self, t), damDesc(self, DamageType.COLD, t.getDamage(self, t)), icepen)
    end,
 }
 
@@ -271,8 +274,11 @@ newTalent{
       local reduction = t.getReduction(self, t) * 100
       local dam = t.getDamage(self, t)
       local conv = t.getAbsorb(self, t) * 100
+      local icepen = self:callTalent(self.T_REK_WYRMIC_COLD, "getIcepen")
       return ([[Take a defensive stance while you build up your strength.  For the next 3 turns, you absorb %d%% of incoming damage and disarm (#SLATE#Mindpower vs. Physical#LAST#) enemies that strike you in melee.  After this time, you release a burst of ice in a radius 6 around you.  The damage is %d plus %d%% of the absorbed damage.
 
-Remember: you can cancel the effect to create the avalanche early.]]):format(reduction, damDesc(self, DamageType.COLD, dam), conv)
+Remember: you can cancel the effect to create the avalanche early.
+
+Each point in Ice Wyrm talents lets you pierce through ice blocks, reducing the damage they absorb by %d%%.]]):format(reduction, damDesc(self, DamageType.COLD, dam), conv, icepen)
    end,
 }

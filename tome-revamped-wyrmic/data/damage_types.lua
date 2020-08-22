@@ -49,7 +49,11 @@ rekWyrmicSurge = function(self, tg, damage_inc)
       local tgr = {type="beam", range=5, selffire=false, talent=t, x=sx, y=sy}
 
       -- Decrease damage with each jump, no new variability.
-      dam = dam * diminish / 100
+      if i > 1 then
+         dam = dam * 0.75
+      else
+         dam = dam * diminish / 100
+      end
       
       self:project(tgr, actor.x, actor.y, DamageType.LIGHTNING, dam)
       
@@ -496,7 +500,7 @@ newDamageType{
       state = initState(state)
       if target and not state[target] then
 	 state[target] = true
-	 target:setEffect(target.EFF_SHOCKED, 2, {apply_power=src:combatMindpower()})
+	 target:setEffect(target.EFF_SHOCKED, 3, {apply_power=src:combatMindpower()})
       end
    end,
 }

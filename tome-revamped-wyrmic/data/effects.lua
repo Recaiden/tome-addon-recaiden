@@ -495,4 +495,26 @@ newEffect{
       
       return old_eff
    end,
+         }
+
+newEffect{
+   name = "REK_WYRMIC_PRISMATIC_SPEED",
+   desc = "Dissolution", image = "talents/rek_wyrmic_multicolor_blood.png",
+   long_desc = function(self, eff) return ("Action speed is increased by %d%%."):format(eff.power*100) end,
+   type = "physical",
+   subtype = { nature=true, speed=true },
+   status = "beneficial",
+   parameters = {power = 2},
+   on_gain = function(self, err) return nil, "+Quick action" end,
+   on_lose = function(self, err) return nil, "-Quick action" end,
+   activate = function(self, eff)
+      eff.cid = self:addTemporaryValue("combat_physspeed", eff.power)
+      eff.mid = self:addTemporaryValue("combat_mindspeed", eff.power)
+      eff.sid = self:addTemporaryValue("combat_spellspeed", eff.power)
+   end,
+   deactivate = function(self, eff)
+      self:removeTemporaryValue("combat_physspeed", eff.cid)
+      self:removeTemporaryValue("combat_mindspeed", eff.mid)
+      self:removeTemporaryValue("combat_spellspeed", eff.sid)
+   end,
 }

@@ -87,6 +87,24 @@ numAspects = function(self)
    return num
 end
 
+numAspectsKnown = function(self)
+   local num = 0
+   local aspects = {
+      self.T_REK_WYRMIC_FIRE,
+      self.T_REK_WYRMIC_COLD,
+      self.T_REK_WYRMIC_ELEC,
+      self.T_REK_WYRMIC_SAND,
+      self.T_REK_WYRMIC_ACID,
+      self.T_REK_WYRMIC_VENM
+   }
+   for k, talent in pairs(aspects) do
+      if self:knowTalent(talent) then
+	 num = num + 1
+      end
+   end
+   return num
+end
+
 aspect_req_1 = {
    stat = { wil=function(level) return 10 + (level-1) * 4 end },
    level = function(level) return 0 + (level-1) * 3 end,
@@ -170,32 +188,27 @@ function hasHigherAbility(self)
    if level > 1 then return true else return false end
 end
 
-function onLearnHigherAbility(self)
-   local level = self:getTalentLevelRaw(self.T_REK_WYRMIC_FIRE_HEAL)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_COLD_WALL)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_ELEC_SHOCK)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_SAND_BURROW)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_ACID_AURA)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_VENM_PIN)
+function onLearnHigherAbility(self, t)
+   local level = self:getTalentLevelRaw(t)
    if level == 1 then
       self.unused_talents_types = self.unused_talents_types - 1
    end
 end
 
-function onUnLearnHigherAbility(self)
-   local level = self:getTalentLevelRaw(self.T_REK_WYRMIC_FIRE_HEAL)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_COLD_WALL)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_ELEC_SHOCK)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_SAND_BURROW)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_ACID_AURA)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_VENM_PIN)
+function onUnLearnHigherAbility(self, t)
+   local level = self:getTalentLevelRaw(t)
    if level == 0 then
       self.unused_talents_types = self.unused_talents_types + 1
    end
 end
 
+function onLearnAspect(self, t)
+   self:learnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY)
+end
+
 -- If you unlearn your last level of your last aspect, remove your element.
 function onUnLearnAspect(self)
+   self:unlearnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY)
    local level = self:getTalentLevelRaw(self.T_REK_WYRMIC_FIRE)
       + self:getTalentLevelRaw(self.T_REK_WYRMIC_COLD)
       + self:getTalentLevelRaw(self.T_REK_WYRMIC_ELEC)
@@ -239,22 +252,6 @@ if not Talents.talents_types_def["wild-gift/draconic-body"] then
 		  description = "Scales and heart, the strength of the dragons." }
    load("/data-revamped-wyrmic/talents/gifts/draconic-body.lua")
 end
-
--- if not Talents.talents_types_def["wild-gift/draconic-aspects"] then
---    newTalentType{ allow_random=true, is_mind=true, is_nature=true,
--- 		  type="wild-gift/draconic-aspects",
--- 		  name = "Draconic Aspects",
--- 		  description = "Fire, Ice, Storm, Acid, Venom, and Sand." }
---    load("/data-revamped-wyrmic/talents/gifts/draconic-aspects.lua")
--- end
-
--- if not Talents.talents_types_def["wild-gift/draconic-utility"] then
---    newTalentType{ allow_random=true, is_mind=true, is_nature=true,
--- 		  type="wild-gift/draconic-utility",
--- 		  name = "Draconic Skill",
--- 		  description = "Create and destroy walls, melt, burn, shock foes." }
---    load("/data-revamped-wyrmic/talents/gifts/draconic-utility.lua")
--- end
 
 if not Talents.talents_types_def["wild-gift/prismatic-dragon"] then
    newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/prismatic-dragon", name = "Prismatic Aspect", min_lev = 10, description = "Take on the power of the mighty multi-hued wyrms." }

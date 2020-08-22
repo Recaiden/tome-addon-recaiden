@@ -15,22 +15,20 @@ newTalent{
    name = "Change Aspect", short_name = "REK_WYRMIC_COLOR_PRIMARY",
    type = {"wild-gift/other", 1},
    points = 1,
-   cooldown = 30,
+   cooldown = 15,
    no_energy = true,
    no_npc_use = true,
-   on_pre_use = function(self, t, silent)
-      if self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD) then
-         if not silent then game.logPlayer(self, "You must use prismatic blood instead if you know it.") end
-         return false
-      end
-      return true
-   end,
    action = function(self, t)
-      local possibles =  self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD, "getOptions")
+      local possibles = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD, "getOptions")
       local aspect = self:talentDialog(Dialog:listPopup("Primary Aspect", "Choose an aspect to bring forth:", possibles, 400, 400, function(item) self:talentDialogReturn(item) end))
       if aspect then
+         if self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD) and aspect ~= self.rek_wyrmic_dragon_damage then
+            local speed = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD, "getPassiveSpeed")
+            self:setEffect(self.EFF_REK_WYRMIC_PRISMATIC_SPEED, 5, {power=speed})
+            game:playSoundNear(self, "talents/devouringflame")
+         end
 	 self.rek_wyrmic_dragon_damage = aspect
-	 self:updateTalentPassives(t.id)
+	 self:updateTalentPassives(self.T_REK_WYRMIC_MULTICOLOR_BLOOD)
       end
       
       return true
@@ -53,9 +51,7 @@ newTalent{
    type = {"wild-gift/prismatic-dragon", 1},
    require = color_req_1,
    points = 5,
-   cooldown = 30,
-   no_energy = true,
-   no_unlearn_last = true,
+   mode = "passive",
    -- 1 aspect per rank, plus one per weird dragon type unlocked
    getNumAspects = function(self, t)
       local num = self:getTalentLevelRaw(t)
@@ -154,23 +150,6 @@ newTalent{
       return possibles
    end,
 
-   -- If they have a Weird Element, it should have given them a switch-talent with no stats
-   -- Take it away.
-   on_learn = function(self, t)
-      if self:knowTalent(self.T_REK_WYRMIC_COLOR_PRIMARY) then
-         self:unlearnTalentFull(self.T_REK_WYRMIC_COLOR_PRIMARY)
-      end
-   end,
-
-   on_unlearn = function(self, t)
-      if self:getTalentLevel(t) == 0
-         and (self:knowTalent(self.T_TENTACLED_WINGS)
-         or self:knowTalent(self.T_RAZE)) then
-          local nb = self:getTalentLevelRaw(self.T_TENTACLED_WINGS) + self:getTalentLevelRaw(self.T_RAZE)
-          self:learnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY, nb)
-      end
-   end,
-
    getPassiveSpeed = function(self, t) return (self:combatTalentScale(t, 2, 10, 0.5)/100) end,
    -- Chromatic Fury hook
    passives = function(self, t, p)
@@ -186,35 +165,10 @@ newTalent{
 	 self:talentTemporaryValue(p, "resists_pen", {[aspect.damtype] = resists_pen})
       end
    end,
-   -- Actually Switch aspects
-   action = function(self, t)
-      local possibles =  t.getOptions(self, t)
-      local aspect = self:talentDialog(Dialog:listPopup("Primary Aspect", "Choose an aspect to bring forth:", possibles, 400, 400, function(item) self:talentDialogReturn(item) end))
-      if aspect then
-	 self.rek_wyrmic_dragon_damage = aspect
-	 self:updateTalentPassives(t.id)
-      end
-      
-      return true
-   end,
+
    info = function(self, t)
-      --local damtype = self.rek_wyrmic_dragon_type or DamageType.FIRE
       local speed = t.getPassiveSpeed(self, t)
-      local numAspects = t.getNumAspects(self, t)
-      local damname = ""
-      local str_info = ([[Through intense concentration you attune yourself to the power of dragons. This talent allows you to learn talents from %d additional elements. (Special unlockable elements do not require this talent).
-
-Passively increases Physical, Mental, and Spell attack speeds by %d%%.
-
-You can activate this talent to change which drake aspect to bring forth, altering the damage type and status effect your abilities inflict.
-Current Aspect: ]]):format(numAspects, speed*100)
-
-      local aspect = self.rek_wyrmic_dragon_damage or nil
-      if aspect then
-	 damname = DamageType:get(aspect.damtype).text_color..DamageType:get(aspect.damtype).name.."#LAST#"
-	 str_info = str_info..([[ %s ]]):format(damname)
-      end
-      return str_info
+      return ([[Taking lessons from every color of wyrm, you move with serpentine swiftness. Your Physical, Mental, and Spell attack speeds are increased by %d%%.  This bonus is doubled for 5 turns when you change your elemental aspect.]]):format(speed*100)
    end,
 }
 

@@ -12,9 +12,9 @@ newTalent{
       level = function(level) return 0 + (level-1) * 3 end,
       special =
 	 {
-	    desc="One level in Prismatic Blood per additional aspect",
-	    fct=function(self) 
-	       return self:getTalentLevelRaw(self.T_REK_WYRMIC_MULTICOLOR_BLOOD) > numAspects(self) or self:knowTalent(self.T_REK_WYRMIC_ACID)
+         desc="You can learn a new aspect every 6 levels",
+         fct=function(self)
+            return self:knowTalent(self.T_REK_WYRMIC_ACID) or self.level >= numAspectsKnown(self)*6
 	    end
 	 },
    },
@@ -38,7 +38,7 @@ newTalent{
    getResists = getAspectResists,
    -- For elemental Spray
    getCorrodeDur = function(self, t) return math.floor(self:combatTalentScale(t, 2.3, 3.8)) end,
-   getAtk = function(self, t) return self:combatTalentMindDamage(t, 2, 20) end,
+   getAtk = function(self, t) return self:combatTalentMindDamage(t, 7, 25) end,
    passives = function(self, t, p)
       local resist = t.getResists(self, t)
       self:talentTemporaryValue(p, "resists", {[DamageType.ACID] = resist})
@@ -46,9 +46,7 @@ newTalent{
    info = function(self, t)
       local resist = t.getResists(self, t)
       local corrosion = t.getAtk(self, t)
-      return ([[You can take on the power of Acid Wyrms using Prismatic Blood.  You will gain %d%% acid resistance.  
-
-This talent passively improves your Elemental Spray, causing it to corrode affected enemies, reducing their accuracy and power by %d (#SLATE#Mindpower vs. Physical#LAST#).
+      return ([[You can take on the power of Acid Wyrms, giving you %d%% acid resistance. Whenever you use Elemental Spray it will corrode affected enemies, reducing their accuracy and power by %d (#SLATE#Mindpower vs. Physical#LAST#).
 
 Acid damage can inflict Disarm (#SLATE#Mindpower vs. Physical#LAST#).
 ]]):format(resist, corrosion)
@@ -63,14 +61,9 @@ newTalent{
       level = function(level) return 10 + (level-1) end,
       special =
 	 {
-	    desc="Higher Aspect Abilities unlocked",
+	    desc="Advanced aspect talents learnable",
 	    fct=function(self) 
-	       return self:knowTalent(self.T_REK_WYRMIC_FIRE_HEAL)
-		  or self:knowTalent(self.T_REK_WYRMIC_COLD_WALL)
-		  or self:knowTalent(self.T_REK_WYRMIC_ELEC_SHOCK)
-		  or self:knowTalent(self.T_REK_WYRMIC_SAND_BURROW)
-		  or self:knowTalent(self.T_REK_WYRMIC_ACID_AURA)
-		  or self:knowTalent(self.T_REK_WYRMIC_VENM_PIN)
+	       return self:knowTalent(self.T_REK_WYRMIC_ACID_AURA)
 		  or self.unused_talents_types >= 1
 	    end
 	 },
@@ -88,8 +81,8 @@ newTalent{
    target = function(self, t)
       return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false}
    end,
-   on_learn = function(self, t) onLearnHigherAbility(self) end,
-   on_unlearn = function(self, t) onUnLearnHigherAbility(self) end,
+   on_learn = function(self, t) onLearnHigherAbility(self, t) end,
+   on_unlearn = function(self, t) onUnLearnHigherAbility(self, t) end,
    action = function(self, t)
       local damage = self:mindCrit(t.getDamage(self, t))
       local duration = t.getDuration(self, t)
@@ -116,15 +109,11 @@ newTalent{
       local radius = self:getTalentRadius(t)
       local duration = t.getDuration(self, t)
       local slow = t.getDamage(self, t)
-      local desc =  ([[Dissolve the ground around you in radius %d for %d turns, causing it to slow the movement speed of enemies within by %d%% (#SLATE#Mindpower vs. Physical#LAST#).  The aura moves with you.
-]]):format(radius, duration, slow)
-      if not hasHigherAbility(self) then
-	 return desc..[[
+      local notice = (self:getTalentLevelRaw(t) == 1000 or (self:getTalentLevelRaw(t) < 2)) and [[
 
-#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
-      else
-	 return desc
-      end 
+
+#YELLOW#Learning the advanced acid talents costs a category point.#LAST#]] or ""
+      return ([[Dissolve the ground around you in radius %d for %d turns, causing it to slow the movement speed of enemies within by %d%% (#SLATE#Mindpower vs. Physical#LAST#).  The aura moves with you.%s]]):format(radius, duration, slow, notice)
    end,
 }
 
@@ -154,7 +143,6 @@ newTalent{
       
       target:setEffect(target.EFF_REK_WYRMIC_DISSOLVE, t.getDuration(self, t), { power=t.getDamage(self, t), apply_power=self:combatMindpower(), src=self })
 
-      --game:playSoundNear(self, "talents/acid")
       game:playSoundNear(self, "talents/rek_wyrmic_dissolution")
       
       return true
@@ -199,6 +187,8 @@ newTalent{
    
    info = function(self, t)
       local nb = t.getNumber(self, t)
-      return ([[Detrimental effects on you expire twice as fast.  This affects up to %d effects at a time.  This will not affect cross-tier effects (Off-Balance, Brainlock, Spellshock)]]):format(nb)
+      return ([[Detrimental effects on you expire twice as fast.
+                This affects up to %d effects each turn.
+                This will not affect cross-tier effects (Off-Balance, Brainlock, Spellshock)]]):format(nb)
    end,
 }

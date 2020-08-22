@@ -12,9 +12,9 @@ newTalent{
       level = function(level) return 0 + (level-1) * 3 end,
       special =
 	 {
-	    desc="One level in Prismatic Blood per additional aspect",
-	    fct=function(self) 
-	       return self:getTalentLevelRaw(self.T_REK_WYRMIC_MULTICOLOR_BLOOD) > numAspects(self) or self:knowTalent(self.T_REK_WYRMIC_FIRE)
+         desc="You can learn a new aspect every 6 levels",
+         fct=function(self)
+            return self:knowTalent(self.T_REK_WYRMIC_FIRE) or self.level >= numAspectsKnown(self)*6
 	    end
 	 },
    },
@@ -73,9 +73,8 @@ newTalent{
       local resist = t.getResists(self, t)
       local damage = t.getDamage(self, t)*100
       local cooldown = t.cooldown(self,t)
-      return ([[You can take on the power of Fire Wyrms using Prismatic Blood.  You gain %d%% fire resistance.
-
-When you hit an enemy with a melee attack, you immediately follow up, making another attack against a random adjacent enemy doing %d%% damage as Flame.  This can only happen once every %d turns. This will also attack with your shield, if you have one equipped.
+      return ([[You can take on the power of Fire Wyrms, giving you %d%% fire resistance.
+When you hit an enemy with a melee attack, you immediately follow up, making another attack against a random adjacent enemy doing %d%% damage as Flame.  This will also attack with your shield, if you have one equipped. This can only happen once every %d turns.
 
 Flame damage can inflict stun (#SLATE#Mindpower vs. Physical#LAST#).  
 Flame does 10%% bonus damage. 
@@ -92,14 +91,9 @@ newTalent{
       level = function(level) return 10 + (level-1) end,
       special =
 	 {
-	    desc="Higher Aspect Abilities unlocked",
+	    desc="Advanced aspect talents learnable",
 	    fct=function(self) 
 	       return self:knowTalent(self.T_REK_WYRMIC_FIRE_HEAL)
-		  or self:knowTalent(self.T_REK_WYRMIC_COLD_WALL)
-		  or self:knowTalent(self.T_REK_WYRMIC_ELEC_SHOCK)
-		  or self:knowTalent(self.T_REK_WYRMIC_SAND_BURROW)
-		  or self:knowTalent(self.T_REK_WYRMIC_ACID_AURA)
-		  or self:knowTalent(self.T_REK_WYRMIC_VENM_PIN)
 		  or self.unused_talents_types >= 1
 	    end
 	 },
@@ -107,8 +101,8 @@ newTalent{
    points = 5,
    mode = "passive",
    getLeech = function(self, t) return self:combatTalentScale(t, 3, 8) end,
-   on_learn = function(self, t) onLearnHigherAbility(self) end,
-   on_unlearn = function(self, t) onUnLearnHigherAbility(self) end,
+   on_learn = function(self, t) onLearnHigherAbility(self, t) end,
+   on_unlearn = function(self, t) onUnLearnHigherAbility(self, t) end,
    callbackOnDealDamage = function(self, t, val, target, dead, death_note)
       local burning = false
       for eff_id, p in pairs(target.tmp) do
@@ -125,15 +119,11 @@ newTalent{
    end,
    
    info = function(self, t)
-      local desc =  ([[The fire wyrm is sutained by destruction.  All damage you do to burning targets heals you for %d%% of the damage done.
-]]):format(t.getLeech(self, t))
-      if not hasHigherAbility(self) then
-	 return desc..[[
+      local notice = (self:getTalentLevelRaw(t) == 1000 or (self:getTalentLevelRaw(t) < 2)) and [[
 
-#YELLOW#Learning this talent will unlock the Tier 2+ talents in all 6 elements at the cost of a category point.  You still require Prismatic Blood to learn more aspects. #LAST#]]
-      else
-	 return desc
-      end 
+
+#YELLOW#Learning the advanced flame talents costs a category point.#LAST#]] or ""
+      return ([[The fire wyrm is sutained by destruction.  All damage you do to burning targets heals you for %d%% of the damage done.%s]]):format(t.getLeech(self, t), notice)
    end,
 }
 
@@ -189,7 +179,7 @@ newTalent{
       local damage = t.getDamage(self, t)
       local radius = self:getTalentRadius(t)
       local eq = t.getEqGain(self, t)
-      return ([[Erupt with a wave of flames with a radius of %d, knocking back and stunning (#SLATE#Mindpower vs. Physical#LAST#) any targets caught inside and burning them for %0.2f flame damage.
+      return ([[Erupt with a wave of flames with a radius of %d, knocking back and stunning (#SLATE#Mindpower vs. Physical#LAST#) any targets caught inside and burning them for %0.1f flame damage.
 
 Then, recover between %d and %d equilibrium, increased for each burning creature within 10 spaces.
 
