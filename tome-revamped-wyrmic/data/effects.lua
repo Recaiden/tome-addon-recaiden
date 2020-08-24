@@ -517,4 +517,51 @@ newEffect{
       self:removeTemporaryValue("combat_mindspeed", eff.mid)
       self:removeTemporaryValue("combat_spellspeed", eff.sid)
    end,
+         }
+
+newEffect{
+   name = "REK_WYRMIC_PRISMATIC_BURST",
+   desc = "Prismatic Burst", image = "talents/rek_wyrmic_prismatic_burst.png",
+   long_desc = function(self, eff) return ("About to unleash a chaotic elemental attack"):format() end,
+   type = "physical",
+   subtype = { nature=true, fire=true, cold=true, lightning=true, physical=true, acid=true },
+   status = "beneficial",
+   parameters = {power = 20},
+   callbackOnDealDamage = function(self, eff, val, target, dead, death_note)
+      local x, y = target.x, target.y
+      if not target or not self:canProject(target, x, y) then return nil end
+
+      local aspects = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD, "getOptions") or {
+         {
+	    name="Default Fire",
+	    nameStatus="None",
+	    nameDrake=(DamageType:get(DamageType.PHYSICAL) or "").text_color.."Generic Drake#LAST#",
+	    damtype=DamageType.FIRE,
+	    status=DamageType.FIRE,
+	    talent=self.T_REK_WYRMIC_PRISMATIC_BURST
+         }
+                                                                                           }
+      if aspects and #aspects > 0 then
+	 local aspect = rng.table(aspects)
+	 local nameBall = "rek_wyrmic_"..DamageType:get(aspect.damtype).name.."_ball"
+
+	 local tg = {type="ball", range=10, selffire=false, friendlyfire=false, radius=self:getTalentRadius(t), talent=t}
+	 local grids = self:project(tg, x, y, aspect.status,
+				    {
+				       dam=self:mindCrit(eff.power),
+				       dur=3,
+				       chance=100,
+				       daze=100,
+				       fail=15
+				    }
+	 )
+	 game.level.map:particleEmitter(x, y, eff.radius, nameBall, {radius=tg.radius, grids=grids, tx=x, ty=y, max_alpha=80})
+	 game:playSoundNear(self, "talents/flame")
+      end
+      self:removeEffect(self.EFF_REK_WYRMIC_PRISMATIC_BURST)
+   end,
+   activate = function(self, eff)
+   end,
+   deactivate = function(self, eff)
+   end,
 }

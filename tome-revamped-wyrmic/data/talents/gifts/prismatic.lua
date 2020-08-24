@@ -178,54 +178,25 @@ newTalent{
    type = {"wild-gift/prismatic-dragon", 2},
    require = gifts_req_high2,
    points = 5,
-   random_ego = "attack",
-   equilibrium = 0,
-   mode = "sustained",
    no_energy = true,
    cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 6, 13, 8)) end,
+   equilibrium = function(self, t) return math.floor(t.cooldown(self, t)/3) end,
    tactical = { ATTACK = { PHYSICAL = 1, COLD = 1, FIRE = 1, LIGHTNING = 1, ACID = 1, POISON = 1 } },
    getBurstDamage = function(self, t) return self:combatTalentMindDamage(t, 50, 230) end,
    getCost = function(self, t) return math.floor(t.cooldown(self, t)/3) end,
    radius = function(self, t) return math.floor(self:combatTalentScale(t, 1.5, 3.5)) end,
-   activate = function(self, t)
-      return {}
-   end,
-   deactivate = function(self, t, p)
+   action = function(self, t)
+      if self:hasEffect(self.EFF_REK_WYRMIC_PRISMATIC_BURST) then return false end
+      self:setEffect(self.EFF_REK_WYRMIC_PRISMATIC_BURST, 3, {power=t.getBurstDamage(self, t), radius = self:getTalentRadius(t)})
       return true
-   end,
-   callbackOnDealDamage = function(self, t, val, target, dead, death_note)
-      if not self:isTalentActive(self.T_REK_WYRMIC_PRISMATIC_BURST) then return end
-      self:forceUseTalent(self.T_REK_WYRMIC_PRISMATIC_BURST, {ignore_energy=true})
-      self:incEquilibrium(t.getCost(self, t))
-      local x, y = target.x, target.y
-      if not target or not self:canProject(target, x, y) then return nil end
-
-      local aspects = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD, "getOptions") or nil
-      if aspects and #aspects > 0 then
-	 local aspect = rng.table(aspects)
-	 local nameBall = "rek_wyrmic_"..DamageType:get(aspect.damtype).name.."_ball"
-
-	 local tg = {type="ball", range=10, selffire=false, friendlyfire=false, radius=self:getTalentRadius(t), talent=t}
-	 local grids = self:project(tg, x, y, aspect.status,
-				    {
-				       dam=self:mindCrit(t.getBurstDamage(self, t)),
-				       dur=3,
-				       chance=100,
-				       daze=100,
-				       fail=15
-				    }
-	 )
-	 game.level.map:particleEmitter(x, y, tg.radius, nameBall, {radius=tg.radius, grids=grids, tx=x, ty=y, max_alpha=80})
-	 game:playSoundNear(self, "talents/flame")
-      end
    end,
    info = function(self, t)
       local burstdamage = t.getBurstDamage(self, t)
       local radius = self:getTalentRadius(t)
       local cost = t.getCost(self, t)
-      return ([[You charge your body with raw, chaotic elemental damage. The next time you damage an enemy, you will unleash a burst of one of your elements at random, dealing %0.2f damage in radius %d, increasing your equilibrium by %d and deactivating this sustain.
-		
-Mindpower: Improves damage.]]):format(burstdamage, radius, cost)
+      return ([[You charge your body with raw, chaotic elemental damage. The next time you damage an enemy (within 2 turns), you will unleash a burst of one of your elements at random, dealing %0.2f damage in radius %d.
+
+Mindpower: Improves damage.]]):format(burstdamage, radius)
    end,
 }
 
