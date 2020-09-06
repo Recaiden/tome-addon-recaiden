@@ -1,15 +1,11 @@
 long_name = "Race: Doomling"
-short_name = "race-doom-halfling"
+short_name = "race-doomling"
 for_module = "tome"
-version = {1,6,0}
-addon_version = {0, 1, 1}
-weight = 27571
+version = {1,7,0}
+addon_version = {1, 1, 0}
+weight = 27551
 author = { 'Recaiden' }
-description = [[Adds the race of Doomlings, demon-corrupted halflings.
-
-Blast enemies with elemental power.
-Ignore attacks with your ghostly nature.
-Unerringly seek out enemies, even behind walls
+description = [[Adds the race of Doomlings, demon-corrupted halflings, weilding destructive corrupted versions of the original halfling talents.
 
 Doomlings begin in the Searing Halls.
 Doomlings are unlocked along with Doomelves.]]
