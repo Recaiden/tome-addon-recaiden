@@ -98,12 +98,14 @@ newTalent{
       local target = game.level.map(x, y, Map.ACTOR)
       if not target then return end
       
-      target:setEffect(target.EFF_REK_MTYR_DEMENTED, t.getDuration(self, t), {power=t.getPower(self, t) or 15, src=self})
-      self:removeEffect(self.EFF_REK_MTYR_INSPIRED)
+      target:setEffect(target.EFF_REK_MTYR_DEMENTED, t.getDuration(self, t), {power=t.getPower(self, t) or 15, src=self, apply_power=self:combatMindpower()})
+			if target:hasEffect(target.EFF_REK_MTYR_DEMENTED) then
+				self:removeEffect(self.EFF_REK_MTYR_INSPIRED)
+			end
       return true
    end,
    info = function(self, t)
-      return ([[Consume your Inspiration to drag a target into the depths of insanity, reducing their damage dealt by %d%% and increasing the cooldowns of any talents they use by %d%% for the next %d turns.
+      return ([[Consume your Inspiration to drag a target into the depths of insanity(#SLATE#Mindpower vs. Mental#LAST#), reducing their damage dealt by %d%% and increasing the cooldowns of any talents they use by %d%% for the next %d turns.
 
 Mindpower: increases effects
 ]]):format(100*t.getPower(self, t), 100*t.getPower(self, t), t.getDuration(self, t))

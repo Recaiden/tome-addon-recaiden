@@ -140,7 +140,7 @@ newTalent{
    end,
    
    info = function(self, t)
-      return ([[Hop astride your noble steed and run down a target at least 3 spaces away, striking with all weapons for %d%% damage. A hit will stun them for %d turns and grant you an additional #INSANE_GREEN#15 insanity#LAST#.  All other targets in or next to your path will be attacked with your mainhand weapon for %d%% damage and dazed for %d turns on a hit.]]):format(t.getSideDamage(self, t)*100, t.getDazeDuration(self, t), t.getHitDamage(self, t)*100, t.getStunDuration(self, t))
+      return ([[Hop astride your noble steed and run down a target at least 3 spaces away, striking with all weapons for %d%% damage. A hit will stun them (#SLATE#Physical Power vs. Physical#LAST#) for %d turns and grant you an additional #INSANE_GREEN#15 insanity#LAST#.  All other targets in or next to your path will be attacked with your mainhand weapon for %d%% damage and dazed (#SLATE#Physical Power vs. Physical#LAST#) for %d turns on a hit.]]):format(t.getSideDamage(self, t)*100, t.getDazeDuration(self, t), t.getHitDamage(self, t)*100, t.getStunDuration(self, t))
    end,
 }
 --If you are wielding the #MIDNIGHT#Moment#LAST# you will deal full damage to all targets.
@@ -167,7 +167,8 @@ newTalent{
       local hit, x, y = self:canProject(tg, self:getTarget(tg))
       if not hit or not x or not y then return nil end
       doMartyrWeaponSwap(self, "melee", true)
-      
+
+			-- TODO 1.7 add 'self' as 1st parameter
       self:removeEffectsFilter({subtype={stun=true, daze=true, pin=true, pinned=true, pinning=true}}, 1)
 
       if self:canMove(x, y) then
@@ -213,7 +214,7 @@ newTalent{
    require = martyr_mirror_req4,
    points = 5,
    mode = "passive",
-   getImmunities = function(self, t) return self:combatTalentLimit(t, 1, 0.2, 0.7) end,
+   getImmunities = function(self, t) return self:combatTalentLimit(t, 1, 0.2, 0.5) end,
    passives = function(self, t, p)
       self:talentTemporaryValue(p, "blind_immune", t.getImmunities(self, t))
       self:talentTemporaryValue(p, "disarm_immune", t.getImmunities(self, t))
@@ -221,7 +222,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[You will not let minor wounds and difficulties stop you from fighting.
-		You gain %d%% resistance to disarms, wounds and blindness.]]):
+		You gain %d%% resistance to blindness, wounds, and being disarmed.]]):
       format(100*t.getImmunities(self, t))
    end,
 }

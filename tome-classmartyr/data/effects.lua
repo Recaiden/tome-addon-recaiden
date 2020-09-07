@@ -728,3 +728,32 @@ newEffect{
    deactivate = function(self, eff)
    end,
 }
+
+newEffect{
+	name = "MARTYR_STACKING_SLOW", image = "talents/rek_mtyr_vagabond_tainted_bullets.png",
+	desc = "Tainted Rounds",
+	long_desc = function(self, eff) return ("Reduces movement speed by %d%%."):format(math.floor(eff.stacks * 10)) end,
+	charges = function(self, eff) return (math.floor(eff.stacks * 10).."%") end,
+	type = "physical",
+	subtype = { slow=true },
+	status = "detrimental",
+	parameters = { power=3, stacks=1, max_stacks=5 },
+	on_gain = function(self, err) return "#Target# is slowed by the taint", "+Tainted Slow" end,
+	on_lose = function(self, err) return "#Target# speeds up.", "-Taainted Slow" end,
+	on_merge = function(self, old_eff, new_eff)
+		old_eff.dur = new_eff.dur
+		old_eff.stacks = math.min(old_eff.stacks + new_eff.stacks, new_eff.max_stacks)
+		DamageType:get(DamageType.MIND).projector(old_eff.src, self.x, self.y, DamageType.MIND, old_eff.power * old_eff.stacks)
+		self:removeTemporaryValue("movement_speed", old_eff.speed)
+		old_eff.speed = self:addTemporaryValue("movement_speed", -old_eff.stacks*0.1)
+		return old_eff		
+	end,
+	activate = function(self, eff)
+		eff.speed = self:addTemporaryValue("movement_speed", -eff.stacks*0.1)
+		DamageType:get(DamageType.MIND).projector(eff.src, self.x, self.y, DamageType.MIND, eff.power)
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("movement_speed", eff.tmpid)
+		self:setProc("martyr_unslowable", true, 5)
+	end,
+}

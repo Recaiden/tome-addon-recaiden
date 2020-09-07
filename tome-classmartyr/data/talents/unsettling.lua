@@ -70,13 +70,13 @@ newTalent{
             if target == self then return end
 
             if target:canBe("confusion") then   
-               -- Main effct
-               target:setEffect(target.EFF_REK_MTYR_UNNERVE, t.getDuration(self,t), {power=t.getPower(self, t) or 30, damage=dam, powerlessness=powerlessness, pitilessness=pitilessness, src=self})
+							-- Main effct
+							target:setEffect(target.EFF_REK_MTYR_UNNERVE, t.getDuration(self,t), {power=t.getPower(self, t) or 30, damage=dam, powerlessness=powerlessness, pitilessness=pitilessness, src=self, apply_power=self:combatMindpower()})
             elseif self:knowTalent(self.T_REK_MTYR_UNSETTLING_UNINHIBITED) then
                -- same effect but weaker when bypassing immunity
                local t4 = self:getTalentFromId(self.T_REK_MTYR_UNSETTLING_UNINHIBITED)
                local diminishment = t4.getReduction(self, t4)
-               target:setEffect(target.EFF_REK_MTYR_UNNERVE, t.getDuration(self,t), {power=power * (100 - diminishment) / 100, damage=dam * (100 - diminishment) / 100, powerlessness= powerlessness * (100 - diminishment) / 100, pitilessness=pitilessness * (100 - diminishment) / 100, src=self})
+               target:setEffect(target.EFF_REK_MTYR_UNNERVE, t.getDuration(self,t), {power=power * (100 - diminishment) / 100, damage=dam * (100 - diminishment) / 100, powerlessness= powerlessness * (100 - diminishment) / 100, pitilessness=pitilessness * (100 - diminishment) / 100, src=self, apply_power=self:combatMindpower()})
             else
                game.logSeen(target, "%s resists the revelation!", target.name:capitalize())
             end
@@ -93,7 +93,7 @@ newTalent{
    end,
    
    info = function(self, t)
-      return ([[Inform an enemy about the true bleak vistas of reality, confusing them for %d turns (%d power).  The range of this talent will increase with the firing range of a ranged weapon in your main set or offset (but is always at least 3).
+      return ([[Inform an enemy about the true bleak vistas of reality, confusing them for %d turns (%d power) (#SLATE#Mindpower vs. Mental#LAST#).  The range of this talent will increase with the firing range of a ranged weapon in your main set or offset (but is always at least 3).
 
 #ORANGE#Sanity Bonus:#LAST# Take advantage of their moment of realization to throw a sucker punch or other sneak attack, dealing %d%% unarmed damage.
 ]]):format(t.getDuration(self, t), t.getPower(self, t), 100*t.getDamage(self, t))

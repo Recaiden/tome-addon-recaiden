@@ -53,7 +53,7 @@ newTalent{
    end,
    
    info = function(self, t)
-      return ([[Strike an enemy in melee, and, if you hit, afflict the target with Scorn, which does %d mind damage per turn for %d turns (#SLATE#No save#LAST#).  Scorn ignores immunity but is otherwise treated as a disease.
+      return ([[Strike an enemy in melee, and, if you hit, afflict the target with Scorn, which does %d mind damage per turn for %d turns (#SLATE#no save#LAST#).  Scorn ignores immunity but is otherwise treated as a disease.
 Mindpower: increases damage.
 
 #GREEN#Our Gift:#LAST# The target will be crippled (#SLATE#Mindpower vs. Physical#LAST#) for %d turns.

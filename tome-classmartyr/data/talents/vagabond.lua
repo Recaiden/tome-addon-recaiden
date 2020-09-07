@@ -41,7 +41,50 @@ newTalent{
    archery_onhit = function(self, t, target, x, y)
       self:incInsanity(5)
       if not target or not target:canBe("knockback") then return end
-      target:knockback(self.x, self.y, t.getDist(self, t))
+			-- Frog Knockback
+			local function doConeKnockback(angle, margin)
+				-- get a cone of tiles
+				-- organize them by distance
+				-- pick the furthest (with a bit of a margin) ones randomly
+				local margin = margin or 1
+				local moved = false
+				local cone_x, cone_y = target.x, target.y
+
+				local spots = {}
+				self:project({type="cone", cone_angle = angle, radius=4}, cone_x, cone_y, function(tx, ty)
+					if not game.level.map:checkAllEntities(tx, ty, "block_move", self) then
+						local dX, dY = self.x - tx, self.y - ty
+						local moveDist = (dX * dX + dY * dY) ^ 0.5
+						if core.fov.distance(x, y, tx, ty) <= 4 then spots[#spots+1] = {x=tx, y=ty, dist=moveDist} end
+					end
+				end)
+				table.sort(spots, "dist")
+				local farSpots = {}
+				local maxDist = nil
+				if #spots ~= 0 then
+					for i = #spots, 1, -1 do
+						maxDist = maxDist or spots[i].dist
+						if maxDist - spots[i].dist < margin then
+							farSpots[#farSpots + 1] = {x = spots[i].x, y = spots[i].y}
+						end
+					end
+					
+					if #farSpots ~= 0 then
+						local spotPicked = rng.tableRemove(farSpots)
+						local mx, my = spotPicked.x, spotPicked.y
+						
+						if mx and (mx ~= target.x or my ~= target.y) then
+							moved = true
+							target:move(mx, my, true)
+							target.last_special_movement = game.turn	
+						end
+					end
+				end
+				return moved
+			end
+			local moved = doConeKnockback(65)
+			if not moved then doConeKnockback(200, .4) end
+      --target:knockback(self.x, self.y, t.getDist(self, t))
    end,
    passives = function(self, t, p)
       self:talentTemporaryValue(p, 'martyr_swap', 1)
@@ -55,7 +98,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[You ready a sling shot with all your strength.
-This shot does %d%% weapon damage, gives you an extra #INSANE_GREEN#5 insanity#LAST#, and knocks back your target %d spaces.
+This shot does %d%% weapon damage, gives you an extra #INSANE_GREEN#5 insanity#LAST#, and knocks back your target %d spaces (#SLATE#checks knockback resistance#LAST#).
 
 Learning this talent allows martyr talents to instantly and automatically swap to your alternate weapon set when needed.
 
@@ -67,34 +110,38 @@ Learning this talent allows martyr talents to instantly and automatically swap t
 }
 
 newTalent{
-   name = "Tainted Bullets", short_name = "REK_MTYR_VAGABOND_TAINTED_BULLETS",
-   type = {"demented/vagabond", 3},
-   require = sling_req3,
-   points = 5,
-   mode = "sustained",
-   cooldown = 10,
-   tactical = { BUFF = 2 },
-   getDamage = function(self, t) return self:combatTalentMindDamage(t, 5, 40) end,
-   passives = function(self, t, p)
-      self:talentTemporaryValue(p, "archery_pass_friendly", 1)
-   end,
-   activate = function(self, t)
-      game:playSoundNear(self, "talents/fire")
-      local ret = {
-         particle = particle,
-         dam = self:addTemporaryValue("ranged_project", {[DamageType.MIND] = t.getDamage(self, t)}),
-      }
-      return ret
-   end,
-   deactivate = function(self, t, p)
-      if p.particle1 then self:removeParticles(p.particle1) end
-      self:removeTemporaryValue("ranged_project", p.dam)
-      return true
-   end,
-   info = function(self, t)
-      return ([[You make unusual modifications to your sling bullets, causing them to deal %0.2f mind damage on hit.  All your shots, including bullets from Shoot and other talents, now travel around friendly targets without causing them harm (regardless of whether this talent is sustained).
-
+	name = "Tainted Bullets", short_name = "REK_MTYR_VAGABOND_TAINTED_BULLETS",
+	type = {"demented/vagabond", 3},
+	require = sling_req3,
+	points = 5,
+	mode = "sustained",
+	cooldown = 10,
+	tactical = { BUFF = 2 },
+	getDamage = function(self, t) return self:combatTalentMindDamage(t, 3, 20) end,
+	passives = function(self, t, p)
+		self:talentTemporaryValue(p, "archery_pass_friendly", 1)
+	end,
+	callbackOnArcheryAttack = function(self, t, target, hitted)
+		if hitted and target and not target.dead then
+			if not target:hasProc("martyr_unslowable") then
+				target:setEffect(target.EFF_MARTYR_STACKING_SLOW, 5, {power=t.getDamage(self, t), src=self})
+			end
+		end
+	end,
+	activate = function(self, t)
+		game:playSoundNear(self, "talents/fire")
+		local ret = {
+		}
+		return ret
+	end,
+	deactivate = function(self, t, p)
+		return true
+	end,
+	info = function(self, t)
+		return ([[You make unusual modifications to your sling bullets, causing them to inflict a stacking 10%% movement speed slow (#SLATE#no save#LAST#) that deal %0.2f mind damage per stack. If the target breaks free from the slow, they'll be immune to it for the next five turns. 
 Mindpower: increases damage.
+
+All your shots, including bullets from Shoot and other talents, now travel around friendly targets without causing them harm (regardless of whether this talent is sustained).
 
 #YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):format(damDesc(self, DamageType.MIND, t.getDamage(self, t)))
    end,
@@ -106,8 +153,7 @@ newTalent{
    require = sling_req4,
    points = 5,
    mode = "passive",
-   getCritResist = function(self, t) return self:combatTalentScale(t, 15, 50, 0.75) end,
-   immunities = function(self, t) return self:combatTalentLimit(t, 1, 0.2, 0.7) end,
+   getCritResist = function(self, t) return self:combatTalentScale(t, 11, 33, 0.66) end,
    passives = function(self, t, p)
       self:talentTemporaryValue(p, "ignore_direct_crits", t.getCritResist(self, t))
    end,
