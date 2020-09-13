@@ -1,13 +1,9 @@
-function martyrSetupSummon(self, def, x, y, level, turns, no_control)
+function martyrSetupSummon(self, def, x, y, level)
    local m = require("mod.class.NPC").new(def)
    m.creation_turn = game.turn
    m.faction = self.faction
    m.summoner = self
    m.summoner_gain_exp = true
-   if turns then
-      m.summon_time_max = turns
-      m.summon_time = turns
-   end
    m.exp_worth = 0
    m.life_regen = 0
 
@@ -25,13 +21,12 @@ function martyrSetupSummon(self, def, x, y, level, turns, no_control)
    
    m.inc_damage = table.clone(self.inc_damage, true)
    m.no_drops = true
+	 m.no_inventory_access = true
    
-   if game.party:hasMember(self) then
-      local can_control = not no_control
-      
+   if game.party:hasMember(self) then 
       m.remove_from_party_on_death = true
       game.party:addMember(m, {
-                              control=can_control and "full" or "no",
+                              control="no",
                               temporary_level = true,
                               type="minion",
                               title="Flag",
@@ -147,89 +142,97 @@ newTalent{
 }
 
 newTalent{
-   name = "Triumphant Flag", short_name = "REK_MTYR_STANDARD_IRRUPTION",
-   type = {"demented/standard-bearer", 1},
-   require = martyr_req1,
-   points = 5,
-   mode = "passive",
-   cooldown = 6,
-   flag = {
-      type = "horror", subtype = "eldritch",
-      display = "h", color=colors.WHITE,
-      blood_color = colors.BLUE,
-      name = "glorious flag",
-      display = "G", color=colors.ORANGE,
-      image="npc/sprouting_tentacles_mtyr_flag.png",
-      sound_moam = {"creatures/rek_flag/on_hit%d", 1, 1},
-      sound_random = {"creatures/rek_flag/random%d", 1, 1},
-
-      level_range = {1, nil}, exp_worth = 0,
-      temporary_level = true, -- don't follow you to new levels
-      is_tentacle_tree = 1,
-      is_tentacle_flag = 1,
-      combat_armor = resolvers.levelup(30, 1, 1.5), combat_def = 0,
-      combat = { dam=resolvers.levelup(resolvers.mbonus(100, 15), 1, 2.2), atk=500, apr=10, damtype=DamageType.DARKNESS },
-      never_move = 1,
-      body = { MAINHAND=1, OFFHAND=1, INVEN = 10 },
-      force_tentacle_hand = 1,
-      autolevel = "warriormage",
-      ai = "dumb_talented_simple", ai_state = { ai_target="target_closest", ai_move="move_complex", talent_in=2, },
-      dont_pass_target = true,
-      stats = { str=14, dex=18, mag=20, con=12 },
-      rank = 2,
-      size_category = 3,
-      infravision = 10,
-      insanity_regen = 10,
-      
-      resists = {all = 10, [DamageType.FIRE] = -10, [DamageType.LIGHT] = -25, [DamageType.BLIGHT] = 50},
-      
-      confusion_immune = 1,
-      fear_immune = 1,
-      knockback_immune = 1,
-      stun_immune = 1,
-      blind_immune = 1,
-      see_invisible = 20,
-      resolvers.sustains_at_birth(),
-      
-      resolvers.talents{T_MUTATED_HAND={base=1, every=5}},
-      max_life = resolvers.rngavg(95,95),
-   },
-   
-   getLevel = function(self, t) return math.floor(self:combatScale(self:getTalentLevel(t), -6, 0.9, 2, 5)) end, -- -6 @ 1, +2 @ 5, +5 @ 8
-   callbackOnRest = function(self, t) self.rek_mtyr_flag_progress = nil end,
-   callbackOnRun = function(self, t) self.rek_mtyr_flag_progress = nil end,
-   callbackOnKill = function(self, t, src, death_note)
-      if self:isTalentCoolingDown(t) then return end
-      local didSummon = t.doSummon(self, t, src.x, src.y)
-      if didSummon then self:startTalentCooldown(t) end
-   end,
-   callbackOnDealDamage = function(self, t, val, target, dead, death_note)
-      if dead then return end
-      
-      local threshold = 0
-      if target.rank < 3.2 then return
-      elseif target.rank >= 5 then
-         threshold = target.max_life * t.thEBoss(self, t)
-      elseif target.rank >= 4 then
-         threshold = target.max_life * t.thBoss(self, t)
-      else
-         threshold = target.max_life * t.thRare(self, t)
-      end
-      local amt = 0
-
-      self.rek_mtyr_flag_progress = self.rek_mtyr_flag_progress or {}
-      
-      local stored = self.rek_mtyr_flag_progress[target.uid] or 0
-      if stored + val >= threshold then
-         if self:isTalentCoolingDown(t) then return end
-         local didSummon = t.doSummon(self, t, target.x, target.y)
-         if didSummon then self:startTalentCooldown(t) end
-         self.rek_mtyr_flag_progress[target.uid] = 0
-      else
-         self.rek_mtyr_flag_progress[target.uid] = stored + val
-      end
-   end,
-   getTimeLimit = function(self, t) return 10 end,
+	name = "Triumphant Flag", short_name = "REK_MTYR_STANDARD_IRRUPTION",
+	type = {"demented/standard-bearer", 1},
+	require = martyr_req1,
+	points = 5,
+	mode = "passive",
+	cooldown = function(self, t)
+		local cd = 6
+		if self:knowTalent(self.T_REK_MTYR_STANDARD_CONTROL) then
+			cd = cd - self:callTalent(self.T_REK_MTYR_STANDARD_CONTROL, "getCDReduce")
+		end
+		return cd
+	end,
+	flag = {
+		type = "horror", subtype = "eldritch",
+		display = "h", color=colors.WHITE,
+		blood_color = colors.BLUE,
+		name = "glorious flag",
+		display = "G", color=colors.ORANGE,
+		image="npc/sprouting_tentacles_mtyr_flag.png",
+		sound_moam = {"creatures/rek_flag/on_hit%d", 1, 1},
+		sound_random = {"creatures/rek_flag/random%d", 1, 1},
+		
+		level_range = {1, nil}, exp_worth = 0,
+		temporary_level = true, -- don't follow you to new levels
+		is_tentacle_tree = 1,
+		is_tentacle_flag = 1,
+		combat_armor = resolvers.levelup(30, 1, 1.5), combat_def = 0,
+		combat = { dam=resolvers.levelup(resolvers.mbonus(100, 15), 1, 2.2), atk=500, apr=10, damtype=DamageType.DARKNESS },
+		never_move = 1,
+		body = { MAINHAND=1, OFFHAND=1, INVEN = 10 },
+		force_tentacle_hand = 1,
+		autolevel = "warriormage",
+		ai = "dumb_talented_simple", ai_state = { ai_target="target_closest", ai_move="move_complex", talent_in=2, },
+		dont_pass_target = true,
+		stats = { str=14, dex=18, mag=20, con=12 },
+		rank = 2,
+		size_category = 3,
+		infravision = 10,
+		insanity_regen = 10,
+		
+		resists = {all = 10, [DamageType.FIRE] = -10, [DamageType.LIGHT] = -25, [DamageType.BLIGHT] = 50},
+		
+		confusion_immune = 1,
+		fear_immune = 1,
+		knockback_immune = 1,
+		stun_immune = 1,
+		blind_immune = 1,
+		see_invisible = 20,
+		resolvers.sustains_at_birth(),
+		
+		resolvers.talents{T_MUTATED_HAND={base=1, every=5}},
+		max_life = resolvers.rngavg(95,95),
+	},
+	
+	getLevel = function(self, t) return math.floor(self:combatScale(self:getTalentLevel(t), -6, 0.9, 2, 5)) end, -- -6 @ 1, +2 @ 5, +5 @ 8
+	getPercentInc = function(self, t) return math.sqrt(math.floor(self:getTalentLevel(t)) / 5) / 1.5 end,
+	callbackOnRest = function(self, t) self.rek_mtyr_flag_progress = nil end,
+	callbackOnRun = function(self, t) self.rek_mtyr_flag_progress = nil end,
+	callbackOnKill = function(self, t, src, death_note)
+		if src.summoner and src.summoner == self then return end
+		if self:isTalentCoolingDown(t) then return end
+		local didSummon = t.doSummon(self, t, src.x, src.y)
+		if didSummon then self:startTalentCooldown(t) end
+	end,
+	callbackOnDealDamage = function(self, t, val, target, dead, death_note)
+		if dead then return end
+		
+		local threshold = 0
+		if target.rank < 3.2 then return
+		elseif target.rank >= 5 then
+			threshold = target.max_life * t.thEBoss(self, t)
+		elseif target.rank >= 4 then
+			threshold = target.max_life * t.thBoss(self, t)
+		else
+			threshold = target.max_life * t.thRare(self, t)
+		end
+		local amt = 0
+		
+		self.rek_mtyr_flag_progress = self.rek_mtyr_flag_progress or {}
+		
+		local stored = self.rek_mtyr_flag_progress[target.uid] or 0
+		if stored + val >= threshold then
+			if self:isTalentCoolingDown(t) then return end
+			local didSummon = t.doSummon(self, t, target.x, target.y)
+			if didSummon then self:startTalentCooldown(t) end
+			self.rek_mtyr_flag_progress[target.uid] = 0
+		else
+			self.rek_mtyr_flag_progress[target.uid] = stored + val
+		end
+	end,
+	getTimeLimit = function(self, t) return 10 end,
    thRare = function(self, t) return .4 end,
    thBoss = function(self, t) return 0.25 end,
    thEBoss = function(self, t) return 0.1 end,
@@ -247,21 +250,21 @@ newTalent{
                            weakest:die()
                         end
                         
-                        local flag = martyrSetupSummon(self, t.flag, x, y, lev, nil, true)
+                        local flag = martyrSetupSummon(self, t.flag, x, y, lev)
                         if self:knowTalent(self.T_REK_MTYR_STANDARD_CONTROL) then
                            local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_CONTROL))
                            flag:learnTalent(flag.T_TENTACLE_CONSTRICT, true, lvl)
       end
                         if self:knowTalent(self.T_REK_MTYR_STANDARD_TUNNELING) then
                            local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_TUNNELING))
-                           flag:learnTalent(flag.T_OOZE_ROOTS, true, lvl)
+                           flag:learnTalent(flag.T_SLIME_ROOTS, true, lvl)
                         end
                         if self:knowTalent(self.T_REK_MTYR_STANDARD_SYMBIOSIS) then
                            local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_SYMBIOSIS))
                            flag:learnTalent(flag.T_REK_MTYR_FLAG_ERUPTION, true, lvl)
                         end
 
-                        if amInsane(self) then
+                        if self:hasEffect(self.EFF_REK_MTYR_INSANE) then
                            flag.replace_display = mod.class.Actor.new{image="npc/rek_mtyr_banner.png",}
                            flag:removeAllMOs()
                            game.level.map:updateMap(flag.x, flag.y)
@@ -270,11 +273,11 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[When you kill an enemy, summon a Flag of level %d where they died that magically strikes nearby enemies. You also summon a flag when you have done enough damage to a powerful enemy: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
-
+		 return ([[When you kill an enemy, summon a Flag  where they died that magically strikes nearby enemies. You also summon a flag when you have done enough damage to a powerful enemy: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
 Summoning a flag has a cooldown.
-
-Flags last until destroyed or until you leave the level, but you can only have 3 placed at a time.]]):format(math.max(1, self.level + t.getLevel(self, t)), t.getTimeLimit(self, t), t.thRare(self, t)*100, t.thBoss(self, t)*100, t.thEBoss(self, t)*100)
+The flag's level is your level + %d, and its damage is increased by %d%%.
+Flags last until destroyed or until you leave the level, but you can only have 3 placed at a time.
+]]):format(t.thRare(self, t)*100, t.thBoss(self, t)*100, t.thEBoss(self, t)*100, t.getLevel(self, t), t.getPercentInc(self, t)*100)
    end,
 }
 
@@ -292,7 +295,7 @@ newTalent{
          local t3 = self:getTalentFromId(self.T_REK_MTYR_STANDARD_TUNNELING)
          return self:getTalentRange(t3)
       end
-      return 1
+      return 1.01
    end,
    target = function(self, t) return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
    action = function(self, t)

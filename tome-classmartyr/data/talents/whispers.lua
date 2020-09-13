@@ -127,7 +127,7 @@ newTalent{
          }
          local type = options[rng.range(1, #options)]
          local ground_effect = game.level.map:
-         addEffect(game.player, x, y, dur, type.dam, t.getPower(self, t), rng.range(1, 2), 5, nil, MapEffect.new{color_br=type.r, color_bg=type.g, color_bb=type.b, alpha=100, effect_shader="shader_images/sun_effect.png"}, nil, true)
+         addEffect(game.player, x, y, dur, type.dam, t.getPower(self, t), rng.range(1, 2), 5, nil, MapEffect.new{color_br=type.r, color_bg=type.g, color_bb=type.b, alpha=100, effect_shader="shader_images/guiding_effect.png"}, nil, true)
          game.logSeen(self, "#YELLOW#A guiding light appears!#LAST#", self.name:capitalize())
       end
    end,
@@ -157,38 +157,38 @@ Mindpower: increases damage.
 }
 
 newTalent{
-   name = "Jolt Awake", short_name = "REK_MTYR_WHISPERS_JOLT",
-   type = {"demented/whispers", 4},
-   require = martyr_req4,
-   points = 5,
-   mode = "sustained",
-   cooldown = function(self, t) return math.max(25, self:combatTalentScale(t, 60, 35)) end,
-   callbackOnHit = function(self, eff, cb, src)
-      if cb.value >= (self.life - self.die_at) then
-         cb.value = 0
+	name = "Jolt Awake", short_name = "REK_MTYR_WHISPERS_JOLT",
+	type = {"demented/whispers", 4},
+	require = martyr_req4,
+	points = 5,
+	mode = "sustained",
+	cooldown = function(self, t) return math.max(25, self:combatTalentScale(t, 60, 35)) end,
+	callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, tmp)
+		if dam >= (self.life - self.die_at) then
 
-         self:forceUseTalent(self.T_REK_MTYR_WHISPERS_JOLT, {ignore_energy=true})
-         game:playSoundNear(self, "talents/rek_false_death")
-         game.logSeen(self, "#YELLOW#%s awakens from a terrible dream!#LAST#", self.name:capitalize())
-         if self == game.player then game.bignews:say(80, "#GREEN#"..string.format("You die in the dream!")) end
-
-         self:incInsanity(-1 * self:getInsanity())
-         self:setEffect(self.EFF_REK_MTYR_JOLT_SHIELD, 1, {src=self})
-      end
-      return cb.value
-   end,
-   activate = function(self, t)
-      game:playSoundNear(self, "talents/dispel")
-      local ret = {}
-      
-      return ret
-   end,
-   deactivate = function(self, t, p)
-      --self:removeParticles(p.particle)
-      return true
-   end,
-   info = function(self, t)
-      return ([[If you suffer damage that would kill you, you instead awake from a dream of dying, setting your insanity to zero and becoming immune to damage for the rest of the turn.
-]]):format()
-   end,
+			game:delayedLogDamage(src or self, self, 0, ("%s(%d to the dream)#LAST#"):format(DamageType:get(type).text_color or "#aaaaaa#", dam), false)
+			dam = 0						
+			self:forceUseTalent(self.T_REK_MTYR_WHISPERS_JOLT, {ignore_energy=true})
+			game:playSoundNear(self, "talents/rek_false_death")
+			game.logSeen(self, "#YELLOW#%s awakens from a terrible dream!#LAST#", self.name:capitalize())
+			if self == game.player then game.bignews:say(80, "#GREEN#"..string.format("You die in the dream!")) end
+			
+			self:incInsanity(-1 * self:getInsanity())
+			self:setEffect(self.EFF_REK_MTYR_JOLT_SHIELD, 1, {src=self})
+		end
+		return {dam=dam}
+	end,
+	activate = function(self, t)
+		game:playSoundNear(self, "talents/dispel")
+		local ret = {}
+		
+		return ret
+	end,
+	deactivate = function(self, t, p)
+		--self:removeParticles(p.particle)
+		return true
+	end,
+	info = function(self, t)
+		return ([[If you suffer damage that would kill you, you instead awake from a dream of dying, setting your insanity to zero and becoming immune to damage for the rest of the turn.]]):format()
+	end,
 }

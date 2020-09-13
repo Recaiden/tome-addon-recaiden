@@ -9,10 +9,10 @@ newTalent{
    getMinPenalty = function(self, t) return self:combatTalentLimit(t, 45, 10, 25) end,
    info = function(self, t)
       return ([[You learn to intensify chaotic forces to your advantage.
-Positive insanity effects will have at least %d / 50 power and be more common.
-Negative insanity effects will have at least %d / 50 power but be less common.
+Positive insanity effects will have at least %d / 50 power and be %d%% more common.
+Negative insanity effects will have at least %d / 50 power but be %d%% less common.
 Talent level: improves chance of a positive effect.
-]]):format(t.getMinBonus(self, t), t.getMinPenalty(self, t))
+]]):format(t.getMinBonus(self, t), t.getRerollChance(self, t) / 2, t.getMinPenalty(self, t), t.getRerollChance(self, t) / 2)
    end,
 }
 
@@ -64,7 +64,7 @@ newTalent{
       if self.turn_procs.rek_mtyr_inspired then return end
       if (ief < 0 and effectname == "damage") or (ief > 0 and effectname == "cooldown") then
          self.turn_procs.rek_mtyr_inspired = true
-         self:setEffect(self.EFF_REK_MTYR_INSPIRED, 10, {stacks = 1, max_stacks=t.getMaxStacks(self, t)})
+         self:setEffect(self.EFF_REK_MTYR_INSPIRED, 10, {power=t.getPower(self, t), stacks = 1, max_stacks=t.getMaxStacks(self, t)})
       end
    end,
    info = function(self, t)

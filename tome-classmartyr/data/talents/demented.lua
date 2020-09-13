@@ -1,4 +1,6 @@
-local ActorTalents = require "engine.interface.ActorTalents"
+local Talents = require "engine.interface.ActorTalents"
+local Tiles = require "engine.Tiles"
+local Entity = require "engine.Entity"
 
 damDesc = function(self, type, dam)
    -- Increases damage
@@ -16,6 +18,29 @@ end
 amInsane = function(self)
    return self:getInsanity() >= 60
 end
+
+local oldNewTalent = Talents.newTalent
+Talents.newTalent = function(self, t)	
+	if t.extra_image_sane then
+		if fs.exists(Tiles.baseImageFile(t.extra_image_sane)) then
+			t.display_entity_sane = Entity.new{image=t.extra_image_sane, is_talent=true}
+		else
+			t.display_entity_sane = Entity.new{image="talents/default.png", is_talent=true}
+		end
+		if fs.exists(Tiles.baseImageFile(t.extra_image_semisane)) then
+			t.display_entity_semisane = Entity.new{image=t.extra_image_semisane, is_talent=true}
+		else
+			t.display_entity_semisane = Entity.new{image="talents/default.png", is_talent=true}
+		end
+		if fs.exists(Tiles.baseImageFile(t.extra_image_insane)) then
+			t.display_entity_insane = Entity.new{image=t.extra_image_insane, is_talent=true}
+		else
+			t.display_entity_insane = Entity.new{image="talents/default.png", is_talent=true}
+		end
+	end
+	return oldNewTalent(self, t)
+end
+
 
 sling_req1 = function(self, t) local stat = self:getStr() >= self:getDex() and "str" or "dex"; return {
       stat = { [stat]=function(level) return 10 + (level-1) * 6 end },
@@ -244,31 +269,32 @@ end
 
 -- Swaps weapons if needed
 doMartyrWeaponSwap = function(self, type, silent)
-   local swap = false
-   local mainhand, offhand, ammo, pf_weapon
-   
-   if type == "melee" then
-      if not hasMeleeWeapon(self) and hasMeleeWeapon(self, true) then
-         swap = true
-      end
-   end
-   if type == "sling" then
-      mainhand, offhand, ammo, pf_weapon = self:hasArcheryWeapon("sling")
-      if not mainhand and not pf_weapon then
-         mainhand, offhand, ammo, pf_weapon = self:hasArcheryWeapon("sling", true)
-         if mainhand or pf_weapon then swap = true end
-      end
-   end
-   
-   if swap == true then
-      local old_inv_access = self.no_inventory_access
-      self.no_inventory_access = nil
-      self:attr("no_sound", 1)
-      self:quickSwitchWeapons(true, "martyr", silent)
-      self:attr("no_sound", -1)
-      self.no_inventory_access = old_inv_access
-   end
-   return swap
+	if not self:attr("martyr_swap") then return false end
+	local swap = false
+	local mainhand, offhand, ammo, pf_weapon
+	
+	if type == "melee" then
+		if not hasMeleeWeapon(self) and hasMeleeWeapon(self, true) then
+			swap = true
+		end
+	end
+	if type == "sling" then
+		mainhand, offhand, ammo, pf_weapon = self:hasArcheryWeapon("sling")
+		if not mainhand and not pf_weapon then
+			mainhand, offhand, ammo, pf_weapon = self:hasArcheryWeapon("sling", true)
+			if mainhand or pf_weapon then swap = true end
+		end
+	end
+	
+	if swap == true then
+		local old_inv_access = self.no_inventory_access
+		self.no_inventory_access = nil
+		self:attr("no_sound", 1)
+		self:quickSwitchWeapons(true, "martyr", silent)
+		self:attr("no_sound", -1)
+		self.no_inventory_access = old_inv_access
+	end
+	return swap
 end
 
 martyrPreUse = function(self, t, silent, weapon_type)
@@ -298,51 +324,51 @@ doMartyrPreUse = function(self, weapon, silent)
 end
 
 if not Talents.talents_types_def["demented/chivalry"] then
-   newTalentType{ allow_random=false, is_mind=true, type="demented/chivalry", name = "Chivalry", description = "Onward, to greater challenges, for glory!" }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/chivalry", name = "Chivalry", description = "Onward, to greater challenges, for glory!" }
    load("/data-classmartyr/talents/chivalry.lua")
 end
 
 if not Talents.talents_types_def["demented/vagabond"] then
-   newTalentType{ allow_random=false, is_mind=true, type="demented/vagabond", name = "Vagabond", description = "I'm not the only one seeing this, right?" }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/vagabond", name = "Vagabond", description = "I'm not the only one seeing this, right?" }
    load("/data-classmartyr/talents/vagabond.lua")
 end
 
 if not Talents.talents_types_def["demented/whispers"] then
-   newTalentType{ allow_random=false, type="demented/whispers", name = "Beinagrind Whispers", description = "Exist on the edge of madness", is_mind=true }
+   newTalentType{ allow_random=true, type="demented/whispers", name = "Beinagrind Whispers", description = "Exist on the edge of madness", is_mind=true }
    load("/data-classmartyr/talents/whispers.lua")
 end
 
 if not Talents.talents_types_def["demented/unsettling"] then
-   newTalentType{ allow_random=false, type="demented/unsettling", name = "Unsettling Words", description = "Distort your enemies' perceptions and fray their sanity.", is_mind=true }
+   newTalentType{ allow_random=true, type="demented/unsettling", name = "Unsettling Words", description = "Distort your enemies' perceptions and fray their sanity.", is_mind=true }
    load("/data-classmartyr/talents/unsettling.lua")
 end
 
 if not Talents.talents_types_def["demented/polarity"] then
-   newTalentType{ allow_random=false, generic=true, type="demented/polarity", name = "Polarity", description = "Dive into the madness; power comes at the price of sanity" }
+   newTalentType{ allow_random=true, generic=true, type="demented/polarity", name = "Polarity", description = "Dive into the madness; power comes at the price of sanity" }
    load("/data-classmartyr/talents/polarity.lua")
 end
 
 if not Talents.talents_types_def["demented/scourge"] then
-   newTalentType{ allow_random=false, is_mind=true, type="demented/scourge", name = "Scourge", description = "We will fight; you are but a vessel." }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/scourge", name = "Scourge", description = "We will fight; you are but a vessel." }
    load("/data-classmartyr/talents/scourge.lua")
 end
 
 if not Talents.talents_types_def["demented/standard-bearer"] then
-   newTalentType{ allow_random=false, is_mind=true, type="demented/standard-bearer", name = "Standard-Bearer", description = "To he who is victorious, ever more victories will flow!" }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/standard-bearer", name = "Standard-Bearer", description = "To he who is victorious, ever more victories will flow!" }
    load("/data-classmartyr/talents/standard-bearer.lua")
 end
 
 if not Talents.talents_types_def["demented/moment"] then
-   newTalentType{ allow_random=false, is_mind=true, type="demented/moment", name = "Final Moment", min_lev = 10, description = "Wield the blade of the ancient kings, and you will never be late nor lost." }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/moment", name = "Final Moment", min_lev = 10, description = "Wield the blade of the ancient kings, and you will never be late nor lost." }
    load("/data-classmartyr/talents/moment.lua")
 end
 
 if not Talents.talents_types_def["psionic/crucible"] then
-   newTalentType{ allow_random=false, is_mind=true, type="psionic/crucible", name = "Crucible", min_lev = 10, description = "Pain brings clarity.  To see clearly is painful." }
+   newTalentType{ allow_random=true, is_mind=true, type="psionic/crucible", name = "Crucible", min_lev = 10, description = "Pain brings clarity.  To see clearly is painful." }
    load("/data-classmartyr/talents/crucible.lua")
 end
 
 if not Talents.talents_types_def["demented/revelation"] then
-   newTalentType{ allow_random=false, is_mind=true, type="demented/revelation", name = "Revelation", min_lev = 10, description = "You see the world as it truly is, Eyal in the Age of Scourge.  The world is horrid, but the truth has power." }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/revelation", name = "Revelation", min_lev = 10, description = "You see the world as it truly is, Eyal in the Age of Scourge.  The world is horrid, but the truth has power." }
    load("/data-classmartyr/talents/revelation.lua")
 end

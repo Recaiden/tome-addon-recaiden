@@ -16,6 +16,7 @@ newTalent{
       if target.rank >= 3 then return end
       if target.on_die then return end
       if target.type == "horror" then return end
+			if target.summoner then return end
       if self and self.reactionToward and self:reactionToward(target) > 0 then return end
       if not rng.percent(4) then return end
       if target.__light_revelation then return end
@@ -73,7 +74,7 @@ newTalent{
    end,
    action = function(self, t)
       doMartyrWeaponSwap(self, "sling", true)
-      local targets = self:archeryAcquireTargets(nil, {one_shot=true})
+      local targets = self:archeryAcquireTargets(nil, {one_shot=true, no_energy = true})
       if not targets then return end
       self:archeryShoot(targets, t, nil, {mult=t.getDamage(self, t)})
 

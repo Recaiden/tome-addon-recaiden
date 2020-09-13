@@ -3,8 +3,6 @@ local _M = loadPrevious(...)
 local base_learnTalent = _M.learnTalent
 local base_unlearnTalent = _M.unlearnTalent
 
-
-
 function _M:learnTalent(t_id, v)
    self.talents_learned[t_id] = self.talents_learned[t_id] or 0
    local t = self.actor:getTalentFromId(t_id)
@@ -22,7 +20,6 @@ function _M:learnTalent(t_id, v)
       + self.actor:getTalentLevelRaw(self.actor.T_REK_MTYR_CHIVALRY_EXECUTIONERS_ONSLAUGHT)
       + self.actor:getTalentLevelRaw(self.actor.T_REK_MTYR_CHIVALRY_HEROS_RESOLVE)
 
-   --self:subtleMessage("DEBUG", "Category is "..t.type[1], subtleMessageErrorColor)
    local lvl_orig = self.actor:getTalentLevelRaw(t_id)
    if v then
       local mtyr_talent_flag = false
@@ -35,18 +32,18 @@ function _M:learnTalent(t_id, v)
    
       if mtyr_talent_flag and self.actor:getTalentLevelRaw(t_id) == lvl_orig then
          self.actor[t_index] = self.actor[t_index] - 1
-         --self:subtleMessage("DEBUG", "V remove", subtleMessageErrorColor)
       end
    else
       if category == "demented/vagabond" and countChivalry >= countVagabond then
          self:subtleMessage("Impossible", "You must unlearn some Chivalry talents first!", subtleMessageErrorColor)
          return
       end
-      if category == "demented/chivalry" and (self.actor:knowTalent(t_id) or self.actor:getTalentLevelRaw(t_id) ~= lvl_orig) then
+			base_learnTalent(self, t_id, v)
+			local lvl = self.actor:getTalentLevelRaw(t_id)
+			--self:subtleMessage("DEBUG", ("%d -> %d"):format(lvl_orig, lvl), subtleMessageErrorColor)
+      if category == "demented/chivalry" and (lvl ~= lvl_orig) then
          self.actor[t_index] = self.actor[t_index] - 1
-         --self:subtleMessage("DEBUG", "nil remove", subtleMessageErrorColor)
       end
-      base_learnTalent(self, t_id, v)
    end
 end
 

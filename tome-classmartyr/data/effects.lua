@@ -93,7 +93,7 @@ newEffect{
          str = str..("\nThe damage's intensity will increase by %d%% per turn."):format((eff.ramp-1)*100)
       end
       if eff.fail > 0 then
-         str = str..("\nThe pain causes them to have a %d%% chance to fail to use talents."):format(eff.pain)
+         str = str..("\nThe pain causes them to have a %d%% chance to fail to use talents."):format(eff.fail)
       end
       return str
    end,
@@ -172,7 +172,7 @@ newEffect{
 }
 
 newEffect{
-   name = "REK_MTYR_MANIC_SPEED", image = "talents/rek_mtyr_polarity_dement.png",
+   name = "REK_MTYR_MANIC_SPEED", image = "talents/rek_mtyr_polarity_manic_speed.png",
    desc = "Demented",
    long_desc = function(self, eff) return ("The target is moving at infinite speed for %d to %d steps."):format(eff.min_steps, eff.max_steps) end,
    type = "mental",
@@ -349,28 +349,30 @@ newEffect{
 }
 
 newEffect{
-   name = "REK_MTYR_MOMENT_COUNTER", image = "talents/rek_mtyr_moment_block.png",
-   desc = "Cut Danger",
-   long_desc = function(self, eff) return ("The target is countering all attacks, preventing %d damage."):format(eff.power) end,
-   type = "other",
-   subtype = { temporal=true, block=true },
-   status = "beneficial",
-   parameters = { power = 1, dam = 1.0 },
-   activate = function(self, eff)
-      --self:effectTemporaryValue(p, "flat_damage_armor", {all=eff.power})
-   end,
-   callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, tmp)
-      self.turn_procs.rek_martyr_moment_counter = self.turn_procs.rek_martyr_moment_counter or {}
-      if not self.turn_procs.rek_martyr_moment_counter[src.uid] then
-         self.turn_procs.rek_martyr_moment_counter[src.uid] = true
-         local t = self:getTalentFromId(self.T_REK_MTYR_MOMENT_BLOCK)
-         if t and src ~= self then
-            self:attackTargetWith(src, t.getFinalMoment(self, t), nil, eff.dam)
-         end
+	name = "REK_MTYR_MOMENT_COUNTER", image = "talents/rek_mtyr_moment_block.png",
+	desc = "Cut Danger",
+	long_desc = function(self, eff) return ("The target is countering all attacks, preventing %d damage."):format(eff.power) end,
+	type = "other",
+	subtype = { temporal=true, block=true },
+	status = "beneficial",
+	parameters = { power = 1, dam = 1.0 },
+	activate = function(self, eff)
+		--self:effectTemporaryValue(p, "flat_damage_armor", {all=eff.power})
+	end,
+	callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, tmp)
+		self.turn_procs.rek_martyr_moment_counter = self.turn_procs.rek_martyr_moment_counter or {}
+		if src and src.x and src.y and src.life then
+			if not self.turn_procs.rek_martyr_moment_counter[src.uid] then
+				self.turn_procs.rek_martyr_moment_counter[src.uid] = true
+				local t = self:getTalentFromId(self.T_REK_MTYR_MOMENT_BLOCK)
+				if t and src ~= self then
+					self:attackTargetWith(src, t.getFinalMoment(self, t), nil, eff.dam)
+				end
       end
-
-      return {dam=math.max(0, dam-eff.power)}
-   end,
+		end
+			
+		return {dam=math.max(0, dam-eff.power)}
+	end,
 }
 
 newEffect{
@@ -666,67 +668,68 @@ newEffect{
 
 
 newEffect{
-   name = "REK_MTYR_SANE", image = "effects/rek_mtyr_insanity_low.png",
-   desc = "Sane",
-   long_desc = function(self, eff) return ("You see the world as it truly is."):format(eff.slow, eff.armor) end,
-   type = "other",
-   subtype = { insanity=true },
-   status = "beneficial",
-   decrease = 0, no_player_remove = true,
-   parameters = {thresh=60},
-   callbackOnAct = function(self, eff)
-      if self:getInsanity() >= eff.thresh then
-         self:removeEffect(self.EFF_REK_MTYR_SANE)
-         self:setEffect(self.EFF_REK_MTYR_INSANE, 1, {})
-
-         --flag graphics
-         if game.party and game.party:hasMember(self) then
-            for flag, def in pairs(game.party.members) do
-               if flag.is_tentacle_flag then
-                  flag.replace_display = mod.class.Actor.new{image="npc/rek_mtyr_banner.png",}
-                  flag:removeAllMOs()
-                  game.level.map:updateMap(flag.x, flag.y)
-               end
-            end
-         end
-      end
-   end,
-   activate = function(self, eff)
-   end,   
-   deactivate = function(self, eff)
-   end,
+	name = "REK_MTYR_SANE", image = "effects/rek_mtyr_insanity_low.png",
+	desc = "Sane",
+	long_desc = function(self, eff) return ("You see the world as it truly is."):format(eff.slow, eff.armor) end,
+	type = "other",
+	subtype = { insanity=true },
+	status = "beneficial",
+	decrease = 0, no_player_remove = true,
+	parameters = {thresh=60},
+	callbackOnAct = function(self, eff)
+		
+		if self:getInsanity() >= eff.thresh then
+			self:removeEffect(self.EFF_REK_MTYR_SANE)
+			self:setEffect(self.EFF_REK_MTYR_INSANE, 1, {})
+			
+			--flag graphics
+			if game.party and game.party:hasMember(self) then
+				for flag, def in pairs(game.party.members) do
+					if flag.is_tentacle_flag then
+						flag.replace_display = mod.class.Actor.new{image="npc/rek_mtyr_banner.png",}
+						flag:removeAllMOs()
+						game.level.map:updateMap(flag.x, flag.y)
+					end
+				end
+			end
+		end
+	end,
+	activate = function(self, eff)
+	end,   
+	deactivate = function(self, eff)
+	end,
 }
 
 newEffect{
-   name = "REK_MTYR_INSANE", image = "effects/rek_mtyr_insanity_high.png",
-   desc = "Insane",
-   long_desc = function(self, eff) return "You see the world as it should be." end,
-   type = "other",
-   subtype = { insanity=true },
-   status = "beneficial",
-   decrease = 0, no_player_remove = true,
-   parameters = {thresh=40},
-   callbackOnAct = function(self, eff)
-      if self:getInsanity() <= eff.thresh then
-         self:removeEffect(self.EFF_REK_MTYR_INSANE)
-         self:setEffect(self.EFF_REK_MTYR_SANE, 1, {})
-
-         --flag graphics
-         if game.party and game.party:hasMember(self) then
-            for flag, def in pairs(game.party.members) do
-               if flag.is_tentacle_flag then
-                  flag.replace_display = nil
-                  flag:removeAllMOs()
-                  game.level.map:updateMap(flag.x, flag.y)
-               end
-            end
-         end
-      end
-   end,
-   activate = function(self, eff)
-   end,
-   deactivate = function(self, eff)
-   end,
+	name = "REK_MTYR_INSANE", image = "effects/rek_mtyr_insanity_high.png",
+	desc = "Insane",
+	long_desc = function(self, eff) return "You see the world as it should be." end,
+	type = "other",
+	subtype = { insanity=true },
+	status = "beneficial",
+	decrease = 0, no_player_remove = true,
+	parameters = {thresh=40},
+	callbackOnAct = function(self, eff)
+		if self:getInsanity() <= eff.thresh then
+			self:removeEffect(self.EFF_REK_MTYR_INSANE)
+			self:setEffect(self.EFF_REK_MTYR_SANE, 1, {})
+			
+			--flag graphics
+			if game.party and game.party:hasMember(self) then
+				for flag, def in pairs(game.party.members) do
+					if flag.is_tentacle_flag then
+						flag.replace_display = nil
+						flag:removeAllMOs()
+						game.level.map:updateMap(flag.x, flag.y)
+					end
+				end
+			end
+		end
+	end,
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+	end,
 }
 
 newEffect{
@@ -735,7 +738,7 @@ newEffect{
 	long_desc = function(self, eff) return ("Reduces movement speed by %d%%."):format(math.floor(eff.stacks * 10)) end,
 	charges = function(self, eff) return (math.floor(eff.stacks * 10).."%") end,
 	type = "physical",
-	subtype = { slow=true },
+	subtype = { disease=true, slow=true },
 	status = "detrimental",
 	parameters = { power=3, stacks=1, max_stacks=5 },
 	on_gain = function(self, err) return "#Target# is slowed by the taint", "+Tainted Slow" end,
