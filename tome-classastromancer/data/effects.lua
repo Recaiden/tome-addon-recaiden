@@ -282,134 +282,164 @@ newEffect{
 }
 
 newEffect{
-   name = "WANDER_METEOR_STORM", image = "talents/wander_meteor_storm.png",
-   desc = "Meteor Rain",
-   long_desc = function(self, eff) return ("The target is summoning meteors"):format() end,
-   type = "magical",
-   subtype = { fire=true },
-   status = "beneficial",
-   parameters = { power=100, range=4, radius=1 },
-
-   callbackOnActBase = function(self, eff)
-      local rad = eff.radius
-      local meteor = function(src, x, y, dam)
-	 game.level.map:particleEmitter(x, y, 10, "meteor", {x=x, y=y}).on_remove = function(self)
-	    local x, y = self.args.x, self.args.y
-	    game.level.map:particleEmitter(x, y, 10, "starfall", {radius=rad})
-	    src:project({type="ball", radius=rad, selffire=false, friendlyfire=false}, x, y, engine.DamageType.METEOR, dam)
-	    game:getPlayer(true):attr("meteoric_crash", 1)
-										    end
-      end
-      
-      --Collect possible targets
-      local list = {}
-      --Near the player
-      self:project({type="ball", radius=eff.range}, self.x, self.y, function(px, py)
-	    local actor = game.level.map(px, py, Map.ACTOR)
-	    if actor and self:reactionToward(actor) < 0 then list[#list+1] = actor end  
-      end)
-
-      --Near summons
-      local apply = function(a)
-	 a:project({type="ball", radius=eff.range}, a.x, a.y,
-	    function(px, py)
-	       local actor = game.level.map(px, py, Map.ACTOR)
-	       if actor and self:reactionToward(actor) < 0 then
-		  list[#list+1] = actor
-	       end
-	 end)
-      end
-      if game.party and game.party:hasMember(self) then
-	 for act, def in pairs(game.party.members) do
-	    if act.summoner and act.summoner == self and act.type == "elemental" then
-	       apply(act)
-	    end
-	 end
-      else
-	 for uid, act in pairs(game.level.entities) do
-	    if act.summoner and act.summoner == self and act.type == "elemental" then
-	       apply(act)
-	    end
-	 end
-      end
-
-      -- determine damage for this turn
-      local dam = 0
-      if #list > 0 then
-	 dam = self:spellCrit(eff.power)
-      end
-
-      -- Hit a random enemy
-      local nb = 0
-      while #list > 0 and nb < 1 do
-	 local a = rng.tableRemove(list)
-
-         -- Hit within 1 space of the target so they're always included.
-         local tx = util.bound(a.x + rng.range(-1,1), 0, game.level.map.w-1)
-         local ty = util.bound(a.y + rng.range(-1,1), 0, game.level.map.h-1)
-         local rad = 1
-                               
-         self:project({type="ball", x=tx, y=ty, radius=1, selffire=false}, tx, ty, DamageType.METEOR, dam)
-
-         if core.shader.active() then
-            game.level.map:particleEmitter(tx, ty, rad, "starfall", {radius=rad, tx=tx, ty=ty})
-         else
-            game.level.map:particleEmitter(tx, ty, rad, "shadow_flash", {radius=rad, grids=grids, tx=tx, ty=ty})
-            game.level.map:particleEmitter(tx, ty, rad, "circle", {oversize=0.7, a=60, limit_life=16, appear=8, speed=-0.5, img="darkness_celestial_circle", radius=rad})
-         end
-         
-         -- Don't use the BIZARRE REALTIME METEOR except for visuals
-	 meteor(self, tx, ty, 0)
-
-	 -- Void summons hook
-	 if self:knowTalent(self.T_WANDER_METEOR_VOID_SUMMONS) then
-	    local tal_vs = self:getTalentFromId(self.T_WANDER_METEOR_VOID_SUMMONS)
-	    if rng.percent(tal_vs.getChance(self, tal_vs)) then
-	       if rng.percent(50) then
-		  tal_vs.callLosgoroth(self, tal_vs, a.x, a.y, a)
-	       else
-		  tal_vs.callManaworm(self, tal_vs, a.x, a.y, a)
-	       end
-	    end
-	 end
-	 
-	 nb = nb + 1
-      end   
-   end,
-
-   
-   on_merge = function(self, old_eff, new_eff)
-      return old_eff
-   end,
-   on_gain = function(self, err)
-      return nil, true
-   end,
-   on_lose = function(self, err)
-      return nil, true
-   end,
-   activate = function(self, eff)
-   end,
-   deactivate = function(self, eff)
-      if eff.particle then
-	 self:removeParticles(eff.particle)
-      end
-   end,
+	name = "WANDER_METEOR_STORM", image = "talents/wander_meteor_storm.png",
+	desc = "Meteor Rain",
+	long_desc = function(self, eff) return ("The target is summoning meteors"):format() end,
+	type = "magical",
+	subtype = { fire=true },
+	status = "beneficial",
+	parameters = {
+		power=100, range=4, radius=1, 
+		dropMeteor = function(self, eff, multiplier)
+			local rad = 1
+			if multiplier < 1 then rad = 0.5 + 0.5 * multiplier end
+			local meteor = function(src, x, y, dam)
+				game.level.map:particleEmitter(x, y, 5*rad, "meteor", {x=x, y=y}).on_remove = function(self)
+					local x, y = self.args.x, self.args.y
+					if core.shader.active() then
+						game.level.map:particleEmitter(x, y, rad, "starfall", {radius=rad, tx=tx, ty=ty})
+					else
+						game.level.map:particleEmitter(x, y, rad, "shadow_flash", {radius=rad, grids=grids, tx=tx, ty=ty})
+						game.level.map:particleEmitter(x, y, rad, "circle", {oversize=0.7, a=60, limit_life=16, appear=8, speed=-0.5, img="darkness_celestial_circle", radius=rad})
+					end
+					game:getPlayer(true):attr("meteoric_crash", 1)
+																																									 end
+			end
+			
+			--Collect possible targets
+			local list = {}
+			--Near the player
+			self:project({type="ball", radius=eff.range}, self.x, self.y, function(px, py)
+										 local actor = game.level.map(px, py, Map.ACTOR)
+										 if actor and self:reactionToward(actor) < 0 then list[#list+1] = actor end  
+																																		end)
+			
+			--Near summons
+			local apply = function(a)
+				a:project({type="ball", radius=eff.range}, a.x, a.y,
+									function(px, py)
+										local actor = game.level.map(px, py, Map.ACTOR)
+										if actor and self:reactionToward(actor) < 0 then
+											list[#list+1] = actor
+										end
+									end)
+			end
+			if game.party and game.party:hasMember(self) then
+				for act, def in pairs(game.party.members) do
+					if act.summoner and act.summoner == self and act.type == "elemental" then
+						apply(act)
+					end
+				end
+			else
+				for uid, act in pairs(game.level.entities) do
+					if act.summoner and act.summoner == self and act.type == "elemental" then
+						apply(act)
+					end
+				end
+			end
+			
+			-- determine damage for this turn
+			local dam = 0
+			if #list > 0 then
+				dam = self:spellCrit(eff.power)
+				if multiplier then dam = dam * multiplier end
+			end
+			
+			-- Hit a random enemy
+			local nb = 0
+			while #list > 0 and nb < 1 do
+				local a = rng.tableRemove(list)
+				
+				-- Hit within 1 space of the target so they're always included.
+				local tx = util.bound(a.x + rng.range(-1,1), 0, game.level.map.w-1)
+				local ty = util.bound(a.y + rng.range(-1,1), 0, game.level.map.h-1)
+				
+				-- Don't use the BIZARRE REALTIME METEOR for damage, just for visuals
+				meteor(self, tx, ty, 0)
+				self:project({type="ball", x=tx, y=ty, radius=1, friendlyfire=false}, tx, ty, DamageType.METEOR, dam)
+				
+				-- Void summons hook
+				if self:knowTalent(self.T_WANDER_METEOR_VOID_SUMMONS) then
+					local tal_vs = self:getTalentFromId(self.T_WANDER_METEOR_VOID_SUMMONS)
+					if rng.percent(tal_vs.getChance(self, tal_vs)) then
+						if rng.percent(50) then
+							tal_vs.callLosgoroth(self, tal_vs, a.x, a.y, a)
+						else
+							tal_vs.callManaworm(self, tal_vs, a.x, a.y, a)
+						end
+					end
+				end
+				
+				nb = nb + 1
+			end   
+		end
+	},
+	callbackOnActBase = function(self, eff)
+		eff.dropMeteor(self, eff, 1.0)
+	end,
+	on_merge = function(self, old_eff, new_eff)
+		return old_eff
+	end,
+	on_gain = function(self, err)
+		return nil, true
+	end,
+	on_lose = function(self, err)
+		return nil, true
+	end,
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+		if eff.particle then
+			self:removeParticles(eff.particle)
+		end
+	end,
 }
 
 
 newEffect{
-   name = "WANDER_UNITY_CONVERGENCE", image = "talents/wander_cycle_boost.png",
-   desc = "Planetary Convergence",
-   long_desc = function(self, eff) return ("The target is preparing to summon a mighty elemental"):format() end,
+	name = "WANDER_UNITY_CONVERGENCE", image = "talents/wander_cycle_boost.png",
+	desc = "Planetary Convergence",
+	long_desc = function(self, eff) return ("The target is preparing to summon a mighty elemental"):format() end,
+	type = "magical",
+	subtype = { arcane=true },
+	status = "beneficial",
+	parameters = { count=1, extend=0, ultimate=false },
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+		if eff.particle then
+			self:removeParticles(eff.particle)
+		end
+	end,
+}
+
+
+newEffect{
+   name = "WANDER_CORROSIVE_WORM", image = "talents/corrosive_worm.png",
+   desc = "Corrosive Worm",
+   long_desc = function(self, eff) return ("The target is infected with a lesser manaworm, reducing damage resistance by %d%%. When the effect ends, the worm will explode, dealing %d arcane damage in a 2 radius ball. This damage will increase by %d%% of all damage taken while under torment"):format(eff.power, eff.finaldam, eff.rate*100) end,
    type = "magical",
    subtype = { arcane=true },
-   status = "beneficial",
-   parameters = { extend=0, ultimate=false },
+   status = "detrimental",
+   parameters = { power=20, rate=10, finaldam=50, },
+   on_gain = function(self, err) return "#Target# is infected by a corrosive worm.", "+Corrosive Manaworm" end,
+   on_lose = function(self, err) return "#Target# is free from the corrosive worm.", "-Corrosive Manaworm" end,
    activate = function(self, eff)
+      eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=0, oversize=0.7, a=255, appear=8, speed=0, img="blight_worms", radius=0}))
+      self:effectTemporaryValue(eff, "resists", {all=-eff.power})
    end,
    deactivate = function(self, eff)
-      if eff.particle then
-	 self:removeParticles(eff.particle)
-      end
+      local tg = {type="ball", radius=2, selffire=false, x=self.x, y=self.y}
+      eff.src:project(tg, self.x, self.y, DamageType.MANABURN, eff.finaldam, {type="acid"})
+      self:removeParticles(eff.particle)
+   end,
+   callbackOnHit = function(self, eff, cb)
+      eff.finaldam = eff.finaldam + (cb.value * eff.rate)
+      return true
+   end,
+   
+   on_die = function(self, eff)
+      local tg = {type="ball", radius=2, selffire=false, x=self.x, y=self.y}
+      eff.src:project(tg, self.x, self.y, DamageType.MANABURN, eff.finaldam, {type="acid"})
    end,
 }

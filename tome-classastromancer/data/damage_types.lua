@@ -45,27 +45,27 @@ newDamageType{
 
 -- 50% fire, 50% physical, spellshock
 newDamageType{
-   name = "volcanic rift", type = "WANDER_FIRE_CRUSH",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      if _G.type(dam) == "number" then
-	 dam = {dam=dam/2, dur=3}
-      end
-   
-      local target = game.level.map(x, y, Map.ACTOR)
-      if not target or target.dead then return end
-      
-      if target and src:reactionToward(target) < 0 then
-	 DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
-	 DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam.dam, state)
-	 if not target:attr("fly")
-	    and not target:attr("levitation")
-	 then
-	    target:setEffect(target.EFF_SPELLSHOCKED, dam.dur, {apply_power=src:combatSpellpower()})
-	 end	 
-      end
-   end,
+	name = "volcanic rift", type = "WANDER_FIRE_CRUSH",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		if _G.type(dam) == "number" then
+			dam = {dam=dam/2, dur=3}
+		end
+		
+		local target = game.level.map(x, y, Map.ACTOR)
+		if not target or target.dead then return end
+		
+		if target and src:reactionToward(target) < 0 then
+			DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
+			DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam.dam, state)
+			if not target:attr("fly")
+				and not target:attr("levitation")
+			then
+				target:setEffect(target.EFF_FLAWED_DESIGN, dam.dur, {power=20, apply_power=src:combatSpellpower()})
+			end	 
+		end
+	end,
 }
 
 -- Cold damage + speed reduction +wet (but no freeze chance)
@@ -85,19 +85,25 @@ newDamageType{
 
 -- lightning damage to enemies, healing to allies
 newDamageType{
-   name = "bright lightning", type = "GOOD_LIGHTNING",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      local target = game.level.map(x, y, Map.ACTOR)
-      if target then
-	 if src:reactionToward(target) >= 0 then
-	    DamageType:get(DamageType.HEAL).projector(src, x, y, DamageType.HEAL, dam.dam, state)
-	 elseif src:reactionToward(target) < 0 then
-	    DamageType:get(DamageType.LIGHTNING).projector(src, x, y, DamageType.LIGHTNING, dam.dam, state)
-	 end
-      end
-   end,
+	name = "bright lightning", type = "GOOD_LIGHTNING",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			if src:reactionToward(target) >= 0 then
+				-- include your lightning increase as a bonus
+				if src.combatGetDamageIncrease then
+					local bonus = src:combatGetDamageIncrease(DamageType.LIGHTNING) / 100
+					if bonus > 0 then dam.dam = dam.dam * (1 + bonus) end
+				end
+				if dam.heal then dam.dam = dam.dam * dam.heal end
+				DamageType:get(DamageType.HEAL).projector(src, x, y, DamageType.HEAL, dam.dam, state)
+			elseif src:reactionToward(target) < 0 then
+				DamageType:get(DamageType.LIGHTNING).projector(src, x, y, DamageType.LIGHTNING, dam.dam, state)
+			end
+		end
+	end,
 }
 
 -- physical, fire
@@ -161,3 +167,23 @@ newDamageType{
    end,
 }
 
+newDamageType{
+   name = "manaworm arcane", type = "ASTROMANCER_MANAWORM",
+   projector = function(src, x, y, type, dam, state)
+      state = initState(state)
+      useImplicitCrit(src, state)
+      local realdam = DamageType:get(DamageType.ARCANE).projector(src, x, y, DamageType.ARCANE, dam, state)
+      local target = game.level.map(x, y, Map.ACTOR)
+      if target then
+         if game.zone.void_blast_hits and game.party:hasMember(target) then game.zone.void_blast_hits = game.zone.void_blast_hits + 1 end
+         
+         if target:knowTalent(target.T_MANA_POOL) then
+            target:setEffect(target.EFF_MANAWORM, 5, {power=dam * 5, src=src, no_ct_effect=true})
+            src:die()
+         else
+            game.logSeen(target, "%s has no mana to burn.", target.name:capitalize())
+         end
+      end
+      return realdam
+   end,
+}

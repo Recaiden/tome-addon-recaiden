@@ -27,7 +27,7 @@ newEntity{
       dam = 20,
       apr = 4,
       dammod = {mag=1.3},
-      element = DamageType.FIRE,
+      element = DamageType.PHYSICAL,
       convert_damage = { [DamageType.FIRE] = 50,},
    },
    wielder = {
@@ -40,7 +40,9 @@ newEntity{
 	 ["celestial/meteor"] = 0.2,
       },
       talent_cd_reduction={[Talents.T_WANDER_METEOR_STARSTRIKE]=2},
-      learn_talent = {[Talents.T_WANDER_METEOR_STORM_BONUS] = 1},
+      learn_talent = {
+				[Talents.T_WANDER_METEOR_STORM_BONUS] = 1,
+				[Talents.T_WANDER_METEOR_STORM] = 1},
    }
 }
 
@@ -117,57 +119,60 @@ newEntity{
 -- Weapons
 --------------------------------------------------------------------------------
 newEntity{
-   base = "BASE_GREATMAUL", define_as="WANDER_VOLCANO_HAMMER",
-   power_source = {unknown=true, arcane=true},
-   unique = true,
-   name = "Molten Hammer", color = colors.LIGHT_RED, image = "object/artifact/wander_molten_hammer.png",
-   unided_name = "unfinished hammer",
-   desc = [[The end of the hammer is still glowing.  It's said the volcanoes of the Daikara first erupted when this hammer was thrown down into the mountain from the heavens. It doesn't fit right in your hands.  You suspect it wouldn't fit right in anyone's hands.]],
-   level_range = {31, 45},
-   rarity = 250,
-   require = { stat = { str=50 }, },
-   cost = 650,
-   material_level = 4,
-   combat = {
-      dam = 75,
-      apr = 4,
-      physcrit = 10,
-      dammod = {str=1.0, con=0.3},
-      special_on_hit = {desc="splashes up to 5 nearby enemies with lava",
-			fct=function(combat, who, target)
-			   local o, item, inven_id = who:findInAllInventoriesBy("define_as", "WANDER_VOLCANO_HAMMER")
-
-			   local tgts = {}
-			   local grids = core.fov.circle_grids(target.x, target.y, 5, true)
-			   for x, yy in pairs(grids) do
-			      for y, _ in pairs(grids[x]) do
-				 local a = game.level.map(x, y, engine.Map.ACTOR)
-				 if a and who:reactionToward(a) < 0 then
-				    tgts[#tgts+1] = a
-				 end
-			      end
-			   end
-			   local tg = {type="bolt", range=5, x=target.x, y=target.y, display={image="object/lava_boulder.png"}}
-			   for i = 1, 5 do
-			      if #tgts <= 0 then break end
-			      local a, id = rng.table(tgts)
-			      who:projectile(tg, a.x, a.y, engine.DamageType.MOLTENROCK, who:getMag()*0.5, {type="flame"})
-			      table.remove(tgts, id) 
-			   end
-			end
-      },
-      talent_on_crit = { [Talents.T_WANDER_FIRE_VOLCANO] = {level=4, chance=10} },
-      melee_project={[DamageType.FIRE] = 30},
-   },
-   
-   wielder = {
-      inc_damage={
-	 [DamageType.FIRE] = 10,
-      },
-      talents_types_mastery = {
-	 ["celestial/kolal"] = 0.2,
-      },
-   },
+	base = "BASE_GREATMAUL", define_as="WANDER_VOLCANO_HAMMER",
+	power_source = {unknown=true, arcane=true},
+	unique = true,
+	name = "Molten Hammer", color = colors.LIGHT_RED, image = "object/artifact/wander_molten_hammer.png",
+	unided_name = "unfinished hammer",
+	desc = [[The end of the hammer is still glowing.  It's said the volcanoes of the Daikara first erupted when this hammer was thrown down into the mountain range by the gods. It doesn't fit right in your hands, but it's very easy to lift.]],
+	level_range = {31, 45},
+	rarity = 250,
+	require = { stat = { str=10, mag=30 }, },
+	cost = 650,
+	material_level = 4,
+	combat = {
+		dam = 75,
+		apr = 4,
+		physcrit = 10,
+		dammod = {str=1.2, con=0.1, mag=0.1},
+		special_on_hit = {desc="splashes up to 5 nearby enemies with lava",
+											fct=function(combat, who, target)
+												local o, item, inven_id = who:findInAllInventoriesBy("define_as", "WANDER_VOLCANO_HAMMER")
+												
+												local tgts = {}
+												local grids = core.fov.circle_grids(target.x, target.y, 5, true)
+												for x, yy in pairs(grids) do
+													for y, _ in pairs(grids[x]) do
+														local a = game.level.map(x, y, engine.Map.ACTOR)
+														if a and who:reactionToward(a) < 0 then
+															tgts[#tgts+1] = a
+														end
+													end
+												end
+												local tg = {type="bolt", range=5, x=target.x, y=target.y, display={image="object/lava_boulder.png"}}
+												for i = 1, 5 do
+													if #tgts <= 0 then break end
+													local a, id = rng.table(tgts)
+													who:projectile(tg, a.x, a.y, engine.DamageType.MOLTENROCK, who:getMag()*0.5, {type="flame"})
+													table.remove(tgts, id) 
+												end
+											end
+		},
+		talent_on_crit = { [Talents.T_WANDER_FIRE_VOLCANO] = {level=4, chance=10} },
+		melee_project={[DamageType.FIRE] = 20, [DamageType.PHYSICAL] = 20},
+	},
+	
+	wielder = {
+		combat_spellpower = 35,
+		combat_spellcrit = 15,
+		inc_damage={
+			[DamageType.FIRE] = 30,
+			[DamageType.PHYSICAL] = 30,
+		},
+		talents_types_mastery = {
+			["celestial/kolal"] = 0.2,
+		},
+	},
 }
 
 

@@ -1,25 +1,5 @@
--- ToME - Tales of Maj'Eyal
--- Copyright (C) 2009, 2010, 2011, 2012 Nicolas Casalini
---
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
---
--- Nicolas Casalini "DarkGod"
--- darkgod@te4.org
-
 local ActorTalents = require "engine.interface.ActorTalents"
 
--- Not the best way to do this, might clean up later
 damDesc = function(self, type, dam)
 	-- Increases damage
 	if self.inc_damage then
@@ -76,13 +56,6 @@ function astromancerSummonSpeed(self, t)
    if self:knowTalent(self.T_WANDER_GRAND_ARRIVAL) then
       speed = speed / (1 + self:getTalentLevelRaw(self.T_WANDER_GRAND_ARRIVAL) )
    end
-   -- if self:getTalentLevelRaw(self.T_WANDER_GRAND_ARRIVAL) >= 2 then
-   --    return self:getSpeed('spell') * 0.33
-   -- elseif self:getTalentLevel(self.T_WANDER_GRAND_ARRIVAL) >= 1 then
-   --    return self:getSpeed('spell') * 0.5
-   -- else
-   --    return self:getSpeed('spell')
-   -- end
    return speed
 end
 
@@ -130,7 +103,6 @@ function setupSummonStar(self, m, x, y, no_control)
    -- Try to use stored AI talents to preserve tweaking over multiple summons
    m.ai_talents = self.stored_ai_talents and self.stored_ai_talents[m.name] or {}
    local main_weapon = self:getInven("MAINHAND") and self:getInven("MAINHAND")[1]
-   m.life_regen = m.life_regen + (self:attr("nature_summon_regen") or 0)
    m:attr("combat_apr", self:combatAPR(main_weapon))
    m.inc_damage = table.clone(self.inc_damage, true)
    m.resists_pen = table.clone(self.resists_pen, true)
@@ -166,65 +138,9 @@ function setupSummonStar(self, m, x, y, no_control)
    -- Summons never flee
    m.ai_tactic = m.ai_tactic or {}
    m.ai_tactic.escape = 0
-   
-   if self:knowTalent(self.T_BLIGHTED_SUMMONING)
-   then
-      m:incIncStat("mag", self:getMag())
-      m:incVim(m:getMaxVim())
-   end
-   
+      
    self:attr("summoned_times", 1)
 end
-
---not sure how to get these from the original chronomancy file without double-loading the base trees
-getParadoxModifier = function (self)
-	local paradox = self:getParadox()
-	local pm = math.sqrt(paradox / 300)
-	if paradox < 300 then pm = paradox/300 end
-	pm = util.bound(pm, 0.5, 1.5)
-	return pm
-end
-
-getParadoxCost = function (self, t, value)
-	local pm = getParadoxModifier(self)
-	local multi = 1
-	if self:attr("paradox_cost_multiplier") then
-		multi = 1 - self:attr("paradox_cost_multiplier")
-	end
-	return (value * pm) * multi
-end
-
-getParadoxSpellpower = function(self, t, mod, add)
-	local pm = getParadoxModifier(self)
-	local mod = mod or 1
-
-	-- Empower?
-	local p = self:isTalentActive(self.T_EMPOWER)
-	if p and p.talent == t.id then
-		pm = pm + self:callTalent(self.T_EMPOWER, "getPower")
-	end
-
-	local spellpower = self:combatSpellpower(mod * pm, add)
-	return spellpower
-end
-
-getExtensionModifier = function(self, t, value)
-	local pm = getParadoxModifier(self)
-	local mod = 1
-	
-	local p = self:isTalentActive(self.T_EXTENSION)
-	if p and p.talent == t.id then
-		mod = mod + self:callTalent(self.T_EXTENSION, "getPower")
-	end
-	
-	-- paradox modifier rounds down
-	value = math.floor(value * pm)
-	-- extension modifier rounds up
-	value = math.ceil(value * mod)
-	
-	return math.max(1, value)
-end
-
 
 if not Talents.talents_types_def["celestial/ponx"] then
    newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/ponx", name = "Ponx", description = "Celestial spellcasting drawn from the whirling gas giant Ponx in the middle reaches of the solar system." }
@@ -251,10 +167,6 @@ if not Talents.talents_types_def["celestial/meteor"] then
    load("/data-classastromancer/talents/celestial/meteor.lua")
 end
 
-if not Talents.talents_types_def["chronomancy/morass"] then
-   newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="chronomancy/morass", name = "Chronosummons", description = "It's not exactly a planet, but the same summoning techniques should apply..." }
-   load("/data-classastromancer/talents/chronomancy/telugoroth_summon.lua")
-end
 
 if not Talents.talents_types_def["celestial/paeans"] then
    newTalentType{ allow_random=true, no_silence=true, is_spell=true, generic=true, type="celestial/paeans", name = "Paeans", description = "Sing the glory of the planetary spheres." }
@@ -265,3 +177,5 @@ end
 --    newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/comet", name = "Comet", description = "The approach of a comet to Shandral always heralds great changes." }
 --    load("/data-classastromancer/talents/celestial/comet.lua")
 -- end
+
+load("/data-classastromancer/talents/chronomancy/chronomancy.lua")

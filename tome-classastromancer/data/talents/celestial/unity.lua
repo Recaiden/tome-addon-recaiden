@@ -91,50 +91,48 @@ newTalent{
    end,
 }
 
---  8  Planetary Convergence
 newTalent{
-   name = "Planetary Convergence", short_name = "WANDER_CYCLE_BOOST",
-   type = {"celestial/terrestrial_unity", 3},
-   require = spells_req3,
-   points = 5,
-   no_energy = true,
-   negative = 5,
-   cooldown = 10,
-   getDuration = function(self, t)
-      return self:combatTalentScale(t, 1, 4)
-   end,
-   getExtension = function(self, t) return math.floor(self:combatTalentLimit(t, 6, 1, 2.8)) end,
-   on_pre_use = function(self, t, silent)
-      if not self:hasEffect(self.EFF_WANDER_KOLAL)
-	 or not self:hasEffect(self.EFF_WANDER_LUXAM)
-	 or not self:hasEffect(self.EFF_WANDER_PONX)
-      then
-	 if not silent then game.logPlayer(self, "You require all three planetary charges.") end
-	 return false
-      end
-      return true
-   end,
-   action = function(self, t)
-      local chargeFlame = self:hasEffect(self.EFF_WANDER_KOLAL)
-      local chargeCold = self:hasEffect(self.EFF_WANDER_LUXAM)
-      local chargeWind = self:hasEffect(self.EFF_WANDER_PONX)
-      local ultimate = false
-      if chargeFlame.stacks >= 5
-	 and chargeCold.stacks >= 5
-	 and chargeWind.stacks >= 5
-      then
-	 ultimate = true
-      end
-
-      self:setEffect(self.EFF_WANDER_UNITY_CONVERGENCE, t.getDuration(self, t), {extend=t.getExtension(self, t), ultimate=ultimate})
-      
-      self:removeEffect(self.EFF_WANDER_KOLAL)
-      self:removeEffect(self.EFF_WANDER_LUXAM)
-      self:removeEffect(self.EFF_WANDER_PONX)
-   end,
-
-    info = function(self, t)
-       return ([[When the worlds align, great power flows through the void.  Consume your planetary charges to make your next summon (within %d turns) call a Greater Elemental, which has an additional talent and lasts for %d additional turns.
+	name = "Planetary Convergence", short_name = "WANDER_CYCLE_BOOST",
+	type = {"celestial/terrestrial_unity", 3},
+	require = spells_req3,
+	points = 5,
+	no_energy = true,
+	negative = 5,
+	cooldown = 10,
+	getDuration = function(self, t) return 3 end,
+	getCount = function(self, t) return math.floor(self:combatTalentScale(t, 1, 2.6)) end,
+	getExtension = function(self, t) return math.floor(self:combatTalentLimit(t, 6, 1, 2.8)) end,
+	on_pre_use = function(self, t, silent)
+		if not self:hasEffect(self.EFF_WANDER_KOLAL)
+			or not self:hasEffect(self.EFF_WANDER_LUXAM)
+			or not self:hasEffect(self.EFF_WANDER_PONX)
+		then
+			if not silent then game.logPlayer(self, "You require all three planetary charges.") end
+			return false
+		end
+		return true
+	end,
+	action = function(self, t)
+		local chargeFlame = self:hasEffect(self.EFF_WANDER_KOLAL)
+		local chargeCold = self:hasEffect(self.EFF_WANDER_LUXAM)
+		local chargeWind = self:hasEffect(self.EFF_WANDER_PONX)
+		local ultimate = false
+		if chargeFlame.stacks >= 5
+			and chargeCold.stacks >= 5
+			and chargeWind.stacks >= 5
+		then
+			ultimate = true
+		end
+		
+		self:setEffect(self.EFF_WANDER_UNITY_CONVERGENCE, t.getDuration(self, t), {count=t.getCount(self, t), extend=t.getExtension(self, t), ultimate=ultimate})
+		
+		self:removeEffect(self.EFF_WANDER_KOLAL)
+		self:removeEffect(self.EFF_WANDER_LUXAM)
+		self:removeEffect(self.EFF_WANDER_PONX)
+	end,
+	
+	info = function(self, t)
+		return ([[When the worlds align, great power flows through the void.  Consume your planetary charges to make your next %d summons (within %d turns) call a Greater Elemental, which has an additional talent and lasts for %d additional turns.
 Greater Gwelgoroth: Shocks and dazes enemies
 Greater Shivgoroth: Freezes enemies in place
 Greater Faeros: Launches bolts of fire when it attacks
@@ -142,20 +140,20 @@ Greater Faeros: Launches bolts of fire when it attacks
 If you have at least 5 of each charge, you will call an Ultimate Elemental, which have another additional talent.
 Ultimate Gwelgoroth: Forms hurricanes
 Ultimate Shivgoroth: Surrounded by an ice storm
-Ultimate Faeros: Continually launches fire at nearby enemies]]):format(t.getDuration(self, t), t.getExtension(self, t))
-   end,
+Ultimate Faeros: Continually launches fire at nearby enemies]]):format(t.getCount(self, t), t.getDuration(self, t), t.getExtension(self, t))
+	end,
 }
 
 newTalent{
-   name = "Swift Arrival", short_name = "WANDER_GRAND_ARRIVAL",
-   type = {"celestial/terrestrial_unity", 4},
-   require = spells_req4,
-   points = 5,
-   mode = "passive",
-   
-   info = function(self, t)
-      return ([[Perfect your summoning techniques, increasing the speed of your summons.
-Each rank greatly improves the casting speed of your summons, allowing you to summon multiple elementals in one turn.
-The bonuses are reflected in the description of each summon spell.]])
-   end,
+	name = "Swift Arrival", short_name = "WANDER_GRAND_ARRIVAL",
+	type = {"celestial/terrestrial_unity", 4},
+	require = spells_req4,
+	points = 5,
+	mode = "passive",
+	getSummonsPerTurn = function(self, t) return 1 + self:getTalentLevelRaw(t) end,
+	info = function(self, t)
+		return ([[Perfect your summoning techniques, increasing the speed of your summons.
+Each rank greatly improves the casting speed of your summons, allowing you to summon %d elementals in one turn.
+The bonuses are reflected in the description of each summon spell.]]):format(t.getSummonsPerTurn(self, t))
+	end,
 }

@@ -1,22 +1,3 @@
--- ToME - Tales of Maj'Eyal
--- Copyright (C) 2009, 2010, 2011, 2012 Nicolas Casalini
---
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
---
--- Nicolas Casalini "DarkGod"
--- darkgod@te4.org
-
 local ActorTalents = require "engine.interface.ActorTalents"
 
 damDesc = function(self, type, dam)
@@ -50,32 +31,58 @@ spells_req_high5 = {
 	level = function(level) return 26 + (level-1)  end,
 }
 
-if not Talents.talents_types_def["celestial/ponx"] then
-   newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/ponx", name = "Ponx", description = "Celestial spellcasting drawn from the whirling gas giant Ponx on the middle reaches of the solar system." }
-   load("/data-classastromancer/talents/celestial/ponx.lua")
+--not sure how to get these from the original chronomancy file without double-loading the base trees
+getParadoxModifier = function (self)
+	local paradox = self:getParadox()
+	local pm = math.sqrt(paradox / 300)
+	if paradox < 300 then pm = paradox/300 end
+	pm = util.bound(pm, 0.5, 1.5)
+	return pm
 end
 
-if not Talents.talents_types_def["celestial/luxam"] then
-   newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/luxam", name = "Luxam", description = "Celestial spellcasting drawn from the icy world of Luxam in the dark depths of space." }
-   load("/data-classastromancer/talents/celestial/luxam.lua")
+getParadoxCost = function (self, t, value)
+	local pm = getParadoxModifier(self)
+	local multi = 1
+	if self:attr("paradox_cost_multiplier") then
+		multi = 1 - self:attr("paradox_cost_multiplier")
+	end
+	return (value * pm) * multi
 end
 
-if not Talents.talents_types_def["celestial/kolal"] then
-   newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/kolal", name = "Kolal", description = "Celestial spellcasting drawn from Eyal's nearest neighbor, the fiery wasteland of Kolal." }
-   load("/data-classastromancer/talents/celestial/kolal.lua")
+getParadoxSpellpower = function(self, t, mod, add)
+	local pm = getParadoxModifier(self)
+	local mod = mod or 1
+
+	-- Empower?
+	local p = self:isTalentActive(self.T_EMPOWER)
+	if p and p.talent == t.id then
+		pm = pm + self:callTalent(self.T_EMPOWER, "getPower")
+	end
+
+	local spellpower = self:combatSpellpower(mod * pm, add)
+	return spellpower
 end
 
-if not Talents.talents_types_def["celestial/unity"] then
-   newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/terrestrial_unity", name = "Terrestrial Unity", description = "Celestial augmentations based on keeping the planets in harmonious balance." }
-   load("/data-classastromancer/talents/celestial/unity.lua")
+getExtensionModifier = function(self, t, value)
+	local pm = getParadoxModifier(self)
+	local mod = 1
+	
+	local p = self:isTalentActive(self.T_EXTENSION)
+	if p and p.talent == t.id then
+		mod = mod + self:callTalent(self.T_EXTENSION, "getPower")
+	end
+	
+	-- paradox modifier rounds down
+	value = math.floor(value * pm)
+	-- extension modifier rounds up
+	value = math.ceil(value * mod)
+	
+	return math.max(1, value)
 end
 
-if not Talents.talents_types_def["celestial/meteor"] then
-   newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/meteor", name = "Meteor", description = "Celestial combat magic that calls down meteors from above." }
-   load("/data-classastromancer/talents/celestial/meteor.lua")
+if not Talents.talents_types_def["chronomancy/morass"] then
+   newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="chronomancy/morass", name = "Chronosummons", description = "It's not exactly a planet, but the same summoning techniques should apply..." }
+   load("/data-classastromancer/talents/chronomancy/telugoroth_summon.lua")
 end
 
--- if not Talents.talents_types_def["celestial/comet"] then
---    newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/comet", name = "Comet", description = "The approach of a comet to Shandral always heralds great changes." }
---    load("/data-classastromancer/talents/celestial/comet.lua")
--- end
+
