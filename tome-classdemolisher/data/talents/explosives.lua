@@ -96,7 +96,10 @@ newTalent{
 		local _ _, tx, ty = self:canProject(tg, tx, ty)
 		if game.level.map:checkEntity(tx, ty, Map.TERRAIN, "block_move") then return end
 		local trap = game.level.map(tx, ty, Map.TRAP)
-		if trap then return end
+		if trap then
+			game.logPlayer(self, "There's already a trap there.")
+			return
+		end
 
 		t.placeCharge(self, t, tx, ty)
 		
@@ -196,7 +199,7 @@ newTalent{
 			tg, tx, ty,
 			function(px, py)
 				local target_trap = game.level.map(px, py, Map.TRAP)
-				if target_trap then return end
+				if target_trap then return nil end
 				if game.level.map:checkEntity(px, py, Map.TERRAIN, "block_move") then return end
 				
 				-- Make our mine

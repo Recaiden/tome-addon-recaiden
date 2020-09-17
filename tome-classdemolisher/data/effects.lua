@@ -20,3 +20,72 @@ newEffect{
 		self:effectTemporaryValue(eff, "combat_mentalresist", eff.power)
 	end,
 }
+
+newEffect{
+	name = "REK_DEML_RIDE", image = "talents/rek_deml_pilot_automotor.png",
+	desc = "Piloting",
+	long_desc = function(self, eff) return ("The target is riding in a mechanical contraption."):format(eff.power) end,
+	type = "other",
+	subtype = { steam=true, vehicle=true },
+	status = "beneficial",
+	decrease = 0,
+	parameters = { hull=10, pin=10, armor=0, speed=0, def=0 },
+	-- Healing goes to your hull first
+	callbackPriorities={callbackOnHeal = 5},
+	callbackOnHeal = function(self, eff, value, src, raw_value)
+		if value > 0 then
+			local hullMissing = self:getMaxHull() - self:getHull()
+			local hullRestored = math.min(hullMissing, value)
+			self.hull = self.hull + hullRestored
+			value = value - hullRestored
+			return {value = value}
+		end
+	end,
+	callbackOnHit = function(self, eff, cb, src, dt)
+		local hullLost = math.min(cb.value, self:getHull())
+		if cb.value > self:getHull() then
+			cb.value = cb.value - self:getHull()
+			self.hull = 0
+			self:removeEffect(self.EFF_REK_DEML_RIDE)
+			self:startTalentCooldown(self.T_REK_DEML_PILOT_AUTOMOTOR)
+		else
+			self.hull = self.hull - cb.value
+			cb.value = 0
+		end
+		game:delayedLogDamage(src, self, 0, ("#SLATE#(%d to hull)#LAST#"):format(hullLost), false)
+		cb.value = 0
+		return true
+	end,
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "hull_regen", 0.25)
+		if eff.pin then self:effectTemporaryValue(eff, "pin_immune", eff.pin) end
+		if eff.speed then self:effectTemporaryValue(eff, "movement_speed", eff.speed) end
+		if eff.armor then self:effectTemporaryValue(eff, "combat_armor", eff.armor) end
+		if eff.def then self:effectTemporaryValue(eff, "combat_def", eff.def) end
+		self.hull = self:getMaxHull()
+		self:updateModdableTile()
+	end,
+	deactivate = function(self, eff)
+		self.hull = 0
+		self:updateModdableTile()
+	end,
+}
+
+newEffect{
+	name = "REK_DEML_DRIFTING", image = "talents/rek_deml_engine_drift_nozzle.png",
+	desc = "Drifting",
+	long_desc = function(self, eff) return ("The target is coasting forward."):format() end,
+	type = "other",
+	subtype = { steam=true },
+	status = "beneficial",
+	parameters = { dir=1 },
+	activate = function(self, eff)
+	end,
+	callbackOnActBase = function(self, eff)
+		local dx, dy = util.dirToCoord(eff.dir)
+		
+		if not game.level.map:checkAllEntities(self.x+dx, self.y+dy, "block_move", self) then
+			self:move(self.x+dx, self.y+dy, true)
+		end
+	end,
+}

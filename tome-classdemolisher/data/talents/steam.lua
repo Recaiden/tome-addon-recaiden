@@ -62,6 +62,16 @@ if not Talents.talents_types_def["steamtech/drones"] then
 	load("/data-classdemolisher/talents/drones.lua")
 end
 
+if not Talents.talents_types_def["steamtech/pilot"] then
+	newTalentType{ allow_random=true, is_steam=true, type="steamtech/pilot", name = "Piloting", description = "Fight from behind the wheel." }
+	load("/data-classdemolisher/talents/pilot.lua")
+end
+
+if not Talents.talents_types_def["steamtech/engine"] then
+	newTalentType{ allow_random=true, is_steam=true, type="steamtech/engine", name = "Engine", description = "There's no point in any machine that does not go fast." }
+	load("/data-classdemolisher/talents/engine.lua")
+end
+
 -- if not Talents.talents_types_def["demented/polarity"] then
 --    newTalentType{ allow_random=true, is_mind=true, generic=true, type="demented/polarity", name = "Polarity", description = "Dive into the madness; power comes at the price of sanity" }
 --    load("/data-classdemolisher/talents/polarity.lua")

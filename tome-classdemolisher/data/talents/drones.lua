@@ -11,6 +11,8 @@ newTalent{
 	cooldown = 10,
 	tactical = { ATTACKAREA = { weapon = 2 }, },
 	range = steamgun_range,
+	getPower = function(self, t) return 30 end,
+	getPercentInc = function(self, t) return math.sqrt(self:getTalentLevel(t) / 5) / 1.5 end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.8, 1.5) end,
 	target = function(self, t)
 		return {type="bolt", range=self:getTalentRange(t), talent=t,
@@ -107,7 +109,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Deploy a tiny autonomous machine that hovers near you and shoots at your enemies.  Each turn, it uses your ammo to attack an enemy in range %d, dealing %d%% damage.  
+		return ([[Deploy a tiny autonomous machine that hovers near you and shoots at your enemies.  Each round, it uses your ammo to attack an enemy in range %d, dealing %d%% damage.  
 If your ammo is depleted, it instead reloads (with %d extra ammunition reloaded).
 The shots will pass harmlessly through allies.]]):format(self:getTalentRange(t), t.getDamage(self,t)*100, t.getReload(self, t))
 	end,
@@ -313,10 +315,8 @@ newTalent{
 	getDuration = function(self, t) return self:combatTalentScale(t, 2, 4) end,
 	getNb = function(self, t) return self:combatTalentScale(t, 1, 3) end,
 	getSaves = function(self, t) return self:combatTalentScale(t, 20, 40, 1.0) end,
-	on_pre_use = function(self, t) return self.life > self.max_life * 0.1 end,
 	action = function(self, t)
 		local what = {physical=true, mental=true, magical=true}
-		self:takeHit(self.max_life * 0.1, self)
 		
 		local target = self
 		local effs = {}

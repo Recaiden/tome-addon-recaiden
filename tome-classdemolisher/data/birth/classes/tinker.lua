@@ -9,7 +9,7 @@ newBirthDescriptor{
       "#GOLD#Stat modifiers:",
       "#LIGHT_BLUE# * +0 Strength, +3 Dexterity, +0 Constitution",
       "#LIGHT_BLUE# * +0 Magic, +0 Willpower, +5 Cunning",
-      "#GOLD#Life per level:#LIGHT_BLUE# +1",
+      "#GOLD#Life rating:#LIGHT_BLUE# -3",
    },
    power_source = {steam=true},
    stats = { dex=3, cun=5 },
@@ -19,13 +19,13 @@ newBirthDescriptor{
       ["steamtech/battle-machinery"]={true, 0.3},
       ["steamtech/explosives"]={true, 0.3},
 			["steamtech/drones"]={true, 0.3},
-      --["steamtech/conveyance"]={true, 0.3},
-      --["steamtech/engine"]={true, 0.3},
-      
+      ["steamtech/pilot"]={true, 0.3},
+      ["steamtech/engine"]={true, 0.3},
       
       --advanced talents
       ["steamtech/automation"]={false, 0.3},
       --["steamtech/battlewagon"]={false, 0.3},
+			--["steamtech/pyromaniac"]={false, 0.3},
 
       --old generics
       ["cunning/survival"]={true, 0.0},
@@ -36,7 +36,7 @@ newBirthDescriptor{
    talents = {
 		 [ActorTalents.T_EXPLOSIVE_STEAM_ENGINE] = 1,
 		 [ActorTalents.T_REK_DEML_EXPLOSIVE_REMOTE_CHARGE] = 1,
-		 --[ActorTalents.T_REK_DEML_CONVEYANCE_CAR] = 1,
+		 [ActorTalents.T_REK_DEML_PILOT_AUTOMOTOR] = 1,
 		 
 		 [ActorTalents.T_THERAPEUTICS] = 1,
 		 [ActorTalents.T_SMITH] = 1,
@@ -67,7 +67,7 @@ newBirthDescriptor{
                         end),
    },
    copy_add = {
-      life_rating = -1,
+      life_rating = -3,
    },
 }
 
