@@ -56,7 +56,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Use your nozzles to amplify your vehicle's momentum.  At the start of each round for 2 rounds after moving, you move 1 space in the same direction for free.
+		return ([[Attach additional jet nozzles to your vehicle thatamplify its movements.  At the start of each round for 2 rounds after moving, you move 1 space in the same direction for free.
 
 Passively improve your vehicle's evasive movements. While riding, you have %d extra defense.]]):format(t.getDefense(self, t))
 	end,
@@ -109,6 +109,10 @@ newTalent{
 
 		if core.fov.distance(self.x, self.y, x, y) == 1 then
 			DamageType:get(DamageType.PHYSICAL).projector(self, target.x, target.y, DamageType.PHYSICAL, did_crit * t.getCrashDamage(self, t))
+			if self:isTalentActive(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
+				local damageFlame = self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "getDamage")
+				game.level.map:addEffect(self, target.x, target.y, 4, engine.DamageType.FIRE, damageFlame, 0, 5, nil, {type="inferno"}, nil, true)
+			end
 			target:attr("knockback_immune", 1)
 			local blast = {type="ball", range=0, radius=3, friendlyfire=false}
 			local grids = self:project(blast, self.x, self.y, DamageType.FIREKNOCKBACK, {dist=t.fireRadius(self,t), dam=did_crit * (t.getWaveDamage(self, t))})

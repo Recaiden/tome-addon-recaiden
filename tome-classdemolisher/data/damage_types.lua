@@ -29,7 +29,7 @@ newDamageType{
       state = initState(state)
       useImplicitCrit(src, state)
       local target = game.level.map(x, y, Map.ACTOR)
-			if target:hasProc("explosive_charge_resist") then dam = dam / 2 end
+			if target:hasProc("explosive_charge_resist") then dam = dam * 0.6 end
       if target then
 				DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam, state)
 				target:setProc("explosive_charge_resist", 1)
@@ -50,8 +50,6 @@ newDamageType{
 			if target:canBe("blind") then
 				local power = src.summoner and src.summoner:combatSteampower() or src:combatSteampower()
 				target:setEffect(target.EFF_BLINDED, 3, {src=src, apply_power=power})
-			else
-				game.logSeen(target, "%s resists the blinding storm!", target:getName():capitalize())
 			end
 		end
 		return realdam

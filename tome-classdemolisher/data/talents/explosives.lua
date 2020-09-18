@@ -10,7 +10,7 @@ newTalent{
    cooldown = 0,
 	 action = function(self, t)
 		 self:project(
-			 {type="ball", range=0, radius=10},
+			 {type="ball", range=0, radius=10, no_restrict=true},
 			 self.x, self.y,
 			 function(px, py)
 				 local trap = game.level.map(px, py, engine.Map.TRAP)
@@ -50,7 +50,7 @@ newTalent{
 			display = '#', color=colors.ORANGE, image = "trap/critical_steam_engine.png",
 			dam = dam,
 			radius = self:getTalentRadius(t),
-			canTrigger = function(self, x, y, who) return true end,
+			canTrigger = function(self, x, y, who) return false end,
 			triggered = function(self, x, y, who)
 				local DamageType = require "engine.DamageType"
 				game.level.map:particleEmitter(self.x, self.y, self.radius, "fireflash", {radius=self.radius})
@@ -107,7 +107,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Throw a small bundle of explosives onto the battlefield that is primed for you to detonate at a later time.
-When triggered, the device creates a blast in radius 1, hitting all foes for %0.2f fire damage.  Targets take half damage from each remote charge after the first that hits them in a turn.
+When triggered, the device creates a blast in radius 1, hitting all foes for %0.2f fire damage.  Targets take 40%% reduced damage from each remote charge after the first that hits them in a turn.
 Steampower: increases damage
 
 Undetonated charges disarm after 10 turns.]]):format(damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
@@ -230,7 +230,9 @@ newTalent{
 	cooldown = 2,
 	tactical = { ATTACK = { weapon = 2 } },
 	requires_target = true,
-	callbackOnDeath = function(self, t,src, death_note)
+	callbackOnDeath = function(self, t, src, death_note)
+		if self.exploded then return end
+		self.exploded = true
 		local rad = self.blast_rad or 2
 		local dam = self.blast_dam or 100
 		game.level.map:particleEmitter(self.x, self.y, self.radius, "fireflash", {radius=rad})
@@ -330,6 +332,7 @@ newTalent{
 															title="Summon",
 															 })
 		 end
+		 return true
 	 end,
 	 
 	 info = function(self, t)

@@ -21,7 +21,7 @@ newTalent{
 	end,
 	range = function(self, t) return math.min(10, self:combatTalentScale(t, 6, 10)) end,
 	getReload = function(self, t) return self:combatTalentScale(t,1,3) end,
-	autoshoot = function(self, range, dam, x, y)
+	autoshoot = function(self, range, dam, multiplier, power, x, y)
 		self.turn_procs.quickdraw = true
 		local tg = {
 			speed = 6, type="bolt", range=range, selffire=false,
@@ -35,7 +35,7 @@ newTalent{
 				if target and target ~= self then
 					local ammoWeapon = table.clone(self:getInven("QUIVER")[1])
 					if not ammoWeapon or not ammoWeapon.combat then return end
-					local combat = ammoWeapon.combat
+					local combat = table.clone(ammoWeapon.combat)
 					-- copy ranged_project to melee_project
 					combat.melee_project = {}
 					for k, v in pairs(combat) do
@@ -43,7 +43,13 @@ newTalent{
 							combat["melee_project"] = v
 						end
 					end
+					--if not combat.multiplied then
+					 	combat.dam = combat.dam * (1 + multiplier)
+					 	combat.multiplied = true
+					--end
+					local tempPow = self:addTemporaryValue("combat_dam", power)
 					local hit = self:attackTargetWith(target, combat, nil, dam)
+					self:removeTemporaryValue("combat_dam", tempPow)
 					
 					if combat.sound and hit then game:playSoundNear(self, combat.sound)
 					elseif combat.sound_miss then game:playSoundNear(self, combat.sound_miss) end
@@ -90,7 +96,7 @@ newTalent{
 			local _ _, x, y = self:canProject(tg, a.x, a.y)
 			--game.logPlayer(self, "DEBUG: gunner drone entering firing routine")
 			game:playSoundNear(self, {"talents/single_steamgun", vol=0.8})
-			local proj = t.autoshoot(self, tg.range, t.getDamage(self, t), x, y)
+			local proj = t.autoshoot(self, tg.range, t.getDamage(self, t),  t.getPercentInc(self, t), t.getPower(self, t), x, y)
 			proj.name = "gunner drone"
 			if not ammo.infinite then
 				if ammo.combat.shots_left <= 0 then return nil end
@@ -109,9 +115,9 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Deploy a tiny autonomous machine that hovers near you and shoots at your enemies.  Each round, it uses your ammo to attack an enemy in range %d, dealing %d%% damage.  
+		return ([[Deploy a tiny autonomous machine that hovers near you and shoots at your enemies.  Each round, it uses your ammo to attack an enemy in range %d, dealing %d%% damage.  These attacks will have %d increased Physical Power and %d%% increased damage.
 If your ammo is depleted, it instead reloads (with %d extra ammunition reloaded).
-The shots will pass harmlessly through allies.]]):format(self:getTalentRange(t), t.getDamage(self,t)*100, t.getReload(self, t))
+The shots will pass harmlessly through allies.]]):format(self:getTalentRange(t), t.getDamage(self,t)*100, t.getPower(self,t), t.getPercentInc(self, t)*100, t.getReload(self, t))
 	end,
 }
 
@@ -170,9 +176,9 @@ newTalent{
 	getResist = function(self, t) return self:combatTalentSteamDamage(t, 20, 50) end,
 	getArmor = function(self, t) return self:combatTalentSteamDamage(t, 5, 45) end,
 	getHP = function(self, t) return self:combatTalentSteamDamage(t, 10, 1000) end,
-	target = function(self, t) return {type="bolt", nowarning=true, radius=2, range=self:getTalentRange(t), nolock=true, simple_dir_request=true, talent=t} end, -- for the ai
+	target = function(self, t) return {type="ball", nowarning=true, radius=3, range=self:getTalentRange(t), nolock=true, simple_dir_request=true, talent=t} end,
 	action = function(self, t)
-		local tg = {type="bolt", nowarning=true, range=self:getTalentRange(t), nolock=true, simple_dir_request=true, talent=t}
+		local tg = self:getTalentTarget(t)--{type="bolt", nowarning=true, range=self:getTalentRange(t), nolock=true, simple_dir_request=true, talent=t}
 		local tx, ty, target = self:getTarget(tg)
 		if not tx or not ty then return nil end
 		local _ _, _, _, tx, ty = self:canProject(tg, tx, ty)
@@ -230,7 +236,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Deploy a tiny autonomous machine to a nearby location, where it creates a storm of whirling metal and electricity which does %d lightning damage with a 25%% chance to blind.
+		return ([[Deploy a tiny autonomous machine to a nearby location, where it creates a storm of whirling metal and electricity which does %d lightning damage in radius 3 with a 25%% chance to blind.
 The drone has %d life (increased by steam critical), %d armor, and %d%% resistance to all damage. It lasts 10 turns.
 It inherits your increased damage and penetration.
 Steampower: improves	damage, life, resists, and armor]]):
@@ -246,7 +252,6 @@ newTalent{
 	mode = "sustained",
 	drain_steam = 3,
 	cooldown = 10,
-	steam = 25,
 	range = 10,
 	tactical = { DEFEND = 3 },
 	getShrug = function(self, t) return self:combatTalentSteamDamage(t, 2, 40) end,

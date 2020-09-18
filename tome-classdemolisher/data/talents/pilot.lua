@@ -76,7 +76,7 @@ newTalent{
 			self:addParticles(Particles.new("shader_shield_temp", 1, {toback=false, size_factor=1.5, y=-0.3, img="healarcane", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=1.0, beamColor1={0x8e/255, 0x2f/255, 0xbb/255, 1}, beamColor2={0xe7/255, 0x39/255, 0xde/255, 1}, circleDescendSpeed=4}))
 		end
 		
-		game:playSoundNear(self, {"ambient/town/town_large2", vol=300}) -- Hammer clinking sound
+		game:playSoundNear(self, {"ambient/town/town_large2", vol=200}) -- Hammer clinking sound
 		return true
 	end,
 	info = function(self, t)
@@ -123,8 +123,8 @@ newTalent{
 
 newTalent{
 	name = "Activate Runeplate", short_name = "REK_DEML_PILOT_RUNEPLATE",
-	type = {"steamtech/pilot", 3},
-	require = steam_req3,
+	type = {"steamtech/pilot", 4},
+	require = steam_req4,
 	points = 5,
 	steam = 10,
 	cooldown = function(self, t) return math.max(10, math.floor(self:combatTalentScale(t, 45, 25, 0.75))) end,
@@ -148,6 +148,15 @@ newTalent{
 		self:callTalent(tal.id, "action")
 		self.__inscription_data_fake = nil
 		self:startTalentCooldown(t)
+	end,
+	no_energy = function(self, t)
+		if self.runeplate_inscription then 
+			local o = self.runeplate_inscription
+			self.__inscription_data_fake = o.inscription_data
+			local tal = self:getTalentFromId("T_"..o.inscription_talent.."_1")
+			return util.getval(tal.no_energy, self, tal)
+		end
+		return false
 	end,
 	info = function(self, t) 
 		local cd = t.cooldown(self, t)
@@ -173,8 +182,8 @@ newTalent{
 
 newTalent{
 	name = "Explosive Exit", short_name = "REK_DEML_PILOT_EXPLOSIVE_EXIT",
-	type = {"steamtech/pilot", 4},
-	require = steam_req4,
+	type = {"steamtech/pilot", 3},
+	require = steam_req3,
 	points = 5,
 	cooldown = function(self, t) return 25 end,
 	steam = 5,
@@ -302,8 +311,8 @@ newTalent{
 		game:playSoundNear(self, "talents/fire")
 
 		-- Remove effect, start coolingdown
-		self:removeEffect(self.EFF_REK_DEML_RIDE)
 		self:startTalentCooldown(self.T_REK_DEML_PILOT_AUTOMOTOR, 10)
+		self:removeEffect(self.EFF_REK_DEML_RIDE)
 		return true
 	end,
 	info = function(self, t)

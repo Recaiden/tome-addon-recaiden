@@ -68,11 +68,20 @@ newEffect{
 	deactivate = function(self, eff)
 		self.hull = 0
 		self:updateModdableTile()
+		if not self:isTalentCoolingDown(self.T_REK_DEML_PILOT_AUTOMOTOR) then
+			self:startTalentCooldown(self.T_REK_DEML_PILOT_AUTOMOTOR)
+		end
+		if self:isTalentActive(self.T_REK_DEML_ENGINE_FULL_THROTTLE) then
+			self:forceUseTalent(self.T_REK_DEML_ENGINE_FULL_THROTTLE, {ignore_energy=true})
+		end
+		if self:isTalentActive(self.T_REK_DEML_ENGINE_DRIFT_NOZZLES) then
+			self:forceUseTalent(self.T_REK_DEML_ENGINE_DRIFT_NOZZLES, {ignore_energy=true})
+		end
 	end,
 }
 
 newEffect{
-	name = "REK_DEML_DRIFTING", image = "talents/rek_deml_engine_drift_nozzle.png",
+	name = "REK_DEML_DRIFTING", image = "talents/rek_deml_engine_drift_nozzles.png",
 	desc = "Drifting",
 	long_desc = function(self, eff) return ("The target is coasting forward."):format() end,
 	type = "other",
@@ -82,6 +91,8 @@ newEffect{
 	activate = function(self, eff)
 	end,
 	callbackOnActBase = function(self, eff)
+		if self.running and self.running.explore then return end
+		if self:attr("never_move") then return end
 		local dx, dy = util.dirToCoord(eff.dir)
 		
 		if not game.level.map:checkAllEntities(self.x+dx, self.y+dy, "block_move", self) then
