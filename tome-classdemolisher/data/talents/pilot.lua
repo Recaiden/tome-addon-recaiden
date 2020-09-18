@@ -21,7 +21,6 @@ newTalent{
 	points = 5,
 	steam = 35,
 	cooldown = 25,
-	no_npc_use = true,
 	autolearn_talent = "T_HULL_POOL",
 	getHull = function(self, t) return self.getMaxHull and self:getMaxHull() or 100 end,
 	getPinImmune = function(self, t) return math.min(1, self:combatTalentScale(t, 0.1, 0.90, 0.5)) end,
@@ -32,6 +31,7 @@ newTalent{
 	action = function(self, t)
 		self:incHull(self:getMaxHull())
 		local pin = t.getPinImmune(self,t)
+		local knock = 0
 		local armor = 0
 		local speed = 0
 		local def = 0
@@ -44,12 +44,15 @@ newTalent{
 		if self:knowTalent(self.T_REK_DEML_ENGINE_DRIFT_NOZZLES) then
 			def = self:callTalent(self.T_REK_DEML_ENGINE_DRIFT_NOZZLES, "getDefense")
 		end
-		self:setEffect(self.EFF_REK_DEML_RIDE, 10, {src=self, pin=pin, armor=armor, speed=speed, def=def})
+		if self:knowTalent(self.T_REK_DEML_BATTLEWAGON_HEAVY) then
+			knock = self:callTalent(self.T_REK_DEML_BATTLEWAGON_HEAVY, "getKnockImmune")
+		end
+		self:setEffect(self.EFF_REK_DEML_RIDE, 10, {src=self, pin=pin, armor=armor, speed=speed, def=def, knock=knock})
 		return true
 	end,
 	info = function(self, t)
 		return ([[You travel in a peculiar contraption: a steam-powered, jet propelled, armored buggy.
-Your ride has %d points of Hull, Healing and Damage are applied to Hull before they are applied to your life.  Hull increases with level, and you get 2 extra points per Constitution, and 4 extra points per Willpower.
+Your ride has %d points of Hull. Healing and Damage are applied to Hull before they are applied to your life.  Hull increases with level, and you get 2 extra points per Constitution, and 4 extra points per Willpower.
 
 Your ride is hard to stop.  While riding, you have %d%% resistance to pinning.]]):format(t.getHull(self, t), t.getPinImmune(self, t)*100)
 	end,
@@ -89,101 +92,28 @@ Your familiarity with repairs lets you reinforce the vehicle's chassis.  While r
 }
 
 newTalent{
-	name = "Choose Runeplate", short_name = "REK_DEML_CHOOSE_RUNE",
-	type = {"steamtech/other", 1},
-	points = 1,
+	name = "Rev Up", short_name = "REK_DEML_PILOT_REV_UP",
+	type = {"steamtech/pilot", 3},
+	require = steam_req3,
+	points = 5,
+	steam = 40,
 	no_energy = true,
-	cooldown = 0,
-	no_npc_use = true,
-	filterObject = function(self, t, o)
-		if o.subtype == "rune" then return true end
-		return false
-	end,
+	cooldown = 30,
+	getPower = function(self, t) return self:combatTalentScale(t, 0.1, 0.2) end,
+	getDuration = function(self, t) return self:combatTalentScale(t, 3, 6) end,
 	action = function(self, t)
-		local inven = self:getInven("INVEN")
-		local d = self:showInventory("Which rune do you wish to apply?", inven, function(o) return t.filterObject(self, ct, o) end, nil)
-		d.action = function(o, item) self:talentDialogReturn(true, o, item) return false end
-		local ret, o, item = self:talentDialog(d)
-		if not ret then return nil end
-		self.runeplate_inscription = o
-		self.__inscription_data_fake = o.inscription_data
-		local tal = self:getTalentFromId("T_"..o.inscription_talent.."_1")
-		local tal_desc = tostring(self:getTalentFullDescription(tal, 1, nil, 1))
-		local tal_name = tal.name
-		game.logSeen(self, "#ORANGE#You apply %s to your ride's runeplate!#LAST#", tal_name)
-		self.__inscription_data_fake = nil
-		self:removeObject(inven, item)
-		self:startTalentCooldown(self:getTalentFromId(self.T_REK_DEML_PILOT_RUNEPLATE))
+		self:setEffect(self.EFF_REK_DEML_REVVED_UP, t.getDuration(self, t), {power=t.getPower(self,t), src=self})
 		return true
 	end,
-	info = function(self, t)  
-	return ([[Choose a rune to apply to your ride, removing the object from your inventory. Once choosen, you can activate the rune while riding.	The rune will retain the power and any stat scaling it may have had, but the cooldown is based solely on this talent.	A runeplate inscription does not count toward your limit for the type or total maximum numbers of inscriptions. The chosen inscription may be overwritten by using this talent again.]]) 
-	end,
-}
-
-newTalent{
-	name = "Activate Runeplate", short_name = "REK_DEML_PILOT_RUNEPLATE",
-	type = {"steamtech/pilot", 4},
-	require = steam_req4,
-	points = 5,
-	steam = 10,
-	cooldown = function(self, t) return math.max(10, math.floor(self:combatTalentScale(t, 45, 25, 0.75))) end,
-	innate = true,
-	on_pre_use = function(self, t) return self:hasEffect(self.EFF_REK_DEML_RIDE) end,
-	on_learn = function(self, t)
-		if not self:knowTalent(self:getTalentFromId(self.T_REK_DEML_CHOOSE_RUNE)) then
-			self:learnTalent(self.T_REK_DEML_CHOOSE_RUNE, true, 1, {no_unlearn=true})
-		end
-	end,
-	on_unlearn = function(self, t)
-		if not self:knowTalent(self:getTalentFromId(self.T_REK_DEML_PILOT_RUNEPLATE)) and self:knowTalent(self:getTalentFromId(self.T_REK_DEML_CHOOSE_RUNE)) then
-			self:unlearnTalent(self.T_REK_DEML_CHOOSE_RUNE)
-		end
-	end,
-	action = function(self, t)
-		if not self.runeplate_inscription then return false end
-		local o = self.runeplate_inscription
-		self.__inscription_data_fake = o.inscription_data
-		local tal = self:getTalentFromId("T_"..o.inscription_talent.."_1")
-		self:callTalent(tal.id, "action")
-		self.__inscription_data_fake = nil
-		self:startTalentCooldown(t)
-	end,
-	no_energy = function(self, t)
-		if self.runeplate_inscription then 
-			local o = self.runeplate_inscription
-			self.__inscription_data_fake = o.inscription_data
-			local tal = self:getTalentFromId("T_"..o.inscription_talent.."_1")
-			return util.getval(tal.no_energy, self, tal)
-		end
-		return false
-	end,
 	info = function(self, t) 
-		local cd = t.cooldown(self, t)
-		if not self.runeplate_inscription then 
-			return ([[The chassis of your ride serves as a place to inscribe an additional inscription (though since it is not alive, it can only be a rune, not an infusion or injector).
-			
-			Use your 'Choose Runeplate' talent to choose a rune to apply. Once choosen, you can use the rune by activating this talent.	The inscription will inherit the power and any stat scaling the inscription may have had, but the cooldown is based solely on this talent and the inscription may not be activated in any other way.]]):format(cd) 
-		else
-			local o = self.runeplate_inscription
-			self.__inscription_data_fake = o.inscription_data
-			local tal = self:getTalentFromId("T_"..o.inscription_talent.."_1")
-			local tal_desc = tal.info(self, tal) --tostring(self:getTalentFullDescription(tal, 1, nil, 1))
-			local tal_name = tal.name
-			local color = "#PURPLE#"
-			self.__inscription_data_fake = nil
-			return ([[Use mana-charged steam to invoke your runeplate. You may permanently replace the rune with another by using 'Choose Runeplate' again. Note that this talent will be put on cooldown.
-			
-			#GOLD#Runeplate Effect:#LAST#
-			%s]]):format(tal_desc)
-		end
+		return ([[Use a rush of steam to overclock your motors and mechanisms.  For %d turns, your steam speed is increased by %d%%, your guardian drone can block %d%% more damage, and your gunner drone has a %d%% chance to fire twice.]]):format(t.getDuration(self, t), t.getPower(self,t)*100, t.getPower(self,t)*100, t.getPower(self,t)*100) 
 	end,
 }
 
 newTalent{
 	name = "Explosive Exit", short_name = "REK_DEML_PILOT_EXPLOSIVE_EXIT",
-	type = {"steamtech/pilot", 3},
-	require = steam_req3,
+	type = {"steamtech/pilot", 4},
+	require = steam_req4,
 	points = 5,
 	cooldown = function(self, t) return 25 end,
 	steam = 5,

@@ -9,7 +9,7 @@ newBirthDescriptor{
       "#GOLD#Stat modifiers:",
       "#LIGHT_BLUE# * +0 Strength, +3 Dexterity, +0 Constitution",
       "#LIGHT_BLUE# * +0 Magic, +0 Willpower, +5 Cunning",
-      "#GOLD#Life rating:#LIGHT_BLUE# -3",
+      "#GOLD#Life rating:#LIGHT_BLUE# -4",
    },
    power_source = {steam=true},
    stats = { dex=3, cun=5 },
@@ -24,7 +24,7 @@ newBirthDescriptor{
       
       --advanced talents
       ["steamtech/automation"]={false, 0.3},
-      --["steamtech/battlewagon"]={false, 0.3},
+      ["steamtech/battlewagon"]={false, 0.3},
 			--["steamtech/pyromaniac"]={false, 0.3},
 
       --old generics
@@ -45,29 +45,21 @@ newBirthDescriptor{
    copy = {
       max_life = 105,
       resolvers.auto_equip_filters{
-         MAINHAND = {type="weapon", subtype="sling"},
-         OFFHAND = {type="none"},
-         QUIVER={properties={"archery_ammo"}, special=function(e, filter) -- must match the MAINHAND weapon, if any
-               local mh = filter._equipping_entity and filter._equipping_entity:getInven(filter._equipping_entity.INVEN_MAINHAND)
-               mh = mh and mh[1]
-               if not mh or mh.archery == e.archery_ammo then return true end
-                                                      end},
-         QS_MAINHAND = {type="weapon", not_properties={"twohanded"}},
+				resolvers.equipbirth{ id=true,
+															{type="weapon", subtype="dagger", name="iron dagger", autoreq=true, ego_chance=-1000},
+															{type="ammo", subtype="shot", name="pouch of iron shots", autoreq=true, ego_chance=-1000},
+														},
+				QS_MAINHAND = {type="weapon", subtype="sling"},
+				QUIVER={properties={"archery_ammo"}, special=function(e, filter) -- must match the MAINHAND weapon, if any
+						local mh = filter._equipping_entity and filter._equipping_entity:getInven(filter._equipping_entity.INVEN_QS_MAINHAND)
+						mh = mh and mh[1]
+						if not mh or mh.archery == e.archery_ammo then return true end
+																										 end},
                                   },
-      resolvers.equipbirth{ id=true,
-                            {type="weapon", subtype="sling", name="rough leather sling", autoreq=true, ego_chance=-1000},
-                            {type="ammo", subtype="shot", name="pouch of iron shots", autoreq=true, ego_chance=-1000},
-                          },
-      resolvers.inventorybirth{
-         id=true, inven="QS_MAINHAND",
-         {type="weapon", subtype="dagger", name="iron dagger", autoreq=true, ego_chance=-1000},
-                              },
-      resolvers.generic(function(e)
-                           e.auto_shoot_talent = e.T_SHOOT
-                        end),
+
    },
    copy_add = {
-      life_rating = -3,
+      life_rating = -4,
    },
 }
 

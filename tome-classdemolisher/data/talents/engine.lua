@@ -71,7 +71,14 @@ newTalent{
 	cooldown = 12,
 	tactical = { ATTACKAREA = { PHYSICAL = 1,	FIRE = 1 }, CLOSEIN = 3 },
 	requires_target = true,
-	getCrashDamage = function (self, t) return self:combatTalentSteamDamage(t, 30, 190) end,
+	getCrashDamage = function (self, t)
+		local dam = self:combatTalentSteamDamage(t, 30, 190)
+		if self:knowTalent(self:getTalentFromId(self.T_REK_DEML_BATTLEWAGON_HEAVY)) then
+			local t2 = self:getTalentFromId(self.T_REK_DEML_BATTLEWAGON_HEAVY)
+			dam = dam * (1 + t2.getRamBoost(self, t2))
+		end
+		return dam
+	end,
 	getWaveDamage = function(self, t) return self:combatTalentSteamDamage(t, 30, 190) end,
 	range = function(self, t) return  math.ceil(self:combatTalentScale(t, 4, 8.5)) end,
 	fireRadius = function(self, t) return math.ceil(self:combatTalentScale(t, 1, 4)) end,
@@ -139,7 +146,14 @@ newTalent{
 	mode = "sustained",
 	no_energy = true,
 	on_pre_use = function(self, t) return self:hasEffect(self.EFF_REK_DEML_RIDE) end,
-	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 5, 50) end,
+	getDamage = function(self, t)
+		local dam = self:combatTalentSteamDamage(t, 5, 50)
+		if self:knowTalent(self:getTalentFromId(self.T_REK_DEML_BATTLEWAGON_HEAVY)) then
+			local t2 = self:getTalentFromId(self.T_REK_DEML_BATTLEWAGON_HEAVY)
+			dam = dam * (1 + t2.getRamBoost(self, t2))
+		end
+		return dam
+	end,
 	getMovement = function(self, t) return self:combatTalentScale(t, 2.0, 4.0) end,
 	callbackOnAct = function(self, t)
 		if self:getSteam() < 0.1 then

@@ -17,7 +17,7 @@ newTalent{
 				 if not trap then return end
 				 if trap.name ~= "remote explosive charge" then return end
 				 if trap.summoner ~= self then return end
-				 trap:triggered(px, py, src)
+				 trap:triggered(px, py, self)
 			 end)
 		 return true
    end,
@@ -53,7 +53,26 @@ newTalent{
 			canTrigger = function(self, x, y, who) return false end,
 			triggered = function(self, x, y, who)
 				local DamageType = require "engine.DamageType"
+				-- Mayhem engine CDR
+				if who and who:knowTalent(who.T_REK_DEML_BATTLEWAGON_MAYHEM_ENGINE) and not who:hasProc("demolisher_mayhem") then
+					who:setProc("demolisher_mayhem", true, 1)
+					local cd = who:callTalent(who.T_REK_DEML_BATTLEWAGON_MAYHEM_ENGINE, "getCDReduce")
+					if who:isTalentCoolingDown(who.T_REK_DEML_ENGINE_RAMMING_SPEED) then
+						who:alterTalentCoolingdown(who.T_REK_DEML_ENGINE_RAMMING_SPEED, -cd)
+					end
+					if who:isTalentCoolingDown(who.T_REK_DEML_MG_MISSILE) then
+						who:alterTalentCoolingdown(who.T_REK_DEML_MG_MISSILE, -cd)
+					end
+					if who:isTalentCoolingDown(who.T_REK_DEML_MG_GAUSS) then
+						who:alterTalentCoolingdown(who.T_REK_DEML_MG_GAUSS, -cd)
+					end
+					if who:isTalentCoolingDown(who.T_REK_DEML_MG_HARPOON) then	 
+						who:alterTalentCoolingdown(who.T_REK_DEML_MG_HARPOON, -cd)
+					end
+				end
+				
 				game.level.map:particleEmitter(self.x, self.y, self.radius, "fireflash", {radius=self.radius})
+				-- damage
 				self.summoner:project(
 					{type="ball", radius=self.radius, friendlyfire=false, x=self.x, y=self.y},
 					self.x, self.y,
@@ -140,7 +159,7 @@ makeMine = function(self, t, x, y, dam)
 		triggered = function(self, x, y, who)
 			-- Project our damage
 			self.summoner:project({type="hit",x=x,y=y, talent=self.talent}, x, y, engine.DamageType.FIRE, self.dam/2)
-			self.summoner:project({type="hit",x=x,y=y, talent=self.talent}, x, y, engine.DamageType.BLEED, self.dam/2)
+			self.summoner:project({type="hit",x=x,y=y, talent=self.talent}, x, y, engine.DamageType.PHYSICALBLEED, self.dam/2)
 
 			-- knockback
 			if not who.dead then
@@ -218,7 +237,7 @@ newTalent{
 		return ([[Lay Blast Mines in a radius of %d that inflict %0.2f physical (bleed) and %0.2f fire damage and knock enemies 1 space in a random direction (#SLATE#Steampower vs. Physical#LAST#).
 		The mines are hidden traps (%d detection and %d disarm power based on your Cunning) and last for %d turns.
 Steampower: improves damage.]]):
-		format(self:getTalentRadius(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)/2), damDesc(self, DamageType.FIRE, t.getDamage(self, t)/2), t.getTrapPower(self, t)*0.8, t.getTrapPower(self, t), t.getDuration(self, t))
+		format(self:getTalentRadius(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)*1.5/2), damDesc(self, DamageType.FIRE, t.getDamage(self, t)/2), t.getTrapPower(self, t)*0.8, t.getTrapPower(self, t), t.getDuration(self, t))
 	end,
 }
 
@@ -232,6 +251,21 @@ newTalent{
 	requires_target = true,
 	callbackOnDeath = function(self, t, src, death_note)
 		if self.exploded then return end
+		if self.summoner and self.summoner:knowTalent(self.T_REK_DEML_BATTLEWAGON_MAYHEM_ENGINE) then
+			local cd = self.summoner:callTalent(self.summoner.T_REK_DEML_BATTLEWAGON_MAYHEM_ENGINE, "getCDReduce")
+			if self.summoner:isTalentCoolingDown(self.summoner.T_REK_DEML_ENGINE_RAMMING_SPEED) then
+				self.summoner:alterTalentCoolingdown(self.summoner.T_REK_DEML_ENGINE_RAMMING_SPEED, -cd)
+			end
+			if self.summoner:isTalentCoolingDown(self.summoner.T_REK_DEML_MG_MISSILE) then
+				self.summoner:alterTalentCoolingdown(self.summoner.T_REK_DEML_MG_MISSILE, -cd)
+			end
+			if self.summoner:isTalentCoolingDown(self.summoner.T_REK_DEML_MG_GAUSS) then
+				self.summoner:alterTalentCoolingdown(self.summoner.T_REK_DEML_MG_GAUSS, -cd)
+			end
+			if self.summoner:isTalentCoolingDown(self.summoner.T_REK_DEML_MG_HARPOON) then	 
+				self.summoner:alterTalentCoolingdown(self.summoner.T_REK_DEML_MG_HARPOON, -cd)
+			end
+		end
 		self.exploded = true
 		local rad = self.blast_rad or 2
 		local dam = self.blast_dam or 100

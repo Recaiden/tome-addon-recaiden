@@ -22,6 +22,19 @@ newEffect{
 }
 
 newEffect{
+	name = "REK_DEML_REVVED_UP", image = "talents/rek_deml_pilot_rev_up.png",
+	desc = "Revved Up",
+	long_desc = function(self, eff) return ("The target's steam speed is increased by %d%%."):format(eff.power*100) end,
+	type = "physical",
+	subtype = { steam=true },
+	status = "beneficial",
+	parameters = { power=10 },
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "steam_speed", eff.power)
+	end,
+}
+
+newEffect{
 	name = "REK_DEML_RIDE", image = "talents/rek_deml_pilot_automotor.png",
 	desc = "Piloting",
 	long_desc = function(self, eff) return ("The target is riding in a mechanical contraption."):format(eff.power) end,
@@ -29,7 +42,7 @@ newEffect{
 	subtype = { steam=true, vehicle=true },
 	status = "beneficial",
 	decrease = 0,
-	parameters = { hull=10, pin=10, armor=0, speed=0, def=0 },
+	parameters = { hull=10, pin=10, armor=0, speed=0, def=0, knock=0 },
 	-- Healing goes to your hull first
 	callbackPriorities={callbackOnHeal = 5},
 	callbackOnHeal = function(self, eff, value, src, raw_value)
@@ -59,6 +72,7 @@ newEffect{
 	activate = function(self, eff)
 		self:effectTemporaryValue(eff, "hull_regen", 0.25)
 		if eff.pin then self:effectTemporaryValue(eff, "pin_immune", eff.pin) end
+		if eff.knock then self:effectTemporaryValue(eff, "knockback_immune", eff.knock) end
 		if eff.speed then self:effectTemporaryValue(eff, "movement_speed", eff.speed) end
 		if eff.armor then self:effectTemporaryValue(eff, "combat_armor", eff.armor) end
 		if eff.def then self:effectTemporaryValue(eff, "combat_def", eff.def) end

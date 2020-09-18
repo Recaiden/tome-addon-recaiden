@@ -4,7 +4,7 @@ local Object = require "mod.class.Object"
 newTalent{
 	name = "Gunner Drone", short_name = "REK_DEML_DRONE_GUNNER",
 	type = {"steamtech/drones", 1},
-	require = steam_req1,
+	require = steam_req_mastery,
 	points = 5,
 	mode = "sustained",
 	drain_steam = 3,
@@ -13,7 +13,7 @@ newTalent{
 	range = steamgun_range,
 	getPower = function(self, t) return 30 end,
 	getPercentInc = function(self, t) return math.sqrt(self:getTalentLevel(t) / 5) / 1.5 end,
-	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.8, 1.5) end,
+	getDamage = function(self, t) return 0.42 + self:combatTalentWeaponDamage(t, 0.3, 0.6) end,
 	target = function(self, t)
 		return {type="bolt", range=self:getTalentRange(t), talent=t,
 						display=self:archeryDefaultProjectileVisual(nil, self:hasAmmo()),
@@ -57,44 +57,35 @@ newTalent{
 			end)
 		return proj
 	end,
-	callbackOnActBase = function(self, t)
-		--game.logPlayer(self, "DEBUG: Begin gunner drone target routine")
+	activateGunner = function(self, t)
 		local ammo = self:hasAmmo()
 		if not ammo or not ammo.combat then
-			--game.logPlayer(self, "DEBUG: gunner drone no weapon found")
 			return
 		end
 		if ammo.combat.shots_left == 0 then
-			--game.logPlayer(self, "DEBUG: gunner drone out of ammo")
 			self:reload()
-			return true
 		else
-			--game.logPlayer(self, "DEBUG: gunner drone acquiring targets")
 			local tgts = {}
 			local grids = core.fov.circle_grids(self.x, self.y, self:getTalentRange(t), true)
 			for x, yy in pairs(grids) do
 				for y, _ in pairs(grids[x]) do
 					local a = game.level.map(x, y, Map.ACTOR)
 					if a and self:reactionToward(a) < 0 then
-						--game.logPlayer(self, ("DEBUG: gunner drone target %s scanned"):format(a.name))
 						tgts[#tgts+1] = a
 					end
 				end
 			end
-
+			
 			-- Aim at a single target and shoot them
 			local tg = self:getTalentTarget(t)
 			if #tgts <= 0 then
-				--game.logPlayer(self, "DEBUG: gunner drone no targets")
 				return
 			end
 			local a, id = rng.table(tgts)
 			if not a.x or not a.y then
-				--game.logPlayer(self, "DEBUG: gunner drone invalid target")
 				return nil
 			end
 			local _ _, x, y = self:canProject(tg, a.x, a.y)
-			--game.logPlayer(self, "DEBUG: gunner drone entering firing routine")
 			game:playSoundNear(self, {"talents/single_steamgun", vol=0.8})
 			local proj = t.autoshoot(self, tg.range, t.getDamage(self, t),  t.getPercentInc(self, t), t.getPower(self, t), x, y)
 			proj.name = "gunner drone"
@@ -102,9 +93,13 @@ newTalent{
 				if ammo.combat.shots_left <= 0 then return nil end
 				ammo.combat.shots_left = ammo.combat.shots_left - 1
 			end
-			
-			return true
 		end
+		return true
+	end,
+	callbackOnActBase = function(self, t)
+		t.activateGunner(self, t)
+		local rev = self:hasEffect(self.EFF_REK_DEML_REVVED_UP)
+		if rev and rng.percent(rev.power*100) then t.activateGunner(self, t) end
 	end,
 	activate = function(self, t)
 		local ret = {}
@@ -254,11 +249,10 @@ newTalent{
 	cooldown = 10,
 	range = 10,
 	tactical = { DEFEND = 3 },
-	getShrug = function(self, t) return self:combatTalentSteamDamage(t, 2, 40) end,
+	getShrug = function(self, t) return self:combatTalentSteamDamage(t, 1.5, 30) end,
 	activate = function(self, t)
 		local ret = {
 			value = t.getShrug(self, t) * 5,
-			__update_display = true,
 		}
 		return ret
 	end,
@@ -271,16 +265,19 @@ newTalent{
 	end,
 	callbackPriorities={callbackOnTakeDamage = 2},
 	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, state)
+		local fend  = t.getShrug(self, t)
+		local rev = self:hasEffect(self.EFF_REK_DEML_REVVED_UP)
+		if rev then fend = fend * (1+rev.power) end
 		local p = self.sustain_talents[t.id]
 		if not p or p.value == 0 then return {dam=dam} end
 
 		local block = 0
-		if dam < t.getShrug(self, t) then
+		if dam < fend then
 			block = dam
-		elseif dam > t.getShrug(self, t) * 3 then
-			block = t.getShrug(self, t) * 2
+		elseif dam > fend * 3 then
+			block = fend * 2
 		else
-			block = t.getShrug(self, t) + (dam - t.getShrug(self, t))/2
+			block = fend + (dam - fend)/2
 		end
 		block = math.min(p.value, block)
 		dam = dam - block

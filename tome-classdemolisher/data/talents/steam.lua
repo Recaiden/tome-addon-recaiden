@@ -11,6 +11,10 @@ damDesc = function(self, type, dam)
    return dam
 end
 
+steam_req_mastery = {
+	stat = { cun=function(level) return 12 + (level-1) * 6 end },
+	level = function(level) return 0 + (level-1)  end,
+}
 steam_req1 = {
 	stat = { cun=function(level) return 12 + (level-1) * 2 end },
 	level = function(level) return 0 + (level-1)  end,
@@ -58,7 +62,7 @@ if not Talents.talents_types_def["steamtech/explosives"] then
 end
 
 if not Talents.talents_types_def["steamtech/drones"] then
-	newTalentType{ allow_random=true, is_steam=true, type="steamtech/drones", name = "Drones", description = "Aiming, healing...boring.  Let the machines do it for you." }
+	newTalentType{ allow_random=true, is_steam=true, type="steamtech/drones", name = "Drones", description = "Aiming, dodging...boring.  Let the machines do it for you." }
 	load("/data-classdemolisher/talents/drones.lua")
 end
 
@@ -70,6 +74,13 @@ end
 if not Talents.talents_types_def["steamtech/engine"] then
 	newTalentType{ allow_random=true, is_steam=true, type="steamtech/engine", name = "Engine", description = "There's no point in any machine that does not go fast." }
 	load("/data-classdemolisher/talents/engine.lua")
+end
+
+if not Talents.talents_types_def["steamtech/battlewagon"] then
+   newTalentType{ allow_random=true, is_steam=true, type="steamtech/battlewagon", name = "Battlewagon", min_lev = 10, description = "Blast and trample enemies with your war machine." }
+   load("/data-classdemolisher/talents/battlewagon.lua")
+	 newTalentType{ allow_random=false, is_steam=true, type="steamtech/battlewagon-guns", name = "Main Guns", min_lev = 10, description = "Armament used by demolisher wagons" }
+	 load("/data-classdemolisher/talents/main_guns.lua")
 end
 
 -- if not Talents.talents_types_def["demented/polarity"] then
