@@ -79,19 +79,11 @@ end
 if not Talents.talents_types_def["steamtech/battlewagon"] then
    newTalentType{ allow_random=true, is_steam=true, type="steamtech/battlewagon", name = "Battlewagon", min_lev = 10, description = "Blast and trample enemies with your war machine." }
    load("/data-classdemolisher/talents/battlewagon.lua")
-	 newTalentType{ allow_random=false, is_steam=true, type="steamtech/battlewagon-guns", name = "Main Guns", min_lev = 10, description = "Armament used by demolisher wagons" }
+	 newTalentType{ allow_random=false, is_steam=true, type="steamtech/battlewagon-guns", hide=true, name = "Main Guns", min_lev = 10, description = "Armament used by demolisher wagons" }
 	 load("/data-classdemolisher/talents/main_guns.lua")
 end
 
--- if not Talents.talents_types_def["demented/polarity"] then
---    newTalentType{ allow_random=true, is_mind=true, generic=true, type="demented/polarity", name = "Polarity", description = "Dive into the madness; power comes at the price of sanity" }
---    load("/data-classdemolisher/talents/polarity.lua")
--- end
-
--- for heavy guns
---newTalentType{ is_steam=true, type="inscriptions/implants", name = "implants", hide = true, description = "Steamtech directly embedded on the skin." }
-
--- if not Talents.talents_types_def["demented/revelation"] then
---    newTalentType{ allow_random=true, is_mind=true, type="demented/revelation", name = "Revelation", min_lev = 10, description = "You see the world as it truly is, Eyal in the Age of Scourge.  The world is horrid, but the truth has power." }
---    load("/data-classdemolisher/talents/revelation.lua")
--- end
+if not Talents.talents_types_def["steamtech/pyromaniac"] then
+   newTalentType{ allow_random=true, is_steam=true, type="steamtech/pyromaniac", name = "Pyromaniac", min_lev = 10, description = "Water, air, and earth are all the same. But fire is a true wonder." }
+   load("/data-classdemolisher/talents/pyromaniac.lua")
+end

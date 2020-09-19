@@ -25,7 +25,7 @@ newBirthDescriptor{
       --advanced talents
       ["steamtech/automation"]={false, 0.3},
       ["steamtech/battlewagon"]={false, 0.3},
-			--["steamtech/pyromaniac"]={false, 0.3},
+			["steamtech/pyromaniac"]={false, 0.3},
 
       --old generics
       ["cunning/survival"]={true, 0.0},
@@ -45,10 +45,6 @@ newBirthDescriptor{
    copy = {
       max_life = 105,
       resolvers.auto_equip_filters{
-				resolvers.equipbirth{ id=true,
-															{type="weapon", subtype="dagger", name="iron dagger", autoreq=true, ego_chance=-1000},
-															{type="ammo", subtype="shot", name="pouch of iron shots", autoreq=true, ego_chance=-1000},
-														},
 				QS_MAINHAND = {type="weapon", subtype="sling"},
 				QUIVER={properties={"archery_ammo"}, special=function(e, filter) -- must match the MAINHAND weapon, if any
 						local mh = filter._equipping_entity and filter._equipping_entity:getInven(filter._equipping_entity.INVEN_QS_MAINHAND)
@@ -56,7 +52,12 @@ newBirthDescriptor{
 						if not mh or mh.archery == e.archery_ammo then return true end
 																										 end},
                                   },
-
+			resolvers.equipbirth{
+				id=true,
+				{type="weapon", subtype="dagger", name="iron dagger", autoreq=true, ego_chance=-1000},
+				{type="ammo", subtype="shot", name="pouch of iron shots", autoreq=true, ego_chance=-1000},
+				{type="armor", subtype="cloth", name="linen robe", autoreq=true, ego_chance=-1000}
+													},	
    },
    copy_add = {
       life_rating = -4,

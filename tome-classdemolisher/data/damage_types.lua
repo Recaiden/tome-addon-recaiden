@@ -57,7 +57,7 @@ newDamageType{
 }
 
 newDamageType{
-	name = "blinding storm", type = "REK_DEML_FIRE_DAZE", text_color = "#FF3311#",
+	name = "dazing fire", type = "REK_DEML_FIRE_DAZE", text_color = "#FF3311#",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
 		useImplicitCrit(src, state)
@@ -65,6 +65,20 @@ newDamageType{
 		local realdam = DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam, state)
 		if target and target:canBe("stun") then
 			target:setEffect(target.EFF_DAZED, 2, {apply_power=src:combatSteampower()})
+		end
+		return realdam
+	end,
+}
+
+newDamageType{
+	name = "stunning fire", type = "REK_DEML_FIRE_STUN", text_color = "#FF3311#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		local realdam = DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam.dam, state)
+		if target and target:canBe("stun") then
+			target:setEffect(target.EFF_STUNNED, dam.dur, {apply_power=src:combatSteampower()})
 		end
 		return realdam
 	end,
@@ -89,6 +103,20 @@ newDamageType{
 			DamageType:get(DamageType.LIGHTNING).projector(src, x, y, DamageType.LIGHTNING, dam, state)
 			-- Reset respen
 			src.resists_pen[engine.DamageType.LIGHTNING] = old_pen
+		end
+	end,
+}
+
+-- shadow smoke but applies with summoner's steampower
+newDamageType{
+	name = "shadow smoke", type = "STEAM_SHADOW_SMOKE",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			local power = src.summoner and src.summoner:combatSteampower() or src:combatSteampower()
+			target:setEffect(target.EFF_SHADOW_SMOKE, 5, {sight=dam, apply_power=power})
 		end
 	end,
 }

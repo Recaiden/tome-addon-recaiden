@@ -11,14 +11,6 @@ ActorResource:defineResource ("Hull", "hull", "T_HULL_POOL", "hull_regen", "Hull
 	color = "#a35633#", 
 	wait_on_rest = true,
 	
-	-- status_text = function(act)
-	-- 	if not act or act ~= table.get(game, "player") then return end
-	-- 	local cur_t = act:getHull()
-	-- 	local max_t = act:getMaxHull()
-	-- 	local regen_t = act.life_regen --not hull regen
-	-- 	return ("%d/%d +%0.2f"):format(cur_t, max_t, regen_t)
-	-- end,
-	
 	Minimalist = { --parameters for the Minimalist uiset
 		images = {front = "resources/front_steam.png", front_dark = "resources/front_steaam_dark.png"},
 		highlight = function(player, vc, vn, vm, vr) -- dim the resource display if <= 30%
@@ -57,6 +49,18 @@ class:bindHook("ToME:load", function(self, data)
                   DamageType:loadDefinition("/data-classdemolisher/damage_types.lua")
                             end)
 
+class:bindHook("DamageProjector:final", function(self, hd)
+	local src = hd.src
+	local type = hd.type
+	local dam = hd.dam
+	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
+	if type ~= DamageType.FIRE and src.knowTalent and src:isTalentActive(src.T_REK_DEML_PYRO_DEMON) then
+		local tDemon = src:getTalentFromId(src.T_REK_DEML_PYRO_DEMON)
+		tDemon.doConsumeBurn(src, tDemon, target)
+	end
+	return hd
+end)
+
 -- class:bindHook("Entity:loadList", function(self, data)
 -- 		  if data.file == "/data/general/objects/world-artifacts.lua" then
 -- 		     self:loadList("/data-classdemolisher/world-artifacts.lua", data.no_default, data.res, data.mod, data.loaded)
@@ -64,17 +68,21 @@ class:bindHook("ToME:load", function(self, data)
 -- end)
 
 
--- function hookupdateModdableTileBack(self, data)
--- end
+function hookupdateModdableTileBack(self, data)
+	local base = data.base
+	local add = data.add
+	if self:hasEffect(self.EFF_REK_DEML_RIDE) then
+		add[#add+1] = {image = "demolisher_ride_back.png", auto_tall=1}
+	end
+end
 
 function hookupdateModdableTileFront(self, data)
 	local base = data.base
 	local add = data.add
-	
 	if self:hasEffect(self.EFF_REK_DEML_RIDE) then
-		add[#add+1] = {image = base.."exoskeleton.png", auto_tall=1}
+		add[#add+1] = {image = "demolisher_ride_front.png", auto_tall=1}
 	end
 end
 
---class:bindHook("Actor:updateModdableTile:back", hookupdateModdableTileBack)
+class:bindHook("Actor:updateModdableTile:back", hookupdateModdableTileBack)
 class:bindHook("Actor:updateModdableTile:front", hookupdateModdableTileFront)

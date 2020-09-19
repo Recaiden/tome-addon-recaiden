@@ -103,6 +103,7 @@ newTalent{
 	getDuration = function(self, t) return self:combatTalentScale(t, 3, 6) end,
 	action = function(self, t)
 		self:setEffect(self.EFF_REK_DEML_REVVED_UP, t.getDuration(self, t), {power=t.getPower(self,t), src=self})
+		game:playSoundNear(self, "talents/speedup_saw")
 		return true
 	end,
 	info = function(self, t) 

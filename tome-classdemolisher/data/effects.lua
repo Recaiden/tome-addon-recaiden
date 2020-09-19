@@ -30,7 +30,7 @@ newEffect{
 	status = "beneficial",
 	parameters = { power=10 },
 	activate = function(self, eff)
-		self:effectTemporaryValue(eff, "steam_speed", eff.power)
+		self:effectTemporaryValue(eff, "combat_steamspeed", eff.power)
 	end,
 }
 
@@ -72,7 +72,10 @@ newEffect{
 	activate = function(self, eff)
 		self:effectTemporaryValue(eff, "hull_regen", 0.25)
 		if eff.pin then self:effectTemporaryValue(eff, "pin_immune", eff.pin) end
-		if eff.knock then self:effectTemporaryValue(eff, "knockback_immune", eff.knock) end
+		if eff.knock then
+			self:effectTemporaryValue(eff, "knockback_immune", eff.knock)
+			self:effectTemporaryValue(eff, "size_category", 1)
+		end
 		if eff.speed then self:effectTemporaryValue(eff, "movement_speed", eff.speed) end
 		if eff.armor then self:effectTemporaryValue(eff, "combat_armor", eff.armor) end
 		if eff.def then self:effectTemporaryValue(eff, "combat_def", eff.def) end
@@ -104,7 +107,19 @@ newEffect{
 	parameters = { dir=1 },
 	activate = function(self, eff)
 	end,
-	callbackOnActBase = function(self, eff)
+	-- Method 1
+	-- callbackOnActBase = function(self, eff)
+	-- 	if self.running and self.running.explore then return end
+	-- 	if self:attr("never_move") then return end
+	-- 	local dx, dy = util.dirToCoord(eff.dir)
+		
+	-- 	if not game.level.map:checkAllEntities(self.x+dx, self.y+dy, "block_move", self) then
+	-- 		self:move(self.x+dx, self.y+dy, true)
+	-- 	end
+	-- end,
+	
+	-- Method 2
+	on_timeout = function(self, eff)
 		if self.running and self.running.explore then return end
 		if self:attr("never_move") then return end
 		local dx, dy = util.dirToCoord(eff.dir)

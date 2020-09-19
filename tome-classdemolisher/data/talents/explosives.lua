@@ -9,6 +9,7 @@ newTalent{
    points = 5,
    cooldown = 0,
 	 action = function(self, t)
+		 local detonated = 0
 		 self:project(
 			 {type="ball", range=0, radius=10, no_restrict=true},
 			 self.x, self.y,
@@ -18,7 +19,11 @@ newTalent{
 				 if trap.name ~= "remote explosive charge" then return end
 				 if trap.summoner ~= self then return end
 				 trap:triggered(px, py, self)
+				 detonated = detonated + 1
 			 end)
+		 if self:knowTalent(self.T_REK_DEML_PYRO_BLASTRIDER) and detonated >= 3 then
+			 self:callTalent(self.T_REK_DEML_PYRO_BLASTRIDER, "gainSpeed")
+		 end
 		 return true
    end,
    info = function(self, t)
@@ -37,13 +42,22 @@ newTalent{
 	on_unlearn = function(self, t)
 		self:unlearnTalent(self.T_REK_DEML_EXPLOSIVE_DETONATE)
 	end,
-	steam = 10,
+	steam = function(self, t)
+		local cost = 10
+		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then cost  = cost + 5
+			return cost
+		end
+	end,
 	cooldown = 0,
 	range = 6,
 	radius = 1,
 	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 50, 500) end,
 	placeCharge = function(self, t, x, y)
 		local dam = self:steamCrit(t.getDamage(self, t))
+		local burn = 0
+		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then
+			burn = self:callTalent(self.T_REK_DEML_PYRO_FLAMES, "getDamage")
+		end
 		local trap = Trap.new{
 			name = "remote explosive charge",
 			type = "steamtech", id_by_type=true, unided_name = "trap",
@@ -73,14 +87,17 @@ newTalent{
 				
 				game.level.map:particleEmitter(self.x, self.y, self.radius, "fireflash", {radius=self.radius})
 				-- damage
+				local tg = {type="ball", radius=self.radius, friendlyfire=false, x=self.x, y=self.y},
 				self.summoner:project(
-					{type="ball", radius=self.radius, friendlyfire=false, x=self.x, y=self.y},
-					self.x, self.y,
+					{type="ball", radius=self.radius, friendlyfire=false, x=self.x, y=self.y}, self.x, self.y,
 					function(px, py)
 						local target = game.level.map(px, py, engine.Map.ACTOR)
 						if not target then return end
 						DamageType:get(DamageType.REK_DEML_FIRE_DIMINISHING).projector(self.summoner, px, py, DamageType.REK_DEML_FIRE_DIMINISHING, self.dam)
 					end)
+				if self.burn > 0 then
+					self.summoner:project(tg, self.x, self.y, DamageType.FIREBURN, {dam=self.burn, dur=4, initial=0})
+				end
 				game:playSoundNear(self, "talents/fire")
 				game.level:removeEntity(self)
 					if game.level.map(self.x, self.y, engine.Map.TRAP) == self then game.level.map:remove(self.x, self.y, engine.Map.TRAP) end
@@ -90,6 +107,7 @@ newTalent{
 			x = x, y = y,
 			disarm_power = math.floor(self:combatSteampower() * 1.8),
 			detect_power = math.floor(self:combatSteampower() * 1.8),
+			burn = burn,
 			canAct = false,
 			energy = {value=0},
 			act = function(self)
@@ -270,14 +288,21 @@ newTalent{
 		local rad = self.blast_rad or 2
 		local dam = self.blast_dam or 100
 		game.level.map:particleEmitter(self.x, self.y, self.radius, "fireflash", {radius=rad})
+		local tg = {type="ball", radius=rad, friendlyfire=true, x=self.x, y=self.y}
+
+		local old_ps = self.summoner.__project_source
+		self.summoner.__project_source = self
 		self.summoner:project(
-			{type="ball", radius=rad, friendlyfire=true, x=self.x, y=self.y},
-			self.x, self.y,
+			tg,	self.x, self.y,
 			function(px, py)
 				local target = game.level.map(px, py, engine.Map.ACTOR)
 				if not target then return end
 				DamageType:get(DamageType.FIRE).projector(self.summoner, px, py, DamageType.FIRE, dam)
 			end)
+		if self.burn > 0 then
+			self.summoner:project(tg, self.x, self.y, DamageType.FIREBURN, {dam=self.burn, dur=4, initial=0})
+		end
+		self.summoner.__project_source = old_ps
 		game:playSoundNear(self, "talents/fire")
 	end,
 	action = function(self, t)
@@ -296,84 +321,105 @@ newTalent{
 }
 
 newTalent{
-   name = "Spider Mine", short_name = "REK_DEML_EXPLOSIVE_SPIDER_MINE",
-   type = {"steamtech/explosives", 3},
-   require = steam_req3,
-   points = 5,
-   cooldown = 12,
-   steam = 25,
-   range = 10,
-   tactical = { ATTACK = { FIRE = 2 } },
-   requires_target = true,
-	 radius = 3,
-	 getMovementSpeed = function(self, t) return self:combatTalentScale(t, 2, 5) end,
-	 getDamage = function(self, t) return self:combatTalentSteamDamage(t, 40, 300) end,
-	 action = function(self, t)
-		 local x, y = util.findFreeGrid(self.x, self.y, 1, true, {[Map.ACTOR]=true})
-		 if not x then return nil end
-		 
-		 local NPC = require "mod.class.NPC"
-		 local m = NPC.new{
-			 type = "mechanical", subtype = "arachnid",
-			 display = "S", blood_color = colors.ORANGE,
-			 faction = self.faction,
-			 repairable=true,
-			 stats = { str=10, dex=50, wil=1, mag=5, con=20, cun=10 },
-			 infravision = 10,
-			 no_breath = 1,
-			 fear_immune = 1,
-			 sight = 15,
-			 infravision = 15,
-			 name = "Mecharachnid Mine", color=colors.ORANGE,
-			 desc = "A swift mechanical spider carrying an unstable explosive",
-			 image = "npc/mechanical_arachnid_mecharachnid_repairbot.png",
-			 level_range = {self.level, self.level}, exp_worth = 0,
-			 rank = 2,
-			 size_category = 1,
-			 autolevel = "zerker",
-			 max_life = 100,
-			 life_rating = 4,
-			 life_regen = 4,
-			 movement_speed = t.getMovementSpeed(self, t),
-			 blast_rad = self:getTalentRadius(t),
-			 blast_dam = t.getDamage(self, t),
-			 combat_armor = 16, combat_def = 1,
-			 combat = { dam=10 + self.level, atk=self.level*2.2, apr=0, dammod={str=1.1}, physcrit = 10 },
-			 
-			 resolvers.talents{
-				 [Talents.T_REK_DEML_SPIDER_MINE_EXPLODE]=1,			
-												},
-			 
-			 ai = "summoned", ai_real = "tactical", ai_state = { ai_move="move_complex", talent_in=1, ally_compassion=0 },
-			 no_drops = true, keep_inven_on_death = false,
-			 faction = self.faction,
-			 summoner = self,
-			 summoner_gain_exp=true,
-			 summon_time = 10,
-											}
-		 m:resolve()
-		 m:resolve(nil, true)
-		 
-		 game.zone:addEntity(game.level, m, "actor", x, y)
-		 if target then m:setTarget(target) end
-		 
-		 if game.party:hasMember(self) then
-			 m.remove_from_party_on_death = true
-			 game.party:addMember(m, {
-															control=false,
-															temporary_level = true,
-															type="summon",
-															title="Summon",
-															 })
-		 end
-		 return true
-	 end,
-	 
-	 info = function(self, t)
-		 return ([[Deploy a miniature mecharachnid to carry an explosive into position.  It has %d%% movement speed.
+	name = "Mecharachnid Mine", short_name = "REK_DEML_EXPLOSIVE_SPIDER_MINE",
+	type = {"steamtech/explosives", 3},
+	require = steam_req3,
+	points = 5,
+	cooldown = 12,
+	steam = function(self, t)
+		local cost = 15
+		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then cost  = cost + 5
+			return cost
+		end
+	end,
+	range = 1,
+	tactical = { ATTACK = { FIRE = 2 } },
+	requires_target = true,
+	radius = 3,
+	target = function(self, t)
+		return {type="hit", range=self:getTalentRange(t), nolock=true, default_target=self, first_target="friend", talent=t}
+	end,
+	getMovementSpeed = function(self, t) return self:combatTalentScale(t, 2, 5) end,
+	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 40, 300) end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+		local _ _, x, y = self:canProject(tg, x, y)
+		local act = game.level.map(x, y, Map.ACTOR)
+		local block = game.level.map:checkEntity(x, y, Map.TERRAIN, "block_move")
+		if block or act then return nil end
+
+		--local x, y = util.findFreeGrid(self.x, self.y, 1, true, {[Map.ACTOR]=true})
+		--if not x then return nil end
+		
+		local burn = 0
+		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then
+			burn = self:callTalent(self.T_REK_DEML_PYRO_FLAMES, "getDamage")
+		end
+		
+		local NPC = require "mod.class.NPC"
+		local m = NPC.new{
+			type = "mechanical", subtype = "arachnid",
+			display = "S", blood_color = colors.ORANGE,
+			faction = self.faction,
+			repairable=true,
+			stats = { str=10, dex=50, wil=1, mag=5, con=20, cun=10 },
+			infravision = 10,
+			no_breath = 1,
+			fear_immune = 1,
+			sight = 15,
+			infravision = 15,
+			name = "Mecharachnid Mine", color=colors.ORANGE,
+			desc = "A swift mechanical spider carrying an unstable explosive",
+			image = "npc/mechanical_arachnid_mecharachnid_repairbot.png",
+			level_range = {self.level, self.level}, exp_worth = 0,
+			rank = 2,
+			size_category = 1,
+			autolevel = "zerker",
+			max_life = 100,
+			life_rating = 4,
+			life_regen = 4,
+			movement_speed = t.getMovementSpeed(self, t),
+			blast_rad = self:getTalentRadius(t),
+			blast_dam = t.getDamage(self, t),
+			burn = burn,
+			combat_armor = 16, combat_def = 1,
+			combat = { dam=10 + self.level, atk=self.level*2.2, apr=0, dammod={str=1.1}, physcrit = 10 },
+			
+			resolvers.talents{
+				[Talents.T_REK_DEML_SPIDER_MINE_EXPLODE]=1,			
+											 },
+			
+			ai = "summoned", ai_real = "tactical", ai_state = { ai_move="move_complex", talent_in=1, ally_compassion=0 },
+			no_drops = true, keep_inven_on_death = false,
+			faction = self.faction,
+			summoner = self,
+			summoner_gain_exp=true,
+			summon_time = 10,
+										 }
+		m:resolve()
+		m:resolve(nil, true)
+		
+		game.zone:addEntity(game.level, m, "actor", x, y)
+		if target then m:setTarget(target) end
+		
+		if game.party:hasMember(self) then
+			m.remove_from_party_on_death = true
+			game.party:addMember(m, {
+														 control=false,
+														 temporary_level = true,
+														 type="summon",
+														 title="Summon",
+															})
+		end
+		return true
+	end,
+	info = function(self, t)
+		return ([[Deploy a miniature mecharachnid to carry an explosive into position.  It has %d%% movement speed.
 When it reaches an enemy or dies, the mecharachnid will explode, dealing %d fire damage in radius %d.
 ]]):format(t.getMovementSpeed(self, t)*100, damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t))
-	 end,
+	end,
 }
 
 newTalent{

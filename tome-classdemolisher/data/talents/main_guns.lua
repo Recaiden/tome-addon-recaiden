@@ -105,6 +105,9 @@ newTalent{
 		local tx, ty = self:getTarget(tg)
 		local dam = self:steamCrit(t.getDamage(self, t))
 		self:project(tg, tx, ty, DamageType.REK_DEML_FIRE_DAZE, dam)
+		game.level.map:particleEmitter(
+			tx, ty, self:getTalentRadius(t),
+			"generic_ball", {img="particles_images/smoke_whispery_bright", size={8,20}, life=16, density=10, radius=self:getTalentRadius(t)})
 		game:playSoundNear(self, "talents/fireflash")
 		main_gun_cd(self, t.id)
 		return true

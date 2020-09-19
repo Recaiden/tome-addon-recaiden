@@ -294,8 +294,113 @@ Steampower: increases damage absorbed]]):format(t.getShrug(self, t), t.getShrug(
 }
 
 newTalent{
-	name = "Medical Drone", short_name = "REK_DEML_DRONE_MEDIC",
+	name = "Shroud Drone", short_name = "REK_DEML_DRONE_SMOKE",
 	type = {"steamtech/drones", 4},
+	require = steam_req4,
+	points = 5,
+	cooldown = 15,
+	steam = 20,
+	tactical = { DISABLE = 2 },
+	range = 7,
+	tactical = { ATTACKAREA = {LIGHTNING = 2} },
+	requires_target = true,
+	getSightLoss = function(self, t) return math.floor(self:combatTalentScale(t,1, 6, "log", 0, 4)) end,
+	getResist = function(self, t) return self:combatTalentSteamDamage(t, 20, 50) end,
+	getArmor = function(self, t) return self:combatTalentSteamDamage(t, 5, 45) end,
+	getHP = function(self, t) return self:combatTalentSteamDamage(t, 10, 1000) end,
+	target = function(self, t) return {type="ball", nowarning=true, radius=3, range=self:getTalentRange(t), nolock=true, simple_dir_request=true, talent=t} end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local tx, ty, target = self:getTarget(tg)
+		if not tx or not ty then return nil end
+		local _ _, _, _, tx, ty = self:canProject(tg, tx, ty)
+		target = game.level.map(tx, ty, Map.ACTOR)
+		if target == self then target = nil end
+		
+		-- Find space
+		local x, y = util.findFreeGrid(tx, ty, 5, true, {[Map.ACTOR]=true})
+		if not x then
+			game.logPlayer(self, "Not enough space to summon!")
+			return
+		end
+		
+		local NPC = require "mod.class.NPC"
+		local m = NPC.new{
+			type = "construct", subtype = "drone",
+			display = "*", color=colors.GREEN,
+			name = "shroud drone", faction = self.faction, image = "object/canister_toxic_gas.png",
+			desc = [[A strange hovering device of hissing smoke, nearly impossible to see.]],
+			autolevel = "none",
+			ai = "summoned", ai_real = "dumb_talented", ai_state = { talent_in=1, },
+			level_range = {1, 1}, exp_worth = 0,
+			
+			max_life = self:steamCrit(t.getHP(self, t)),
+			life_rating = 0,
+			never_move = 1,
+
+			summoner_damage = t.getSightLoss(self, t),
+			inc_damage = table.clone(self.inc_damage),
+			resists_pen = table.clone(self.resists_pen),
+
+			combat_armor_hardiness = 50,
+			combat_armor = t.getArmor(self, t),
+			resists = {all = t.getResist(self, t)},
+
+			negative_status_effect_immune = 1,
+			cant_be_moved = 1,
+
+			on_act = function(self)
+				local tg = {type="ball", range=0, friendlyfire=false, radius=3}	
+				self:project(tg, self.x, self.y, DamageType.STEAM_SHADOW_SMOKE, self.summoner_damage )
+
+				game.level.map:addEffect(
+					self,
+					self.x, self.y, 1,
+					DamageType.COSMETIC, {},
+					3,
+					5, nil,
+					{
+						type="vapour_spin",
+						args={
+							radius=1, smoke="particles_images/smoke_dark", density=2,
+							sub_particle="vapour_spin",
+							sub_particle_args={
+								radius=1, smoke="particles_images/smoke_heavy_bright", density=2
+							}
+						}
+					},
+					nil, false, false)
+				game:playSoundNear(self, {"talents/cloud", vol=0.3})
+				self.energy.value = 0
+			end,
+
+			summoner = self, summoner_gain_exp=true,
+			summon_time = 10,
+			embed_particles = {{name="shadow"}},
+		}
+
+		m:resolve() m:resolve(nil, true)
+		m:forceLevelup(self.level)
+		game.zone:addEntity(game.level, m, "actor", x, y)
+
+		
+
+		
+		game.level.map:addEffect(self, x, y, 10, DamageType.COSMETIC, dam, 0, 5, nil, {type="burning-steam"}, nil, nil)
+		return true
+	end,
+	info = function(self, t)
+		return ([[Deploy a tiny autonomous machine to a nearby location, where it creates a cloud of obscuring smoke in radius 3 which reduces sight range of those who enter by %d.
+The drone has %d life (increased by steam critical), %d armor, and %d%% resistance to all damage. It lasts 10 turns.
+It inherits your increased damage and penetration.
+Steampower: improves	damage, life, resists, and armor]]):
+		format(t.getSightLoss(self, t), t.getHP(self, t), t.getArmor(self, t), t.getResist(self, t))
+	end,
+}
+
+newTalent{
+	name = "Medical Drone", short_name = "REK_DEML_DRONE_MEDIC",
+	type = {"steamtech/other", 4},
 	require = steam_req4,
 	points = 5,
 	no_energy = true,
