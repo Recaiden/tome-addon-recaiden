@@ -48,13 +48,16 @@ newTalent{
 			knock = self:callTalent(self.T_REK_DEML_BATTLEWAGON_HEAVY, "getKnockImmune")
 		end
 		self:setEffect(self.EFF_REK_DEML_RIDE, 10, {src=self, pin=pin, armor=armor, speed=speed, def=def, knock=knock})
+		game:playSoundNear(self, "talents/clinking")
 		return true
 	end,
 	info = function(self, t)
 		return ([[You travel in a peculiar contraption: a steam-powered, jet propelled, armored buggy.
 Your ride has %d points of Hull. Healing and Damage are applied to Hull before they are applied to your life.  Hull increases with level, and you get 2 extra points per Constitution, and 4 extra points per Willpower.
 
-Your ride is hard to stop.  While riding, you have %d%% resistance to pinning.]]):format(t.getHull(self, t), t.getPinImmune(self, t)*100)
+Your ride is hard to stop.  While riding, you have %d%% resistance to pinning.
+
+(Cancel the effect if you need to get off your ride early)]]):format(t.getHull(self, t), t.getPinImmune(self, t)*100)
 	end,
 }
 

@@ -61,6 +61,7 @@ newEffect{
 			self.hull = 0
 			self:removeEffect(self.EFF_REK_DEML_RIDE)
 			self:startTalentCooldown(self.T_REK_DEML_PILOT_AUTOMOTOR)
+			game:playSoundNear(self, "talents/breaking")
 		else
 			self.hull = self.hull - cb.value
 			cb.value = 0
@@ -126,6 +127,10 @@ newEffect{
 		
 		if not game.level.map:checkAllEntities(self.x+dx, self.y+dy, "block_move", self) then
 			self:move(self.x+dx, self.y+dy, true)
+			if self:isTalentActive(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
+				local damageFlame = self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "getDamage")
+				game.level.map:addEffect(self, self.x, self.y, 4, engine.DamageType.FIRE, damageFlame, 0, 5, nil, {type="inferno"}, nil, true)
+			end
 		end
 	end,
 }

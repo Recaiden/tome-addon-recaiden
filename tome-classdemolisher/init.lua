@@ -7,7 +7,7 @@ weight = 27651
 author = { 'recaiden' }
 require_addons = {'orcs'}
 description = [[The Steamcaster you deserve.]]
-tags = {'tinker', 'class', 'recaiden', 'steam', 'demolisher', 'bomb', 'tank'} -- tags MUST immediately follow description
+tags = {'tinker', 'class', 'recaiden', 'steam', 'demolisher', 'bomb', 'car', 'tank'} -- tags MUST immediately follow description
 
 hooks = true
 overload = true

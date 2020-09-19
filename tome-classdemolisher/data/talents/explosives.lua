@@ -61,7 +61,7 @@ newTalent{
 		local trap = Trap.new{
 			name = "remote explosive charge",
 			type = "steamtech", id_by_type=true, unided_name = "trap",
-			display = '#', color=colors.ORANGE, image = "trap/critical_steam_engine.png",
+			display = '#', color=colors.ORANGE, image = "trap/explosive_charge.png",
 			dam = dam,
 			radius = self:getTalentRadius(t),
 			canTrigger = function(self, x, y, who) return false end,
@@ -126,8 +126,9 @@ newTalent{
 		trap:setKnown(self, true)
 		game.zone:addEntity(game.level, trap, "trap", x, y)
 	end,
+	target = function(self, t) return {type="ball", radius=self:getTalentRadius(t), range=self:getTalentRange(t), talent=t} end, --nolock=true, nowarning=true, 
 	action = function(self, t)
-		local tg = {type="ball", radius=self:getTalentRadius(t), nowarning=true, range=self:getTalentRange(t), nolock=true, talent=t}
+		local tg = self:getTalentTarget(t)
 		local tx, ty = self:getTarget(tg)
 		if not tx or not ty then return nil end
 		local _ _, tx, ty = self:canProject(tg, tx, ty)
@@ -162,7 +163,7 @@ makeMine = function(self, t, x, y, dam)
 	local mine = Trap.new{
 		name = "blast mine",
 		type = "steamtech", id_by_type=true, unided_name = "trap",
-		display = '^', color=colors.ORANGE, image = ("trap/chronomine_red_0%d.png"):format(rng.avg(1, 4, 3)),
+		display = '^', color=colors.ORANGE, image = ("trap/blast_mine.png"),
 		shader = "shadow_simulacrum", shader_args = { color = {0.2, 0.2, 0.2}, base = 0.8, time_factor = 1500 },
 		temporary = duration,
 		x = x, y = y,
@@ -178,6 +179,7 @@ makeMine = function(self, t, x, y, dam)
 			-- Project our damage
 			self.summoner:project({type="hit",x=x,y=y, talent=self.talent}, x, y, engine.DamageType.FIRE, self.dam/2)
 			self.summoner:project({type="hit",x=x,y=y, talent=self.talent}, x, y, engine.DamageType.PHYSICALBLEED, self.dam/2)
+			game.level.map:particleEmitter(x, y, 0.5, "fireflash", {radius=0.5})
 
 			-- knockback
 			if not who.dead then
@@ -223,7 +225,7 @@ newTalent{
 	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 20, 200) end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 6, 10)) end,
 	getTrapPower = function(self,t) return math.max(1,self:combatScale(self:getTalentLevel(t) * self:getCun(15, true), 0, 0, 75, 75)) end, 
-	target = function(self, t) return {type="ball", nowarning=true, range=self:getTalentRange(t), radius=self:getTalentRadius(t), nolock=true, talent=t} end,	
+	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t} end,	--nowarning=true,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local tx, ty = self:getTarget(tg)
@@ -337,7 +339,9 @@ newTalent{
 	requires_target = true,
 	radius = 3,
 	target = function(self, t)
-		return {type="hit", range=self:getTalentRange(t), nolock=true, default_target=self, first_target="friend", talent=t}
+		return {type="ball", range=self:getTalentRange(t), radius=0, talent=t, selffire=false}
+
+		--return {type="hit", range=self:getTalentRange(t), default_target=self, first_target="friend", talent=t}
 	end,
 	getMovementSpeed = function(self, t) return self:combatTalentScale(t, 2, 5) end,
 	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 40, 300) end,
@@ -372,7 +376,7 @@ newTalent{
 			infravision = 15,
 			name = "Mecharachnid Mine", color=colors.ORANGE,
 			desc = "A swift mechanical spider carrying an unstable explosive",
-			image = "npc/mechanical_arachnid_mecharachnid_repairbot.png",
+			image = "npc/mechanical_arachnid_mecharachnid_bomber.png",
 			level_range = {self.level, self.level}, exp_worth = 0,
 			rank = 2,
 			size_category = 1,
@@ -386,6 +390,7 @@ newTalent{
 			burn = burn,
 			combat_armor = 16, combat_def = 1,
 			combat = { dam=10 + self.level, atk=self.level*2.2, apr=0, dammod={str=1.1}, physcrit = 10 },
+			resists = {all = self.level*1.5},
 			
 			resolvers.talents{
 				[Talents.T_REK_DEML_SPIDER_MINE_EXPLODE]=1,			
@@ -416,9 +421,9 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Deploy a miniature mecharachnid to carry an explosive into position.  It has %d%% movement speed.
+		return ([[Deploy a miniature mecharachnid to carry an explosive into position.  It has %d%% movement speed and %d%% resistance to damage (based on level).
 When it reaches an enemy or dies, the mecharachnid will explode, dealing %d fire damage in radius %d.
-]]):format(t.getMovementSpeed(self, t)*100, damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t))
+]]):format(t.getMovementSpeed(self, t)*100, self.level*1.5, damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t))
 	end,
 }
 

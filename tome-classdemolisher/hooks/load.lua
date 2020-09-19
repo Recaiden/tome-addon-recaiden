@@ -12,7 +12,7 @@ ActorResource:defineResource ("Hull", "hull", "T_HULL_POOL", "hull_regen", "Hull
 	wait_on_rest = true,
 	
 	Minimalist = { --parameters for the Minimalist uiset
-		images = {front = "resources/front_steam.png", front_dark = "resources/front_steaam_dark.png"},
+		images = {front = "resources/front_hull.png", front_dark = "resources/front_hull_dark.png"},
 		highlight = function(player, vc, vn, vm, vr) -- dim the resource display if <= 30%
 			if player then
 				local cur_t = player.hull

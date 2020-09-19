@@ -191,7 +191,7 @@ newTalent{
 		local m = NPC.new{
 			type = "construct", subtype = "drone",
 			display = "*", color=colors.GREEN,
-			name = "hurricane drone", faction = self.faction, image = "object/canister_toxic_gas.png",
+			name = "hurricane drone", faction = self.faction, image = "npc/hurricane_drone.png",
 			desc = [[A strange hovering device of whirling blades. Your hair stands on end when you approach.]],
 			autolevel = "none",
 			ai = "summoned", ai_real = "dumb_talented", ai_state = { talent_in=1, },
@@ -222,7 +222,7 @@ newTalent{
 
 			summoner = self, summoner_gain_exp=true,
 			summon_time = 10,
-			embed_particles = {{name="bolt_lightning"}},
+			--embed_particles = {{name="bolt_lightning"}},
 		}
 
 		m:resolve() m:resolve(nil, true)
@@ -328,7 +328,7 @@ newTalent{
 		local m = NPC.new{
 			type = "construct", subtype = "drone",
 			display = "*", color=colors.GREEN,
-			name = "shroud drone", faction = self.faction, image = "object/canister_toxic_gas.png",
+			name = "shroud drone", faction = self.faction, image = "npc/smoke_drone.png",
 			desc = [[A strange hovering device of hissing smoke, nearly impossible to see.]],
 			autolevel = "none",
 			ai = "summoned", ai_real = "dumb_talented", ai_state = { talent_in=1, },
@@ -382,11 +382,6 @@ newTalent{
 		m:resolve() m:resolve(nil, true)
 		m:forceLevelup(self.level)
 		game.zone:addEntity(game.level, m, "actor", x, y)
-
-		
-
-		
-		game.level.map:addEffect(self, x, y, 10, DamageType.COSMETIC, dam, 0, 5, nil, {type="burning-steam"}, nil, nil)
 		return true
 	end,
 	info = function(self, t)
