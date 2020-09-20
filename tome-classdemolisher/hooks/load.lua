@@ -61,6 +61,11 @@ class:bindHook("DamageProjector:final", function(self, hd)
 	return hd
 end)
 
+class:bindHook("Object:descWielder", function(self, hd)
+								 hd.compare_fields(hd.w, hd.compare_with, hd.field, "max_hull", "%+.2f", "Maximum hull: ")
+	return hd
+end) 
+
 -- class:bindHook("Entity:loadList", function(self, data)
 -- 		  if data.file == "/data/general/objects/world-artifacts.lua" then
 -- 		     self:loadList("/data-classdemolisher/world-artifacts.lua", data.no_default, data.res, data.mod, data.loaded)

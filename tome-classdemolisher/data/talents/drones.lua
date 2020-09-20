@@ -13,7 +13,7 @@ newTalent{
 	range = steamgun_range,
 	getPower = function(self, t) return 30 end,
 	getPercentInc = function(self, t) return math.sqrt(self:getTalentLevel(t) / 5) / 1.5 end,
-	getDamage = function(self, t) return 0.42 + self:combatTalentWeaponDamage(t, 0.3, 0.6) end,
+	getDamage = function(self, t) return 0.25 + self:combatTalentWeaponDamage(t, 0.3, 0.7) end,
 	target = function(self, t)
 		return {type="bolt", range=self:getTalentRange(t), talent=t,
 						display=self:archeryDefaultProjectileVisual(nil, self:hasAmmo()),
@@ -24,7 +24,7 @@ newTalent{
 	autoshoot = function(self, range, dam, multiplier, power, x, y)
 		self.turn_procs.quickdraw = true
 		local tg = {
-			speed = 6, type="bolt", range=range, selffire=false,
+			speed = 6, type="bolt", range=range, selffire=false, friendlyfire=false, friendlyblock=false,
 			display=self:archeryDefaultProjectileVisual(nil, self:hasAmmo())
 			--{display='', particle="arrow", particle_args={tile="particles_images/particle_stone"} }
 		}
@@ -70,7 +70,7 @@ newTalent{
 			for x, yy in pairs(grids) do
 				for y, _ in pairs(grids[x]) do
 					local a = game.level.map(x, y, Map.ACTOR)
-					if a and self:reactionToward(a) < 0 then
+					if a and self:reactionToward(a) < 0 and self:canSee(a) then
 						tgts[#tgts+1] = a
 					end
 				end
@@ -103,6 +103,11 @@ newTalent{
 	end,
 	activate = function(self, t)
 		local ret = {}
+		if core.shader.active() then
+			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1, img="rotating_gunner_drone"}, shader={type="rotatingshield", noup=2.0, cylinderVerticalPos=-0.2, cylinderRotationSpeed=1.0, appearTime=0.2}})
+			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1, img="rotating_gunner_drone"}, shader={type="rotatingshield", noup=1.0, cylinderVerticalPos=-0.2, cylinderRotationSpeed=1.0, appearTime=0.2}})
+		end
+
 		self:talentTemporaryValue(ret, 'ammo_mastery_reload', t.getReload(self, t))
 		return ret
 	end,
@@ -110,7 +115,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Deploy a tiny autonomous machine that hovers near you and shoots at your enemies.  Each round, it uses your ammo to attack an enemy in range %d, dealing %d%% damage.  These attacks will have %d increased Physical Power and %d%% increased damage.
+		return ([[Deploy a tiny autonomous machine to hovers around you and shoot at your enemies.  Each round, it uses your ammo to attack an enemy in range %d, dealing %d%% damage.  These attacks will have %d increased Physical Power and %d%% increased damage, and apply on-hit effects as if they were melee attacks.
 If your ammo is depleted, it instead reloads (with %d extra ammunition reloaded).
 The shots will pass harmlessly through allies.]]):format(self:getTalentRange(t), t.getDamage(self,t)*100, t.getPower(self,t), t.getPercentInc(self, t)*100, t.getReload(self, t))
 	end,
@@ -254,6 +259,10 @@ newTalent{
 		local ret = {
 			value = t.getShrug(self, t) * 5,
 		}
+		if core.shader.active() then
+			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1, img="rotating_guardian_drone"}, shader={type="rotatingshield", noup=2.0, cylinderRadius=0.26, cylinderVerticalPos=-0.2, cylinderRotationSpeed=1.0, appearTime=0.2}})
+			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1, img="rotating_guardian_drone"}, shader={type="rotatingshield", noup=1.0, cylinderRadius=0.26, cylinderVerticalPos=-0.2, cylinderRotationSpeed=1.0, appearTime=0.2}})
+		end
 		return ret
 	end,
 	deactivate = function(self, t, p)
@@ -304,7 +313,7 @@ newTalent{
 	range = 7,
 	tactical = { ATTACKAREA = {LIGHTNING = 2} },
 	requires_target = true,
-	getSightLoss = function(self, t) return math.floor(self:combatTalentScale(t,1, 6, "log", 0, 4)) end,
+	getSightLoss = function(self, t) return math.floor(self:combatTalentScale(t, 2, 7, "log", 0, 4)) end,
 	getResist = function(self, t) return self:combatTalentSteamDamage(t, 20, 50) end,
 	getArmor = function(self, t) return self:combatTalentSteamDamage(t, 5, 45) end,
 	getHP = function(self, t) return self:combatTalentSteamDamage(t, 10, 1000) end,

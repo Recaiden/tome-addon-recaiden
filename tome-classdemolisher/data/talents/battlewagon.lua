@@ -7,12 +7,36 @@ newTalent{
 	getHullBoost = function(self, t) return self:combatTalentScale(t, 50, 300) end,
 	getKnockImmune = function(self, t) return math.min(1, self:combatTalentScale(t, 0.1, 0.90, 0.5)) end,
 	getRamBoost = function(self, t) return self:combatTalentScale(t, 0.3, 0.90) end,
+	callbackOnWear = function(self, t, o, fBypass)
+		if not o then return end
+		if not o.wielder then return end
+		if not o.wielder.max_life then return end
+		if o.wielder.max_hull then return end
+		local amt = o.wielder.max_life
+		--rewear it with new stats
+		local _, _, inven_id = self and self:findInAllInventoriesByObject(o)
+		self:onTakeoff(o, inven_id, true)
+		o.wielder.max_hull = math.ceil(amt * 0.75)
+		o.wielder.max_life = math.floor(amt * 0.25)
+		self:onWear(o, inven_id, true)
+	end,
+	callbackOnTakeoff = function(self, t, o, fBypass)
+		if not o then return end
+		if not o.wielder then return end
+		if not o.wielder.max_life then return end
+		if not o.wielder.max_hull then return end
+		o.wielder.max_life = o.wielder.max_life + o.wielder.max_hull
+		o.wielder.max_hull = nil
+	end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "max_hull", t.getHullBoost(self,t))
 	end,
 	info = function(self, t)
-		return ([[Upgrade your ride into a heavy-duty armored fighting vehicle with %d additional points of hull.
-Your battlewagon is an unstoppable force #{italic}#and#{normal}# an immovable object.  While riding, you have %d%% resistance to knockback.  Ramming Speed and Full Throttle's impacts have their damage increased by %d%%.]]):format(t.getHullBoost(self, t), t.getKnockImmune(self, t)*100, t.getRamBoost(self, t)*100)
+		return ([[Upgrade your ride into a heavy-duty armored fighting vehicle with %d additional points of hull. This also converts 75%% of bonus life on items into bonus hull.
+The sheer mass of your ride gives Ramming Speed and Full Throttle %d%% more impact damage.
+While riding, you have %d%% resistance to knockback and gain 1 size category. 
+
+#{italic}#Your battlewagon is both an unstoppable force and an immovable object.#{normal}#]]):format(t.getHullBoost(self, t), t.getKnockImmune(self, t)*100, t.getRamBoost(self, t)*100)
 	end,
 }
 
@@ -117,7 +141,7 @@ newTalent{
 		game.logSeen(self, "#ORANGE#You apply %s to your battlewagon's runeplate!#LAST#", tal_name)
 		self.__inscription_data_fake = nil
 		self:removeObject(inven, item)
-		self:startTalentCooldown(self:getTalentFromId(self.T_REK_DEML_PILOT_RUNEPLATE))
+		self:startTalentCooldown(self:getTalentFromId(self.T_REK_DEML_BATTLEWAGON_RUNEPLATE))
 		return true
 	end,
 	info = function(self, t)  

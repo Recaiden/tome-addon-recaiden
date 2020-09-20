@@ -36,7 +36,7 @@ newTalent{
 			target:pull(self.x, self.y, tg.range)
 		end
 		
-		game:playSoundNear(self, "talents/arcane")
+		game:playSoundNear(self, "actions/knife_throw")
 		main_gun_cd(self, t.id)
 		return true
 	end,
@@ -104,6 +104,7 @@ newTalent{
 		local tg = self:getTalentTarget(t)
 		local tx, ty = self:getTarget(tg)
 		local dam = self:steamCrit(t.getDamage(self, t))
+		if not tg or not tx or not ty then return nil end
 		self:project(tg, tx, ty, DamageType.REK_DEML_FIRE_DAZE, dam)
 		game.level.map:particleEmitter(
 			tx, ty, self:getTalentRadius(t),

@@ -23,10 +23,25 @@ newTalent{
 	cooldown = 25,
 	autolearn_talent = "T_HULL_POOL",
 	getHull = function(self, t) return self.getMaxHull and self:getMaxHull() or 100 end,
+	getHullBoost = function(self, t) return self:combatTalentScale(t, 10, 50) end,
 	getPinImmune = function(self, t) return math.min(1, self:combatTalentScale(t, 0.1, 0.90, 0.5)) end,
-	on_pre_use = function(self, t) return not self:hasEffect(self.EFF_REK_DEML_RIDE) end,
+	on_pre_use = function(self, t, silent)
+		if self:getInven("BODY") then 
+			local am = self:getInven("BODY")[1] or {}
+			if am.subtype == "massive" then
+				if not silent then
+					game.logPlayer(self, "You can't operate your ride in massive armor.")
+				end
+				return false
+			end
+		end
+		return not self:hasEffect(self.EFF_REK_DEML_RIDE)
+	end,
 	on_learn = function(self, t)
 		self.hull_rating = 5
+	end,
+	passives = function(self, t, p)
+		self:talentTemporaryValue(p, "max_hull", t.getHullBoost(self,t))
 	end,
 	action = function(self, t)
 		self:incHull(self:getMaxHull())
@@ -52,12 +67,11 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[You travel in a peculiar contraption: a steam-powered, jet propelled, armored buggy.
-Your ride has %d points of Hull. Healing and Damage are applied to Hull before they are applied to your life.  Hull increases with level, and you get 2 extra points per Constitution, and 4 extra points per Willpower.
+		return ([[You travel in a peculiar contraption: a steam-powered, jet propelled, armored buggy.  While riding in this machine, your vehicle's Hull protects you. Damage and Healing are applied to Hull before they are applied to your life.  Hull is based on level (5 life rating), Consitution (2 Hull/point), Willpower (4 Hull/point), and ranks in this talent (+%d Hull).
 
 Your ride is hard to stop.  While riding, you have %d%% resistance to pinning.
 
-(Cancel the effect if you need to get off your ride early)]]):format(t.getHull(self, t), t.getPinImmune(self, t)*100)
+(Cancel the effect if you need to get off your ride early)]]):format(t.getHullBoost(self, t), t.getPinImmune(self, t)*100)
 	end,
 }
 
@@ -90,7 +104,7 @@ newTalent{
 		return ([[Make some battlefield repairs to your ride, healing it for %d hull.
 The hull restored increases with Steampower and can be a critical hit.
 
-Your familiarity with repairs lets you reinforce the vehicle's chassis.  While riding, you have %d extra armor.]]):format(t.getHeal(self, t), t.getArmor(self, t))
+Your familiarity with repairs lets you reinforce the vehicle's structure.  While riding, you have %d extra armor.]]):format(t.getHeal(self, t), t.getArmor(self, t))
 	end,
 }
 
@@ -99,7 +113,7 @@ newTalent{
 	type = {"steamtech/pilot", 3},
 	require = steam_req3,
 	points = 5,
-	steam = 40,
+	steam = 30,
 	no_energy = true,
 	cooldown = 30,
 	getPower = function(self, t) return self:combatTalentScale(t, 0.1, 0.2) end,
@@ -122,7 +136,7 @@ newTalent{
 	cooldown = function(self, t) return 25 end,
 	steam = 5,
 	no_npc_use = true,
-	range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 5)) end,
+	range = function(self, t) return math.floor(self:combatTalentScale(t, 4, 6)) end,
 	radius = 2,
 	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 40, 300) end,
 	getDist = function(self, t) return math.floor(self:combatTalentLimit(t, 10, 3, 7)) end,

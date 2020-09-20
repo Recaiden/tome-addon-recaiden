@@ -36,7 +36,7 @@ newEffect{
 
 newEffect{
 	name = "REK_DEML_RIDE", image = "talents/rek_deml_pilot_automotor.png",
-	desc = "Piloting",
+	desc = "Steel Rider",
 	long_desc = function(self, eff) return ("The target is riding in a mechanical contraption."):format(eff.power) end,
 	type = "other",
 	subtype = { steam=true, vehicle=true },
@@ -45,6 +45,15 @@ newEffect{
 	parameters = { hull=10, pin=10, armor=0, speed=0, def=0, knock=0 },
 	-- Healing goes to your hull first
 	callbackPriorities={callbackOnHeal = 5},
+	callbackOnWear = function(self, t, o, fBypass)
+		if self:getInven("BODY") then 
+			local am = self:getInven("BODY")[1] or {}
+			if am.subtype == "massive" then
+				game.logPlayer(self, "You can't keep operating your ride in massive armor.")
+				self:removeEffect(self.EFF_REK_DEML_RIDE)
+			end
+		end
+	end,
 	callbackOnHeal = function(self, eff, value, src, raw_value)
 		if value > 0 then
 			local hullMissing = self:getMaxHull() - self:getHull()
@@ -106,6 +115,7 @@ newEffect{
 	subtype = { steam=true },
 	status = "beneficial",
 	parameters = { dir=1 },
+	cancel_on_level_change = true,
 	activate = function(self, eff)
 	end,
 	-- Method 1
@@ -121,16 +131,16 @@ newEffect{
 	
 	-- Method 2
 	on_timeout = function(self, eff)
-		if self.running and self.running.explore then return end
+		if self.running then return end --and self.running.explore then return end
 		if self:attr("never_move") then return end
 		local dx, dy = util.dirToCoord(eff.dir)
 		
 		if not game.level.map:checkAllEntities(self.x+dx, self.y+dy, "block_move", self) then
-			self:move(self.x+dx, self.y+dy, true)
 			if self:isTalentActive(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
 				local damageFlame = self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "getDamage")
 				game.level.map:addEffect(self, self.x, self.y, 4, engine.DamageType.FIRE, damageFlame, 0, 5, nil, {type="inferno"}, nil, true)
 			end
+			self:move(self.x+dx, self.y+dy, true)
 		end
 	end,
 }

@@ -7,8 +7,8 @@ newTalent{
 	cooldown = 5,
 	mode = "sustained",
 	no_energy = true,
-	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 5, 10) end,
-	getMovement = function(self, t) return self:combatTalentScale(t, 0.5, 1.0) end,
+	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 10, 50) end,
+	getMovement = function(self, t) return self:combatTalentScale(t, 0.18, 0.5, 0.75) end,
 	callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
 		if moved and not force and self:getSteam() > 0 then
 			game.level.map:addEffect(self, ox, oy, 4, engine.DamageType.FIRE, t.getDamage(self, t), 0, 5, nil, {type="inferno"}, nil, true)
@@ -56,7 +56,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Attach additional jet nozzles to your vehicle thatamplify its movements.  At the start of each round for 2 rounds after moving, you move 1 space in the same direction for free.
+		return ([[Attach additional jet nozzles to your vehicle that amplify its movements.  Each round for 2 rounds after moving, you move 1 space in the same direction for free.
 
 Passively improve your vehicle's evasive movements. While riding, you have %d extra defense.]]):format(t.getDefense(self, t))
 	end,

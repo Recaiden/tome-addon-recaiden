@@ -8,6 +8,40 @@ newTalent{
    require = steam_req1,
    points = 5,
    cooldown = 0,
+	 tactical = {
+		 ATTACKAREA = {
+			 FIRE = function(self, t, target)
+				 if not game or not game.level then return 0 end
+				 local count = 0
+				 self:project(
+					 {type="ball", range=0, radius=10, no_restrict=true},
+					 self.x, self.y,
+					 function(px, py)
+						 local trap = game.level.map(px, py, engine.Map.TRAP)
+						 if not trap then return end
+						 if trap.name ~= "remote explosive charge" then return end
+						 if trap.summoner ~= self then return end
+						 count = count + 1
+					 end)
+				 return count
+			 end },
+	 },
+	 on_pre_use = function(self, t, silent)
+		 local count = 0
+		 if not game or not game.level then return false end
+		 self:project(
+			 {type="ball", range=0, radius=10, no_restrict=true},
+			 self.x, self.y,
+			 function(px, py)
+				 local trap = game.level.map(px, py, engine.Map.TRAP)
+				 if not trap then return end
+				 if trap.name ~= "remote explosive charge" then return end
+				 if trap.summoner ~= self then return end
+				 count = count + 1
+			 end)
+		 if count == 0 and not silent then game.logPlayer(self, "You have nothing to detonate") end
+		 return count > 0
+	 end,
 	 action = function(self, t)
 		 local detonated = 0
 		 self:project(
@@ -44,14 +78,14 @@ newTalent{
 	end,
 	steam = function(self, t)
 		local cost = 10
-		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then cost  = cost + 5
-			return cost
-		end
+		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then cost  = cost + 5 end
+		return cost
 	end,
 	cooldown = 0,
 	range = 6,
 	radius = 1,
-	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 50, 500) end,
+	tactical = { ATTACKAREA = { FIRE = 1 } },
+	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 20, 400) end,
 	placeCharge = function(self, t, x, y)
 		local dam = self:steamCrit(t.getDamage(self, t))
 		local burn = 0
@@ -330,18 +364,15 @@ newTalent{
 	cooldown = 12,
 	steam = function(self, t)
 		local cost = 15
-		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then cost  = cost + 5
-			return cost
-		end
+		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then cost  = cost + 5 end
+		return cost
 	end,
 	range = 1,
 	tactical = { ATTACK = { FIRE = 2 } },
 	requires_target = true,
 	radius = 3,
 	target = function(self, t)
-		return {type="ball", range=self:getTalentRange(t), radius=0, talent=t, selffire=false}
-
-		--return {type="hit", range=self:getTalentRange(t), default_target=self, first_target="friend", talent=t}
+		return {type="hit", range=self:getTalentRange(t), default_target=self, first_target="friend", talent=t}
 	end,
 	getMovementSpeed = function(self, t) return self:combatTalentScale(t, 2, 5) end,
 	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 40, 300) end,
