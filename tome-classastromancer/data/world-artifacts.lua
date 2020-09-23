@@ -8,42 +8,42 @@ local Object = require "engine.Object"
 -- Staves
 --------------------------------------------------------------------------------
 newEntity{
-   base = "BASE_STAFF",
-   power_source = {arcane=true},
-   unique = true,
-   name = "Meteor Staff",
-   flavor_name = "magestaff",
-   flavors = {magestaff=true},
-   unided_name = "stone-tipped staff", image = "object/artifact/wander_staff_of_meteors.png",
-   level_range = {20, 25},
-   color=colors.VIOLET,
-   rarity = 170,
-   desc = [[Small meteoric stones swirl around the tip of this ashen-wood staff]],
-   cost = 200,
-   material_level = 3,
-   
-   require = { stat = { mag=24 }, },
-   combat = {
-      dam = 20,
-      apr = 4,
-      dammod = {mag=1.3},
-      element = DamageType.PHYSICAL,
-      convert_damage = { [DamageType.FIRE] = 50,},
-   },
-   wielder = {
-      combat_spellpower = 40,
-      inc_damage={
-	 [DamageType.FIRE] = 20,
-	 [DamageType.PHYSICAL] = 20,
-      },
-      talents_types_mastery = {
-	 ["celestial/meteor"] = 0.2,
-      },
-      talent_cd_reduction={[Talents.T_WANDER_METEOR_STARSTRIKE]=2},
-      learn_talent = {
-				[Talents.T_WANDER_METEOR_STORM_BONUS] = 1,
-				[Talents.T_WANDER_METEOR_STORM] = 1},
-   }
+	base = "BASE_STAFF",
+	power_source = {arcane=true},
+	unique = true,
+	name = "Meteor Staff",
+	flavor_name = "magestaff",
+	flavors = {magestaff=true},
+	unided_name = "stone-tipped staff", image = "object/artifact/wander_staff_of_meteors.png",
+	level_range = {20, 35},
+	color=colors.VIOLET,
+	rarity = 170,
+	desc = [[Small meteoric stones swirl around the tip of this ashen-wood staff]],
+	cost = 200,
+	material_level = 4,
+	
+	require = { stat = { mag=24 }, },
+	combat = {
+		dam = 20,
+		apr = 4,
+		dammod = {mag=1.3},
+		element = DamageType.PHYSICAL,
+		convert_damage = { [DamageType.FIRE] = 50,},
+	},
+	wielder = {
+		combat_spellpower = 35,
+		inc_damage={
+			[DamageType.FIRE] = 25,
+			[DamageType.PHYSICAL] = 25,
+		},
+		talents_types_mastery = {
+			["celestial/meteor"] = 0.2,
+		},
+		talent_cd_reduction={[Talents.T_WANDER_METEOR_STARSTRIKE]=2},
+		learn_talent = {
+			[Talents.T_WANDER_METEOR_STORM_BONUS] = 1,
+			[Talents.T_WANDER_METEOR_STORM] = 1},
+	}
 }
 
 --------------------------------------------------------------------------------

@@ -49,12 +49,10 @@ newTalent{
 	requires_target = true,
 	is_summon = true,
 	tactical = { ATTACK = { FIRE = 2 } },
-	
 	on_pre_use = function(self, t, silent)
 		if not self:canBe("summon") and not silent then game.logPlayer(self, "You cannot summon; you are suppressed!") return end
 		return not checkMaxSummonStar(self, silent)
 	end,
-	
 	incStats = function(self, t, fake)
 		local mp = self:combatSpellpower()
 		return{ 
@@ -63,14 +61,11 @@ newTalent{
 			con= (fake and mp or self:spellCrit(mp)) * 1.2 * self:combatTalentScale(t, 0.2, 1, 0.75),
 					}
 	end,
-	
 	speed = astromancerSummonSpeed,
-	
 	display_speed = function(self, t)
 		return ("Swift Spell (#LIGHT_GREEN#%d%%#LAST# of a turn)"):
 		format(t.speed(self, t)*100)
 	end,
-	
 	summonTime = function(self, t)
 		local duration = math.floor(self:combatScale(self:getTalentLevel(t), 5, 0, 10, 5))
 		local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
@@ -79,7 +74,6 @@ newTalent{
 		end
 		return duration
 	end,
-	
 	action = function(self, t)
 		local tg = {type="bolt", nowarning=true, range=self:getTalentRange(t), nolock=true, talent=t}
 		local tx, ty, target = self:getTarget(tg)

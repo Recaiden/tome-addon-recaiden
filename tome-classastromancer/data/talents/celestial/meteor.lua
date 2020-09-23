@@ -181,78 +181,77 @@ newTalent{
 }
 
 newTalent{
-   name = "Starstrike", short_name = "WANDER_METEOR_STARSTRIKE",
-   type = {"celestial/meteor", 3},
-   require = spells_req_high3,
-   points = 5,
-   random_ego = "attack",
-   cooldown = 6,
-   tactical = { ATTACKAREA = {FIRE = 1, PHYSICAL = 1}, DISABLE = 2 },
-   range = 6,
-   radius = function(self, t) return math.floor(self:combatTalentScale(t, 1.3, 2.7)) end,
-   direct_hit = true,
-   requires_target = true,
-   target = function(self, t)
-      return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=self:spellFriendlyFire(), talent=t}
-   end,
-   getDamage = function(self, t) return self:combatTalentSpellDamage(t, 28, 170) end,
-   on_pre_use = function(self, t, silent)
-      if not self:hasEffect(self.EFF_WANDER_METEOR_STORM) then
-	 if not silent then game.logPlayer(self, "You require an active meteor storm.") end
-	 return false
-      end
-      local e = self:hasEffect(self.EFF_WANDER_METEOR_STORM)
-      if e.dur and e.dur < 2 then
-	 if not silent then game.logPlayer(self, "Your meteor storm is too close to ending.") end
-	 return false
-      end
-      return true
-   end,
-   action = function(self, t)
-      local tg = self:getTalentTarget(t)
-      local x, y = self:getTarget(tg)
-      if not x or not y then return nil end
-      local grids = self:project(tg, x, y, DamageType.METEOR_BLAST, self:spellCrit(t.getDamage(self, t)))
-
-      -- Void summons hook
-      if self:knowTalent(self.T_WANDER_METEOR_VOID_SUMMONS) then
-	 local tal_vs = self:getTalentFromId(self.T_WANDER_METEOR_VOID_SUMMONS)
-	 if rng.percent(tal_vs.getChance(self, tal_vs)*2) then
-	    if rng.percent(50) then
-	       tal_vs.callLosgoroth(self, tal_vs, x, y, tg)
-	    else
-	       tal_vs.callManaworm(self, tal_vs, x, y, tg)
-	    end
-	 end
-      end
-      
-      local _ _, _, _, x, y = self:canProject(tg, x, y)
-      if core.shader.active() then
-	 game.level.map:particleEmitter(x, y, tg.radius, "starfall", {radius=tg.radius, tx=x, ty=y})
-      else
-	 game.level.map:particleEmitter(x, y, tg.radius, "shadow_flash", {radius=tg.radius, grids=grids, tx=x, ty=y})
-	 game.level.map:particleEmitter(x, y, tg.radius, "circle", {oversize=0.7, a=60, limit_life=16, appear=8, speed=-0.5, img="darkness_celestial_circle", radius=self:getTalentRadius(t)})
-      end
-      game:playSoundNear(self, "talents/fireflash")
-
-      -- Use up meteor charges
-      local e = self:hasEffect(self.EFF_WANDER_METEOR_STORM)
-      e.dur = e.dur - 2
-      if e.dur <= 0 then
-				self:removeEffect(self.EFF_WANDER_METEOR_STORM)
-      end
-	 
-      return true
-   end,
-   info = function(self, t)
-      local radius = self:getTalentRadius(t)
-      local damage = t.getDamage(self, t)
-      return ([[Call down several of your meteor fragments simultaneously, blasting a radius %d area for %0.2f meteor damage and stunning (#SLATE#Spellpower vs. Physical#LAST#) those within the area for 4 turns. 
+	name = "Starstrike", short_name = "WANDER_METEOR_STARSTRIKE",
+	type = {"celestial/meteor", 3},
+	require = spells_req_high3,
+	points = 5,
+	random_ego = "attack",
+	cooldown = 6,
+	tactical = { ATTACKAREA = {FIRE = 1, PHYSICAL = 1}, DISABLE = 2 },
+	range = 6,
+	radius = function(self, t) return math.floor(self:combatTalentScale(t, 1.3, 2.7)) end,
+	direct_hit = true,
+	requires_target = true,
+	target = function(self, t)
+		return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), friendlyfire=false, talent=t}
+	end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 28, 170) end,
+	on_pre_use = function(self, t, silent)
+		if not self:hasEffect(self.EFF_WANDER_METEOR_STORM) then
+			if not silent then game.logPlayer(self, "You require an active meteor storm.") end
+			return false
+		end
+		local e = self:hasEffect(self.EFF_WANDER_METEOR_STORM)
+		if e.dur and e.dur < 2 then
+			if not silent then game.logPlayer(self, "Your meteor storm is too close to ending.") end
+			return false
+		end
+		return true
+	end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+		local grids = self:project(tg, x, y, DamageType.METEOR_BLAST, self:spellCrit(t.getDamage(self, t)))
+		
+		-- Void summons hook
+		if self:knowTalent(self.T_WANDER_METEOR_VOID_SUMMONS) then
+			local tal_vs = self:getTalentFromId(self.T_WANDER_METEOR_VOID_SUMMONS)
+			if rng.percent(tal_vs.getChance(self, tal_vs)*2) then
+				if rng.percent(50) then
+					tal_vs.callLosgoroth(self, tal_vs, x, y, tg)
+				else
+					tal_vs.callManaworm(self, tal_vs, x, y, tg)
+				end
+			end
+		end
+		
+		local _ _, _, _, x, y = self:canProject(tg, x, y)
+		if core.shader.active() then
+			game.level.map:particleEmitter(x, y, tg.radius, "starfall", {radius=tg.radius, tx=x, ty=y})
+		else
+			game.level.map:particleEmitter(x, y, tg.radius, "shadow_flash", {radius=tg.radius, grids=grids, tx=x, ty=y})
+			game.level.map:particleEmitter(x, y, tg.radius, "circle", {oversize=0.7, a=60, limit_life=16, appear=8, speed=-0.5, img="darkness_celestial_circle", radius=self:getTalentRadius(t)})
+		end
+		game:playSoundNear(self, "talents/fireflash")
+		
+		-- Use up meteor charges
+		local e = self:hasEffect(self.EFF_WANDER_METEOR_STORM)
+		e.dur = e.dur - 2
+		if e.dur <= 0 then
+			self:removeEffect(self.EFF_WANDER_METEOR_STORM)
+		end
+		
+		return true
+	end,
+	info = function(self, t)
+		local radius = self:getTalentRadius(t)
+		local damage = t.getDamage(self, t)
+		return ([[Call down several of your meteor fragments simultaneously, blasting a radius %d area for %0.2f meteor damage and stunning (#SLATE#Spellpower vs. Physical#LAST#) those within the area for 4 turns. 
 This can trigger Void Summons, with double chance.
 This talent requires an active Meteor Storm, and reduces its duration by 2.
-		The damage dealt will increase with your Spellpower.]]):
-	 format(radius, damDesc(self, DamageType.METEOR, damage))
-   end,
+		The damage dealt will increase with your Spellpower.]]):format(radius, damDesc(self, DamageType.METEOR, damage))
+	end,
 }
 
 newTalent{

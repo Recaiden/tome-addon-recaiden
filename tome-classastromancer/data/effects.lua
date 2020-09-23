@@ -377,9 +377,6 @@ newEffect{
 	callbackOnActBase = function(self, eff)
 		eff.dropMeteor(self, eff, 1.0)
 	end,
-	on_merge = function(self, old_eff, new_eff)
-		return old_eff
-	end,
 	on_gain = function(self, err)
 		return nil, true
 	end,

@@ -286,13 +286,13 @@ newTalent{
    getAffinity = function(self, t) return self:combatTalentLimit(t, 100, 10, 35) end, -- Limit < 100%
 	 getSaves = function(self, t) return self:getTalentLevel(t)*3.5 end,
    getShield = function(self, t) return 7 + self:combatSpellpower(0.056) * self:combatTalentScale(t, 1, 4)  end,
-	 getHealFactor = function(self, t) return self:combatTalentScale(t, 15, 30) end,
+	 getHealFactor = function(self, t) return self:combatTalentScale(t, 0.15, 0.30) end,
    info = function(self, t)
       return ([[Your skill at singing paeans now extends the elemental cloak, increasing your affinity for the associated element by %d.
 		Also, each Paean has an additional effect while it's active.
 		Paean of Volcanic Fire increases all your saves by %d.
 		Paean of Glacial Ice reinforces existing damage shields by %d each turn.
-		Paean of Cleansing Wind increases your healing factor by %d%%. ]]):format(t.getAffinity(self, t), t.getSaves(self, t), t.getShield(self, t), t.getHealFactor(self, t))
+		Paean of Cleansing Wind increases your healing factor by %d%%. ]]):format(t.getAffinity(self, t), t.getSaves(self, t), t.getShield(self, t), t.getHealFactor(self, t)*100)
    end,
 }
 

@@ -48,6 +48,51 @@ newTalent{
 }
 
 newTalent{
+	name = "Ice Storm", short_name="WANDER_ICE_STORM",
+	type = {"spell/other",1},
+	points = 5,
+	random_ego = "attack",
+	mana = 25,
+	cooldown = 20,
+	tactical = { ATTACKAREA = { COLD = 2, stun = 1 } },
+	range = 0,
+	radius = 3,
+	requires_target = true,
+	target = function(self, t)
+		return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false}
+	end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 5, 90) end,
+	getDuration = function(self, t) return 5 + self:combatSpellpower(0.05) + self:getTalentLevel(t) end,
+	action = function(self, t)
+		-- Add a lasting map effect
+		game.level.map:addEffect(self,
+			self.x, self.y, t.getDuration(self, t),
+			DamageType.LUXAM_ICE_STORM, t.getDamage(self, t),
+			3,
+			5, nil,
+			{type="icestorm", only_one=true},
+			function(e)
+				if e.src.dead then return end
+				e.x = e.src.x
+				e.y = e.src.y
+				return true
+			end,
+			false
+		)
+		game:playSoundNear(self, "talents/icestorm")
+		return true
+	end,
+	info = function(self, t)
+		local damage = t.getDamage(self, t)
+		local duration = t.getDuration(self, t)
+		return ([[A furious ice storm rages around the caster, doing %0.2f cold damage in a radius of 3 each turn for %d turns.
+		It has a 25%% chance to freeze damaged targets.
+		If the target is wet the damage increases by 30%% and the freeze chance increases to 50%%.
+		The damage and duration will increase with your Spellpower.]]):format(damDesc(self, DamageType.COLD, damage), duration)
+	end,
+}
+
+newTalent{
 	name = "Summon: Shivgoroth", short_name = "WANDER_SUMMON_ICE",
 	type = {"celestial/luxam", 1},
 	require = spells_req1,
@@ -141,13 +186,13 @@ newTalent{
 		 if augment then
 			 if augment.ultimate then
 				 m[#m+1] = resolvers.talents{
-					 [self.T_ICE_STORM]=self:getTalentLevelRaw(t),
-					 [self.T_COLD_FLAMES]=self:getTalentLevelRaw(t)
+					 [self.T_FLASH_FREEZE]=self:getTalentLevelRaw(t),
+					 [self.T_WANDER_ICE_STORM]=self:getTalentLevelRaw(t)
 																		}
 				 m.name = "Ultimate "..m.name
 				 m.image = "npc/elemental_ice_ultimate_shivgoroth_short.png"
 			 else
-				 m[#m+1] = resolvers.talents{ [self.T_COLD_FLAMES]=self:getTalentLevelRaw(t) }
+				 m[#m+1] = resolvers.talents{ [self.T_FLASH_FREEZE]=self:getTalentLevelRaw(t) }
 				 m.name = "Greater "..m.name
 				 m.image = "npc/elemental_ice_greater_shivgoroth_short.png"
 			 end

@@ -12,12 +12,10 @@ newTalent{
 	requires_target = true,
 	is_summon = true,
 	tactical = { ATTACK = { TEMPORAL = 2 } },
-	
 	on_pre_use = function(self, t, silent)
 		if not self:canBe("summon") and not silent then game.logPlayer(self, "You cannot summon; you are suppressed!") return end
 		return not checkMaxSummonStar(self, silent)
 	end,
-	
 	incStats = function(self, t, fake)
 		local mp = self:combatSpellpower()
 		return{ 
@@ -26,18 +24,19 @@ newTalent{
 			con=(fake and mp or self:spellCrit(mp)) * 1.2 * self:combatTalentScale(t, 0.2, 1, 0.75)
 					}
 	end,
-	
 	speed = astromancerSummonSpeed,
-	
 	display_speed = function(self, t)
 		return ("Swift Spell (#LIGHT_GREEN#%d%%#LAST# of a turn)"):
 		format(t.speed(self, t)*100)
 	end,
-	
 	summonTime = function(self, t)
-		return math.floor(self:combatScale(self:getTalentLevel(t) + self:getTalentLevel(self.T_WANDER_GRAND_ARRIVAL), 5, 0, 10, 5))
+		local duration = math.floor(self:combatScale(self:getTalentLevel(t), 5, 0, 10, 5))
+		local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
+		if augment then
+			duration = duration + augment.extend
+		end
+		return duration
 	end,
-	
 	action = function(self, t)
 		local tg = {type="bolt", nowarning=true, range=self:getTalentRange(t), nolock=true, talent=t}
 		local tx, ty, target = self:getTarget(tg)
@@ -102,7 +101,24 @@ newTalent{
 			summon_time = t.summonTime(self, t),
 			ai_target = {actor=target},
 			resolvers.sustains_at_birth(),
-										 }
+		}
+		local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
+		if augment then
+			if augment.ultimate then
+				m[#m+1] = resolvers.talents{
+					[self.T_TIME_DILATION]=self:getTalentLevelRaw(t),
+					[self.T_SPEED_SAP]=self:getTalentLevelRaw(t)
+																	 }
+				m.size_category = 5
+				m.name = "Ultimate "..m.name
+			else
+				m[#m+1] = resolvers.talents{ [self.T_TIME_DILATION]=self:getTalentLevelRaw(t) }
+				m.size_category = 4
+				m.name = "Greater "..m.name
+			end
+			augment.count = augment.count-1
+			if augment.count <= 0 then self:removeEffect(self.EFF_WANDER_UNITY_CONVERGENCE) end
+		end
 		
 		setupSummonStar(self, m, x, y)
 		game:playSoundNear(self, "talents/warp")
