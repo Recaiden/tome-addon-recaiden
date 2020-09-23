@@ -7,6 +7,8 @@ newTalent{
 	cooldown = 5,
 	mode = "sustained",
 	no_energy = true,
+	on_learn = function(self, t) updateSteelRider(self) end,
+	on_unlearn = function(self, t) updateSteelRider(self) end,
 	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 10, 50) end,
 	getMovement = function(self, t) return self:combatTalentScale(t, 0.18, 0.5, 0.75) end,
 	callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
@@ -33,9 +35,11 @@ newTalent{
 	type = {"steamtech/engine", 2},
 	require = steam_req2,
 	points = 5,
-	cooldown = 0,
+	cooldown = 12,
 	mode = "sustained",
 	no_energy = true,
+	on_learn = function(self, t) updateSteelRider(self) end,
+	on_unlearn = function(self, t) updateSteelRider(self) end,
 	getDefense = function(self, t) return self:combatTalentScale(t, 5, 50, 1) end,
 	on_pre_use = function(self, t) return self:hasEffect(self.EFF_REK_DEML_RIDE) end,
 	callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
@@ -106,6 +110,16 @@ newTalent{
 		end
 
 		local ox, oy = self.x, self.y
+
+		-- set the ground we cover on fire
+		if self:isTalentActive(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
+			local damageFlame = self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "getDamage")
+			local sub_tg = {type="beam", range=self:getTalentRange(t), talent=t}
+			self:project(sub_tg, tx, ty, function(px, py)
+										 game.level.map:addEffect(self, px, py, 4, engine.DamageType.FIRE, damageFlame, 0, 5, nil, {type="inferno"}, nil, true)
+																	 end)
+		end
+		
 		self:move(tx, ty, true)
 		if config.settings.tome.smooth_move > 0 then
 			self:resetMoveAnim()

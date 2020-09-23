@@ -87,3 +87,29 @@ if not Talents.talents_types_def["steamtech/pyromaniac"] then
    newTalentType{ allow_random=true, is_steam=true, type="steamtech/pyromaniac", name = "Pyromaniac", min_lev = 10, description = "Water, air, and earth are all the same. But fire is a true wonder." }
    load("/data-classdemolisher/talents/pyromaniac.lua")
 end
+
+updateSteelRider = function(self)
+	if not self:hasEffect(self.EFF_REK_DEML_RIDE) then return end
+	local pin = 0
+	local knock = 0
+	local armor = 0
+	local speed = 0
+	local def = 0
+	if self:knowTalent(self.T_REK_DEML_PILOT_AUTOMOTOR) then
+		pin = self:callTalent(self.T_REK_DEML_PILOT_AUTOMOTOR, "getPinImmune")
+	end
+	if self:knowTalent(self.T_REK_DEML_PILOT_PATCH) then
+		armor = self:callTalent(self.T_REK_DEML_PILOT_PATCH, "getArmor")
+	end
+	if self:knowTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
+		speed = self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "getMovement")
+	end
+	if self:knowTalent(self.T_REK_DEML_ENGINE_DRIFT_NOZZLES) then
+		def = self:callTalent(self.T_REK_DEML_ENGINE_DRIFT_NOZZLES, "getDefense")
+	end
+	if self:knowTalent(self.T_REK_DEML_BATTLEWAGON_HEAVY) then
+		knock = self:callTalent(self.T_REK_DEML_BATTLEWAGON_HEAVY, "getKnockImmune")
+	end
+	self:setEffect(self.EFF_REK_DEML_RIDE, 10, {src=self, pin=pin, armor=armor, speed=speed, def=def, knock=knock})
+	game:playSoundNear(self, "talents/clinking")
+end

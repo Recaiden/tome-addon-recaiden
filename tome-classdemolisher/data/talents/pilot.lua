@@ -39,39 +39,27 @@ newTalent{
 	end,
 	on_learn = function(self, t)
 		self.hull_rating = 5
+		updateSteelRider(self)
+	end,
+	on_unlearn = function(self, t)
+		updateSteelRider(self)
 	end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "max_hull", t.getHullBoost(self,t))
 	end,
 	action = function(self, t)
 		self:incHull(self:getMaxHull())
-		local pin = t.getPinImmune(self,t)
-		local knock = 0
-		local armor = 0
-		local speed = 0
-		local def = 0
-		if self:knowTalent(self.T_REK_DEML_PILOT_PATCH) then
-			armor = self:callTalent(self.T_REK_DEML_PILOT_PATCH, "getArmor")
-		end
-		if self:knowTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
-			speed = self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "getMovement")
-		end
-		if self:knowTalent(self.T_REK_DEML_ENGINE_DRIFT_NOZZLES) then
-			def = self:callTalent(self.T_REK_DEML_ENGINE_DRIFT_NOZZLES, "getDefense")
-		end
-		if self:knowTalent(self.T_REK_DEML_BATTLEWAGON_HEAVY) then
-			knock = self:callTalent(self.T_REK_DEML_BATTLEWAGON_HEAVY, "getKnockImmune")
-		end
-		self:setEffect(self.EFF_REK_DEML_RIDE, 10, {src=self, pin=pin, armor=armor, speed=speed, def=def, knock=knock})
+		self:setEffect(self.EFF_REK_DEML_RIDE, 10, {src=self})
+		updateSteelRider(self)
 		game:playSoundNear(self, "talents/clinking")
 		return true
 	end,
 	info = function(self, t)
-		return ([[You travel in a peculiar contraption: a steam-powered, jet propelled, armored buggy.  While riding in this machine, your vehicle's Hull protects you. Damage and Healing are applied to Hull before they are applied to your life.  Hull is based on level (5 life rating), Consitution (2 Hull/point), Willpower (4 Hull/point), and ranks in this talent (+%d Hull).
+		return ([[You travel in a peculiar contraption: a steam-powered, jet propelled, armored buggy.  While riding, you have %d%% resistance to pinning, and your vehicle's Hull protects you. Damage and Healing are applied to Hull before they are applied to your life.  Hull is based on level (5 life rating), Consitution (2 Hull/point), Willpower (4 Hull/point), and ranks in this talent (+%d Hull).
 
-Your ride is hard to stop.  While riding, you have %d%% resistance to pinning.
+Controlling your ride requires fine control that isn't possible while wearing massive armor.
 
-(Cancel the effect if you need to get off your ride early)]]):format(t.getHullBoost(self, t), t.getPinImmune(self, t)*100)
+(Cancel the effect if you need to get off your ride early)]]):format(t.getPinImmune(self, t)*100, t.getHullBoost(self, t))
 	end,
 }
 
@@ -86,6 +74,8 @@ newTalent{
 	getHeal = function(self, t) return 40 + self:combatTalentSteamDamage(t, 20, 390) end,
 	getArmor = function(self, t) return self:combatTalentScale(t, 1, 7, 0.75) end,
 	on_pre_use = function(self, t) return self:hasEffect(self.EFF_REK_DEML_RIDE) end,
+	on_learn = function(self, t) updateSteelRider(self) end,
+	on_unlearn = function(self, t) updateSteelRider(self) end,
 	is_heal = true,
 	action = function(self, t)
 		self:attr("allow_on_heal", 1)

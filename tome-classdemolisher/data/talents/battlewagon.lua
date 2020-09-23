@@ -4,6 +4,8 @@ newTalent{
 	require = steam_req_high1,
 	points = 5,
 	mode = "passive",
+	on_learn = function(self, t) updateSteelRider(self) end,
+	on_unlearn = function(self, t) updateSteelRider(self) end,
 	getHullBoost = function(self, t) return self:combatTalentScale(t, 50, 300) end,
 	getKnockImmune = function(self, t) return math.min(1, self:combatTalentScale(t, 0.1, 0.90, 0.5)) end,
 	getRamBoost = function(self, t) return self:combatTalentScale(t, 0.3, 0.90) end,
@@ -48,9 +50,9 @@ newTalent{
 	mode = "passive",
 	cooldown = 5,
 	getMissileRadius = function(self, t) return math.floor(self:combatTalentScale(t, 2, 4)) end,
-	getMissileDamage = function(self, t) return self:combatTalentSteamDamage(t, 20, 330) end,
-	getGaussDamage = function(self, t) return self:combatTalentSteamDamage(t, 30, 400) end,
-	getHarpoonDamage = function(self, t) return self:combatTalentSteamDamage(t, 60, 250) end,	
+	getMissileDamage = function(self, t) return self:combatTalentSteamDamage(t, 20, 230) end,
+	getGaussDamage = function(self, t) return self:combatTalentSteamDamage(t, 30, 380) end,
+	getHarpoonDamage = function(self, t) return self:combatTalentSteamDamage(t, 60, 180) end,	
 	on_learn = function(self, t)
 		local lev = self:getTalentLevel(t)
 		if not self:knowTalent(self:getTalentFromId(self.T_REK_DEML_MG_MISSILE)) then

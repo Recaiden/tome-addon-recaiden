@@ -79,6 +79,9 @@ newEffect{
 		cb.value = 0
 		return true
 	end,
+	-- on_merge = function(self, old_eff, new_eff)
+	-- 	return old_eff
+	-- end,
 	activate = function(self, eff)
 		self:effectTemporaryValue(eff, "hull_regen", 0.25)
 		if eff.pin then self:effectTemporaryValue(eff, "pin_immune", eff.pin) end
@@ -89,11 +92,11 @@ newEffect{
 		if eff.speed then self:effectTemporaryValue(eff, "movement_speed", eff.speed) end
 		if eff.armor then self:effectTemporaryValue(eff, "combat_armor", eff.armor) end
 		if eff.def then self:effectTemporaryValue(eff, "combat_def", eff.def) end
-		self.hull = self:getMaxHull()
+		--self.hull = self:getMaxHull()
 		self:updateModdableTile()
 	end,
 	deactivate = function(self, eff)
-		self.hull = 0
+		--self.hull = 0
 		self:updateModdableTile()
 		if not self:isTalentCoolingDown(self.T_REK_DEML_PILOT_AUTOMOTOR) then
 			self:startTalentCooldown(self.T_REK_DEML_PILOT_AUTOMOTOR)
@@ -131,8 +134,9 @@ newEffect{
 	
 	-- Method 2
 	on_timeout = function(self, eff)
-		if self.running then return end --and self.running.explore then return end
-		if self:attr("never_move") then return end
+		if self.running then return end -- not in autoexplore or run
+		if self:attr("never_move") then return end -- not while pinned
+		if game.zone.wilderness then return end -- not on the world map
 		local dx, dy = util.dirToCoord(eff.dir)
 		
 		if not game.level.map:checkAllEntities(self.x+dx, self.y+dy, "block_move", self) then

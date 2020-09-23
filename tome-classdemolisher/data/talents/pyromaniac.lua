@@ -6,7 +6,7 @@ newTalent{
 	mode = "sustained",
 	cooldown = 5,
 	no_energy = true,
-	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 10, 55) end,
+	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 30, 165) end,
 	activate = function(self, t)
 		game:playSoundNear(self, "talents/fire")
 		self:addShaderAura("burning_wake", "awesomeaura", {time_factor=3500, alpha=0.6, flame_scale=0.6}, "particles_images/wings.png")
@@ -41,13 +41,14 @@ newTalent{
 	target = function(self, t)
 		return {type="ball", radius=self:getTalentRadius(t), range=self:getTalentRange(t), friendlyfire=true}
 	end,
-	radius = function(self, t) return math.floor(self:combatTalentScale(t, 2, 4)) end,
-	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 20, 330) end,
+	radius = function(self, t) return math.floor(self:combatTalentScale(t, 2, 3.8)) end,
+	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 20, 230) end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
   action = function(self, t)
 		local rad = self:getTalentRadius(t)
 		local tg = self:getTalentTarget(t)
 		local tx, ty = self:getTarget(tg)
+		if not tg or not tx or not ty then return nil end
 		local dam = self:steamCrit(t.getDamage(self, t))
 		self:project(tg, tx, ty, DamageType.REK_DEML_FIRE_STUN, {dam=dam, dur=t.getDuration(self, t)})
 		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then

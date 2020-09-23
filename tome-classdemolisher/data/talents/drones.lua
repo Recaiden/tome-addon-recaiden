@@ -252,7 +252,6 @@ newTalent{
 	mode = "sustained",
 	drain_steam = 3,
 	cooldown = 10,
-	range = 10,
 	tactical = { DEFEND = 3 },
 	getShrug = function(self, t) return self:combatTalentSteamDamage(t, 1.5, 30) end,
 	activate = function(self, t)

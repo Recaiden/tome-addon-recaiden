@@ -81,7 +81,7 @@ newTalent{
 		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then cost  = cost + 5 end
 		return cost
 	end,
-	cooldown = 0,
+	cooldown = 1,
 	range = 6,
 	radius = 1,
 	tactical = { ATTACKAREA = { FIRE = 1 } },
@@ -453,7 +453,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Deploy a miniature mecharachnid to carry an explosive into position.  It has %d%% movement speed and %d%% resistance to damage (based on level).
-When it reaches an enemy or dies, the mecharachnid will explode, dealing %d fire damage in radius %d.
+When it reaches an enemy or dies, the mecharachnid will explode, dealing %d fire damage to all targets in radius %d, friend or foe.
 ]]):format(t.getMovementSpeed(self, t)*100, self.level*1.5, damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t))
 	end,
 }
@@ -482,6 +482,8 @@ newTalent{
 			self:setProc("mad_bomber", true, cd.turns-1)
 			return nil
 		end
+
+		self:setProc("mad_bomber", true, t.getBombCD(self, t))
 	
 		-- collect spaces of or adjacent to enemies within range that don't already have a charge
 		local tgts = {}
@@ -509,16 +511,10 @@ newTalent{
 		if not self:canProject(tg, target.x, target.y) then return nil end
 		t1.placeCharge(self, t1, target.x, target.y)
 		
-		self:setProc("mad_bomber", true, t.getBombCD(self, t))
 		return true
 	end,
 	activate = function(self, t)
 		local ret = {}
-		if core.shader.active() then
-			ret.particle1 = self:addParticles(Particles.new("shader_ring_rotating", 1, {rotation=0, radius=0.8, img="runicshield_yellow"}, {type="lightningshield", time_factor=3000, noup=1.0}))
-			ret.particle1.toback = true
-			ret.particle2 = self:addParticles(Particles.new("shader_ring_rotating", 1, {rotation=0, radius=0.8, img="runicshield_dark"}, {type="lightningshield", time_factor=3000, noup=1.0}))
-		end
 		return ret
 	end,
 	deactivate = function(self, t, p)
