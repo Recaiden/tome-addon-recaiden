@@ -57,9 +57,12 @@ newEffect{
 	callbackOnHeal = function(self, eff, value, src, raw_value)
 		if value > 0 then
 			local hullMissing = self:getMaxHull() - self:getHull()
+			local healthMissing = self.max_life - self.life
 			local hullRestored = math.min(hullMissing, value)
 			self.hull = self.hull + hullRestored
 			value = value - hullRestored
+			local overheal = value - healthMissing
+			if self.in_combat and overheal > 0 and self:knowTalent(self.T_REK_DEML_PILOT_PATCH) then self:setEffect(self.EFF_REK_DEML_TEMP_HULL, 3, {src=self, block=overheal}) end
 			return {value = value}
 		end
 	end,
@@ -111,6 +114,53 @@ newEffect{
 }
 
 newEffect{
+	name = "REK_DEML_TEMP_HULL", image = "talents/rek_deml_pilot_patch.png",
+	desc = "Reinforced Hull",
+	long_desc = function(self, eff)
+		return ("Blocking up to %d total damage."):format(eff.block or 0)
+	end,
+	charges = function(self, eff) return math.floor(eff.block) end,
+	type = "physical",
+	subtype = {steamtech=true},
+	status = "beneficial",
+	parameters = {block = 0},
+	activate = function(self, eff)
+		eff.block = math.min(self:getMaxHull()/2, eff.block)
+		if core.shader.active() then
+			self:effectParticles(eff, {type="shader_shield", args={toback=false, size_factor=2, img="open_palm_block_tentacles2"}, shader={type="tentacles", backgroundLayersCount=-4, appearTime=0.3, time_factor=500, noup=0.0}})
+		end
+	end,
+	deactivate = function(self, eff) end,
+	on_merge = function(self, old_eff, new_eff)
+		old_eff.dur = new_eff.dur
+		old_eff.block = old_eff.block + new_eff.block
+		old_eff.block = math.min(self:getMaxHull()/2, old_eff.block)
+		return old_eff
+	end,
+	callbackPriorities={callbackOnTakeDamage = -5},
+	callbackOnTakeDamage = function(self, eff, src, x, y, type, value, tmp)
+		if value <= 0 then return end
+
+		local dam = value
+		game:delayedLogDamage(src, self, 0, ("#STEEL_BLUE#(%d to reinforced hull)#LAST#"):format(math.min(dam, eff.block)), false)
+		if dam < eff.block then
+			eff.block = eff.block - dam
+			dam = 0
+		else
+			dam = dam - eff.block
+			eff.block = 0
+		end
+
+		-- If we are at the end of the capacity
+		if eff.block <= 0 then
+			game.logPlayer(self, "#ORCHID#Your hull reinforcement is broken!#LAST#")
+			self:removeEffect(self.EFF_REK_DEML_TEMP_HULL)
+		end
+		return {dam = dam}
+	end,
+}
+
+newEffect{
 	name = "REK_DEML_DRIFTING", image = "talents/rek_deml_engine_drift_nozzles.png",
 	desc = "Drifting",
 	long_desc = function(self, eff) return ("The target is coasting forward."):format() end,
@@ -121,16 +171,6 @@ newEffect{
 	cancel_on_level_change = true,
 	activate = function(self, eff)
 	end,
-	-- Method 1
-	-- callbackOnActBase = function(self, eff)
-	-- 	if self.running and self.running.explore then return end
-	-- 	if self:attr("never_move") then return end
-	-- 	local dx, dy = util.dirToCoord(eff.dir)
-		
-	-- 	if not game.level.map:checkAllEntities(self.x+dx, self.y+dy, "block_move", self) then
-	-- 		self:move(self.x+dx, self.y+dy, true)
-	-- 	end
-	-- end,
 	
 	-- Method 2
 	on_timeout = function(self, eff)

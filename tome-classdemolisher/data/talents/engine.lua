@@ -43,6 +43,8 @@ newTalent{
 	getDefense = function(self, t) return self:combatTalentScale(t, 5, 50, 1) end,
 	on_pre_use = function(self, t) return self:hasEffect(self.EFF_REK_DEML_RIDE) end,
 	callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
+		if self.running then return end -- not in autoexplore or run
+		if game.zone.wilderness then return end -- not on the world map
 		if not ox or not oy then return end
 		if not x or not y then return end
 		if not moved or force then return end

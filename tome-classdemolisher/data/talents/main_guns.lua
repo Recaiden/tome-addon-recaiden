@@ -36,7 +36,7 @@ newTalent{
 			target:pull(self.x, self.y, tg.range)
 		end
 		
-		game:playSoundNear(self, "actions/knife_throw")
+		game:playSoundNear(self, "talents/chain_hit")
 		main_gun_cd(self, t.id)
 		return true
 	end,

@@ -1,19 +1,18 @@
 newBirthDescriptor{
-   type = "subclass",
-   name = "Demolisher",
-   locked = function() return true end,
-   locked_desc = "...",
-   desc = {
-      "A demolisher turns their mastery of technology to two important tasks: going fast and blowing stuff up.",
-      "Their most important stat is Cunning.",
-      "#GOLD#Stat modifiers:",
-      "#LIGHT_BLUE# * +0 Strength, +3 Dexterity, +0 Constitution",
-      "#LIGHT_BLUE# * +0 Magic, +0 Willpower, +5 Cunning",
-      "#GOLD#Life rating:#LIGHT_BLUE# -4",
-   },
-   power_source = {steam=true},
-   stats = { dex=3, cun=5 },
-   talents_types = {
+	type = "subclass",
+	name = "Demolisher",
+	locked = function() return true end,
+	locked_desc = "I wish to have no connection with any vehicle that does not go fast; for I intend to go in harm's way.",
+	desc = {
+		"A demolisher turns their mastery of technology to two important tasks: going fast and blowing stuff up.",
+		"Their most important stat is Cunning.",
+		"#GOLD#Stat modifiers:",
+		"#LIGHT_BLUE# * +3 Dexterity, +5 Cunning",
+		"#GOLD#Life rating:#LIGHT_BLUE# -5 (special)",
+	},
+	power_source = {steam=true},
+	stats = { dex=3, cun=5 },
+	talents_types = {
       --Class
       --new base talents
       ["steamtech/battle-machinery"]={true, 0.3},
@@ -28,11 +27,14 @@ newBirthDescriptor{
 			["steamtech/pyromaniac"]={false, 0.3},
 
       --old generics
-      ["cunning/survival"]={true, 0.0},
+			["technique/combat-training"]={true, 0.0},
+			["cunning/survival"]={true, 0.0},
       ["steamtech/physics"]={true, 0.3},
       ["steamtech/chemistry"]={true, 0.3},
+			["steamtech/blacksmith"]={false, 0.0},
+			["steamtech/engineering"]={true, 0.3},
    },
-   --birth_example_particles = "darkness_shield",
+   birth_example_particles = "wildfire",
    talents = {
 		 [ActorTalents.T_EXPLOSIVE_STEAM_ENGINE] = 1,
 		 [ActorTalents.T_REK_DEML_EXPLOSIVE_REMOTE_CHARGE] = 1,
@@ -60,7 +62,7 @@ newBirthDescriptor{
 													},	
    },
    copy_add = {
-      life_rating = -4,
+      life_rating = -5,
    },
 }
 

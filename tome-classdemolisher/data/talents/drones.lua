@@ -33,6 +33,7 @@ newTalent{
 			function(px, py, tg, self)
 				local target = game.level.map(px, py, engine.Map.ACTOR)
 				if target and target ~= self then
+					if not self:getInven("QUIVER") then return end
 					local ammoWeapon = table.clone(self:getInven("QUIVER")[1])
 					if not ammoWeapon or not ammoWeapon.combat then return end
 					local combat = table.clone(ammoWeapon.combat)
@@ -97,15 +98,22 @@ newTalent{
 		return true
 	end,
 	callbackOnActBase = function(self, t)
+		if self:getSteam() < 0.1 then
+			self:forceUseTalent(t.id, {ignore_energy=true})
+			return
+		end
 		t.activateGunner(self, t)
 		local rev = self:hasEffect(self.EFF_REK_DEML_REVVED_UP)
 		if rev and rng.percent(rev.power*100) then t.activateGunner(self, t) end
 	end,
 	activate = function(self, t)
-		local ret = {}
+		local ret = {}		
+
+
 		if core.shader.active() then
-			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1, img="rotating_gunner_drone"}, shader={type="rotatingshield", noup=2.0, cylinderVerticalPos=-0.2, cylinderRotationSpeed=1.0, appearTime=0.2}})
-			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1, img="rotating_gunner_drone"}, shader={type="rotatingshield", noup=1.0, cylinderVerticalPos=-0.2, cylinderRotationSpeed=1.0, appearTime=0.2}})
+			-- custom size-scaling shader
+			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1.5, img="rotating_gunner_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderVerticalPos=0.0, cylinderRotationSpeed=2.0, appearTime=0.2}})
+			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1.5, img="rotating_gunner_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderVerticalPos=0.0, cylinderRotationSpeed=2.0, appearTime=0.2}})
 		end
 
 		self:talentTemporaryValue(ret, 'ammo_mastery_reload', t.getReload(self, t))
@@ -115,9 +123,11 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Deploy a tiny autonomous machine to hovers around you and shoot at your enemies.  Each round, it uses your ammo to attack an enemy in range %d, dealing %d%% damage.  These attacks will have %d increased Physical Power and %d%% increased damage, and apply on-hit effects as if they were melee attacks.
+		return ([[Deploy a tiny autonomous machine to hovers around you and shoot at your enemies.  Each round, it uses your ammo to attack an enemy in range %d, dealing %d%% damage.  These attacks use your accuracy, will have %d increased Physical Power and %d%% more damage, and apply on-hit effects as if they were melee attacks.
 If your ammo is depleted, it instead reloads (with %d extra ammunition reloaded).
-The shots will pass harmlessly through allies.]]):format(self:getTalentRange(t), t.getDamage(self,t)*100, t.getPower(self,t), t.getPercentInc(self, t)*100, t.getReload(self, t))
+The shots will pass harmlessly through allies.
+
+The drone deactivates if you run out of steam.]]):format(self:getTalentRange(t), t.getDamage(self,t)*100, t.getPower(self,t), t.getPercentInc(self, t)*100, t.getReload(self, t))
 	end,
 }
 
@@ -259,8 +269,8 @@ newTalent{
 			value = t.getShrug(self, t) * 5,
 		}
 		if core.shader.active() then
-			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1, img="rotating_guardian_drone"}, shader={type="rotatingshield", noup=2.0, cylinderRadius=0.26, cylinderVerticalPos=-0.2, cylinderRotationSpeed=1.0, appearTime=0.2}})
-			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1, img="rotating_guardian_drone"}, shader={type="rotatingshield", noup=1.0, cylinderRadius=0.26, cylinderVerticalPos=-0.2, cylinderRotationSpeed=1.0, appearTime=0.2}})
+			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1, img="rotating_guardian_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderRadius=0.26, cylinderVerticalPos=-0.13, cylinderRotationSpeed=1.5, appearTime=0.2}})
+			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1, img="rotating_guardian_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderRadius=0.26, cylinderVerticalPos=-0.13, cylinderRotationSpeed=1.5, appearTime=0.2}})
 		end
 		return ret
 	end,
@@ -268,6 +278,10 @@ newTalent{
 		return true
 	end,
 	callbackOnActBase = function(self, t)
+		if self:getSteam() < 0.1 then
+			self:forceUseTalent(t.id, {ignore_energy=true})
+			return
+		end
 		local p = self:isTalentActive(t.id)
 		p.value = t.getShrug(self, t) * 5
 	end,
@@ -297,7 +311,9 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Deploy a tiny autonomous machine to hover around you and deflect incoming blows.  You reduce incoming damage by %d to %d (more for stronger hits), but the drone can only deflect %d total damage each round.
-Steampower: increases damage absorbed]]):format(t.getShrug(self, t), t.getShrug(self, t)*2, t.getShrug(self, t)*5)
+Steampower: increases damage absorbed
+
+The drone deactivates if you run out of steam.]]):format(t.getShrug(self, t), t.getShrug(self, t)*2, t.getShrug(self, t)*5)
 	end,
 }
 

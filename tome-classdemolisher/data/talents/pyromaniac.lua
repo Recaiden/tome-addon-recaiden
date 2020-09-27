@@ -1,5 +1,5 @@
 newTalent{
-	name = "Life in the Flames", short_name = "REK_DEML_PYRO_FLAMES",
+	name = "Incinerator", short_name = "REK_DEML_PYRO_FLAMES",
 	type = {"steamtech/pyromaniac", 1},
 	require = steam_req_high1,
 	points = 5,
@@ -20,7 +20,7 @@ newTalent{
 	end,
 
 	info = function(self, t)
-		return ([[Upgrade your bombs with a flammable gel.  While sustained, your Explosive Charges,  Mecharachnid Mine, and Pyre Bomb inflict a burn on their targets, dealing %0.2f fire damage over 4 turns, but cost an additional 5 steam.]]):format(damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
+		return ([[Upgrade your bombs with a flammable gel.  While this talent is sustained, your Explosive Charges,  Mecharachnid Mine, and Pyre Bomb inflict a burn on their targets, dealing %0.2f fire damage over 4 turns, but costing an additional 5 steam.]]):format(damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
 	end,
 }
 
@@ -59,7 +59,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Lob a colossal bomb that detonates on impact, dealing %d fire damage in radius %d  and stunning (#SLATE#Steampower vs Physical#LAST#) all targets for %d turns.
+		return ([[Lob a colossal bomb that detonates on impact, dealing %d fire damage in radius %d and stunning (#SLATE#Steampower vs Physical#LAST#) all targets for %d turns.
 Steampower: increases damage]]):format(damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t), t.getDuration(self, t))
 	end,
 }

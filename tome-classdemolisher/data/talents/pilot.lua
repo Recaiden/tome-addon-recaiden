@@ -21,6 +21,7 @@ newTalent{
 	points = 5,
 	steam = 35,
 	cooldown = 25,
+	no_unlearn_last = true,
 	autolearn_talent = "T_HULL_POOL",
 	getHull = function(self, t) return self.getMaxHull and self:getMaxHull() or 100 end,
 	getHullBoost = function(self, t) return self:combatTalentScale(t, 10, 50) end,
@@ -38,7 +39,15 @@ newTalent{
 		return not self:hasEffect(self.EFF_REK_DEML_RIDE)
 	end,
 	on_learn = function(self, t)
-		self.hull_rating = 5
+		local level = self:getTalentLevelRaw(t)
+		if level == 1 then
+			self.hull_rating = 5
+			if self.life_rating >= 7 then --tougher races need tougher cars
+				local excess = math.floor((self.life_rating - 5) / 2)
+				self.life_rating = self.life_rating - excess
+				self.hull_rating = self.hull_rating + excess
+			end
+		end
 		updateSteelRider(self)
 	end,
 	on_unlearn = function(self, t)
@@ -93,7 +102,7 @@ newTalent{
 		local heal = t.getHeal(self, t)
 		return ([[Make some battlefield repairs to your ride, healing it for %d hull.
 The hull restored increases with Steampower and can be a critical hit.
-
+In combat, excess healing to your hull becomes a temporary barrier.
 Your familiarity with repairs lets you reinforce the vehicle's structure.  While riding, you have %d extra armor.]]):format(t.getHeal(self, t), t.getArmor(self, t))
 	end,
 }

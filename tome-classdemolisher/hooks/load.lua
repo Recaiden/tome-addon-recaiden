@@ -11,6 +11,15 @@ ActorResource:defineResource ("Hull", "hull", "T_HULL_POOL", "hull_regen", "Hull
 	color = "#a35633#", 
 	wait_on_rest = true,
 	
+	status_text = function(act)
+		if act.hasEffect and act:hasEffect(act.EFF_REK_DEML_RIDE) then
+			local regen_t = act.life_regen * (act.healing_factor or 1)
+			return ("%d/%d  +%0.2f"):format(act:getHull(), act:getMaxHull(), regen_t)
+		else
+			return ("%d"):format(act:getMaxHull())
+		end
+	end,
+	
 	Minimalist = { --parameters for the Minimalist uiset
 		images = {front = "resources/front_hull.png", front_dark = "resources/front_hull_dark.png"},
 		highlight = function(player, vc, vn, vm, vr) -- dim the resource display if <= 30%

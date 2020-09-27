@@ -96,6 +96,11 @@ newTalent{
 			name = "remote explosive charge",
 			type = "steamtech", id_by_type=true, unided_name = "trap",
 			display = '#', color=colors.ORANGE, image = "trap/explosive_charge.png",
+			temporary = 10,
+			x = x, y = y,
+			faction = self.faction,
+			disarm_power = math.floor(self:combatSteampower() * 1.8),
+			detect_power = math.floor(self:combatSteampower() * 1.8),
 			dam = dam,
 			radius = self:getTalentRadius(t),
 			canTrigger = function(self, x, y, who) return false end,
@@ -137,10 +142,6 @@ newTalent{
 					if game.level.map(self.x, self.y, engine.Map.TRAP) == self then game.level.map:remove(self.x, self.y, engine.Map.TRAP) end
 				return true
 			end,
-			temporary = 10,
-			x = x, y = y,
-			disarm_power = math.floor(self:combatSteampower() * 1.8),
-			detect_power = math.floor(self:combatSteampower() * 1.8),
 			burn = burn,
 			canAct = false,
 			energy = {value=0},
@@ -160,7 +161,7 @@ newTalent{
 		trap:setKnown(self, true)
 		game.zone:addEntity(game.level, trap, "trap", x, y)
 	end,
-	target = function(self, t) return {type="ball", radius=self:getTalentRadius(t), range=self:getTalentRange(t), talent=t} end, --nolock=true, nowarning=true, 
+	target = function(self, t) return {type="ball", radius=self:getTalentRadius(t), range=self:getTalentRange(t), talent=t, nolock=true, nowarning=true, can_autoaccept=true} end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local tx, ty = self:getTarget(tg)
@@ -174,6 +175,7 @@ newTalent{
 		end
 
 		t.placeCharge(self, t, tx, ty)
+		game:playSoundNear(self, {"talents/whoosh_thrown_charge", vol=0.5})
 		
 		return true
 	end,
@@ -203,7 +205,7 @@ makeMine = function(self, t, x, y, dam)
 		x = x, y = y,
 		faction = self.faction,
 		summoner = self, summoner_gain_exp = true,
-		disarm_power = disarm,	detect_power = detect,
+		disarm_power = disarm, detect_power = detect,
 		dam = dam, talent=t, power = power,
 		canTrigger = function(self, x, y, who)
 			if who:reactionToward(self.summoner) < 0 then return mod.class.Trap.canTrigger(self, x, y, who) end
@@ -283,7 +285,7 @@ newTalent{
 				trap:setKnown(self, true)
 				game.zone:addEntity(game.level, trap, "trap", px, py)
 			end)
-		game:playSoundNear(self, "talents/warp")
+		game:playSoundNear(self, {"talents/soft_thump", vol=6.0})
 		
 		return true
 	end,
@@ -305,6 +307,7 @@ newTalent{
 	requires_target = true,
 	callbackOnDeath = function(self, t, src, death_note)
 		if self.exploded then return end
+		if self.summon_time <= 0 then return end
 		if self.summoner and self.summoner:knowTalent(self.T_REK_DEML_BATTLEWAGON_MAYHEM_ENGINE) then
 			local cd = self.summoner:callTalent(self.summoner.T_REK_DEML_BATTLEWAGON_MAYHEM_ENGINE, "getCDReduce")
 			if self.summoner:isTalentCoolingDown(self.summoner.T_REK_DEML_ENGINE_RAMMING_SPEED) then
@@ -429,7 +432,6 @@ newTalent{
 			
 			ai = "summoned", ai_real = "tactical", ai_state = { ai_move="move_complex", talent_in=1, ally_compassion=0 },
 			no_drops = true, keep_inven_on_death = false,
-			faction = self.faction,
 			summoner = self,
 			summoner_gain_exp=true,
 			summon_time = 10,
