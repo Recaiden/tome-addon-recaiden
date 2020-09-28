@@ -12,3 +12,7 @@ local load = function(self, data)
    DamageType:loadDefinition("/data-rec-evolutions/damage_types.lua")
 end
 class:bindHook('ToME:load', load)
+
+class:bindHook("ToME:birthDone", function()
+	dofile("/data-rec-evolutions/talents/dlc.lua")
+end)

@@ -43,5 +43,5 @@ if not Talents.talents_types_def["undead/shadow-destruction"] then
 	newTalentType{ type="undead/shadow-magic", name = "Shadow Magic", is_mind=true, is_spell=true, description = "Contort space and safety, life and death."}
 	load("/data-rec-evolutions/talents/destruction.lua")
 	load("/data-rec-evolutions/talents/magic.lua")
-	load("/data-rec-evolutions/talents/uber.lua")
+	load("/data-rec-evolutions/talents/hollow.lua")
 end

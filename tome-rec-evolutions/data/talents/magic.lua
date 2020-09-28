@@ -143,7 +143,7 @@ newTalent{
 
 Willpower: improves reform chance.
 
-If you fail to reform, you will instead swap places with your healthiest shadow, which dies in your stead.  This can happen even if Fade to Black is on cooldown.  If you have no shadows left, you die normally.]]):format(t.getChance(self, t))
+If you fail to reform, you will instead swap places with your healthiest shadow, which dies in your stead.  This can happen even if this talent is on cooldown.  If you have no shadows left, you die normally.]]):format(t.getChance(self, t))
 end,
 }
 
