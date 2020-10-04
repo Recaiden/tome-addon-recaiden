@@ -4,7 +4,6 @@ newBirthDescriptor{
    locked = function() return profile.mod.allow_build.psionic_mindslayer end,
    locked_desc = "I do not shoot with my hand; he who shoots with his hand has forgotten the face of his father. I shoot with my mind.",
    desc = {
-      "#BLUE#It'll be fine! I'm telling you, just turn off the inhibitor and#LAST#-",
       "There's something inside you, something terrible and strong.  But you've got it under control.  Your mental discipline allows you to use its power for constructive purposes.",
       "It's all perfectly safe.",
       "Send arrows zooming forward with telekinetic speed while controlling the perceptions of your enemies and reshaping the matter of the battlefield.",
@@ -19,7 +18,8 @@ newBirthDescriptor{
    talents_types = {
       --Class
       --new base talents
-      ["psionic/idol"]={true, 0.3},
+		 ["psionic/idol"]={true, 0.3},
+		 ["psionic/noumena"]={true, 0.3},
       --old base talents
 
       --advanced talents

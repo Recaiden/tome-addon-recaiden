@@ -244,8 +244,8 @@ newTalent{
 		self:setEffect(self.EFF_REK_GLR_QUENCHED_SPEED, 2, {speed=t.getSpeedBoost(self, t), steps=math.ceil(t.getSpeedBoost(self, t)), src=self})
 	end,
 	info = function(self, t)
-		return ([[Each round, you gain #4080ff#%0.2f psi#LAST# for each visible enemy within range %d.
-When you kill an enemy, you gain #4080ff#%0.2f psi#LAST# and %d%% movement speed (which lasts 2 turns or %d steps, whichever comes first).
+		return ([[Each round, you gain %0.2f #4080ff#psi #LAST#for each visible enemy within range %d.
+When you kill an enemy, you gain %0.2f #4080ff#psi #LAST#and %d%% movement speed (which lasts 2 turns or %d steps, whichever comes first).
 
 #{italic}#Fighting is challenging.  Challenge is fun.#{normal}#]]):
 		format(t.getPsiRefund(self, t), t.auraRadius(self, t), t.getKillMultiplier(self, t) * t.getPsiRefund(self, t), t.getSpeedBoost(self, t)*100, math.ceil(t.getSpeedBoost(self, t)))
@@ -280,7 +280,7 @@ newTalent{
 				caged = true
 			end
 			if caged then
-				return {stopped=true}
+				return {stopped=0}
 			end
 		end
 

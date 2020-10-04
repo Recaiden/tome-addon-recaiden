@@ -74,3 +74,31 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+newEffect{
+	name = "REK_GLR_BRAINSEALED", image = "talents/rek_psi_noumena_lockdown.png",
+	desc = "Thoughtsealed",
+	long_desc = function(self, eff) return ("The target is unable to think, preventing weapon attacks and spells, and slowing talent cooldown."):format() end,
+	type = "mental",
+	subtype = { psionic=true, },
+	status = "detrimental",
+	parameters = { count=1 },
+	activate = function(self, eff)
+		if self:canBe("silence") then self:effectTemporaryValue(eff, "silence", 1) end
+		if self:canBe("disarm") then self:effectTemporaryValue(eff, "disarmed", 1) end
+		self:effectTemporaryValue(eff,"half_talents_cooldown", 1)
+		local tids = {}
+		for tid, lev in pairs(self.talents) do
+			local t = self:getTalentFromId(tid)
+			if t and not self.talents_cd[tid] and t.mode == "activated" and not t.innate and not t.no_energy then tids[#tids+1] = t end
+		end
+		for i = 1, eff.count do
+			local t = rng.tableRemove(tids)
+			if not t then break end
+			self.talents_cd[t.id] = 1
+		end
+	end,
+	deactivate = function(self, eff)
+	end,
+}
+
