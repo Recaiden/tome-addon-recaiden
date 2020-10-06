@@ -102,3 +102,52 @@ newEffect{
 	end,
 }
 
+newEffect{
+	name = "REK_GLR_TRACED",
+	desc = "Illuminating Trace", image = "talents/illumination.png",
+	long_desc = function(self, eff) return ("The target is psychically mapped, reducing its stealth and invisibility power by %d and removing all evasion bonus from being unseen."):format(eff.power, eff.def) end,
+	type = "physical",
+	subtype = { vision=true },
+	status = "detrimental",
+	parameters = { power=20 },
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "inc_stealth", -eff.power)
+		if self:attr("invisible") then self:effectTemporaryValue(eff, "invisible", -eff.power) end
+		self:effectTemporaryValue(eff, "blind_fighted", 1)
+	end,
+}
+
+newEffect{
+	name = "REK_GLR_TRACE", image = "talents/perfect_strike.png",
+	desc = "Trace Accuracy",
+	long_desc = function(self, eff) return ("The target's accuracy is improved by %d."):format(eff.power) end,
+	type = "mental",
+	subtype = { focus=true },
+	status = "beneficial",
+	parameters = { power=10 },
+	on_gain = function(self, err) return "#Target# aims carefully." end,
+	on_lose = function(self, err) return "#Target# aims less carefully." end,
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("combat_atk", eff.power)
+		self:effectParticles(eff, {type="perfect_strike", args={radius=1}})
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("combat_atk", eff.tmpid)
+	end,
+}
+
+
+newEffect{
+	name = "REK_GLR_SUNDER_ARMOUR", image = "talents/sunder_armour.png",
+	desc = "Sunder Armour",
+	long_desc = function(self, eff) return ("The target's armour is broken, reducing it by %d."):format(eff.power) end,
+	type = "physical",
+	subtype = { sunder=true },
+	status = "detrimental",
+	parameters = { power=10 },
+	on_gain = function(self, err) return "#Target#'s armour is damaged!", "+Sunder Armor" end,
+	on_lose = function(self, err) return "#Target#'s armour is more intact.", "-Sunder Armor" end,
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "combat_armor", -eff.power)
+	end,
+}

@@ -100,7 +100,7 @@ newTalent{
 	info = function(self, t)
 		return ([[
 
-While Active: Each turn, enemies within range 10 will be Dazed (#SLATE#Mindpower vs Mind#LAST#) for %d turns.  Once they recover from the daze, they are immune for %d turns.  If any targets are dazed, this costs #4080ff#1 Psi#LAST#.
+While Active: Each turn, non-dazed enemies within range 10 will be Dazed (#SLATE#Mindpower vs Mind#LAST#) for %d turns.  Once they recover from the daze, they are immune for %d turns.  If any targets are dazed, this costs #4080ff#1 Psi#LAST#.
 
 Deactivate: focus your presence to overwhelm a single creature, causing it to lose 1 turn for every 20%% of its life it was missing.
 Costs #4080ff#%d psi#LAST#

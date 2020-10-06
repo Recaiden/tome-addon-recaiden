@@ -20,6 +20,8 @@ newBirthDescriptor{
       --new base talents
 		 ["psionic/idol"]={true, 0.3},
 		 ["psionic/noumena"]={true, 0.3},
+		 ["technique/psychic-marksman"]={true, 0.3},
+		 ["technique/psychic-shots"]={true, 0.3},
       --old base talents
 
       --advanced talents
@@ -35,6 +37,9 @@ newBirthDescriptor{
       [ActorTalents.T_WEAPON_COMBAT] = 1,
       --[ActorTalents.T_ARMOUR_TRAINING] = 2,
       --[ActorTalents.T_HEALING_LIGHT] = 1,
+			[ActorTalents.T_REK_GLR_MARKSMAN_ACCELERATE] = 1,
+			[ActorTalents.T_REK_GLR_SHOT_DRILL] = 1,
+			[ActorTalents.T_REK_GLR_NOUMENA_UNSEEN_GUARDIAN] = 1,
       [ActorTalents.T_SKATE] = 1,
    },
    

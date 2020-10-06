@@ -72,7 +72,7 @@ newTalent{
 		if not src then return end
 		if not src.x then return end
 		if src == self then return end
-		if src.summoner and src/summoner == self then return end
+		if src.summoner and src.summoner == self then return end
 		if self:isTalentCoolingDown(t) then return end
 		if not rng.percent(10) then return end
 		if t.callGuardian(self, t, src) then self:startTalentCooldown(t) end
