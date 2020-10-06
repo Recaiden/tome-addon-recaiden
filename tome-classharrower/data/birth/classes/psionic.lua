@@ -20,6 +20,7 @@ newBirthDescriptor{
       --new base talents
 		 ["psionic/idol"]={true, 0.3},
 		 ["psionic/noumena"]={true, 0.3},
+		 ["psionic/mindshaped-material"]={true, 0.3},
 		 ["technique/psychic-marksman"]={true, 0.3},
 		 ["technique/psychic-shots"]={true, 0.3},
       --old base talents
@@ -30,7 +31,8 @@ newBirthDescriptor{
       --new generics
       --old generics
 			["psionic/augmented-mobility"]={true, 0.3},      
-      ["technique/combat-training"]={true, 0.3},      
+      ["technique/combat-training"]={true, 0.3},
+			["cunning/survival"]={true, 0.0},
    },
    birth_example_particles = "darkness_shield",
    talents = {

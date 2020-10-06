@@ -1,6 +1,6 @@
 newTalent{
-	name = "Unseen Guardian", short_name = "REK_GLR_NOUMENA_UNSEEN_GUARDIAN",
-	type = {"psionic/noumena", 1},
+	name = "Glass Wings", short_name = "REK_GLR_MATERIAL_WINGS",
+	type = {"psionic/mindshaped-material", 1},
 	require = wil_req1,
 	points = 5,
 	cooldown = function(self, t) return math.ceil(self:combatTalentScale(t, 24, 12)) end,
@@ -9,65 +9,6 @@ newTalent{
 	getArmor = function(self, t) return self:combatTalentMindDamage(t, 5, 45) end,
 	getHP = function(self, t) return self:combatTalentMindDamage(t, 10, 1000) end,
 	target = function(self, t) return {type="ball", nowarning=true, radius=3, range=self:getTalentRange(t), nolock=true, simple_dir_request=true, talent=t} end,
-	callGuardian = function(self, t, target)
-		-- Find space
-		local x, y = util.findFreeGrid(target.x, target.y, 3, true, {[Map.ACTOR]=true})
-		if not x then
-			game.logPlayer(self, "Not enough space for guardian to arrive!")
-			return nil
-		end
-		
-		local NPC = require "mod.class.NPC"
-		local m = NPC.new{
-			type = "psionic", subtype = "???",
-			display = "*", color=colors.BLUE,
-			name = "unseen guardian", faction = self.faction, image = "npc/noumena_guardian.png",
-			desc = [[A shapeless force of mental energy, barely visible as a distortion in the air.]],
-			autolevel = "none",
-			ai = "summoned", ai_real = "dumb_talented", ai_state = { talent_in=1, },
-			level_range = {1, 1}, exp_worth = 0,
-			
-			max_life = self:mindCrit(t.getHP(self, t)),
-			life_rating = 0,
-			never_move = 1,
-			cant_be_moved = 1,
-			
-			inc_damage = table.clone(self.inc_damage),
-			resists_pen = table.clone(self.resists_pen),
-
-			combat_armor_hardiness = 50,
-			combat_armor = t.getArmor(self, t),
-			resists = {all = t.getResist(self, t)},
-
-			negative_status_effect_immune = 1,
-			
-			on_act = function(self)
-				local tg = {type="ball", range=0, friendlyfire=false, radius=2}	
-				self:project(
-					tg, self.x, self.y,
-					function(px, py)
-						local target = game.level.map(px, py, Map.ACTOR)
-						if not target then return end
-						
-						if self:reactionToward(target) < 0 then
-							if self.ai_target then self.ai_target.target = target end
-							target:setTarget(self)
-						end
-					end)
-				self.energy.value = 0
-			end,
-
-			summoner = self, summoner_gain_exp=true,
-			summon_time = 3,
-		}
-
-		m:resolve() m:resolve(nil, true)
-		m:forceLevelup(self.level)
-		m.energy.value = game.energy_to_act * 2
-		
-		game.zone:addEntity(game.level, m, "actor", x, y)
-		return true
-	end,
 	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
 		if not src then return end
 		if not src.x then return end
@@ -86,39 +27,51 @@ Mindpower: improves	damage, life, resists, and armor]]):
 }
 
 newTalent{
-	name = "Crystal Flare", short_name = "REK_GLR_NOUMENA_CRYSTAL_FLARE",
-	type = {"psionic/noumena", 2},
+	name = "Silken Armor", short_name = "REK_GLR_MATERIAL_ARMOR",
+	type = {"psionic/mindshaped-material", 2},
 	require = wil_req2,
 	points = 5,
-	psi = 18,
-	cooldown = 12,
-	tactical = { DISABLE = { blind = 2, } },
-	range = 0,
-	radius = function(self, t) return math.floor(self:combatTalentScale(t, 4, 8)) end,
-	requires_target = true,
-	target = function(self, t)
-		return {type="cone", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, talent=t}
+	mode = "sustained",
+	cooldown = 10,
+	tactical = { BUFF = 2 },
+	getCost = function(self, t) return 3 end,
+	getReduction = function(self, t) return self:combatTalentMindDamage(t, 25, 230) + self.level end,
+	callbackOnHit = function(self, t, cb, src, death_note)
+		if not self:hasLightArmor() then return end
+		if self:getPsi() < self:getMaxPsi() / 2 then return end
+		local dam = cb.value
+		local cost = t.getCost(self, t)
+		if dam < t.getReduction(self, t) then cost = cost * dam / t.getReduction(self, t) end
+		if self:getPsi() < cost then return end -- in case max psi is really tiny?
+		
+		if dam > 0 and state and not self:attr("invulnerable") then					
+			local reduce = math.min(t.getReduction(self, t), dam)
+			dam = dam - reduce
+			local d_color = DamageType:get(type).text_color or "#4080ff#"
+			game:delayedLogDamage(src, self, 0, ("%s(%d to silken armor)"):format(d_color, reduce, stam_txt, d_color), false)
+			cb.value = dam
+			self:incPsi(-1 * cost)
+		end
+		return cb
 	end,
-	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 5)) end,
-	getDamage = function(self, t) return self:combatTalentMindDamage(t, 25, 230) + self.level end,
-	action = function(self, t)
-		local tg = self:getTalentTarget(t)
-		local x, y = self:getTarget(tg)
-		if not x or not y then return nil end
-		self:project(tg, x, y, DamageType.REK_GLR_CRYSTAL_LIGHT, {dam=t.getDamage(self, t), dur=t.getDuration(self, t), power=self:combatMindpower()})
-		game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_earth", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
-
+	activate = function(self, t)
+		--TODO particle
+		return {}
+	end,
+	deactivate = function(self, t, p)
 		return true
 	end,
 	info = function(self, t)
-		return ([[Create a burst of blinding light in a radius %d cone. Tiles will be lit and all creatures will take %0.2f light damage and be blinded (#SLATE#Mindpower vs Physical#LAST#) for %d turns.
-Mindpower: increases damage]]):format( self:getTalentRadius(t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)), t.getDuration(self,t))
+		return ([[Rearrange the fibers of your armor into a psionically conductive matrix that protect you from harm. Incoming damage will be reduced by %d, costing up to #4080ff#%d psi#LAST# per hit.
+This only takes effect while wearing light or cloth armor and while your psi pool over 50%% full.
+Mindpower: increases damage reduction.
+]]):format(t.getReduction(self, t), t.getCost(self, t))
 	end,
 }
 
 newTalent{
-	name = "Esper Cut", short_name = "REK_GLR_NOUMENA_ESPER_CUT",
-	type = {"psionic/noumena", 3},
+	name = "Thread Wall", short_name = "REK_GLR_MATERIAL_WALL",
+	type = {"psionic/mindshaped-material", 3},
 	require = wil_req3,
 	points = 5,
 	cooldown = 10,
@@ -162,15 +115,14 @@ newTalent{
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
 		local spreadFactor = t.getSpreadFactor(self, t)
-		return ([[Erase perceptions of yourself from the minds of nearby enemies, inflicing %0.2f mind damage and rendering you invisible (%d power) for %d turns. Each target after the first will reduce the damage by %d%% and the duration of the invisiblity by 1.
-Mindpower: increases damage and invisibility power]]):format(damDesc(self, DamageType.MIND, damage), t.getInvisibilityPower(self, t), t.getBaseDuration(self, t), (1 - spreadFactor) * 100)
+		return ([[In Progress...]]):format(damDesc(self, DamageType.MIND, damage), t.getInvisibilityPower(self, t), t.getBaseDuration(self, t), (1 - spreadFactor) * 100)
 	end,
 }
 
 
 newTalent{
-	name = "Lockdown", short_name = "REK_GLR_NOUMENA_LOCKDOWN",
-	type = {"psionic/noumena", 4},
+	name = "Coccoon", short_name = "REK_GLR_MATERIAL_COCCOON",
+	type = {"psionic/mindshaped-material", 4},
 	require = wil_req4,
 	points = 5,
 	cooldown = 12,

@@ -129,6 +129,16 @@ archerPreUse = function(self, t, silent, weapon_type)
 	return archeryWeaponCheck(self, weapon, ammo, silent, weapon_type)
 end
 
+if not Talents.talents_types_def["technique/psychic-marksman"] then
+	newTalentType{ allow_random=true, is_mind=true, type="technique/psychic-marksman", name = "Psychic Marksman", description = "A true warrior strikes perfectly, killing with only their mind.  But the bow and arrows help." }
+	load("/data-classharrower/talents/psychic-marksman.lua")
+end
+
+if not Talents.talents_types_def["technique/psychic-shots"] then
+	newTalentType{ allow_random=true, is_mind=true, type="technique/psychic-shots", name = "Psychic Shots", description = "Special Psi-aimed archery techniques" }
+	load("/data-classharrower/talents/psychic-shots.lua")
+end
+
 if not Talents.talents_types_def["psionic/idol"] then
 	newTalentType{ allow_random=true, is_mind=true, type="psionic/idol", name = "Idol", description = "You're the best, and deep down everyone knows it." }
 	load("/data-classharrower/talents/idol.lua")
@@ -139,12 +149,8 @@ if not Talents.talents_types_def["psionic/noumena"] then
 	load("/data-classharrower/talents/noumena.lua")
 end
 
-if not Talents.talents_types_def["technique/psychic-marksman"] then
-	newTalentType{ allow_random=true, is_mind=true, type="technique/psychic-marksman", name = "Psychic Marksman", description = "A true warrior strikes perfectly, killing with only their mind.  But the bow and arrows help." }
-	load("/data-classharrower/talents/psychic-marksman.lua")
+if not Talents.talents_types_def["psionic/mindshaped-material"] then
+	newTalentType{ allow_random=true, is_mind=true, type="psionic/mindshaped-material", name = "Mindshaped Materials", description = "Manipulate the battlefield with minutely mind-molded matter." }
+	load("/data-classharrower/talents/material.lua")
 end
 
-if not Talents.talents_types_def["technique/psychic-shots"] then
-	newTalentType{ allow_random=true, is_mind=true, type="technique/psychic-shots", name = "Psychic Shots", description = "Special Psi-aimed archery techniques" }
-	load("/data-classharrower/talents/psychic-shots.lua")
-end
