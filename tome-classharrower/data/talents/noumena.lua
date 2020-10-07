@@ -123,7 +123,7 @@ newTalent{
 	points = 5,
 	cooldown = 10,
 	psi = 5,
-	range = 3,
+	range = 4,
 	requires_target = true,
 	tactical = { ATTACKAREA = { MIND = 1.5 } },
 	getDamage = function(self, t)
@@ -174,7 +174,7 @@ newTalent{
 	require = wil_req4,
 	points = 5,
 	cooldown = 12,
-	getCount = function(self, t) return math.floor(self:combatTalentMindDamage(t, 2, 5)) end,
+	getCount = function(self, t) return math.max(1, math.floor(self:combatTalentMindDamage(t, 2, 5))) end,
 	getDuration = function(self, t) return self:combatTalentScale(t, 3, 5) end,
 	range = 10,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
@@ -189,6 +189,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Seal away a target's thoughts (#SLATE#Mindpower vs. Mental#LAST#), reducing them to base instinct.  They will have %d talents put on cooldown and for %d turns be silenced, disarmed, and have talents cooldown at only half speed.]]):format(t.getCount(self, t), t.getDuration(self, t))
+		return ([[Seal away a target's thoughts (#SLATE#Mindpower vs. Mental#LAST#), reducing them to base instinct.  They will have %d talents put on cooldown and for %d turns be silenced, disarmed, and have talents cooldown at only half speed.
+Mindpower: increases talents affected.]]):format(t.getCount(self, t), t.getDuration(self, t))
 	end,
 }

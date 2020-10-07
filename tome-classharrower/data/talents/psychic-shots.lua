@@ -4,7 +4,7 @@ newTalent{
 	no_energy = "fake",
 	points = 5,
 	cooldown = 8,
-	psi = 15,
+	psi = 7,
 	require = dex_req1,
 	range = archery_range,
 	tactical = { ATTACK = { weapon = 2 } },
@@ -45,7 +45,7 @@ newTalent{
 	range = 0,
 	radius = archery_range,
 	cooldown = 8,
-	psi = 25,
+	psi = 15,
 	requires_target = true,
 	target = function(self, t)
 		return {
@@ -115,17 +115,16 @@ newTalent{
 		return fired
 	end,
 	info = function(self, t)
-		return ([[Launch a volley of %d arrows on indirect paths.  Each arrow targets an enemy in a cone for %d%% damage and approaches from a random direction. No creature can be targetted by more than 3 arrows.]]):format(t.getCount(self, t), t.getDamage(self, t)*100)
+		return ([[Launch a volley of %d arrows on indirect paths.  Each arrow targets an enemy in a cone for %d%% damage and approaches from a random direction. No creature can be targeted by more than 3 arrows.]]):format(t.getCount(self, t), t.getDamage(self, t)*100)
 	end,
 }
 
 newTalent{
 	name = "Boomerang Shot", short_name = "REK_GLR_SHOT_BOOMERANG",
 	type = {"technique/psychic-shots", 3},
-	no_energy = "fake",
 	points = 5,
 	cooldown = 8,
-	psi = 15,
+	psi = 10,
 	require = dex_req3,
 	range = archery_range,
 	tactical = { ATTACK = { weapon = 2 } },
@@ -134,7 +133,8 @@ newTalent{
 	proj_speed = 10,
 	target = function(self, t)
 		local weapon, ammo = self:hasArcheryWeapon()
-		return {type="beam", range=self:getTalentRange(t), selffire=false, talent=t, display=self:archeryDefaultProjectileVisual(weapon, ammo)}
+		local speed = 10 + (ammo.travel_speed or 0) + (weapon.travel_speed or 0) + (self.combat and self.combat.travel_speed or 0)
+		return {type="beam", speed=speed, range=self:getTalentRange(t), selffire=false, nolock=true, talent=t, display=self:archeryDefaultProjectileVisual(weapon, ammo)}
 	end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1, 1.5) end,
 	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,

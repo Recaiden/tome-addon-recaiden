@@ -39,7 +39,7 @@ newDamageType{
 		if target then
 			if target:canBe("blind") then
 				target:setEffect(target.EFF_BLINDED, math.ceil(dur), {apply_power=power, no_ct_effect=true})
-			else
+			elseif target.getName then
 				game.logSeen(target, "%s resists the blinding light!", target:getName():capitalize())
 			end
 		end

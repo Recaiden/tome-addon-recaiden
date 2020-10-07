@@ -3,26 +3,40 @@ newTalent{
 	type = {"psionic/mindshaped-material", 1},
 	require = wil_req1,
 	points = 5,
-	cooldown = function(self, t) return math.ceil(self:combatTalentScale(t, 24, 12)) end,
-	mode = "passive",
-	getResist = function(self, t) return self:combatTalentMindDamage(t, 20, 50) end,
-	getArmor = function(self, t) return self:combatTalentMindDamage(t, 5, 45) end,
-	getHP = function(self, t) return self:combatTalentMindDamage(t, 10, 1000) end,
-	target = function(self, t) return {type="ball", nowarning=true, radius=3, range=self:getTalentRange(t), nolock=true, simple_dir_request=true, talent=t} end,
-	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
-		if not src then return end
-		if not src.x then return end
-		if src == self then return end
-		if src.summoner and src.summoner == self then return end
-		if self:isTalentCoolingDown(t) then return end
-		if not rng.percent(10) then return end
-		if t.callGuardian(self, t, src) then self:startTalentCooldown(t) end
+	range = function(self, t) return math.min(14, math.floor(self:combatTalentScale(t, 6, 10))) end,
+	cooldown = 18,
+	psi = 8,
+	target = function(self, t) return {type="widebeam", radius=1, nolock=true, range=self:getTalentRange(t), selffire=false, talent=t} end,
+	getDamage = function(self, t) return self:combatTalentMindDamage(t, 20, 250) end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local tx, ty, target = self:getTargetLimited(tg)
+		if not tx or not ty then return nil end
+		if not self:canProject(tg, tx, ty) then return nil end
+		if game.level.map(tx, ty, engine.Map.ACTOR) then return nil end
+		if game.level.map:checkEntity(tx, ty, Map.TERRAIN, "block_move") then return nil end
+
+
+		local hit = false
+		local dam = self:mindCrit(t.getDamage(self, t))
+		self:project(tg, tx, ty, function(px, py)
+									 DamageType:get(DamageType.PHYSICALBLEED).projector(self, px, py, DamageType.PHYSICALBLEED, dam)
+			local target = game.level.map(px, py, Map.ACTOR)
+			if target then hit = true end
+		end)
+
+		--local ox, oy = self.x, self.y
+		self:move(tx, ty, true)
+		if hit then
+			game:onTickEnd(function() self:alterTalentCoolingdown(t.id, -math.floor((self.talents_cd[t.id] or 0) * 0.67)) end)
+		end
+				
+		return true
 	end,
 	info = function(self, t)
-		return ([[Something is watching over you.  When damaged, there is a 10%% chance that a psionic guardian will appear to distract your enemies.  The guardian lasts for 3 turns and does no damage but constantly taunts enemies within 2 spaces to attack it.
-The guardian has %d life (increased by mental critical), %d armor, and %d%% resistance to all damage.
-Mindpower: improves	damage, life, resists, and armor]]):
-		format(t.getHP(self, t), t.getArmor(self, t), t.getResist(self, t))
+		return ([[Ultra-thin plates of crystal allow you to fly short distances on telekinetic currents.  Jump to a space within range %d, cutting creatures in your path with the crystal edges for %0.2f physical bleed damage.  If you hit anything, this talent's cooldown is reduced by 2/3.
+Mindpower: improves	damage]]):
+		format(self:getTalentRange(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)*1.5))
 	end,
 }
 
@@ -35,19 +49,23 @@ newTalent{
 	cooldown = 10,
 	tactical = { BUFF = 2 },
 	getCost = function(self, t) return 3 end,
-	getReduction = function(self, t) return self:combatTalentMindDamage(t, 25, 230) + self.level end,
+	getReduction = function(self, t) return self:combatTalentMindDamage(t, 10, 50) + self.level end,
 	callbackOnHit = function(self, t, cb, src, death_note)
-		if not self:hasLightArmor() then return end
-		if self:getPsi() < self:getMaxPsi() / 2 then return end
+		if not self:hasLightArmor() then
+			--game.logPlayer(self, ("DEBUG - Not in light armor"):format(sx, sy))
+			return end
+		if self:getPsi() < (self:getMaxPsi() / 2) then
+			--game.logPlayer(self, ("DEBUG - Not enough psi!"):format(sx, sy))
+			return end
 		local dam = cb.value
 		local cost = t.getCost(self, t)
 		if dam < t.getReduction(self, t) then cost = cost * dam / t.getReduction(self, t) end
 		if self:getPsi() < cost then return end -- in case max psi is really tiny?
 		
-		if dam > 0 and state and not self:attr("invulnerable") then					
+		if dam > 0 and not self:attr("invulnerable") then					
 			local reduce = math.min(t.getReduction(self, t), dam)
 			dam = dam - reduce
-			local d_color = DamageType:get(type).text_color or "#4080ff#"
+			local d_color = "#4080ff#"
 			game:delayedLogDamage(src, self, 0, ("%s(%d to silken armor)"):format(d_color, reduce, stam_txt, d_color), false)
 			cb.value = dam
 			self:incPsi(-1 * cost)
@@ -64,7 +82,8 @@ newTalent{
 	info = function(self, t)
 		return ([[Rearrange the fibers of your armor into a psionically conductive matrix that protect you from harm. Incoming damage will be reduced by %d, costing up to #4080ff#%d psi#LAST# per hit.
 This only takes effect while wearing light or cloth armor and while your psi pool over 50%% full.
-Mindpower: increases damage reduction.
+Mindpower: increases damage reduction
+Character Level: increases damage reduction
 ]]):format(t.getReduction(self, t), t.getCost(self, t))
 	end,
 }
@@ -74,60 +93,117 @@ newTalent{
 	type = {"psionic/mindshaped-material", 3},
 	require = wil_req3,
 	points = 5,
-	cooldown = 10,
-	psi = 5,
-	range = 3,
+	cooldown = 20,
+	psi = 18,
+	range = 6,
 	requires_target = true,
+	no_npc_use = true,
 	tactical = { ATTACKAREA = { MIND = 1.5 } },
-	getDamage = function(self, t)
-		return self:combatTalentMindDamage(t, 0, 320)
-	end,
-	getSpreadFactor = function(self, t) return self:combatTalentLimit(t, .95, .75, .85) end,
-	getBaseDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 5)) end,
-	getInvisibilityPower = function(self, t) return self:combatTalentMindDamage(t, 10, 50) end,
-	target = function(self, t) return {type="ball", radius=self:getTalentRange(t), range=0, friendlyfire=false} end,
-	action = function(self, t)
-		local tg, targets = self:getTalentTarget(t), {}
-
-		self:project(tg, self.x, self.y, function(px, py, t)
-			local target = game.level.map(px, py, Map.ACTOR)
-				if target and self:reactionToward(target) < 0 then
-					targets[#targets + 1] = target
-				end
+	target = function(self, t) return {type="hit", friendlyblock = false, nolock=true, range=self:getTalentRange(t)} end,
+	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 4, 8)) end,
+	getStats = function(self, t) return self:getWil()*0.5 end,
+	getLifeRating = function(self, t) return math.floor(self:combatStatScale("wil", 0.5, 2)) end,
+	makeWall = function(self, t, x, y)
+		local oe = game.level.map(x, y, Map.TERRAIN)
+		if not oe or oe.special then return end
+		if game.level.map:checkAllEntities(x, y, "block_move") then return end
+		local NPC = require "mod.class.NPC"
+		local wall = NPC.new{
+			type = "immovable", subtype = "wall",
+			display = "#", blood_color = colors.GRAY,
+			stats = { str=t.getStats(self, t), dex=t.getStats(self, t), wil=t.getStats(self, t), mag=t.getStats(self, t), con=t.getStats(self, t), cun=t.getStats(self, t) },
+			infravision = 10,
+			no_breath = 1,
+			never_move = 1,
+			cant_be_moved = 1,
+			name = "thread wall", color=colors.GRAY,
+			desc = "A wall of countless thin fibers blocks your path.",
+			resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/iceblock.png", display_h=1, display_y=-1}}},
+			level_range = {self.level, self.level}, exp_worth = 0,
+			rank = 2,
+			size_category = 4,
+			block_sight = true,
+			autolevel = "wildcaster",
+			life_rating = 10 + t.getLifeRating(self, t),
+			negative_status_effect_immune = 1,
+			combat_armor = math.floor(self.level^.75),
+			combat_armor_hardiness = 100,
+			summoner = self, summoner_gain_exp=true,
+			summon_time = t.getDuration(self, t),
+			on_act = function(self)
+				self:useEnergy()
+			end,
 			
-			end, 0)
-		if #targets == 0 then return false end
-
-		local spreadFactor = t.getSpreadFactor(self, t)^(#targets - 1)
-		local damage = self:mindCrit(t.getDamage(self, t)) * spreadFactor
-
-		for i, t2 in ipairs(table.shuffle(targets)) do
-			self:project({type="hit", talent=t, x=t2.x,y=t2.y}, t2.x, t2.y, DamageType.MIND, {dam=damage})
-			damage = damage
-			game.level.map:particleEmitter(t2.x, t2.y, 1, "reproach", { dx = self.x - t2.x, dy = self.y - t2.y })
+			ai = "summoned", ai_real = "tactical", ai_state = { ai_move="move_simple", talent_in=1, ally_compassion=0 },
+			no_drops = true, keep_inven_on_death = false,
+			faction = self.faction,
+												}
+		wall:resolve()
+		wall:resolve(nil, true)		
+		game.zone:addEntity(game.level, wall, "actor", x, y)
+		if target then m:setTarget(target) end
+		if game.party:hasMember(self) then
+			wall.remove_from_party_on_death = true
+			game.party:addMember(wall, {control=false, temporary_level=true, type="summon", title="Summon"})
 		end
-		local duration = t.getBaseDuration(self, t) - (#targets - 1)
-		self:setEffect(self.EFF_INVISIBILITY, duration, {power=t.getInvisibilityPower(self, t), src=self})
+	end,
+	action = function(self, t)
+		game.logPlayer(self, "Target the start of the wall...")
+		local tg = self:getTalentTarget(t)
+		local sx, sy, target = self:getTarget(tg)
+		if not self:canProject(tg, sx, sy) then return end
 
-		game:playSoundNear(self, "talents/fire")
+		game.logPlayer(self, "Target the end of the wall...")
+
+		tgEnd = {type="beam", start_x=sx, start_y=sy, nolock=true, range=self:getTalentRange(t), no_start_scan=true}
+		--game.target.target.x,game.target.target.y = defaultX,defaultY
+		--game.target.target.entity = nil
+		dx, dy = self:getTarget(tgEnd)
+		if not dx then
+			game.logPlayer(self, "Invalid end point")
+			return
+		end
+		if not self:canProject(tgEnd, dx, dy) then
+			game.logPlayer(self, "Can't reach endpoint")
+			return
+		end
+		if not self:hasLOS(dx, dy) then
+			game.logPlayer(self, "Need line of sight to the end of the wall")
+			return
+		end
+
+		self:project(
+			tgEnd, dx, dy,
+			function(px, py, tgEnd, self)
+				t.makeWall(self, t, px, py)
+      end)
+		t.makeWall(self, t, sx, sy)
+		self:resetCanSeeCache()
+		if self == game.player then
+			for uid, e in pairs(game.level.entities) do
+				if e.x then
+					game.level.map:updateMap(e.x, e.y)
+				end
+			end game.level.map.changed = true
+		end
 		return true
 	end,
 	info = function(self, t)
-		local damage = t.getDamage(self, t)
-		local spreadFactor = t.getSpreadFactor(self, t)
-		return ([[In Progress...]]):format(damDesc(self, DamageType.MIND, damage), t.getInvisibilityPower(self, t), t.getBaseDuration(self, t), (1 - spreadFactor) * 100)
+		return ([[Weave together tiny scraps into a resilient barrier, materializing a line of destructible but durable wall segments.  Each wall segment blocks line of sight and lasts for %d turns.
+Willpower: improves the health of each wall segment]]):format(t.getDuration(self, t))
 	end,
 }
 
 
 newTalent{
-	name = "Coccoon", short_name = "REK_GLR_MATERIAL_COCCOON",
+	name = "Cocoon", short_name = "REK_GLR_MATERIAL_COCOON",
 	type = {"psionic/mindshaped-material", 4},
 	require = wil_req4,
 	points = 5,
 	cooldown = 12,
-	getCount = function(self, t) return math.floor(self:combatTalentMindDamage(t, 2, 5)) end,
-	getDuration = function(self, t) return self:combatTalentScale(t, 3, 5) end,
+	psi = 12,
+	getVulnerability = function(self, t) return math.floor(self:combatTalentMindDamage(t, 10, 40)) end,
+	getDuration = function(self, t) return self:combatTalentLimit(t, 8, 3, 5) end,
 	range = 10,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
 	action = function(self, t)
@@ -137,10 +213,10 @@ newTalent{
 		local _ _, x, y = self:canProject(tg, x, y)
 		local target = game.level.map(x, y, Map.ACTOR)
 		if not target then return end		
-		target:setEffect(target.EFF_REK_GLR_BRAINSEALED, t.getDuration(self, t), {count=t.getCount(self, t) or 1, src=self, apply_power=self:combatMindpower()})
+		target:setEffect(target.EFF_REK_GLR_COCOONED, t.getDuration(self, t), {power=t.getVulnerability(self, t), src=self})
 		return true
 	end,
 	info = function(self, t)
-		return ([[Seal away a target's thoughts (#SLATE#Mindpower vs. Mental#LAST#), reducing them to base instinct.  They will have %d talents put on cooldown and for %d turns be silenced, disarmed, and have talents cooldown at only half speed.]]):format(t.getCount(self, t), t.getDuration(self, t))
+		return ([[Reshape the terrain around a target into a snare, pinning them (#SLATE#no save, ignores immunity#LAST#) for %d turns.  The snare prevents them from properly defending themselves, reducing their resistance to damage by %d%%.]]):format(t.getDuration(self, t), t.getVulnerability(self, t))
 	end,
 }

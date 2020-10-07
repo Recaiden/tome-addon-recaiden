@@ -150,7 +150,7 @@ if not Talents.talents_types_def["psionic/noumena"] then
 end
 
 if not Talents.talents_types_def["psionic/mindshaped-material"] then
-	newTalentType{ allow_random=true, is_mind=true, type="psionic/mindshaped-material", name = "Mindshaped Materials", description = "Manipulate the battlefield with minutely mind-molded matter." }
+	newTalentType{ allow_random=true, is_mind=true, generic = true, type="psionic/mindshaped-material", name = "Mindshaped Materials", description = "Manipulate the battlefield with minutely mind-molded matter." }
 	load("/data-classharrower/talents/material.lua")
 end
 

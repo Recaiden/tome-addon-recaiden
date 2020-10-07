@@ -7,7 +7,7 @@ newTalent{
 	getDamage = function(self, t) return 30 end,
 	getPercentInc = function(self, t) return math.sqrt(self:getTalentLevel(t) / 5) / 1.5 end,
 	getReload = function(self, t)	return math.floor(self:combatTalentScale(t, 0, 2.7, "log"))	end,
-	getSpeed = function(self, t) return self:combatTalentScale(t, 30, 100) end,
+	getSpeed = function(self, t) return self:combatTalentScale(t, 10, 50) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, 'ammo_mastery_reload', t.getReload(self, t))
 		self:talentTemporaryValue(p, "slow_projectiles_outgoing", -1*t.getSpeed(self, t))

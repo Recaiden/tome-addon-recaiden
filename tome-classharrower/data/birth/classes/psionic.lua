@@ -16,29 +16,28 @@ newBirthDescriptor{
    power_source = {psionic=true, technique=true, technique_ranged=true},
    stats = { dex=3, con=-2, wil=5, cun=3 },
    talents_types = {
-      --Class
-      --new base talents
+		 --Class
+		 --new base talents
 		 ["psionic/idol"]={true, 0.3},
 		 ["psionic/noumena"]={true, 0.3},
-		 ["psionic/mindshaped-material"]={true, 0.3},
 		 ["technique/psychic-marksman"]={true, 0.3},
 		 ["technique/psychic-shots"]={true, 0.3},
-      --old base talents
-
-      --advanced talents
-      --["psionic/unleash-nightmare"]={false, 0.3},
-
-      --new generics
-      --old generics
-			["psionic/augmented-mobility"]={true, 0.3},      
-      ["technique/combat-training"]={true, 0.3},
-			["cunning/survival"]={true, 0.0},
+		 --old base talents
+		 
+		 --advanced talents
+		 --["psionic/unleash-nightmare"]={false, 0.3},
+		 
+		 --new generics
+		 ["psionic/mindshaped-material"]={true, 0.3},
+		 --old generics
+		 ["psionic/augmented-mobility"]={true, 0.3},      
+		 ["technique/combat-training"]={true, 0.3},
+		 ["cunning/survival"]={true, 0.0},
+		 ["cunning/scoundrel"]={false, 0.3},
    },
    birth_example_particles = "darkness_shield",
    talents = {
       [ActorTalents.T_WEAPON_COMBAT] = 1,
-      --[ActorTalents.T_ARMOUR_TRAINING] = 2,
-      --[ActorTalents.T_HEALING_LIGHT] = 1,
 			[ActorTalents.T_REK_GLR_MARKSMAN_ACCELERATE] = 1,
 			[ActorTalents.T_REK_GLR_SHOT_DRILL] = 1,
 			[ActorTalents.T_REK_GLR_NOUMENA_UNSEEN_GUARDIAN] = 1,

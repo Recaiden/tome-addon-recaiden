@@ -33,6 +33,7 @@ newTalent{
 	cooldown = 12,
 	no_energy = function(self, t) return not self:isTalentActive(t.id) end,
 	mode = "sustained",
+	no_sustain_autoreset = true,
 	sustain_psi = 10,
 	range = 7,
 	getSpikeCost = function(self, t) return 20 end,
@@ -45,6 +46,7 @@ newTalent{
 	end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 5.6)) end,
 	getImmunityDuration = function(self, t) return 15 end,
+	getMaxOppression = function(self, t) return math.floor(self:getTalentLevel(t)) end,
 	activate = function(self, t)
 		local ret = {}
 		return ret
@@ -63,11 +65,12 @@ newTalent{
 						incPsi2(self, -t.getAuraCost(self, t))
 						paid = true
 					end
-					act:setEffect(act.EFF_REK_GLR_DAZE, dur, {immunity=durImm, src=self, apply_power=self:combatMindpower()})
+					act:setEffect(act.EFF_REK_GLR_DAZE, dur, {immunity=durImm, src=self, apply_power=self:combatMindpower(), no_ct_effect=true})
 				end
 			end)
 	end,
 	deactivate = function(self, t, p)
+		if self:attr("save_cleanup") then return true end
 		--self:removeParticles(p.particle)
 
 		local cost = t.getSpikeCost(self, t)
@@ -78,6 +81,7 @@ newTalent{
 
 		local tg = t.spikeTarget(self, t)
 		local x, y = self:getTarget(tg)
+		if x == self.x and y == self.y then return true end
 		-- if no target, turn the ability off without spending resource or going on CD
 		-- in 1.7 make this handle dispelling better
 		if not x or not y then
@@ -100,14 +104,14 @@ newTalent{
 	info = function(self, t)
 		return ([[
 
-While Active: Each turn, non-dazed enemies within range 10 will be Dazed (#SLATE#Mindpower vs Mind#LAST#) for %d turns.  Once they recover from the daze, they are immune for %d turns.  If any targets are dazed, this costs #4080ff#1 Psi#LAST#.
+While Active: Each turn, non-fascinated enemies within range 10 will be fascinated, dazing them (#SLATE#Mindpower vs Mind#LAST#) for %d turns.  This can never inflict Brainlock. Once they recover from fascination, they are immune for %d turns.  If anyone is targeted, this costs #4080ff#1 Psi#LAST#.
 
-Deactivate: focus your presence to overwhelm a single creature, causing it to lose 1 turn for every 20%% of its life it was missing.
+Deactivate: focus your presence to overwhelm a single creature, causing it to lose 1 turn for every 20%% of its life it was missing (up to %d turns).
 Costs #4080ff#%d psi#LAST#
 Uses Mind Speed
 
 #{italic}#All who look upon you lose the will to fight.#{normal}#]]):
-		format(t.getDuration(self, t), t.getImmunityDuration(self, t), t.getSpikeCost(self, t))
+		format(t.getDuration(self, t), t.getImmunityDuration(self, t), t.getMaxOppression(self, t), t.getSpikeCost(self, t))
 	end,
 }
 
@@ -129,6 +133,7 @@ newTalent{
 	cooldown = 16,
 	no_energy = function(self, t) return not self:isTalentActive(t.id) end,
 	mode = "sustained",
+	no_sustain_autoreset = true,
 	sustain_psi = 10,
 	range = 4,
 	getSpikeCost = function(self, t) return 12 end,
@@ -158,6 +163,7 @@ newTalent{
 			end)
 	end,
 	deactivate = function(self, t, p)
+		if self:attr("save_cleanup") then return true end
 		--self:removeParticles(p.particle)
 
 		local cost = t.getSpikeCost(self, t)
@@ -177,6 +183,8 @@ newTalent{
 			
 			return nil
 		end
+		if x == self.x and y == self.y then return true end
+
 		local actor = game.level.map(x, y, Map.ACTOR)
 		if core.fov.distance(self.x, self.y, x, y) == 0 then return true end
 		if not actor then return end
@@ -247,7 +255,7 @@ newTalent{
 		return ([[Each round, you gain %0.2f #4080ff#psi #LAST#for each visible enemy within range %d.
 When you kill an enemy, you gain %0.2f #4080ff#psi #LAST#and %d%% movement speed (which lasts 2 turns or %d steps, whichever comes first).
 
-#{italic}#Fighting is challenging.  Challenge is fun.#{normal}#]]):
+#{italic}#Fighting is challenging.  Challenge is fun.  Winning is better.#{normal}#]]):
 		format(t.getPsiRefund(self, t), t.auraRadius(self, t), t.getKillMultiplier(self, t) * t.getPsiRefund(self, t), t.getSpeedBoost(self, t)*100, math.ceil(t.getSpeedBoost(self, t)))
 	end,
 }
@@ -269,14 +277,16 @@ newTalent{
 		if dam >= thresh then
 			--game.logPlayer(self, ("DEBUG: Beloved blocking damage"):format(dam))
 			local caged = false
+			local dmg_src = self
+			if src.__is_actor then dmg_src = src end
 			if not self:hasEffect(self.EFF_SLOW_MOVE) then
-				self:setEffect(self.EFF_SLOW_MOVE, 5, {power=50, src=self})
+				self:setEffect(self.EFF_SLOW_MOVE, 5, {power=50, dmg_src=self})
 				caged = true
 			elseif not self:hasEffect(self.EFF_PINNED) then
-				self:setEffect(self.EFF_PINNED, 4, {src=self})
+				self:setEffect(self.EFF_PINNED, 4, {dmg_src=self})
 				caged = true
 			else
-				self:setEffect(self.EFF_STUNNED, 3, {src=self})
+				self:setEffect(self.EFF_STUNNED, 3, {dmg_src=self})
 				caged = true
 			end
 			if caged then

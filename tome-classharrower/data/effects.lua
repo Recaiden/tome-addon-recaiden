@@ -7,13 +7,16 @@ local Map = require "engine.Map"
 local Level = require "engine.Level"
 
 newEffect{
-	name = "REK_GLR_DAZE", image = "talents/rek_psi_idol_fascinating.png",
+	name = "REK_GLR_DAZE", image = "talents/rek_glr_idol_fascinating.png",
 	desc = "Fascinated",
 	long_desc = function(self, eff) return ("The target is dazed with fascination."):format() end,
 	type = "mental",
 	subtype = { psionic=true, stun=true },
 	status = "detrimental",
 	parameters = { power=1, immunity=15 },
+	callbackOnTakeDamage = function (self, eff, src, x, y, type, dam, tmp, no_martyr)
+		self:removeEffect(self.EFF_REK_GLR_DAZE)
+	end,
 	activate = function(self, eff)
 		self:effectTemporaryValue(eff, "dazed", 1)
 		self:effectTemporaryValue(eff, "never_move", 1)
@@ -24,7 +27,7 @@ newEffect{
 }
 
 newEffect{
-	name = "REK_GLR_NO_FASCINATE", image = "talents/rek_psi_idol_fascinating.png",
+	name = "REK_GLR_NO_FASCINATE", image = "talents/rek_glr_idol_fascinating.png",
 	desc = "Bored",
 	long_desc = function(self, eff) return ("The target is immune to further fascination."):format() end,
 	type = "mental",
@@ -38,7 +41,7 @@ newEffect{
 }
 
 newEffect{
-	name = "REK_GLR_QUENCHED_SPEED", image = "talents/rek_psi_idol_thought_drinker.png",
+	name = "REK_GLR_QUENCHED_SPEED", image = "talents/rek_glr_idol_thought_drinker.png",
 	desc = "Mind-Quenched",
 	long_desc = function(self, eff) return ("Movement speed increased by %d%%."):format(eff.speed) end,
 	type = "mental",
@@ -61,7 +64,7 @@ newEffect{
 
 
 newEffect{
-	name = "REK_GLR_INTIMIDATED", image = "talents/rek_psi_idol_terrific.png",
+	name = "REK_GLR_INTIMIDATED", image = "talents/rek_glr_idol_terrific.png",
 	desc = "Awed",
 	long_desc = function(self, eff) return ("The target is in awe, losing %d mental save."):format(eff.power) end,
 	type = "mental",
@@ -76,7 +79,7 @@ newEffect{
 }
 
 newEffect{
-	name = "REK_GLR_BRAINSEALED", image = "talents/rek_psi_noumena_lockdown.png",
+	name = "REK_GLR_BRAINSEALED", image = "talents/rek_glr_noumena_lockdown.png",
 	desc = "Thoughtsealed",
 	long_desc = function(self, eff) return ("The target is unable to think, preventing weapon attacks and spells, and slowing talent cooldown."):format() end,
 	type = "mental",
@@ -149,5 +152,25 @@ newEffect{
 	on_lose = function(self, err) return "#Target#'s armour is more intact.", "-Sunder Armor" end,
 	activate = function(self, eff)
 		self:effectTemporaryValue(eff, "combat_armor", -eff.power)
+	end,
+}
+
+newEffect{
+	name = "REK_GLR_COCOONED", image = "talents/rek_glr_material_cocoon.png",
+	desc = "Cocoon Snare",
+	long_desc = function(self, eff) return ("The target is pinned in place and loses %d resistances."):format(eff.power) end,
+	type = "mental",
+	subtype = { psionic=true, stun=true },
+	status = "detrimental",
+	parameters = { power=10 },
+	on_gain = function(self, err) return "#Target# is snared.", "+Cocoon" end,
+	on_lose = function(self, err) return "#Target# is free of the snare.", "-Cocoon" end,
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "never_move", 1)
+		self:effectTemporaryValue(eff, "resists", {
+			all = -eff.power,
+		})
+	end,
+	deactivate = function(self, eff)
 	end,
 }
