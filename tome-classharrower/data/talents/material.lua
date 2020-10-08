@@ -19,6 +19,21 @@ newTalent{
 
 		local hit = false
 		local dam = self:mindCrit(t.getDamage(self, t))
+
+		-- look for enemies near the landing zone
+		self:project(
+			{type="ball", range=0, radius=4, start_x=tx, start_y=ty, selffire=false, friendlyfire=false}, tx, ty,
+			function(tx, ty)
+				local act = game.level.map(tx, ty, engine.Map.ACTOR)
+				if act and self:canSee(act) then
+					hit = true
+				end
+			end)
+		
+		--move us
+		self:move(tx, ty, true)
+		
+		--send out damage along the path
 		self:project(tg, tx, ty, function(px, py)
 									 DamageType:get(DamageType.PHYSICALBLEED).projector(self, px, py, DamageType.PHYSICALBLEED, dam)
 			local target = game.level.map(px, py, Map.ACTOR)
@@ -26,7 +41,7 @@ newTalent{
 		end)
 
 		--local ox, oy = self.x, self.y
-		self:move(tx, ty, true)
+		
 		if hit then
 			game:onTickEnd(function() self:alterTalentCoolingdown(t.id, -math.floor((self.talents_cd[t.id] or 0) * 0.67)) end)
 		end
@@ -34,7 +49,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Ultra-thin plates of crystal allow you to fly short distances on telekinetic currents.  Jump to a space within range %d, cutting creatures in your path with the crystal edges for %0.2f physical bleed damage.  If you hit anything, this talent's cooldown is reduced by 2/3.
+		return ([[Ultra-thin plates of crystal allow you to fly short distances on telekinetic currents.  Jump to a space within range %d, cutting creatures in your path with the crystal edges for %0.2f physical bleed damage.  If you land within range 4 of an enemy, this talent's cooldown is reduced by 2/3.
 Mindpower: improves	damage]]):
 		format(self:getTalentRange(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)*1.5))
 	end,

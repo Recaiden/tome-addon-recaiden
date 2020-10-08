@@ -220,7 +220,9 @@ newTalent{
 			},
 	},
 	points = 5,
-	mode = "passive",
+	no_energy = true,
+	mode = "sustained",
+	cooldown = 15, 
 	auraRange = function(self, t) return 0 end,
 	auraRadius = function(self, t) return 4 end,
 	auraTarget = function(self, t)
@@ -245,15 +247,28 @@ newTalent{
 		end
 	end,
 	callbackOnKill = function(self, t, src, death_note)
-		game.logPlayer(self, ("DEBUG: %s"):format(death_note))
 		if not self:attr("zero_resource_cost") then
 			self:incPsi(t.getKillMultiplier(self, t) * t.getPsiRefund(self, t))
 		end
 		self:setEffect(self.EFF_REK_GLR_QUENCHED_SPEED, 2, {speed=t.getSpeedBoost(self, t), steps=math.ceil(t.getSpeedBoost(self, t)), src=self})
 	end,
+	activate = function(self, t)
+		local ret = {}
+		return ret
+	end,
+	deactivate = function(self, t, p)
+		if self:attr("save_cleanup") then return true end
+		--self:removeParticles(p.particle)
+		t.callbackOnKill(self, t, self, "deactivation")
+		return true
+	end,
 	info = function(self, t)
-		return ([[Each round, you gain %0.2f #4080ff#psi #LAST#for each visible enemy within range %d.
-When you kill an enemy, you gain %0.2f #4080ff#psi #LAST#and %d%% movement speed (which lasts 2 turns or %d steps, whichever comes first).
+		return ([[
+
+While Active: Each round, you gain %0.2f #4080ff#psi #LAST#for each visible enemy within range %d.
+When you kill an enemy, gain the deactivation bonus of this talent (but it stays active).
+
+Deactivate: You gain %0.2f #4080ff#psi #LAST#and %d%% movement speed (which lasts 2 turns or %d steps, whichever comes first).
 
 #{italic}#Fighting is challenging.  Challenge is fun.  Winning is better.#{normal}#]]):
 		format(t.getPsiRefund(self, t), t.auraRadius(self, t), t.getKillMultiplier(self, t) * t.getPsiRefund(self, t), t.getSpeedBoost(self, t)*100, math.ceil(t.getSpeedBoost(self, t)))
