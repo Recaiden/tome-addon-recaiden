@@ -205,3 +205,45 @@ newEffect{
 	end,
 }
 
+newEffect{
+	name = "REK_GLR_GRINDING", image = "talents/rek_glr_abomination_shard_shot.png",
+	desc = "Ground Down",
+	long_desc = function(self, eff) return ("The target in pinend down by a hail of arrows and debris, losing %d defense, %d accuracy, and %d powers."):format(eff.def, eff.atk, eff.pow) end,
+	type = "physical",
+	subtype = { psionic=true },
+	status = "detrimental",
+	parameters = { def=2, atk=1, pow=0, stacks=1, max_stacks=5 },
+	charges = function(self, eff) return eff.stacks end,
+	updateEffect = function(self, old_eff, new_eff, e)
+		old_eff.__tmpvals = old_eff.__tmpvals or {}
+		new_eff.__tmpvals = new_eff.__tmpvals or {}
+		if old_eff.__tmpvals.id_def then
+			self:removeTemporaryValue("defense", old_eff.__tmpvals.id_def)
+			self:removeTemporaryValue("combat_atk", old_eff.__tmpvals.id_acc)
+			self:removeTemporaryValue("combat_mindpower", old_eff.__tmpvals.id_pm)
+			self:removeTemporaryValue("combat_spellpower", old_eff.__tmpvals.id_ps)
+			self:removeTemporaryValue("combat_dam", old_eff.__tmpvals.id_pp)
+		end
+		new_eff.__tmpvals.id_def = self:addTemporaryValue("defense", -new_eff.def*new_eff.stacks)
+		new_eff.__tmpvals.id_acc = self:addTemporaryValue("combat_atk", -new_eff.atk*new_eff.stacks)
+		new_eff.__tmpvals.id_pm = self:addTemporaryValue("combat_mindpower", -new_eff.pow*new_eff.stacks)
+		new_eff.__tmpvals.id_ps = self:addTemporaryValue("combat_spellpower", -new_eff.pow*new_eff.stacks)
+		new_eff.__tmpvals.id_pp = self:addTemporaryValue("combat_dam", -new_eff.pow*new_eff.stacks)
+	end,
+	on_merge = function(self, old_eff, new_eff, e)
+		new_eff.stacks = util.bound(old_eff.stacks + 1, 1, new_eff.max_stacks)
+		e.updateEffect(self, old_eff, new_eff, e)
+		return new_eff
+	end,
+	activate = function(self, eff, e)
+		e.updateEffect(self, eff, eff, e)
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("defense", eff.__tmpvals.id_def)
+		self:removeTemporaryValue("combat_atk", eff.__tmpvals.id_acc)
+		self:removeTemporaryValue("combat_mindpower", eff.__tmpvals.id_pm)
+		self:removeTemporaryValue("combat_spellpower", eff.__tmpvals.id_ps)
+		self:removeTemporaryValue("combat_dam", eff.__tmpvals.id_pp)
+	end,
+}
+

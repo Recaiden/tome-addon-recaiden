@@ -60,6 +60,8 @@ newTalent{
 	type = {"psionic/mindprison", 3},
 	require = wil_req3,
 	points = 5,
+	psi = 5,
+	innate = true,
 	cooldown = function(self, t) return self:combatTalentLimit(t, 9, 30, 12) end, 
 	action = function(self, t)
 		return true

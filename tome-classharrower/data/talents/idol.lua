@@ -16,6 +16,20 @@ numIdolAurasKnown = function(self)
 end
 
 newTalent{
+	name = "Star Power", short_name = "REK_GLR_IDOL_STARPOWER",
+	type = {"psionic/other", 1},
+	points = 1,
+	mode = "passive",
+	getMindpower = function(self, t) return self:getTalentLevel(t) * 2 end,
+	passives = function(self, t, p)
+		self:talentTemporaryValue(p, 'combat_mindpower', t.getMindpower(self, t))
+	end,
+	info = function(self, t)
+		return ([[Increases your mindpower by %d]]):format(t.getMindpower(self, t))
+	end,
+}
+
+newTalent{
 	name = "Fascinating", short_name = "REK_GLR_IDOL_FASCINATING",
 	type = {"psionic/idol", 1},
 	require = {
@@ -36,6 +50,8 @@ newTalent{
 	no_sustain_autoreset = true,
 	sustain_psi = 10,
 	range = 7,
+	on_learn = function(self, t) self:learnTalent(self.T_REK_GLR_IDOL_STARPOWER, true) end,
+	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
 	getSpikeCost = function(self, t) return 20 end,
 	spikeTarget = function(self, t) return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
 	getAuraCost = function(self, t) return 1.0 end,
@@ -110,7 +126,9 @@ Deactivate: focus your presence to overwhelm a single creature, causing it to lo
 Costs #4080ff#%d psi#LAST#
 Uses Mind Speed
 
-#{italic}#All who look upon you lose the will to fight.#{normal}#]]):
+#{italic}#All who look upon you lose the will to fight.#{normal}#
+
+Each point in Idol talents increases your mindpower by 2.]]):
 		format(t.getDuration(self, t), t.getImmunityDuration(self, t), t.getMaxOppression(self, t), t.getSpikeCost(self, t))
 	end,
 }
@@ -136,6 +154,8 @@ newTalent{
 	no_sustain_autoreset = true,
 	sustain_psi = 10,
 	range = 4,
+	on_learn = function(self, t) self:learnTalent(self.T_REK_GLR_IDOL_STARPOWER, true) end,
+	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
 	getSpikeCost = function(self, t) return 12 end,
 	getAuraCost = function(self, t) return 1.0 end,
 	spikeTarget = function(self, t) return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
@@ -201,7 +221,9 @@ Deactivate: Focus the terror on a single creature, preventing them from using ta
 Costs #4080ff#%d psi#LAST#
 Uses Mind Speed
 
-#{italic}#All who approach you are overwhelmed by your presence.#{normal}#]]):format(t.auraRadius(t), t.getPower(self, t), t.getDuration(self, t), t.getSpikeCost(self, t))
+#{italic}#All who approach you are overwhelmed by your presence.#{normal}#
+
+Each point in Idol talents increases your mindpower by 2.]]):format(t.auraRadius(t), t.getPower(self, t), t.getDuration(self, t), t.getSpikeCost(self, t))
 	end,
 }
 
@@ -222,7 +244,9 @@ newTalent{
 	points = 5,
 	no_energy = true,
 	mode = "sustained",
-	cooldown = 15, 
+	cooldown = 15,
+	on_learn = function(self, t) self:learnTalent(self.T_REK_GLR_IDOL_STARPOWER, true) end,
+	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
 	auraRange = function(self, t) return 0 end,
 	auraRadius = function(self, t) return 4 end,
 	auraTarget = function(self, t)
@@ -270,7 +294,9 @@ When you kill an enemy, gain the deactivation bonus of this talent (but it stays
 
 Deactivate: You gain %0.2f #4080ff#psi #LAST#and %d%% movement speed (which lasts 2 turns or %d steps, whichever comes first).
 
-#{italic}#Fighting is challenging.  Challenge is fun.  Winning is better.#{normal}#]]):
+#{italic}#Fighting is challenging.  Challenge is fun.  Winning is better.#{normal}#
+
+Each point in Idol talents increases your mindpower by 2.]]):
 		format(t.getPsiRefund(self, t), t.auraRadius(self, t), t.getKillMultiplier(self, t) * t.getPsiRefund(self, t), t.getSpeedBoost(self, t)*100, math.ceil(t.getSpeedBoost(self, t)))
 	end,
 }
@@ -285,6 +311,8 @@ newTalent{
 	cooldown = 0,
 	tactical = { DEFENSE = 2 },
 	points = 5,
+	on_learn = function(self, t) self:learnTalent(self.T_REK_GLR_IDOL_STARPOWER, true) end,
+	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
 	getThresh = function(self, t) return self:combatTalentLimit(t, 0.10, 0.33, 0.16) end,
 	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
 		local thresh = t.getThresh(self, t) * self.max_life
@@ -336,6 +364,8 @@ If you are already pinned, you will be stunned for 3 turns.
 
 These effects ignore immunities and saves.
 
-#{italic}#No one would really hurt you, not on purpose.  But they would try to control you.#{normal}#]]):format(t.getThresh(self, t)*100)
+#{italic}#No one would really hurt you, not on purpose.  But they would try to control you.#{normal}#
+
+Each point in Idol talents increases your mindpower by 2.]]):format(t.getThresh(self, t)*100)
 	end,
 }

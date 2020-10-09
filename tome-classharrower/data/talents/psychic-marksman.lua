@@ -72,12 +72,12 @@ newTalent{
 	points = 5,
 	require = dex_req4,
 	mode = "passive",
-	getMinConfuse = function(self, t) return self:combatTalentScale(t, 0, 12) end,
-	getAccConfuse = function(self, t) return 15 end,
+	getMinConfuse = function(self, t) return math.max(0, self:combatTalentScale(t, 0, 10)) end,
+	getAccConfuse = function(self, t) return 10 end,
 	callbackOnArcheryAttack = function(self, t, target, hitted)
 		local weapon, ammo = self:hasArcheryWeapon()
 		if not weapon then return end
-		local bonus = util.bound(self:combatAttack() - target:combatDefense(), 0, t.getAccConfuse(self, t))*0.75
+		local bonus = util.bound((self:combatAttack() - target:combatDefense())/2, 0, t.getAccConfuse(self, t))
 		if hitted and target and not target.dead then
 			if target:canBe("confusion") then
 				target:setEffect(target.EFF_CONFUSED, 1, {power=t.getMinConfuse(self, t)+bonus, apply_power=self:combatMindpower(), no_ct_effect=true, src=self})

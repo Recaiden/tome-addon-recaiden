@@ -154,13 +154,22 @@ if not Talents.talents_types_def["psionic/mindshaped-material"] then
 	load("/data-classharrower/talents/material.lua")
 end
 
-if not Talents.talents_types_def["psionic/unleash-abomination"] then
-	newTalentType{ allow_random=true, is_mind=true, min_lev = 10, type="psionic/unleash-abomination", name = "Unleash: Abomination", description = "Let the source of your power act more freely." }
-	load("/data-classharrower/talents/abomination.lua")
-end
-
 if not Talents.talents_types_def["psionic/mindprison"] then
 	newTalentType{ allow_random=true, is_mind=true, generic = true, type="psionic/mindprison", name = "Mindprison", description = "You are vast; you can contain multitudes." }
 	load("/data-classharrower/talents/mindprison.lua")
 end
 
+if not Talents.talents_types_def["psionic/unleash-abomination"] then
+	newTalentType{ allow_random=true, is_mind=true, min_lev = 10, type="psionic/unleash-abomination", name = "Unleash Abomination", description = "Let the source of your power act more freely." }
+	load("/data-classharrower/talents/abomination.lua")
+end
+
+if not Talents.talents_types_def["psionic/unleash-nightmare"] then
+	newTalentType{ allow_random=true, is_mind=true, min_lev = 10, type="psionic/unleash-nightmare", name = "Unleash Nightmare", description = "Let the source of your power awaken." }
+	load("/data-classharrower/talents/nightmare.lua")
+end
+
+if not Talents.talents_types_def["technique/arrowstorm"] then
+	newTalentType{ allow_random=true, is_mind=true, min_lev = 10, type="technique/arrowstorm", name = "Arrowstorm", description = "Let the winds of beyond carry your quarrels - and remember, killing should be done up close and personal." }
+	load("/data-classharrower/talents/arrowstorm.lua")
+end

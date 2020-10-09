@@ -26,8 +26,8 @@ newBirthDescriptor{
 		 
 		 --advanced talents
 		 ["psionic/unleash-abomination"]={false, 0.3},
-		 --["psionic/unleash-nightmare"]={false, 0.3},
-		 --["technique/arrowstorm"]={false, 0.3},
+		 ["psionic/unleash-nightmare"]={false, 0.3},
+		 ["technique/arrowstorm"]={false, 0.3},
 		 
 		 --new generics
 		 ["psionic/mindshaped-material"]={true, 0.3},

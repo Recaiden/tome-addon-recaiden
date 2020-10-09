@@ -12,6 +12,7 @@ newTalent{
 	getSpeed = function(self, t) return self:combatTalentScale(t, 0.5, 1.5) end,
 	callbackOnArcheryAttack = function(self, t, target, hitted, crit, weapon, ammo, damtype, mult, dam, talent)
 		if talent == t then return end
+		if talent == self.T_REK_GLR_ARROWSTORM_KALMANKA then return end
 		local old_target_forced = game.target.forced
 		game.target.forced = {target.x, target.y, target}
 		local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy = true})
@@ -44,7 +45,9 @@ Mindpower: improves	movement speed
 
 This talent is difficult to maintain, draining 5%% of your maximum psi per turn (+100%% per turn). For example, on turn 2 it will drain 10%%, on turn 3 it will drain 15%%.
 
-#{italic}#Your psionic core constantly roils with suppressed energy.  If you undid some mental safeguards, you could draw more power...#{normal}#]]):
+#{italic}#Your psionic core constantly roils with suppressed energy.  If you undid some mental safeguards, you could draw more power...#{normal}#
+
+#YELLOW#You can only learn 1 Unleash tree.#LAST#]]):
 		format(t.getSpeed(self, t)*100, 100, t.getDamage(self, t)*100)
 	end,
 }
@@ -64,6 +67,7 @@ newTalent{
 	getConversionDamage = function (self, t) return self:combatTalentWeaponDamage(t, 0.30, 0.65) end,
 	getAmmo = function (self, t) return self:combatTalentScale(t, 3, 8) end,
 	getReadySpeed = function (self, t) return self:combatTalentMindDamage(t, 0.20, 0.90) end,
+	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y, target = self:getTarget(tg)
@@ -138,80 +142,45 @@ Mindpower: improves damage reduction]]):format(t.getChance(self, t), t.getDamage
 }
 
 newTalent{
-	name = "Inversion Wave", short_name = "REK_GLR_ABOMINATION_WAVE",
+	name = "Black Arrow", short_name = "REK_GLR_ABOMINATION_SHOT",
 	type = {"psionic/unleash-abomination", 4},
 	require = wil_req_high4,
 	points = 5,
-	cooldown = 12,
-	psi = 12,
-	range = 0,
-	radius = function(self, t) return math.floor(self:combatTalentScale(t, 4, 8)) end,
+	no_energy = "fake",
+	points = 5,
+	cooldown = 8,
+	psi = 15,
+	range = archery_range,
 	requires_target = true,
-	target = function(self, t)
-		return {type="cone", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, nowarning=true, talent=t}
-	end,
+	tactical = { ATTACK = { weapon = 2 }, DISABLE = { knockback = 2 }, ESCAPE = { knockback = 1 } },
+	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.1, 1.3) end,
+	getEffDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.25, 0.5) end,
+	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
+	target = function(self, t) return {type = "hit", range = self:getTalentRange(t), talent = t } end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
-		local x, y = self:getTarget(tg)
-		if not x or not y then return nil end
-
-		if x == self.x and y == self.y then
-			local tgts = {}
-			tg = {type="ball", range=0, friendlyfire=false, radius=math.ceil(self:getTalentRadius(t)/2), talent=t}
-			self:project(
-				tg, self.x, self.y,
-				function(px, py)
-					local target = game.level.map(px, py, Map.ACTOR)
-					if not target then return end
-					if self:reactionToward(target) < 0 and not tgts[target] then
-						tgts[target] = true
-						local ox, oy = target.x, target.y
-						local hit = target:checkHit(self:combatMindpower(), target:combatPhysicalResist(), 0, 95) and target:canBe("knockback")
-						if hit then
-							target:pull(self.x, self.y, math.ceil(self:getTalentRadius(t)/2) - 1)
-							if target.x ~= ox or target.y ~= oy then game.logSeen(target, "%s is pulled in!", target.name:capitalize()) end
-							target:setEffect(target.EFF_DAZED, 1, {src=self})
-						end
-					end
-				end)
-			return true
-		end
-
+		local x, y, target = self:getTarget(tg)
+		if not x or not y then return end
 		
-		-- Do our knockback
-		local tgts = {}
-		local grids = self:project(
-			tg, x, y,
-			function(px, py)
-				local target = game.level.map(px, py, Map.ACTOR)
-				if target  then
-					-- If we've already moved this target don't move it again
-					for _, v in pairs(tgts) do
-						if v == target then
-							return
-						end
-					end
-					
-					local hit = target:checkHit(self:combatMindpower(), target:combatPhysicalResist(), 0, 95) and target:canBe("knockback")
-					
-					if hit then
-						local dist = self:getTalentRadius(t) + 1 - core.fov.distance(self.x, self.y, px, py)
-						target:knockback(self.x, self.y, dist, false)
-						target:setEffect(target.EFF_DAZED, 1, {src=self})
-						tgts[#tgts+1] = target
-						game.logSeen(target, "%s is knocked back!", target.name:capitalize())
-					else
-						game.logSeen(target, "%s resists the knockback!", target.name:capitalize())
-					end		
-				end
-			end)
-		game.level.map:particleEmitter(self.x, self.y, tg.radius, "gravity_breath", {radius=tg.radius, tx=x-self.x, ty=y-self.y, allow=core.shader.allow("distort")})
-		game:playSoundNear(self, "talents/earth")
+		local target = game.level.map(x, y, game.level.map.ACTOR)
+		if not target then return nil end
+		
+		local countEff = 0
+		for eff_id, p in pairs(target.tmp) do 
+			local e = src.tempeffect_def[eff_id]
+			if e.status == "detrimental" and src.save_for_effects[e.type] then
+				countEff = countEff + 1
+			end
+		end
+		
+		local targets = self:archeryAcquireTargets(tg, {one_shot=true, x=target.x, y=target.y})
+		if not targets then return end
+		
+		local dam = t.getDamage(self,t) + t.getEffDamage(self, t)*countEff
+		self:archeryShoot(targets, t, nil, {mult=dam})
 		return true
-	end,
+		end,
 	info = function(self, t)
-		return ([[Project a wave of motive force, knocking back all targets in a range %d cone to the edge of the cone and dazing them for 1 turn.
-
-If you target yourself, you will instead pull in targets in a circle of radius %d.]]):format(self:getTalentRadius(t), math.ceil(self:getTalentRadius(t)/2))
+		return ([[Focus on an enemy, discern their weak points, and fire an arrow perfectly aimed and guided to exploit them. This shot does %d%% damage, plus %d%% for each detrimental effect the target had when the arrow was fired.]]):format(t.getDamage(self, t) * 100, t.getEffDamage(self, t) * 100)
 	end,
 }

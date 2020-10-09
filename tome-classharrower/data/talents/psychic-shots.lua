@@ -85,7 +85,6 @@ newTalent{
 
 		-- Fire each shot.
 		local old_target_forced = game.target.forced
-		local shot_params_base = {mult = t.getDamage(self, t)}--, phasing = true}
 		local fired = nil
 		for i = 1, math.min(t.getCount(self, t), #targets) do
 			local target = targets[i]
@@ -100,7 +99,6 @@ newTalent{
 			--game.logPlayer(self, ("DEBUG - Aiming Crossfire from %d %d!"):format(sx, sy))
 			local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy = fired})
 			if targets then
-				local params = table.clone(shot_params_base)
 				local target = targets.dual and targets.main[1] or targets[1]
 				--self:archeryShoot(targets, t, {type="bolt", start_x=eff.x, start_y=eff.y}, {mult=t.getDamage(self, t)})
 				self:archeryShoot(targets, t, {type = "bolt", start_x=sx, start_y=sy}, {mult=t.getDamage(self, t)})
@@ -110,8 +108,8 @@ newTalent{
 				break
 			end
 		end
-
 		game.target.forced = old_target_forced
+		
 		return fired
 	end,
 	info = function(self, t)
@@ -232,6 +230,6 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Fire an arrow encased in a shell of tremendous kinetic energy, doing %d%% damage and knocking the target back 4 spaces.  If the target collides with a wall, it takes %d%% additional damage and is stunned (#SLATE#Physical Power vs Physical#LAST#) for %d turns.]]):format(t.getDamage(self, t) * 100, t.getSlamDamage(self, t) * 100, t.getDuration(self, t))
+		return ([[Fire an arrow encased in a shell of tremendous kinetic energy, doing %d%% damage and knocking the target back 4 spaces.  If the target collides with a wall, it takes %d%% additional physical damage and is stunned (#SLATE#Physical Power vs Physical#LAST#) for %d turns.]]):format(t.getDamage(self, t) * 100, t.getSlamDamage(self, t) * 100, t.getDuration(self, t))
 	end,
 }

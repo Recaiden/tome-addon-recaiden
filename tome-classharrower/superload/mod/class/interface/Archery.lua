@@ -1,6 +1,6 @@
 local _M = loadPrevious(...)
 
-base_archery_projectile = _M.archery_projectile
+_M.base_archery_projectile = _M.archery_projectile
 local function archery_projectile(tx, ty, tg, self, tmp)
 	local target = game.level.map(tx, ty, game.level.map.ACTOR)
 	if not target then return end
@@ -15,7 +15,7 @@ local function archery_projectile(tx, ty, tg, self, tmp)
 		end
 	end
 	
-	return base_archery_projectile(tx, ty, tg, self, tmp)
+	return self.base_archery_projectile(tx, ty, tg, self, tmp)
 end
 _M.archery_projectile = archery_projectile
 
@@ -72,7 +72,7 @@ function _M:archeryShoot(targets, talent, tg, params, force)
 			-- hook to trigger as each archery projectile is created
 			local hd = {"Combat:archeryFire", tg=tg, archery = tg.archery, weapon=weapon, realweapon = realweapon, ammo=ammo}
 			self:triggerHook(hd)
-			local proj = self:projectile(tg, targets[i].x, targets[i].y, archery_projectile)
+			local proj = self:projectile(tg, targets[i].x, targets[i].y, self.archery_projectile)
 		end
 	end
 
