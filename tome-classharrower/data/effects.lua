@@ -174,3 +174,18 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+newEffect{
+	name = "REK_GLR_SHARDS_READY", image = "talents/rek_glr_abomination_shard_shot.png",
+	desc = "Swift Shooting",
+	long_desc = function(self, eff) return ("The target has transmuted arrows ready to fire and can attack %d%% faster."):format(eff.power) end,
+	type = "physical",
+	subtype = { psionic=true, haste=true },
+	status = "beneficial",
+	parameters = { power=0.1 },
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "combat_physspeed", eff.power)
+	end,
+	deactivate = function(self, eff)
+	end,
+}

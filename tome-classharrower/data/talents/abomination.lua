@@ -8,45 +8,32 @@ newTalent{
 	no_energy = true,
 	mode = "suistained"
 	target = function(self, t) return {type="widebeam", radius=1, nolock=true, range=self:getTalentRange(t), selffire=false, talent=t} end,
-	getDamage = function(self, t) return self:combatTalentMindDamage(t, 20, 250) end,
-	action = function(self, t)
-		local tg = self:getTalentTarget(t)
-		local tx, ty, target = self:getTargetLimited(tg)
-		if not tx or not ty then return nil end
-		if not self:canProject(tg, tx, ty) then return nil end
-		if game.level.map(tx, ty, engine.Map.ACTOR) then return nil end
-		if game.level.map:checkEntity(tx, ty, Map.TERRAIN, "block_move") then return nil end
-
-
-		local hit = false
-		local dam = self:mindCrit(t.getDamage(self, t))
-
-		-- look for enemies near the landing zone
-		self:project(
-			{type="ball", range=0, radius=4, start_x=tx, start_y=ty, selffire=false, friendlyfire=false}, tx, ty,
-			function(tx, ty)
-				local act = game.level.map(tx, ty, engine.Map.ACTOR)
-				if act and self:canSee(act) then
-					hit = true
-				end
-			end)
-		
-		--move us
-		self:move(tx, ty, true)
-		
-		--send out damage along the path
-		self:project(tg, tx, ty, function(px, py)
-									 DamageType:get(DamageType.PHYSICALBLEED).projector(self, px, py, DamageType.PHYSICALBLEED, dam)
-			local target = game.level.map(px, py, Map.ACTOR)
-			if target then hit = true end
-		end)
-
-		--local ox, oy = self.x, self.y
-		
-		if hit then
-			game:onTickEnd(function() self:alterTalentCoolingdown(t.id, -math.floor((self.talents_cd[t.id] or 0) * 0.67)) end)
-		end
-				
+	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.5, 0.75) end,
+	getSpeed = function(self, t) return self:combatTalentScale(t, 0.5, 1.5) end,
+	callbackOnArcheryAttack = function(self, t, target, hitted, crit, weapon, ammo, damtype, mult, dam, talent)
+		if talent == t then return end
+		game.target.forced = {target.x, target.y, target}
+		local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy = true})
+		self:archeryShoot(targets, t, {type = "bolt"}, {mult=mult*t.getDamage(self, t)})
+	end,
+	callbackOnActBase = function(self, t)
+		if self.psi < self.max_psi * rek_glr_unleash_timer / 20 then self:forceUseTalent(self.T_REK_GLR_ABOMINATION_SUPREMACY, {ignore_energy=true}) return end
+		self:incPsi(self.max_psi * self.rek_glr_unleash_timer / -20)
+		self.rek_glr_unleash_timer = self.rek_glr_unleash_timer + 1
+	end,
+	activate = function(self, t)
+		self.rek_glr_unleash_timer = 1
+		--TODO particle
+		local ret  = {}
+		self:talentTemporaryValue(ret, "movement_speed", t.getSpeed(self, t))
+		self:talentTemporaryValue(ret, "movement_speed", t.getSpeed(self, t))
+		self:talentTemporaryValue(ret, "pin_immune", 1)
+		self:talentTemporaryValue(ret, "levitation", 1)
+		self:talentTemporaryValue(ret, "avoid_pressure_traps", 1)
+		return ret
+	end,
+	deactivate = function(self, t, p)
+		self.rek_glr_unleash_timer = nil
 		return true
 	end,
 	info = function(self, t)
@@ -55,7 +42,7 @@ Mindpower: improves	movement speed
 
 This talent is difficult to maintain, draining 5%% of your maximum psi per turn (+100%% per turn). For example, on turn 2 it will drain 10%%, on turn 3, 15%%.
 
-#{italic}#Your psionic core constantly roils with suppressed energy.  If you undid some mental precautions, you could draw more power...#{normal}#]]):
+#{italic}#Your psionic core constantly roils with suppressed energy.  If you undid some mental safeguards, you could draw more power...#{normal}#]]):
 		format(self:getTalentRange(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)*1.5))
 	end,
 }
@@ -65,41 +52,42 @@ newTalent{
 	type = {"psionic/unleash-abomination", 2},
 	require = wil_req_high2,
 	points = 5,
-	cooldown = 10,
+	cooldown = 12,
 	range = 1,
+	is_melee = true,
 	psi = 15,
-	getReduction = function(self, t) return self:combatTalentMindDamage(t, 10, 50) + self.level end,
-	callbackOnHit = function(self, t, cb, src, death_note)
-		if not self:hasLightArmor() then
-			--game.logPlayer(self, ("DEBUG - Not in light armor"):format(sx, sy))
-			return end
-		if self:getPsi() < (self:getMaxPsi() / 2) then
-			--game.logPlayer(self, ("DEBUG - Not enough psi!"):format(sx, sy))
-			return end
-		local dam = cb.value
-		local cost = t.getCost(self, t)
-		if dam < t.getReduction(self, t) then cost = cost * dam / t.getReduction(self, t) end
-		if self:getPsi() < cost then return end -- in case max psi is really tiny?
-		
-		if dam > 0 and not self:attr("invulnerable") then					
-			local reduce = math.min(t.getReduction(self, t), dam)
-			dam = dam - reduce
-			local d_color = "#4080ff#"
-			game:delayedLogDamage(src, self, 0, ("%s(%d to silken armor)"):format(d_color, reduce, stam_txt, d_color), false)
-			cb.value = dam
-			self:incPsi(-1 * cost)
+	tactical = { ATTACK = 2, RESOURCE = 2 },
+	getCount = function (self, t) return 3 end,
+	getConversionDamage = function (self, t) return self:combatTalentWeaponDamage(t, 30, 65) end,
+	getAmmo = function (self, t) return self:combatTalentScale(t, 3, 8) end,
+	getReadySpeed = function (self, t) return self:combatTalentMindDamage(t, 0.20, 0.90) end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y, target = self:getTarget(tg)
+		if not target or not self:canProject(tg, x, y) then return nil end
+
+		-- damaging arrow transmutation
+		local fired = nil
+		for i = 1, t.getCount(self, t) do
+			game.target.forced = {target.x, target.y, target}
+			local targets = self:archeryAcquireTargets({type = "hit"}, {infinite=true, one_shot=true, no_energy = fired})
+			self:archeryShoot(targets, t, {type = "bolt", start_x=sx, start_y=sy}, {mult=t.getConversionDamage(self, t)})
+			fired = true
 		end
-		return cb
-	end,
-	activate = function(self, t)
-		--TODO particle
-		return {}
-	end,
-	deactivate = function(self, t, p)
+
+		-- 'reload' the transmuted shots
+		local ammo, err = self:hasAmmo()
+		if ammo then 
+			ammo.combat.shots_left = math.min(ammo.combat.capacity, ammo.combat.shots_left + t.getAmmo(self, t))
+		end
+
+		-- go fast
+		self:setEffect(self.EFF_REK_GLR_SHARDS_READY, 1, {power=t.getReadySpeed(self, t), src=self})
+		
 		return true
 	end,
 	info = function(self, t)
-		return ([[Transmute part of an adjacent target's body into arrows and launch them with psionic force.  The target is hit %d times for %d%% damage, and arrows are launched at random targets in a cone behind them, doing %d%% damage each.]]):format(t.getCount(self, t), t.getConversionDamage(self, t), t.getHitDamage(self, t))
+		return ([[Transmute part of an adjacent target's body into arrows and ready them for shooting.  The target is hit %d times for %d%% damage, you regain %d ammo, and your combat speed is increased by %d%% for 1 turn.]]):format(t.getCount(self, t), t.getConversionDamage(self, t), t.getAmmo(self, t), t.getReadySpeed(self, t)*100)
 	end,
 }
 
