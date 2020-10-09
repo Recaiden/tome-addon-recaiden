@@ -154,3 +154,13 @@ if not Talents.talents_types_def["psionic/mindshaped-material"] then
 	load("/data-classharrower/talents/material.lua")
 end
 
+if not Talents.talents_types_def["psionic/unleash-abomination"] then
+	newTalentType{ allow_random=true, is_mind=true, min_lev = 10, type="psionic/unleash-abomination", name = "Unleash: Abomination", description = "Let the source of your power act more freely." }
+	load("/data-classharrower/talents/abomination.lua")
+end
+
+if not Talents.talents_types_def["psionic/mindprison"] then
+	newTalentType{ allow_random=true, is_mind=true, generic = true, type="psionic/mindprison", name = "Mindprison", description = "You are vast; you can contain multitudes." }
+	load("/data-classharrower/talents/mindprison.lua")
+end
+

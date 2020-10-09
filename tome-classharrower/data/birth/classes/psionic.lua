@@ -25,7 +25,9 @@ newBirthDescriptor{
 		 --old base talents
 		 
 		 --advanced talents
+		 ["psionic/unleash-abomination"]={false, 0.3},
 		 --["psionic/unleash-nightmare"]={false, 0.3},
+		 --["technique/arrowstorm"]={false, 0.3},
 		 
 		 --new generics
 		 ["psionic/mindshaped-material"]={true, 0.3},
@@ -33,7 +35,7 @@ newBirthDescriptor{
 		 ["psionic/augmented-mobility"]={true, 0.3},      
 		 ["technique/combat-training"]={true, 0.3},
 		 ["cunning/survival"]={true, 0.0},
-		 ["cunning/scoundrel"]={false, 0.3},
+		 ["psionic/mindprison"]={false, 0.3},
    },
    birth_example_particles = "darkness_shield",
    talents = {

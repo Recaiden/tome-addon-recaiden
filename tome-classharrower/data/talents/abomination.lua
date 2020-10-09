@@ -6,18 +6,20 @@ newTalent{
 	range = function(self, t) return math.min(14, math.floor(self:combatTalentScale(t, 6, 10))) end,
 	cooldown = 18,
 	no_energy = true,
-	mode = "suistained"
+	mode = "sustained",
 	target = function(self, t) return {type="widebeam", radius=1, nolock=true, range=self:getTalentRange(t), selffire=false, talent=t} end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.5, 0.75) end,
 	getSpeed = function(self, t) return self:combatTalentScale(t, 0.5, 1.5) end,
 	callbackOnArcheryAttack = function(self, t, target, hitted, crit, weapon, ammo, damtype, mult, dam, talent)
 		if talent == t then return end
+		local old_target_forced = game.target.forced
 		game.target.forced = {target.x, target.y, target}
 		local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy = true})
 		self:archeryShoot(targets, t, {type = "bolt"}, {mult=mult*t.getDamage(self, t)})
+		game.target.forced = old_target_forced
 	end,
 	callbackOnActBase = function(self, t)
-		if self.psi < self.max_psi * rek_glr_unleash_timer / 20 then self:forceUseTalent(self.T_REK_GLR_ABOMINATION_SUPREMACY, {ignore_energy=true}) return end
+		if self.psi < self.max_psi * self.rek_glr_unleash_timer / 20 then self:forceUseTalent(self.T_REK_GLR_ABOMINATION_SUPREMACY, {ignore_energy=true}) return end
 		self:incPsi(self.max_psi * self.rek_glr_unleash_timer / -20)
 		self.rek_glr_unleash_timer = self.rek_glr_unleash_timer + 1
 	end,
@@ -40,10 +42,10 @@ newTalent{
 		return ([[Surround yourself with a powerful nimbus of telekinetic energy.  Your movement speed is increased by %d%%, you gain %d%% pinning immunity, you can't trigger pressure traps, and whenever you shoot an arrow you shoot another arrow for %d%% damage.
 Mindpower: improves	movement speed
 
-This talent is difficult to maintain, draining 5%% of your maximum psi per turn (+100%% per turn). For example, on turn 2 it will drain 10%%, on turn 3, 15%%.
+This talent is difficult to maintain, draining 5%% of your maximum psi per turn (+100%% per turn). For example, on turn 2 it will drain 10%%, on turn 3 it will drain 15%%.
 
 #{italic}#Your psionic core constantly roils with suppressed energy.  If you undid some mental safeguards, you could draw more power...#{normal}#]]):
-		format(self:getTalentRange(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)*1.5))
+		format(t.getSpeed(self, t)*100, 100, t.getDamage(self, t)*100)
 	end,
 }
 
@@ -57,8 +59,9 @@ newTalent{
 	is_melee = true,
 	psi = 15,
 	tactical = { ATTACK = 2, RESOURCE = 2 },
+	target = function(self, t) return {type="hit", range=self:getTalentRange(t)} end,
 	getCount = function (self, t) return 3 end,
-	getConversionDamage = function (self, t) return self:combatTalentWeaponDamage(t, 30, 65) end,
+	getConversionDamage = function (self, t) return self:combatTalentWeaponDamage(t, 0.30, 0.65) end,
 	getAmmo = function (self, t) return self:combatTalentScale(t, 3, 8) end,
 	getReadySpeed = function (self, t) return self:combatTalentMindDamage(t, 0.20, 0.90) end,
 	action = function(self, t)
@@ -67,13 +70,13 @@ newTalent{
 		if not target or not self:canProject(tg, x, y) then return nil end
 
 		-- damaging arrow transmutation
-		local fired = nil
+		local old_target_forced = game.target.forced
 		for i = 1, t.getCount(self, t) do
 			game.target.forced = {target.x, target.y, target}
-			local targets = self:archeryAcquireTargets({type = "hit"}, {infinite=true, one_shot=true, no_energy = fired})
+			local targets = self:archeryAcquireTargets({type = "hit"}, {infinite=true, one_shot=true, no_energy = true})
 			self:archeryShoot(targets, t, {type = "bolt", start_x=sx, start_y=sy}, {mult=t.getConversionDamage(self, t)})
-			fired = true
 		end
+		game.target.forced = old_target_forced
 
 		-- 'reload' the transmuted shots
 		local ammo, err = self:hasAmmo()
@@ -87,7 +90,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Transmute part of an adjacent target's body into arrows and ready them for shooting.  The target is hit %d times for %d%% damage, you regain %d ammo, and your combat speed is increased by %d%% for 1 turn.]]):format(t.getCount(self, t), t.getConversionDamage(self, t), t.getAmmo(self, t), t.getReadySpeed(self, t)*100)
+		return ([[Transmute part of an adjacent target's body into arrows and ready them for shooting.  The target is hit %d times for %d%% damage, you regain %d ammo, and your combat speed is increased by %d%% for 1 turn.]]):format(t.getCount(self, t), t.getConversionDamage(self, t)*100, t.getAmmo(self, t), t.getReadySpeed(self, t)*100)
 	end,
 }
 
@@ -100,21 +103,24 @@ newTalent{
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.2, 0.6) end,
 	getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 40, 10, 30)) end,
 	getReduction = function(self, t) return math.min(0.75, self:combatTalentMindDamage(t, 0.20, 0.50)) end,
-	callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, tmp)
+	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, tmp)
 		if not src.__is_actor then return end
 		if src.turn_procs and src.turn_procs.rek_glr_telepathic_aim then return end
 		if not rng.percent(t.getChance(self, t)) then return end
 		
 		-- shoot them
+		local old_target_forced = game.target.forced
 		game.target.forced = {src.x, src.y, src}
-		local targets = self:archeryAcquireTargets({type = "hit", speed = 200}, {one_shot=true, no_energy = true})
+		local targets = self:archeryAcquireTargets({type = "hit", speed = 200}, {infinite=true, one_shot=true, no_energy = true})
 		if not targets then return end --no ammo
+		game.target.forced = old_target_forced
+
 
 		game.logSeen(src, "%s is interrupted by a telepathically aimed shot!", src.name:capitalize())
 
 		src.turn_procs = src.turn_procs or {}
 		src.turn_procs.rek_glr_telepathic_aim = true
-		dam = dam * (100 - t.getReduction(self, t))
+		dam = dam * (1 - t.getReduction(self, t))
 		local shot_params_base = {mult = t.getDamage(self, t), phasing = true}
 		local params = table.clone(shot_params_base)
 		local target = targets.dual and targets.main[1] or targets[1]
@@ -126,8 +132,8 @@ newTalent{
 
 	info = function(self, t)
 		return ([[Reading an enemy's subtle impulses, you know when they're going to strike before  they do, and can interrupt the attack with a well-timed arrow.  When you would be damaged by an enemy, there is a %d%% chance that they are instantly struck by an arrow that you already fired, doing %d%% damage and reducing their damage to you by %d%%.
-This can only happen once per enemy per turn. 
-Mindpower: damage reduction]]):format(t.getDuration(self, t))
+This can only happen once per enemy per turn.
+Mindpower: improves damage reduction]]):format(t.getChance(self, t), t.getDamage(self, t)*100, t.getReduction(self, t)*100)
 	end,
 }
 
@@ -138,12 +144,11 @@ newTalent{
 	points = 5,
 	cooldown = 12,
 	psi = 12,
-	getVulnerability = function(self, t) return math.floor(self:combatTalentMindDamage(t, 10, 40)) end,
 	range = 0,
-	radius = function(self, t) return math.floor(self:combatTalentScale(t, 4.5, 6.5)) end,
+	radius = function(self, t) return math.floor(self:combatTalentScale(t, 4, 8)) end,
 	requires_target = true,
 	target = function(self, t)
-		return {type="cone", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, talent=t}
+		return {type="cone", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, nowarning=true, talent=t}
 	end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
@@ -151,7 +156,7 @@ newTalent{
 		if not x or not y then return nil end
 
 		if x == self.x and y == self.y then
-			--TODO pull
+			local tgts = {}
 			tg = {type="ball", range=0, friendlyfire=false, radius=math.ceil(self:getTalentRadius(t)/2), talent=t}
 			self:project(
 				tg, self.x, self.y,

@@ -189,3 +189,19 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+newEffect{
+	name = "REK_GLR_OVERFLOW", image = "talents/rek_glr_mindprison_overflow.png",
+	desc = "Overflowed Thoughts",
+	long_desc = function(self, eff) return ("The target is conflicated and about to lose energy."):format() end,
+	type = "other",
+	subtype = { psionic=true, emotion=true },
+	status = "detrimental",
+	parameters = { power=1 },
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+		self.energy.value = self.energy.value - game.energy_to_act
+	end,
+}
+
