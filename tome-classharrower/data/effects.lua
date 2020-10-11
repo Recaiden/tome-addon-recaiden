@@ -14,9 +14,10 @@ newEffect{
 	subtype = { psionic=true, stun=true },
 	status = "detrimental",
 	parameters = { power=1, immunity=15 },
-	callbackOnTakeDamage = function (self, eff, src, x, y, type, dam, tmp, no_martyr)
-		self:removeEffect(self.EFF_REK_GLR_DAZE)
-	end,
+	-- break on damage is in Actor.lua
+	-- callbackOnTakeDamage = function (self, eff, src, x, y, type, dam, tmp, no_martyr)
+	-- 	self:removeEffect(self.EFF_REK_GLR_DAZE)
+	-- end,
 	activate = function(self, eff)
 		self:effectTemporaryValue(eff, "dazed", 1)
 		self:effectTemporaryValue(eff, "never_move", 1)
@@ -248,6 +249,24 @@ newEffect{
 }
 
 newEffect{
+	name = "REK_GLR_COSMIC_AWARENESS", image = "talents/rek_glr_nightmare_awareness.png",
+	desc = "Cosmic Awareness",
+	long_desc = function(self, eff) return ("The target has awakened to the dream, giving it %d%% incoming mind conversion and %d mind resistance."):format(eff.power*100, eff.resist) end,
+	type = "physical",
+	subtype = { psionic=true, sleep=true },
+	status = "beneficial",
+	parameters = { power=0.1, resist=1 },
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "lucid_dreamer", 1)
+		self:effectTemporaryValue(eff, "resists", {[DamageType.MIND] = eff.resist})
+		self:effectTemporaryValue(eff, "resists_cap", {[DamageType.MIND] = eff.resist})
+		
+	end,
+	deactivate = function(self, eff)
+	end,
+}
+
+newEffect{
 	name = "REK_GLR_DREAM_SHIFT", image = "talents/rek_glr_nightmare_shift.png",
 	desc = "Dream Shift",
 	long_desc = function(self, eff) return ("The target is a harmless animal, with %d less stats."):format() end,
@@ -264,8 +283,14 @@ newEffect{
 																						[Stats.STAT_WIL] = -eff.pow,
 																						[Stats.STAT_CUN] = -eff.pow,
 																						[Stats.STAT_LUCK] = -eff.pow})
+		self.replace_display = mod.class.Actor.new{image="npc/vermin_rodent_cute_little_bunny.png",}
+		self:removeAllMOs()
+		game.level.map:updateMap(self.x, self.y)
 	end,
 	deactivate = function(self, eff)
+		self.replace_display = nil
+		self:removeAllMOs()
+		game.level.map:updateMap(self.x, self.y)
 	end,
 	on_timeout = function(self, eff)
 		if eff.lockin > 0 then
@@ -273,5 +298,19 @@ newEffect{
 			return
 		end
 		if not self:checkHit(eff.save, self:combatMindResist(), 0, 95, 5) then eff.dur = 0 end
+	end,
+}
+
+newEffect{
+	name = "REK_GLR_HALLUCINATING", image = "talents/rek_glr_nightmare_overlay.png",
+	desc = "Hallucination",
+	long_desc = function(self, eff) return ("Does %d%% less damage to non-hallucinatory targets."):format(eff.power*100) end,
+	type = "other",
+	subtype = { psionic=true, nightmare=true, hallucination=true },
+	status = "detrimental",
+	parameters = { power=0.1 },
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
 	end,
 }

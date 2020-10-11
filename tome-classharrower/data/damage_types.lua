@@ -47,3 +47,23 @@ newDamageType{
 		return DamageType:get(DamageType.LIGHT).projector(src, x, y, DamageType.LIGHT, dam, state)
 	end,
 }
+
+newDamageType{
+	name = "nightmare", type = "REK_GLR_ETERNAL_SLEEP",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		local validTypes = {physical=true, mental=true, magical=true}
+
+		if target then
+			for eff_id, p in pairs(target.tmp) do
+				local e = target.tempeffect_def[eff_id]
+				if validTypes[e.type] and (e.subtype["stun"] or e.subtype["sleep"]) then
+					local eff = target.tmp[eff_id]
+					eff.dur = eff.dur + 1
+				end
+			end
+		end
+	end,
+}

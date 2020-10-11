@@ -23,3 +23,20 @@ class:bindHook(
 		end
 		return hd   
 	end)
+
+class:bindHook("DamageProjector:base", function(self, hd)
+	local src = hd.src
+	local type = hd.type
+	local dam = hd.dam
+	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
+	
+	if type ~= DamageType.MIND and target.hasEffect then
+		local eff = target:hasEffect(target.T_REK_GLR_COSMIC_AWARENESS)
+		if eff then
+			local damMind = dam * eff.power
+			src:project(tg, target.x, target.y, DamageType.MIND, {src=src, dam=damMind})
+			hd.dam = dam * (1-eff.power)
+		end
+	end
+	return hd
+end)
