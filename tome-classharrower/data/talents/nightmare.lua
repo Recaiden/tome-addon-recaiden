@@ -7,10 +7,10 @@ newTalent{
 	no_energy = true,
 	psi = 20,
 	getDuration = function(self, t) return self:combatTalentWeaponDamage(t, 5, 10) end,
-	getConversion = function(self, t) return math.min(2/3, self:combatTalentMindDamage(t, 0.33, 0.6)) end,
+	getConversion = function(self, t) return math.min(2/3, self:combatTalentMindDamage(t, 0.36, 0.62)) end,
 	getResist = function(self, t) return self:combatTalentScale(t, 4, 9) end,
 	action = function(self, t)
-		self:setEffect(self.EFF_REK_GLR_COSMIC_AWARENESS, t.getDuration(self, t) {power=t.getConversion(self, t), resist=t.getResist(self, t), src=self})
+		self:setEffect(self.EFF_REK_GLR_COSMIC_AWARENESS, t.getDuration(self, t), {power=t.getConversion(self, t), resist=t.getResist(self, t), src=self})
 		return true
 	end,
 	info = function(self, t)
@@ -25,7 +25,7 @@ Mindpower: improves	conversion to mind damage.
 }
 
 newTalent{
-	name = "Narcolepsy", short_name = "REK_GLR_NIGHTMARE_NARCOLESPY",
+	name = "Narcolepsy", short_name = "REK_GLR_NIGHTMARE_NARCOLEPSY",
 	type = {"psionic/unleash-nightmare", 2},
 	require = wil_req_high2,
 	points = 5,
@@ -108,7 +108,7 @@ newTalent{
 		end,
 	info = function(self, t)
 		return ([[Transform a sleeping target into a harmless animal.  In this state all their stats are reduced by %d.
-They spend at least %d turns in animal form (and turns while sleeping do not count).  After this they make a mental save each round to return to normal.]]):format(t.getDamage(self, t) * 100, t.getEffDamage(self, t) * 100)
+They spend at least %d turns in animal form (turns while sleeping do not count).  After this they make a mental save each round to return to normal.]]):format(t.getStat(self, t), t.getDuration(self, t))
 	end,
 }
 
@@ -121,13 +121,13 @@ newTalent{
 	psi = 16,
 	range = function(self, t) return 10 - t.radius(self, t) end,
 	radius = function(self, t) return math.floor(self:combatTalentScale(t, 2, 4.5)) end,
-	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.2, 0.6) end,
+	getDamage = function(self, t) return self:combatTalentMindDamage(t, 1.0, 1.6) end,
 	getDuration = function(self, t) return math.floor(self:combatTalentLimit(t, 10, 4, 7)) end,
 	getHallucination = function(self, t) return math.min(0.5, self:combatTalentMindDamage(t, 0.20, 0.33)) end,
 	getNightmareSummon = function(self, t)
 		local gaunt =  {
 			name = "nightgaunt",
-			display = "h", color=colors.DARK_GREY, image="npc/horror_eldritch_nightmare_horror.png",
+			display = "h", color=colors.DARK_GREY, image="npc/nightmare_nightgaunt.png",
 			blood_color = colors.BLUE,
 			desc = "A formless terror that seems to cut through the air, and its victims, like a knife.",
 			type = "horror", subtype = "eldritch",
@@ -152,14 +152,14 @@ newTalent{
 			max_life = resolvers.rngavg(50, 80),
 			combat_armor = 1, combat_def = 10,
 			combat = {
-				dam=resolvers.levelup(resolvers.rngavg(15,20), 1, 1.1),
+				dam=resolvers.levelup(resolvers.rngavg(15 * t.getDamage(self, t), 20 * t.getDamage(self, t)), 1, 1.1),
 				atk=resolvers.rngavg(5,15), apr=5, dammod={str=1}
 			},
 			resolvers.talents{}
 		}
 		local hallucination =  {
 			name = "hallucination",
-			display = "h", color=colors.DARK_GREY, image="npc/horror_eldritch_nightmare_horror.png",
+			display = "h", color=colors.DARK_GREY, image="npc/nightmare_hallucination.png",
 			blood_color = colors.BLUE,
 			type = "horror", subtype = "eldritch",
 			rank = 2,
@@ -185,16 +185,13 @@ newTalent{
 			combat = { dam=1, atk=1, apr=1, damtype=DamageType.DARKNESS },
 			resolvers.talents{}
 		}
-		if rng.percent() < 50 then return gaunt else return hallucination end
+		if rng.percent(50) then return gaunt else return hallucination end
 	end,
 	action = function(self, t)
 		local tg = {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t)}
 		local x, y, target = self:getTarget(tg)
 		if not x or not y then return nil end
 		local _ _, x, y = self:canProject(tg, x, y)
-		
-		--local dam = self:spellCrit(t.getDamage(self, t))
-		--self:project({type="hit", talent=t}, x, y, DamageType.LIGHT, dam, {type="light"})
 		
 		-- Add a lasting map effect
 		game.level.map:addEffect(
@@ -203,7 +200,7 @@ newTalent{
 			DamageType.REK_GLR_ETERNAL_SLEEP, 1,
 			self:getTalentRadius(t),
 			5, nil,
-			MapEffect.new{color_br=50, color_bg=type.12, color_bb=199, alpha=100, effect_shader="shader_images/nightmare_effect.png"},
+			MapEffect.new{color_br=50, color_bg=20, color_bb=199, alpha=100, effect_shader="shader_images/nightmare_effect.png"},
 			function(e, update_shape_only)
 				if not update_shape_only then 
 					-- attempt one summon per turn
@@ -224,8 +221,7 @@ newTalent{
 					if #locations == 0 then return true end
 					local location = rng.table(locations)
 
-					local m = require("mod.class.NPC").new(caster:callTalent(self.T_REK_GLR_NIGHTMARE_OVERLAY, "getNightmareSummon")
-																								)
+					local m = require("mod.class.NPC").new(caster:callTalent(self.T_REK_GLR_NIGHTMARE_OVERLAY, "getNightmareSummon"))
 					if m.hallucination then
 						m.hallucination_power = t.getHallucination(self, t)
 						m.on_act = function(self)
@@ -239,7 +235,7 @@ newTalent{
 									end
 								end)
 							self.energy.value = 0
-						end,
+						end
 					end
 					m.faction = e.src.faction
 					m.summoner = e.src
@@ -266,8 +262,8 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Merge dreams and reality within a radius %d area for %d turns. Within this area stun, daze, and sleep effects do not expire, and nightguants and hallucinations continually spawn.
-Nightguants are weak attackers that do not interrupt sleep or daze.
+Nightguants are weak attackers (%d%% damage) that do not interrupt sleep or daze.
 Hallucinations do no harm but reduce damage dealt to nearby non-hallucination targets by %d%%.
-Mindpower: improves summon powers]]):format(self:getTalentRadius(t), t.getDuration(self, t), t.getHallucination(self, t))
+Mindpower: improves summon powers]]):format(self:getTalentRadius(t), t.getDuration(self, t), t.getDamage(self, t)*100, t.getHallucination(self, t)*100)
 	end,
 }

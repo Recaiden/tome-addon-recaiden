@@ -31,20 +31,22 @@ function _M:onTakeHit(value, src, death_note)
 				e.temp_power = (e.temp_power or e.power) + value
 			end
 		end
-
+		
 		self:attr("damage_dont_undaze", 1)
 	end
-
+	
 	-- Un-daze
 	if self:hasEffect(self.EFF_REK_GLR_DAZE) and not self:attr("damage_dont_undaze") and (not src or not src.turn_procs or not src.turn_procs.dealing_damage_dont_undaze) then
 		self:removeEffect(self.EFF_REK_GLR_DAZE)
 	end
-
-	return base_onTakeHit(self, value, src, death_note)
-
+	
+	local ret = base_onTakeHit(self, value, src, death_note)
+	
 	if unwaking then
 		self:attr("damage_dont_undaze", -1)
 	end
+
+	return ret
 end
 
 return _M

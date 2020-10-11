@@ -269,20 +269,20 @@ newEffect{
 newEffect{
 	name = "REK_GLR_DREAM_SHIFT", image = "talents/rek_glr_nightmare_shift.png",
 	desc = "Dream Shift",
-	long_desc = function(self, eff) return ("The target is a harmless animal, with %d less stats."):format() end,
+	long_desc = function(self, eff) return ("The target is a harmless animal, with %d less stats."):format(eff.power) end,
 	type = "other",
 	subtype = { psionic=true, dream=true },
 	status = "detrimental",
 	decrease = 0,
 	parameters = { power=10, lockin=1, save=20 },
 	activate = function(self, eff)
-		effectTemporaryValue(eff, "inc_stats", {[Stats.STAT_STR] = -eff.pow,
-																						[Stats.STAT_DEX] = -eff.pow,
-																						[Stats.STAT_CON] = -eff.pow,
-																						[Stats.STAT_MAG] = -eff.pow,
-																						[Stats.STAT_WIL] = -eff.pow,
-																						[Stats.STAT_CUN] = -eff.pow,
-																						[Stats.STAT_LUCK] = -eff.pow})
+		self:effectTemporaryValue(eff, "inc_stats", {[Stats.STAT_STR] = -eff.power,
+																						[Stats.STAT_DEX] = -eff.power,
+																						[Stats.STAT_CON] = -eff.power,
+																						[Stats.STAT_MAG] = -eff.power,
+																						[Stats.STAT_WIL] = -eff.power,
+																						[Stats.STAT_CUN] = -eff.power,
+																						[Stats.STAT_LCK] = -eff.power})
 		self.replace_display = mod.class.Actor.new{image="npc/vermin_rodent_cute_little_bunny.png",}
 		self:removeAllMOs()
 		game.level.map:updateMap(self.x, self.y)
@@ -297,7 +297,7 @@ newEffect{
 			eff.lockin = eff.lockin - 1
 			return
 		end
-		if not self:checkHit(eff.save, self:combatMindResist(), 0, 95, 5) then eff.dur = 0 end
+		if not self:checkHit(eff.save, self:combatMentalResist(), 0, 95, 5) then eff.dur = 0 end
 	end,
 }
 
