@@ -29,7 +29,6 @@ newTalent{
 		--TODO particle
 		local ret  = {}
 		self:talentTemporaryValue(ret, "movement_speed", t.getSpeed(self, t))
-		self:talentTemporaryValue(ret, "movement_speed", t.getSpeed(self, t))
 		self:talentTemporaryValue(ret, "pin_immune", 1)
 		self:talentTemporaryValue(ret, "levitation", 1)
 		self:talentTemporaryValue(ret, "avoid_pressure_traps", 1)
@@ -152,7 +151,7 @@ newTalent{
 	psi = 15,
 	range = archery_range,
 	requires_target = true,
-	tactical = { ATTACK = { weapon = 2 }, DISABLE = { knockback = 2 }, ESCAPE = { knockback = 1 } },
+	tactical = { ATTACK = { weapon = 0.5 } },
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.1, 1.3) end,
 	getEffDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.25, 0.5) end,
 	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,

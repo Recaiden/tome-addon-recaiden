@@ -247,3 +247,31 @@ newEffect{
 	end,
 }
 
+newEffect{
+	name = "REK_GLR_DREAM_SHIFT", image = "talents/rek_glr_nightmare_shift.png",
+	desc = "Dream Shift",
+	long_desc = function(self, eff) return ("The target is a harmless animal, with %d less stats."):format() end,
+	type = "other",
+	subtype = { psionic=true, dream=true },
+	status = "detrimental",
+	decrease = 0,
+	parameters = { power=10, lockin=1, save=20 },
+	activate = function(self, eff)
+		effectTemporaryValue(eff, "inc_stats", {[Stats.STAT_STR] = -eff.pow,
+																						[Stats.STAT_DEX] = -eff.pow,
+																						[Stats.STAT_CON] = -eff.pow,
+																						[Stats.STAT_MAG] = -eff.pow,
+																						[Stats.STAT_WIL] = -eff.pow,
+																						[Stats.STAT_CUN] = -eff.pow,
+																						[Stats.STAT_LUCK] = -eff.pow})
+	end,
+	deactivate = function(self, eff)
+	end,
+	on_timeout = function(self, eff)
+		if eff.lockin > 0 then
+			eff.lockin = eff.lockin - 1
+			return
+		end
+		if not self:checkHit(eff.save, self:combatMindResist(), 0, 95, 5) then eff.dur = 0 end
+	end,
+}
