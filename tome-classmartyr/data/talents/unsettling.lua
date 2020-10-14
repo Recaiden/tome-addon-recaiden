@@ -68,7 +68,7 @@ newTalent{
 		
 		if self:knowTalent(self.T_REK_MTYR_UNSETTLING_UNVEIL) then
 			local t3 = self:getTalentFromId(self.T_REK_MTYR_UNSETTLING_UNVEIL)
-			pitlessness = t3.getPitiless(self, t3)
+			pitilessness = t3.getPitiless(self, t3)
 		end
 		
 		self:project(

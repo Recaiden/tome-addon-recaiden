@@ -59,7 +59,7 @@ newTalent{
 			if hit then game:playSoundNear(self, self.on_hit_sound or "actions/melee_hit_squish") end
 		end
 		if hit and not target.dead then
-			target:setEffect(target.EFF_REK_MTYR_SCORN, 5, {damage=dam, ramp=ramp, fail=fail, lifesteal=lifesteal, src=self, apply_power=self:combatMindpower()})
+			target:setEffect(target.EFF_REK_MTYR_SCORN, 5, {damage={{power=dam, dur_m=0}}, ramp=ramp, fail=fail, lifesteal=lifesteal, src=self})
 			-- insanityBonus
 			if amInsane(self) then
 				if target:canBe("slow") then

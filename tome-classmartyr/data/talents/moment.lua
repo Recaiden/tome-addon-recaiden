@@ -160,11 +160,11 @@ newTalent{
 					self:attackTargetWith(tmp_target, t.getFinalMoment(self, t), nil, t.getDamage(self, t))
 				end
 			end)
-		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(ox-self.x), math.abs(oy-self.y)), "psionicbeam", {tx=ox-self.x, ty=oy-self.y})
+		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(ox-self.x), math.abs(oy-self.y)), "rek_time_beam", {tx=ox-self.x, ty=oy-self.y})
 		
 		--create sword at ox, oy
 		local map_eff = game.level.map:addEffect(
-			self, ox, oy, t.getDurSword(self, t), DamageType.NULL_TYPE, 
+			self, ox, oy, t.getDurSword(self, t), DamageType.COSMETIC, 
 			{dam = t.getDamage(self, t), radius = 0, self = self, talent = t}, 
 			0, 5, nil, 
 			{type="warning_ring", args ={radius = 1, r=45, g=15, b=110, nb=10, size=8}},
@@ -183,7 +183,7 @@ newTalent{
 									e.src:attackTargetWith(tmp_target, t.getFinalMoment(e.src, t), nil, t.getDamage(e.src, t))
 								end
 							end)
-						game.level.map:particleEmitter(e.x, e.y, math.max(math.abs(e.src.x-e.x), math.abs(e.src.y-e.y)), "psionicbeam", {tx=e.src.x-e.x, ty=e.src.y-e.y})
+						game.level.map:particleEmitter(e.x, e.y, math.max(math.abs(e.src.x-e.x), math.abs(e.src.y-e.y)), "rek_time_beam", {tx=e.src.x-e.x, ty=e.src.y-e.y})
 						
 					end
 					e.src.__project_source = nil

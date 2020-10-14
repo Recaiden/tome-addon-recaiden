@@ -7,57 +7,83 @@ local Map = require "engine.Map"
 local Level = require "engine.Level"
 
 newEffect{
-   name = "REK_MTYR_UNNERVE", image = "talents/rek_mtyr_unnerve.png",
-   desc = "Unnerved",
-   long_desc = function(self, eff) return ("Unable to handle the truth, giving them a %d chance to act randomly, suffering %d damage, and losing %d power, with a %d%% chance for longer cooldowns"):format(eff.power, eff.damage, eff.powerlessness, eff.pitilessness) end,
-   type = "mental",
-   subtype = { confusion=true, },
-   status = "detrimental",
-   parameters = { power = 20, damage=0, powerlessness=0, pitilessness=0 },
-   
-   activate = function(self, eff)
-      eff.power = math.floor(util.bound(eff.power, 0, 50))
-      eff.tmpid = self:addTemporaryValue("confused", eff.power)
-
-      if eff.powerlessness > 0 then
-         eff.mental = self:addTemporaryValue("combat_mindpower", -eff.powerlessness)
-         eff.spell = self:addTemporaryValue("combat_spellpower", -eff.powerlessness)
-         eff.physical = self:addTemporaryValue("combat_dam", -eff.powerlessness)
-      end
-   end,
-   deactivate = function(self, eff)
-      self:removeTemporaryValue("confused", eff.tmpid)
-      if eff.mental then
-         self:removeTemporaryValue("combat_mindpower", eff.mental)
-         self:removeTemporaryValue("combat_spellpower", eff.spell)
-         self:removeTemporaryValue("combat_dam", eff.physical)
-      end
-      if self == game.player and self.updateMainShader then self:updateMainShader() end
-   end,
-   callbackOnAct = function(self, eff)
-      if eff.src and eff.src:knowTalent(self.T_REK_MTYR_UNSETTLING_UNVEIL) and eff.src:getInsanity() <= 40 then
-         if rng.percent(self:attr("confused")) then
-            eff.src:incInsanity(1)
-         end
-      end
-      if rng.percent(eff.pitilessness) then
-         local tids = {}
-         for tid, lev in pairs(self.talents) do
-            local t = self:getTalentFromId(tid)
-            if t and self.talents_cd[tid] and not t.fixed_cooldown then tids[#tids+1] = t end
-         end
-         while #tids > 0 do
-            local tt = rng.tableRemove(tids)
-            if not tt then break end
-            self.talents_cd[tt.id] = self.talents_cd[tt.id] + 1
-         end
-      end
-   end,
-   on_timeout = function(self, eff)
-      if eff.damage > 0 then
-         DamageType:get(DamageType.MIND).projector(eff.src, self.x, self.y, DamageType.MIND, eff.damage)
-      end
-   end,
+	name = "REK_MTYR_UNNERVE", image = "talents/rek_mtyr_unnerve.png",
+	desc = "Unnerved",
+	long_desc = function(self, eff) return ("Unable to handle the truth, giving them a %d chance to act randomly, suffering %d damage, and losing %d power, with a %d%% chance for longer cooldowns"):format(eff.power, eff.damage, eff.powerlessness, eff.pitilessness) end,
+	type = "mental",
+	subtype = { confusion=true, },
+	status = "detrimental",
+	parameters = { power = 20, damage=0, powerlessness=0, pitilessness=0 },
+	
+	activate = function(self, eff)
+		eff.power = math.floor(util.bound(eff.power, 0, 50))
+		eff.tmpid = self:addTemporaryValue("confused", eff.power)
+		
+		if eff.powerlessness > 0 then
+			eff.mental = self:addTemporaryValue("combat_mindpower", -eff.powerlessness)
+			eff.spell = self:addTemporaryValue("combat_spellpower", -eff.powerlessness)
+			eff.physical = self:addTemporaryValue("combat_dam", -eff.powerlessness)
+		end
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("confused", eff.tmpid)
+		if eff.mental then
+			self:removeTemporaryValue("combat_mindpower", eff.mental)
+			self:removeTemporaryValue("combat_spellpower", eff.spell)
+			self:removeTemporaryValue("combat_dam", eff.physical)
+		end
+		if self == game.player and self.updateMainShader then self:updateMainShader() end
+	end,
+	on_merge = function(self, old_eff, new_eff)
+		-- Merge the best part of each effect
+		local olddam = old_eff.damage * old_eff.dur
+		local newdam = new_eff.damage * new_eff.dur
+		old_eff.dur = new_eff.dur
+		old_eff.damage = (olddam + newdam) / old_eff.dur
+		old_eff.power = math.max(old_eff.power, new_eff.power)
+		old_eff.powerlessness = math.max(old_eff.powerlessness, new_eff.powerlessness)
+		old_eff.pitilessness = math.max(old_eff.pitilessness, new_eff.pitilessness)
+		-- Clear the old debuffs
+		if old_eff.mental then
+			self:removeTemporaryValue("combat_mindpower", old_eff.mental)
+			self:removeTemporaryValue("combat_spellpower", old_eff.spell)
+			self:removeTemporaryValue("combat_dam", old_eff.physical)
+		end
+		self:removeTemporaryValue("confused", old_eff.tmpid)
+		-- Add the new debuffs
+		old_eff.power = math.floor(util.bound(old_eff.power, 0, 50))
+		old_eff.tmpid = self:addTemporaryValue("confused", old_eff.power)
+		if old_eff.powerlessness > 0 then
+			old_eff.mental = self:addTemporaryValue("combat_mindpower", -old_eff.powerlessness)
+			old_eff.spell = self:addTemporaryValue("combat_spellpower", -old_eff.powerlessness)
+			old_eff.physical = self:addTemporaryValue("combat_dam", -old_eff.powerlessness)
+		end
+		return old_eff
+	end,
+	callbackOnAct = function(self, eff)
+		if eff.src and eff.src:knowTalent(self.T_REK_MTYR_UNSETTLING_UNVEIL) and eff.src:getInsanity() <= 40 then
+			if rng.percent(self:attr("confused")) then
+				eff.src:incInsanity(1)
+			end
+		end
+		if eff.pitilessness > 0 then
+			local tids = {}
+			for tid, lev in pairs(self.talents) do
+				local t = self:getTalentFromId(tid)
+				if t and self.talents_cd[tid] and not t.fixed_cooldown and rng.percent(eff.pitilessness) then tids[#tids+1] = t end
+			end
+			while #tids > 0 do
+				local tt = rng.tableRemove(tids)
+				if not tt then break end
+				self.talents_cd[tt.id] = self.talents_cd[tt.id] + 1
+			end
+		end
+	end,
+	on_timeout = function(self, eff)
+		if eff.damage > 0 then
+			DamageType:get(DamageType.MIND).projector(eff.src, self.x, self.y, DamageType.MIND, eff.damage)
+		end
+	end,
 }
 
 newEffect{
@@ -80,51 +106,103 @@ newEffect{
 
 
 newEffect{
-   name = "REK_MTYR_SCORN", image = "talents/rek_mtyr_scourge_infest.png",
-   desc = "Scorned",
-   long_desc = function(self, eff)
-      local str = ("The target's self-image has been crushed, and they take %d damage each turn as a Disease effect"):format(eff.damage)
-      if eff.lifesteal > 0 then
-         str = str..(" and heal the source for %d%% as much."):format(eff.lifesteal*100)
-      else
-         str = str.."."
-      end
-      if eff.ramp > 1 then
-         str = str..("\nThe damage's intensity will increase by %d%% per turn."):format((eff.ramp-1)*100)
-      end
-      if eff.fail > 0 then
-         str = str..("\nThe pain causes them to have a %d%% chance to fail to use talents."):format(eff.fail)
-      end
-      return str
-   end,
-   type = "mental",
-   subtype = { disease=true, },
-   status = "detrimental",
-   parameters = { damage=10, ramp=1, lifesteal=0, fail=0 },
-   activate = function(self, eff)
-      if eff.fail then
-         self:effectTemporaryValue(eff, "talent_fail_chance", eff.fail)
-      end
-   end,
-   deactivate = function(self, eff)
-   end,
-   on_timeout = function(self, eff)
-      if eff.damage > 0 then
-         local damCurrent = eff.damage
-         --t2 insanity bonus
-         if eff.src and eff.src:knowTalent(self.T_REK_MTYR_SCOURGE_SHARED_FEAST) and eff.src:getInsanity() >= 60 then
-            damCurrent = damCurrent * (1 + (eff.src:getInsanity()-50) / 100)
-         end
-         
-         local realdam = DamageType:get(DamageType.MIND).projector(eff.src, self.x, self.y, DamageType.MIND, damCurrent, {from_disease=true})
-         if eff.src and realdam > 0 and not eff.src:attr("dead") then
-            eff.src:heal(realdam * eff.lifesteal, self)
-         end
-      end
-      if eff.src and eff.src.x and eff.src.y and core.fov.distance(self.x, self.y, eff.src.x, eff.src.y) <= 3 then
-         eff.damage = eff.damage*eff.ramp
-      end
-   end,
+	name = "REK_MTYR_SCORN", image = "talents/rek_mtyr_scourge_infest.png",
+	desc = "Scorned",
+	long_desc = function(self, eff)
+		local damageTotal = 0
+		for i, instance in pairs(eff.damage) do
+			damageTotal = damageTotal + instance.power
+		end
+		local str = ("The target's self-image has been crushed, and they take %d damage each turn as a Disease effect"):format(damageTotal)
+		if eff.lifesteal > 0 then
+			str = str..(" and heal the source for %d%% as much."):format(eff.lifesteal*100)
+		else
+			str = str.."."
+		end
+		if eff.ramp > 1 then
+			str = str..("\nThe damage's intensity will increase by %d%% per turn."):format((eff.ramp-1)*100)
+		end
+		if eff.fail > 0 then
+			str = str..("\nThe pain causes them to have a %d%% chance to fail to use talents."):format(eff.fail)
+		end
+		return str
+	end,
+	type = "mental",
+	subtype = { disease=true, },
+	status = "detrimental",
+	parameters = { damage={{power=10, dur_m=0}}, ramp=1, lifesteal=0, fail=0},
+	charges = function(self, eff)
+		local damageTotal = 0
+		for i, instance in pairs(eff.damage) do
+			damageTotal = damageTotal + instance.power
+		end
+		return math.round(damageTotal)
+	end,
+	activate = function(self, eff)
+		if eff.fail then
+			eff.fail_id = self:addTemporaryValue("talent_fail_chance", eff.fail)
+		end
+	end,
+	deactivate = function(self, eff)
+		if eff.fail_id then
+			self:removeTemporaryValue("talent_fail_chance", eff.fail_id)
+		end
+	end,
+	on_merge = function(self, old_eff, new_eff)
+		-- mark old damage instances to expire
+		for i, instance in pairs(old_eff.damage) do
+			old_eff.damage[i].dur_m = instance.dur_m + new_eff.dur - old_eff.dur
+		end
+		-- Merge the best part of each effect
+		old_eff.dur = new_eff.dur
+		old_eff.fail = math.max(old_eff.fail, new_eff.fail)
+		old_eff.ramp = math.max(old_eff.ramp, new_eff.ramp)
+		old_eff.lifesteal = math.max(old_eff.lifesteal, new_eff.lifesteal)
+		-- add new damage instance
+		old_eff.damage[#old_eff.damage+1] = new_eff.damage[1]
+		
+		-- Clear the old debuffs
+		if old_eff.fail_id then
+			self:removeTemporaryValue("talent_fail_chance", old_eff.fail_id)
+		end
+		-- Add the new debuffs
+		if old_eff.fail then
+			old_eff.fail_id = self:addTemporaryValue("talent_fail_chance", old_eff.fail)
+		end	
+		return old_eff
+	end,
+	on_timeout = function(self, eff)
+
+		local damCurrent = 0
+		for i, instance in pairs(eff.damage) do
+			-- applications that have lived out their allotted time are cleared.
+			if eff.dur < instance.dur_m then
+				eff.damage[i].power = 0
+			end
+
+			-- Collect the damage
+			if instance.power > 0 then
+				if eff.src and eff.src:knowTalent(self.T_REK_MTYR_SCOURGE_SHARED_FEAST) and eff.src:getInsanity() >= 60 then
+					--t2 insanity bonus
+					damCurrent = damCurrent + instance.power * (1 + (eff.src:getInsanity()-50) / 100)
+				else
+					damCurrent = damCurrent + instance.power
+				end
+				-- increase each damage instance
+				if eff.src and eff.src.x and eff.src.y and core.fov.distance(self.x, self.y, eff.src.x, eff.src.y) <= 3 then
+					eff.damage[i].power = instance.power * eff.ramp
+				end
+			end
+		end
+
+		-- Deal the damage
+		if damCurrent > 0 then
+			local realdam = DamageType:get(DamageType.MIND).projector(eff.src, self.x, self.y, DamageType.MIND, damCurrent, {from_disease=true})
+			if eff.src and realdam > 0 and not eff.src:attr("dead") then
+				eff.src:heal(realdam * eff.lifesteal, self)
+			end
+		end
+	end,
 }
 
 newEffect{
@@ -158,7 +236,7 @@ newEffect{
 newEffect{
    name = "REK_MTYR_DEMENTED", image = "talents/rek_mtyr_polarity_dement.png",
    desc = "Demented",
-   long_desc = function(self, eff) return ("The target cannot think clearly, reducing their damage and increasing their cooldowns by %d%%."):format(eff.power) end,
+   long_desc = function(self, eff) return ("The target cannot think clearly, reducing their damage and increasing their cooldowns by %d%%."):format(eff.power*100) end,
    type = "mental",
    subtype = { demented=true },
    status = "detrimental",
@@ -172,50 +250,51 @@ newEffect{
 }
 
 newEffect{
-   name = "REK_MTYR_MANIC_SPEED", image = "talents/rek_mtyr_polarity_manic_speed.png",
-   desc = "Demented",
-   long_desc = function(self, eff) return ("The target is moving at infinite speed for %d to %d steps."):format(eff.min_steps, eff.max_steps) end,
-   type = "mental",
-   charges = function(self, eff) return math.max(0, eff.min_steps - eff.steps) end,
-   subtype = { haste=true },
-   status = "beneficial",
-   parameters = { min_steps=1, max_steps=8 },
-
-   on_gain = function(self, err) return "#Target# accelerates out of sight!", "+Infinite Speed" end,
-   on_lose = function(self, err) return "#Target# has lost their manic speed.", "-Infinite Speed" end,
-   activate = function(self, eff)
-      self.did_energy = true
-      eff.steps = 0
-      eff.ox = self.x
-      eff.oy = self.y
-   end,
-   deactivate = function(self, eff)
-      if self:attr("defense_on_teleport") or self:attr("resist_all_on_teleport") or self:attr("effect_reduction_on_teleport") then
-         self:setEffect(self.EFF_OUT_OF_PHASE, 4, {})
-      end
-      self:fireTalentCheck("callbackOnTeleport", true, eff.ox, eff.oy, self.x, self.y)
-   end,
-   callbackOnMove = function(self, eff, moved, force, ox, oy, x, y)
-      if not moved then return end
-      if ox == x and oy == y then return end
-
-      self.did_energy = true
-      if self.reload then
-         local reloaded = self:reload()
-         if not reloaded and self.reloadQS then
-            self:reloadQS()
-         end
-      end
-      --self.energy.value = self.energy.value + game.energy_to_act * self:combatMovementSpeed(x, y)
-      
-      eff.steps = eff.steps + 1
-      local remaining = eff.max_steps - eff.steps +1
-      if eff.steps >= eff.max_steps or (eff.steps > eff.min_steps and rng.percent(100/remaining)) then
-         self:removeEffect(self.EFF_REK_MTYR_MANIC_SPEED)
-         game:playSoundNear(self, "talents/rek_warp_off")
-      end
-   end,
-         }
+	name = "REK_MTYR_MANIC_SPEED", image = "talents/rek_mtyr_polarity_manic_speed.png",
+	desc = "Manic Speed",
+	long_desc = function(self, eff) return ("The target is moving at infinite speed for %d to %d steps."):format(eff.min_steps, eff.max_steps) end,
+	type = "mental",
+	charges = function(self, eff) return math.max(0, eff.min_steps - eff.steps) end,
+	subtype = { haste=true },
+	status = "beneficial",
+	parameters = { min_steps=1, max_steps=8 },
+	
+	on_gain = function(self, err) return "#Target# accelerates out of sight!", "+Infinite Speed" end,
+	on_lose = function(self, err) return "#Target# has lost their manic speed.", "-Infinite Speed" end,
+	activate = function(self, eff)
+		self.did_energy = true
+		eff.steps = 0
+		eff.ox = self.x
+		eff.oy = self.y
+	end,
+	deactivate = function(self, eff)
+		game:playSoundNear(self, "talents/rek_warp_off")
+		if self:attr("defense_on_teleport") or self:attr("resist_all_on_teleport") or self:attr("effect_reduction_on_teleport") then
+			self:setEffect(self.EFF_OUT_OF_PHASE, 4, {})
+		end
+		self:fireTalentCheck("callbackOnTeleport", true, eff.ox, eff.oy, self.x, self.y)
+	end,
+	callbackOnMove = function(self, eff, moved, force, ox, oy, x, y)
+		self.did_energy = true
+		if not moved then return end
+		if force then return end
+		if ox == self.x and oy == self.y then return end
+		
+		if self.reload then
+			local reloaded = self:reload()
+			if not reloaded and self.reloadQS then
+				self:reloadQS()
+			end
+		end
+		--self.energy.value = self.energy.value + game.energy_to_act * self:combatMovementSpeed(x, y)
+		
+		eff.steps = eff.steps + 1
+		local remaining = eff.max_steps - eff.steps +1
+		if eff.steps >= eff.max_steps or (eff.steps > eff.min_steps and rng.percent(100/remaining)) then
+			self:removeEffect(self.EFF_REK_MTYR_MANIC_SPEED)	
+		end
+	end,
+}
 
 newEffect{
    name = "REK_MTYR_OVERSEER", image = "talents/rek_mtyr_vagabond_tainted_bullets.png",
@@ -735,14 +814,17 @@ newEffect{
 newEffect{
 	name = "MARTYR_STACKING_SLOW", image = "talents/rek_mtyr_vagabond_tainted_bullets.png",
 	desc = "Tainted Rounds",
-	long_desc = function(self, eff) return ("Reduces movement speed by %d%%."):format(math.floor(eff.stacks * 10)) end,
+	long_desc = function(self, eff)
+		local source = eff.src or self
+		return ("Reduces movement speed by %d%% and deals %0.2f mind damge when a new stack is applied."):format(math.floor(eff.stacks * 10), source:damDesc("MIND", eff.power*eff.stacks))
+	end,
 	charges = function(self, eff) return (math.floor(eff.stacks * 10).."%") end,
 	type = "physical",
 	subtype = { disease=true, slow=true },
 	status = "detrimental",
 	parameters = { power=3, stacks=1, max_stacks=5 },
 	on_gain = function(self, err) return "#Target# is slowed by the taint", "+Tainted Slow" end,
-	on_lose = function(self, err) return "#Target# speeds up.", "-Taainted Slow" end,
+	on_lose = function(self, err) return "#Target# speeds up.", "-Tainted Slow" end,
 	on_merge = function(self, old_eff, new_eff)
 		old_eff.dur = new_eff.dur
 		old_eff.stacks = math.min(old_eff.stacks + new_eff.stacks, new_eff.max_stacks)

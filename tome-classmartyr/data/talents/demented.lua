@@ -344,7 +344,7 @@ if not Talents.talents_types_def["demented/unsettling"] then
 end
 
 if not Talents.talents_types_def["demented/polarity"] then
-   newTalentType{ allow_random=true, generic=true, type="demented/polarity", name = "Polarity", description = "Dive into the madness; power comes at the price of sanity" }
+   newTalentType{ allow_random=true, is_mind=true, generic=true, type="demented/polarity", name = "Polarity", description = "Dive into the madness; power comes at the price of sanity" }
    load("/data-classmartyr/talents/polarity.lua")
 end
 

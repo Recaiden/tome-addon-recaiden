@@ -101,6 +101,31 @@ newTalent{
    getPower = function(self,t) return self:combatTalentScale(t, 20, 120) end,
    getChance = function(self, t) return 20 end,
    getDuration = function(self, t) return 4 end,
+	 checkForLight = function(self, t)
+		 local x, y = self.x, self.y
+		 local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_HEAL)
+		 if geff then
+			 geff.src.__project_source = geff
+			 DamageType:get(geff.damtype).projector(geff.src, x, y, geff.damtype, geff.dam)
+			 geff.src.__project_source = nil
+		 end
+		 geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_BUFF)
+		 if geff then
+			 geff.src.__project_source = geff
+			 DamageType:get(geff.damtype).projector(geff.src, x, y, geff.damtype, geff.dam)
+			 geff.src.__project_source = nil
+		 end
+		 geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_FLASH)
+		 if geff then
+			 geff.src.__project_source = geff
+			 DamageType:get(geff.damtype).projector(geff.src, x, y, geff.damtype, geff.dam)
+			 geff.src.__project_source = nil
+		 end
+	 end,
+	 callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
+		 if not moved then return end
+		 t.checkForLight(self, t)
+	 end,
    callbackOnActBase = function (self, t)
       if not self.in_combat then return end
       if not rng.percent(t.getChance(self, t)) then return end
@@ -129,6 +154,7 @@ newTalent{
          local ground_effect = game.level.map:
          addEffect(game.player, x, y, dur, type.dam, t.getPower(self, t), rng.range(1, 2), 5, nil, MapEffect.new{color_br=type.r, color_bg=type.g, color_bb=type.b, alpha=100, effect_shader="shader_images/guiding_effect.png"}, nil, true)
          game.logSeen(self, "#YELLOW#A guiding light appears!#LAST#", self.name:capitalize())
+				 t.checkForLight(self, t)
       end
    end,
    info = function(self, t)
