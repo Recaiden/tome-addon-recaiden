@@ -97,11 +97,11 @@ newTalent{
 				sy = s.y
 			end
 			--game.logPlayer(self, ("DEBUG - Aiming Crossfire from %d %d!"):format(sx, sy))
-			local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy = fired})
+			local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy = fired, no_sound=fired})
 			if targets then
 				local target = targets.dual and targets.main[1] or targets[1]
 				--self:archeryShoot(targets, t, {type="bolt", start_x=eff.x, start_y=eff.y}, {mult=t.getDamage(self, t)})
-				self:archeryShoot(targets, t, {type = "bolt", start_x=sx, start_y=sy}, {mult=t.getDamage(self, t)})
+				self:archeryShoot(targets, t, {type = "bolt", start_x=sx, start_y=sy, speed=4}, {mult=t.getDamage(self, t)})
 				fired = true
 			else
 				-- If no target that means we're out of ammo.
@@ -203,8 +203,8 @@ newTalent{
 			local shot = false
 			target:knockback(
 				self.x, self.y, 4, nil,
-				function(g, x, y)
-					if game.level.map:checkEntity(x, y, Map.TERRAIN, "block_move", target) and not target:hasProc("hammer_shot_knock") then
+				function(g, x, y)		
+					if game.level.map:checkAllEntities(x, y, "block_move", target) and not target:hasProc("hammer_shot_knock") then
 						target:setProc("hammer_shot_knock", true, 1)
 						-- Reconstruct your approximate arrow damage and project it directly.
 						local weapon, ammo = self:hasArcheryWeapon()
@@ -214,6 +214,7 @@ newTalent{
 						dam = self:physicalCrit(dam, ammo, target, self:combatAttack(), target:combatDefense())
 						dam = dam * t.getSlamDamage(self, t)
 						self:project(target, target.x, target.y, DamageType.PHYSICAL, dam, nil)
+						self:project({type="hit"}, x, y, DamageType.PHYSICAL, dam, nil)
 						
 						if target:canBe("stun") then
 							target:setEffect(target.EFF_STUNNED, t.getDuration(self, t), {apply_power=self:combatPhysicalpower()})
@@ -230,6 +231,6 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Fire an arrow encased in a shell of tremendous kinetic energy, doing %d%% damage and knocking the target back 4 spaces.  If the target collides with a wall, it takes %d%% additional physical damage and is stunned (#SLATE#Physical Power vs Physical#LAST#) for %d turns.]]):format(t.getDamage(self, t) * 100, t.getSlamDamage(self, t) * 100, t.getDuration(self, t))
+		return ([[Fire an arrow encased in a shell of tremendous kinetic energy, doing %d%% damage and knocking the target back 4 spaces.  If the target collides with anything, it takes %d%% additional physical damage and is stunned (#SLATE#Physical Power vs Physical#LAST#) for %d turns.  If it collided with a creature, that creature also takes the bonus damage (but is not stunned).]]):format(t.getDamage(self, t) * 100, t.getSlamDamage(self, t) * 100, t.getDuration(self, t))
 	end,
 }

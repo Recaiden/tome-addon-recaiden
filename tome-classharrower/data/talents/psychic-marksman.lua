@@ -5,9 +5,9 @@ newTalent{
 	points = 5,
 	mode = "passive",
 	getDamage = function(self, t) return 30 end,
-	getPercentInc = function(self, t) return math.sqrt(self:getTalentLevel(t) / 5) / 1.5 end,
+	getPercentInc = function(self, t) return math.sqrt(self:getTalentLevel(t) / 5) / 1.8 end,
 	getReload = function(self, t)	return math.floor(self:combatTalentScale(t, 0, 2.7, "log"))	end,
-	getSpeed = function(self, t) return self:combatTalentScale(t, 10, 50) end,
+	getSpeed = function(self, t) return self:combatTalentScale(t, 10, 45) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, 'ammo_mastery_reload', t.getReload(self, t))
 		self:talentTemporaryValue(p, "slow_projectiles_outgoing", -1*t.getSpeed(self, t))
@@ -33,7 +33,7 @@ newTalent{
 	info = function(self, t)
 		return ([[You use telekinetic power to impart additional force to your arrows after firing, causing them to do an additional %0.2f physical damage on-hit.
 
-Your arrow attacks benefit from an additional accuracy bonus: 2.5%% increased on-hit damage per excess accuracy.]]):format(t.getDamage(self, t))
+Your arrow attacks benefit from an additional accuracy bonus: 2.5%% increased on-hit damage per excess accuracy.  Your on-hit damage can get mental critical hits.]]):format(t.getDamage(self, t))
 	end,
 }
 

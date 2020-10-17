@@ -104,15 +104,17 @@ newTalent{
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
+		local crit = self:mindCrit(1.0)
 		if not x or not y then return nil end
-		self:project(tg, x, y, DamageType.REK_GLR_CRYSTAL_LIGHT, {dam=t.getDamage(self, t), dur=t.getDuration(self, t), power=self:combatMindpower()})
+		self:project(tg, x, y, DamageType.REK_GLR_CRYSTAL_LIGHT, {dam=t.getDamage(self, t)*crit, dur=t.getDuration(self, t)*crit, power=self:combatMindpower()})
 		game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_earth", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
 
 		return true
 	end,
 	info = function(self, t)
 		return ([[Create a burst of blinding light in a radius %d cone. Tiles will be lit and all creatures will take %0.2f light damage and be blinded (#SLATE#Mindpower vs Physical#LAST#) for %d turns.
-Mindpower: increases damage]]):format( self:getTalentRadius(t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)), t.getDuration(self,t))
+Mindpower: increases damage
+Mind Critical: increases blind duration as well as damage]]):format( self:getTalentRadius(t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)), t.getDuration(self,t))
 	end,
 }
 

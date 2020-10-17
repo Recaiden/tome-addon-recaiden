@@ -6,8 +6,21 @@ newTalent{
 	cooldown = 20,
 	no_energy = true,
 	psi = 20,
+	on_learn = function(self, t)
+		local level = self:getTalentLevelRaw(t)
+		if level == 1 then
+			self:unlearnTalentType("psionic/unleash-abomination")
+			self.talents_types["psionic/unleash-abomination"] = nil
+		end
+	end,
+	on_unlearn = function(self, t)
+		local level = self:getTalentLevelRaw(t)
+		if level == 0 then
+			self:learnTalentType("psionic/unleash-abomination", false)
+		end
+	end,
 	getDuration = function(self, t) return self:combatTalentWeaponDamage(t, 5, 10) end,
-	getConversion = function(self, t) return math.min(2/3, self:combatTalentMindDamage(t, 0.36, 0.62)) end,
+	getConversion = function(self, t) return 0.18 + math.min(0.49, self:combatTalentMindDamage(t, 0.18, 0.44)) end,
 	getResist = function(self, t) return self:combatTalentScale(t, 4, 9) end,
 	action = function(self, t)
 		self:setEffect(self.EFF_REK_GLR_COSMIC_AWARENESS, t.getDuration(self, t), {power=t.getConversion(self, t), resist=t.getResist(self, t), src=self})
@@ -87,12 +100,12 @@ newTalent{
 	points = 5,
 	no_energy = "fake",
 	points = 5,
-	cooldown = 8,
+	cooldown = 16,
 	psi = 15,
 	range = 10,
 	requires_target = true,
 	tactical = { DISABLE = { stun = 1 } },
-	getStat = function(self, t) return self:combatTalentMindDamage(t, 15, 85) end,
+	getStat = function(self, t) return self:combatTalentMindDamage(t, 5, 40) end,
 	getDuration = function(self, t) return self:combatTalentScale(t, 3, 6) end,
 	target = function(self, t) return {type = "hit", range = self:getTalentRange(t), talent = t } end,
 	action = function(self, t)
@@ -243,6 +256,7 @@ newTalent{
 					m.summon_time = 3
 					m:resolve() m:resolve(nil, true)
 					m:forceLevelup(e.src.level)
+					m.energy.value = 1100
 					
 					-- Add to the party
 					if e.src.player then

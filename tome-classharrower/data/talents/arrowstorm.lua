@@ -18,7 +18,7 @@ newTalent{
 		local old_target_forced = game.target.forced
 		for i, target in pairs(targets) do
 			game.target.forced = {target.x, target.y, target}
-			local subtargets = self:archeryAcquireTargets({type = "hit", speed=200}, {one_shot=true, no_energy=true, infinite=true})
+			local subtargets = self:archeryAcquireTargets({type = "hit", speed=200}, {one_shot=true, no_energy=true, no_sound=true, infinite=true})
 			if subtargets then
 				self:archeryShoot(subtargets, t, {type = "bolt", start_x=target.x, start_y=target.y}, {mult=t.getDamage(self, t)})
 			else

@@ -60,7 +60,7 @@ newTalent{
 	auraTarget = function(self, t)
 		return {type="ball", range=t.auraRange(self, t), radius=t.auraRadius(self, t), selffire=false, friendlyfire=false}
 	end,
-	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 5.6)) end,
+	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5.6)) end,
 	getImmunityDuration = function(self, t) return 15 end,
 	getMaxOppression = function(self, t) return math.floor(self:getTalentLevel(t)) end,
 	activate = function(self, t)
@@ -122,7 +122,7 @@ newTalent{
 
 While Active: Each turn, non-fascinated enemies within range 10 will be fascinated, dazing them (#SLATE#Mindpower vs Mind#LAST#) for %d turns.  This can never inflict Brainlock. Once they recover from fascination, they are immune for %d turns.  If anyone is targeted, this costs #4080ff#1 Psi#LAST#.
 
-Deactivate: focus your presence to overwhelm a single creature, causing it to lose 1 turn for every 20%% of its life it was missing (up to %d turns).
+Deactivate: Focus your fascination to overwhelm a single creature, causing it to lose 1 turn for every 20%% of its life it was missing (up to %d turns).
 Costs #4080ff#%d psi#LAST#
 Uses Mind Speed
 
@@ -165,14 +165,14 @@ newTalent{
 		return {type="ball", range=t.auraRange(self, t), radius=t.auraRadius(self, t), selffire=false, friendlyfire=false}
 	end,
 	getDuration = function(self, t) return math.min(5, self:combatTalentScale(t, 1, 4)) end,
-	getPower = function(self,t) return self:getTalentLevel(t) * 10 end,
+	getPower = function(self,t) return self:getTalentLevel(t) * 7.5 end,
 	activate = function(self, t)
 		local ret = {}
 		return ret
 	end,
 	callbackOnAct = function(self, t)
 		local tg = t.auraTarget(self, t)
-		local dur = 3
+		local dur = 1
 		self:project(
 			tg, self.x, self.y,
 			function(tx, ty)
@@ -217,11 +217,11 @@ newTalent{
 
 While Active: Enemies within %d have their mental save reduced by %d. (#SLATE#No Save#LAST#)
 
-Deactivate: Focus the terror on a single creature, preventing them from using talents for %d turns.
+Deactivate: Focus your awesomeness to dazzle a single creature, preventing them from using talents for %d turns.
 Costs #4080ff#%d psi#LAST#
 Uses Mind Speed
 
-#{italic}#All who approach you are overwhelmed by your presence.#{normal}#
+#{italic}#All who approach you realize how unimportant they are.#{normal}#
 
 Each point in Idol talents increases your mindpower by 2.]]):format(t.auraRadius(t), t.getPower(self, t), t.getDuration(self, t), t.getSpikeCost(self, t))
 	end,

@@ -7,6 +7,19 @@ newTalent{
 	cooldown = 18,
 	no_energy = true,
 	mode = "sustained",
+	on_learn = function(self, t)
+		local level = self:getTalentLevelRaw(t)
+		if level == 1 then
+			self:unlearnTalentType("psionic/unleash-nightmare")
+			self.talents_types["psionic/unleash-nightmare"] = nil
+		end
+	end,
+	on_unlearn = function(self, t)
+		local level = self:getTalentLevelRaw(t)
+		if level == 0 then
+			self:learnTalentType("psionic/unleash-nightmare", false)
+		end
+	end,
 	target = function(self, t) return {type="widebeam", radius=1, nolock=true, range=self:getTalentRange(t), selffire=false, talent=t} end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.5, 0.75) end,
 	getSpeed = function(self, t) return self:combatTalentScale(t, 0.5, 1.5) end,

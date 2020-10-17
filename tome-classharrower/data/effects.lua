@@ -161,7 +161,7 @@ newEffect{
 	desc = "Cocoon Snare",
 	long_desc = function(self, eff) return ("The target is pinned in place and loses %d resistances."):format(eff.power) end,
 	type = "mental",
-	subtype = { psionic=true, stun=true },
+	subtype = { psionic=true, pin=true },
 	status = "detrimental",
 	parameters = { power=10 },
 	on_gain = function(self, err) return "#Target# is snared.", "+Cocoon" end,
@@ -285,6 +285,7 @@ newEffect{
 																						[Stats.STAT_LCK] = -eff.power})
 		self.replace_display = mod.class.Actor.new{image="npc/vermin_rodent_cute_little_bunny.png",}
 		self:removeAllMOs()
+		self.life = min(self.life, self.max_life)
 		game.level.map:updateMap(self.x, self.y)
 	end,
 	deactivate = function(self, eff)
@@ -297,7 +298,7 @@ newEffect{
 			eff.lockin = eff.lockin - 1
 			return
 		end
-		if not self:checkHit(eff.save, self:combatMentalResist(), 0, 95, 5) then eff.dur = 0 end
+		if not self:checkHit(eff.save, self:combatMentalResist(), 0, 95, 10) then eff.dur = 0 end
 	end,
 }
 

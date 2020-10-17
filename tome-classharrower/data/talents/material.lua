@@ -6,6 +6,9 @@ newTalent{
 	range = function(self, t) return math.min(14, math.floor(self:combatTalentScale(t, 6, 10))) end,
 	cooldown = 18,
 	psi = 8,
+	on_pre_use = function(self, t)
+		return not self:attr("never_move")
+	end,
 	target = function(self, t) return {type="widebeam", radius=1, nolock=true, range=self:getTalentRange(t), selffire=false, talent=t} end,
 	getDamage = function(self, t) return self:combatTalentMindDamage(t, 20, 250) end,
 	action = function(self, t)
