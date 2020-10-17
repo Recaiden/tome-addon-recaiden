@@ -17,6 +17,7 @@ newTalent{
 		if game.level.map:checkEntity(tx, ty, Map.TERRAIN, "block_move") then return nil end
 
 
+		local ox, oy = self.x, self.y
 		local hit = false
 		local dam = self:mindCrit(t.getDamage(self, t))
 
@@ -34,7 +35,7 @@ newTalent{
 		self:move(tx, ty, true)
 		
 		--send out damage along the path
-		self:project(tg, tx, ty, function(px, py)
+		self:project(tg, ox, oy, function(px, py)
 									 DamageType:get(DamageType.PHYSICALBLEED).projector(self, px, py, DamageType.PHYSICALBLEED, dam)
 			local target = game.level.map(px, py, Map.ACTOR)
 			if target then hit = true end
