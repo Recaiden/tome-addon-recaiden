@@ -61,33 +61,38 @@ end
 
 
 function checkMaxSummonStar(self, silent, div, check_attr)
-   div = div or 1
-   local nb = 0
-   
-   -- Count party members
-   if game.party:hasMember(self) then
-      for act, def in pairs(game.party.members) do
-	 if act.summoner and act.summoner == self and act.wild_gift_summon and not act.wild_gift_summon_ignore_cap and (not check_attr or act:attr(check_attr)) then nb = nb + 1 end
-      end
-   elseif game.level then
-      for _, act in pairs(game.level.entities) do
-	 if act.summoner and act.summoner == self and act.wild_gift_summon and not act.wild_gift_summon_ignore_cap and (not check_attr or act:attr(check_attr)) then nb = nb + 1 end
-      end
-   end
-   
-   local max = util.bound(math.floor(self:combatStatScale("cun", 10^.5, 10)),1,math.max(1,math.floor(self:getCun() / 10))) -- scaling slows at higher levels of cunning
-   if self:attr("nature_summon_max") then
-      max = max + self:attr("nature_summon_max")
-   end
-   max = math.ceil(max / div)
-   if nb >= max then
-      if not silent then
-	 game.logPlayer(self, "#PINK#You can manage a maximum of %d summons at any time. You need %d Cunning to increase your limit.", nb, math.max((nb+1)*10, (nb+1)^2))
-      end
-      return true, nb, max
-   else
-      return false, nb, max
-   end
+	div = div or 1
+	local nb = 0
+	
+	-- Count party members
+	if game.party:hasMember(self) then
+		for act, def in pairs(game.party.members) do
+			if act.summoner and act.summoner == self and act.type == "elemental" and not act.ignore_summon_cap and (not check_attr or act:attr(check_attr)) then
+				nb = nb + 1
+			end
+		end
+	elseif game.level then
+		for _, act in pairs(game.level.entities) do
+			if act.summoner and act.summoner == self and act.type == "elemental" and not act.ignore_summon_cap and (not check_attr or act:attr(check_attr)) then
+				nb = nb + 1
+			end
+		end
+	end
+
+	local max = 2 + util.bound(
+		math.floor(self:combatStatScale("cun", 10^.5, 10)),
+		1,
+		math.max(1, math.floor(self:getCun() / 10))
+														)
+	max = math.ceil(max / div)
+	if nb >= max then
+		if not silent then
+			game.logPlayer(self, "#PINK#You can manage a maximum of %d summons at any time. You need %d Cunning to increase your limit.", max, math.max((max-1)*10, (max-1)^2))
+		end
+		return true, nb, max
+	else
+		return false, nb, max
+	end
 end
 
 function setupSummonStar(self, m, x, y, no_control)

@@ -356,7 +356,7 @@ newEffect{
 				
 				-- Don't use the BIZARRE REALTIME METEOR for damage, just for visuals
 				meteor(self, tx, ty, 0)
-				self:project({type="ball", x=tx, y=ty, radius=1, friendlyfire=false}, tx, ty, DamageType.METEOR, dam)
+				self:project({type="ball", x=tx, y=ty, radius=1, friendlyfire=false}, tx, ty, DamageType.FIRE, dam)
 				
 				-- Void summons hook
 				if self:knowTalent(self.T_WANDER_METEOR_VOID_SUMMONS) then
@@ -414,7 +414,7 @@ newEffect{
 newEffect{
    name = "WANDER_CORROSIVE_WORM", image = "talents/corrosive_worm.png",
    desc = "Corrosive Worm",
-   long_desc = function(self, eff) return ("The target is infected with a lesser manaworm, reducing damage resistance by %d%%. When the effect ends, the worm will explode, dealing %d arcane damage in a 2 radius ball. This damage will increase by %d%% of all damage taken while under torment"):format(eff.power, eff.finaldam, eff.rate*100) end,
+   long_desc = function(self, eff) return ("The target is infected with a lesser manaworm, reducing damage resistance by %d%%. When the effect ends, the worm will explode, dealing %d arcane damage in a 2 radius ball. This damage will increase by %d%% of all damage taken while under this effect"):format(eff.power, eff.finaldam, eff.rate*100) end,
    type = "magical",
    subtype = { arcane=true },
    status = "detrimental",
@@ -426,7 +426,7 @@ newEffect{
       self:effectTemporaryValue(eff, "resists", {all=-eff.power})
    end,
    deactivate = function(self, eff)
-      local tg = {type="ball", radius=2, selffire=false, x=self.x, y=self.y}
+      local tg = {type="ball", radius=2, selffire=false, friendlyfire=false, x=self.x, y=self.y}
       eff.src:project(tg, self.x, self.y, DamageType.MANABURN, eff.finaldam, {type="acid"})
       self:removeParticles(eff.particle)
    end,

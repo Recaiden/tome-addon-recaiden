@@ -162,13 +162,13 @@ newTalent{
 	type = {"celestial/kolal", 2},
 	require = spells_req2,
 	points = 5,
-	cooldown = 10,
-	negative = -10,
+	cooldown = 8,
+	negative = -4,
 	range = function(self, t)
 		return math.floor(self:combatTalentScale(t, 4, 8))
 	end,
 	
-	tactical = { ATTACKAREA = {PHYSICAL = 2, FIRE = 2}, DISABLE = 3 },
+	tactical = { ATTACKAREA = {FIRE = 2}, DISABLE = 3 },
 	direct_hit = true,
 	requires_target = true,
 	target = function(self, t)
@@ -189,7 +189,7 @@ newTalent{
 		game.level.map:addEffect(self, self.x, self.y, 4,
 														 DamageType.WANDER_FIRE_CRUSH,
 														 {
-															 dam = dam/10,
+															 dam = dam/5,
 															 src = self, talent = t,
 															 dur = 3
 														 },
@@ -201,9 +201,8 @@ newTalent{
 	end,
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
-		return ([[Overlay the crushing volcanic rifts of Kolal onto a small line of land in front of you for %s turns.  Anyone standing on the rift will suffer %d fire and %d physical damage each turn, and have their resistances lowered by 20%% (#SLATE#Spellpower vs. Spellsave#LAST#) for 3 turns.]])
-		:format(5, damDesc(self, DamageType.PHYSICAL, damage / 10),
-						damDesc(self, DamageType.FIRE, damage / 10))
+		return ([[Overlay the crushing volcanic rifts of Kolal onto a small line of land in front of you for %s turns.  Anyone standing on the rift will suffer %d fire damage each turn, and have their resistances lowered by 20%% (#SLATE#Spellpower vs. Spellsave#LAST#) for 3 turns.]])
+		:format(5, damDesc(self, DamageType.FIRE, damage / 5))
 	end,
 }
 
@@ -229,10 +228,11 @@ newTalent{
 			return nb
 		end
 	},
+	getCost = function(self, t) return math.max(7.5, 16.5 - self:getTalentLevel(t)) end,
 	getNb = function(self, t) return self:combatTalentScale(t, 2, 5) end,
-	on_pre_use = function(self, t) return self.life > self.max_life * 0.1 end,
+	on_pre_use = function(self, t) return self.life > self.max_life * t.getCost(self, t)/100 end,
 	action = function(self, t)
-		self:takeHit(self.max_life * 0.1, self)
+		self:takeHit(self.max_life * t.getCost(self, t)/100, self)
 		
 		local target = self
 		local effs = {}
@@ -281,8 +281,8 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Spend 10%% of your total life to burn away your afflictions, removing up to %d physical, mental or magical detrimental effects.]]):
-		format(t.getNb(self, t))
+		return ([[Spend %0.1f%% of your total life to burn away your afflictions, removing up to %d physical, mental or magical detrimental effects.]]):
+		format(t.getCost(self, t), t.getNb(self, t))
 	end,
 }
 
@@ -293,7 +293,7 @@ newTalent{
 	points = 5,
 	message = "A volcano erupts!",
 	cooldown = 10,
-	negative = 30,
+	negative = 20,
 	range = 10,
 	proj_speed = 2,
 	requires_target = true,
@@ -340,7 +340,7 @@ newTalent{
 					local a, id = rng.table(tgts)
 					table.remove(tgts, id)
 					
-					self.summoner:projectile(tg, a.x, a.y, engine.DamageType.MOLTENROCK, self.dam, {type="flame"})
+					self.summoner:projectile(tg, a.x, a.y, engine.DamageType.FIRE, self.dam, {type="flame"})
 					game:playSoundNear(self, "talents/fire")
 				end
 				
@@ -365,8 +365,8 @@ newTalent{
 	end,
 	info = function(self, t)
 		local dam = t.getDamage(self, t)
-		return ([[Summons a small raging volcano for %d turns. Every turn, it will fire a molten boulder towards up to %d of your foes, dealing %0.2f fire and %0.2f physical damage.
+		return ([[Summons a small raging volcano for %d turns. Every turn, it will fire a molten boulder towards up to %d of your foes, dealing %0.2f fire damage.
 		The damage will scale with your Spellpower.]]):
-		format(t.getDuration(self, t), t.nbProj(self, t), damDesc(self, DamageType.FIRE, dam/2), damDesc(self, DamageType.PHYSICAL, dam/2))
+		format(t.getDuration(self, t), t.nbProj(self, t), damDesc(self, DamageType.FIRE, dam))
 	end,
 }

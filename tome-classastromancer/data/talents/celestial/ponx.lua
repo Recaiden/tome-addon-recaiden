@@ -8,7 +8,7 @@ newTalent{
 	random_ego = "attack",
 	mana = 3,
 	tactical = {
-		ATTACKAREA = {
+		ATTACK = {
 			LIGHTNING = function(self, t, target) return self:reactionToward(target) < 0 and 2 or 0 end
 		},
 		HEAL = function(self, t, target) return self:reactionToward(target) > 0 and 0.8 or 0 end
@@ -178,8 +178,8 @@ newTalent{
 	require = spells_req2,
 	points = 5,
 	random_ego = "attack",
-	negative = -8,
-	cooldown = 8,
+	negative = -3,
+	cooldown = 6,
 	tactical = { ATTACKAREA = {LIGHTNING = 2} }, --note: only considers the primary target
 	range = 10,
 	direct_hit = true,
@@ -368,75 +368,76 @@ In addition, you can send the winds out to instantly redirect a projectile to a 
 
 --Voltaic Storm - Sustain, generate random bolts that harm enemies and heal allies
 newTalent{
-   name = "Voltaic Storm", short_name = "WANDER_LIGHTNING_STORM",
-   type = {"celestial/ponx", 4},
-   require = spells_req4,
-   points = 5,
-   mode = "sustained",
-   sustain_negative = 20,
-   cooldown = 15,
-   tactical = { ATTACKAREA = {LIGHTNING = 2} },
-   range = 6,
-   direct_hit = true,
-   
-   getDamage = function(self, t) return self:combatTalentSpellDamage(t, 15, 80) end,
-   getTargetCount = function(self, t) return math.floor(self:getTalentLevel(t)) end,
-   getDrain = function(self, t) return -2 end,
-
-   callbackOnActBase = function(self, t)
-      local nrg = t.getDrain(self, t)
-      if self:getNegative() <= nrg + 1 then return end
-      
-      local tgts = {}
-      local grids = core.fov.circle_grids(self.x, self.y, 6, true)
-      for x, yy in pairs(grids) do
-	 for y, _ in pairs(grids[x]) do
-	    local a = game.level.map(x, y, Map.ACTOR)
-	    if a then
-	       if a.x ~= self.x or a.y ~= self.y then
-		  if self:reactionToward(a) < 0 or a.life < a.max_life then
-		     tgts[#tgts+1] = a
-		  end
-	       end
-	    end
-	 end
-      end
-      
-      -- Randomly take targets
-      local tg = {type="hit", range=self:getTalentRange(t), talent=t, friendlyfire=true}
-      if #tgts > 0 then
-	 game:playSoundNear(self, "talents/lightning")
-         self:incNegative(nrg)
-      end
-      for i = 1, t.getTargetCount(self, t) do
-	 if #tgts <= 0 then break end
-	 local a, id = rng.table(tgts)
-	 table.remove(tgts, id)
-	 
-	 self:project(tg, a.x, a.y, DamageType.GOOD_LIGHTNING, {dam=rng.avg(1, self:spellCrit(t.getDamage(self, t)), 3)})
-
-	 game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(a.x-self.x), math.abs(a.y-self.y)), "lightning", {tx=a.x-self.x, ty=a.y-self.y})
-      end
-   end,
-   activate = function(self, t)
-      game:playSoundNear(self, "talents/thunderstorm")
-      game.logSeen(self, "#0080FF#A furious bright storm forms around %s!", self.name)
-      return {
-      }
-   end,
-   deactivate = function(self, t, p)
-      game.logSeen(self, "#0080FF#The furious bright storm around %s calms down and disappears.", self.name)
-      return true
-   end,
-
-   info = function(self, t)
-      local targetcount = t.getTargetCount(self, t)
-      local damage = t.getDamage(self, t)
-      local nrgdrain = t.getDrain(self, t)
-      return ([[You immerse yourself in a fragment of the Great Storm, creating a maelstrom with a radius of 6 that follows you as long as this spell is active.
-
+	name = "Voltaic Storm", short_name = "WANDER_LIGHTNING_STORM",
+	type = {"celestial/ponx", 4},
+	require = spells_req4,
+	points = 5,
+	mode = "sustained",
+	sustain_negative = 20,
+	cooldown = 15,
+	tactical = { ATTACKAREA = {LIGHTNING = 2} },
+	range = 6,
+	direct_hit = true,
+	
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 15, 80) end,
+	getTargetCount = function(self, t) return math.floor(self:getTalentLevel(t)) end,
+	getDrain = function(self, t) return -2 end,
+	
+	callbackOnActBase = function(self, t)
+		local nrg = t.getDrain(self, t)
+		if self:getNegative() <= (-1*nrg) and not self:attr("force_talent_ignore_ressources") then return end
+		
+		local tgts = {}
+		local grids = core.fov.circle_grids(self.x, self.y, 6, true)
+		for x, yy in pairs(grids) do
+			for y, _ in pairs(grids[x]) do
+				local a = game.level.map(x, y, Map.ACTOR)
+				if a then
+					if a.x ~= self.x or a.y ~= self.y then
+						if self:reactionToward(a) < 0 or a.life < a.max_life then
+							tgts[#tgts+1] = a
+						end
+					end
+				end
+			end
+		end
+		
+		-- Randomly take targets
+		local tg = {type="hit", range=self:getTalentRange(t), talent=t, friendlyfire=true}
+		if #tgts > 0 then
+			game:playSoundNear(self, "talents/lightning")
+			if not self:attr("zero_resource_cost") and not self:attr("force_talent_ignore_ressources") then
+				self:incNegative(nrg)
+			end
+		end
+		for i = 1, t.getTargetCount(self, t) do
+			if #tgts <= 0 then break end
+			local a, id = rng.table(tgts)
+			table.remove(tgts, id)
+			
+			self:project(tg, a.x, a.y, DamageType.GOOD_LIGHTNING, {dam=rng.avg(1, self:spellCrit(t.getDamage(self, t)), 3)})
+			
+			game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(a.x-self.x), math.abs(a.y-self.y)), "lightning", {tx=a.x-self.x, ty=a.y-self.y})
+		end
+	end,
+	activate = function(self, t)
+		game:playSoundNear(self, "talents/thunderstorm")
+		game.logSeen(self, "#0080FF#A furious bright storm forms around %s!", self.name)
+		return {
+					 }
+	end,
+	deactivate = function(self, t, p)
+		game.logSeen(self, "#0080FF#The furious bright storm around %s calms down and disappears.", self.name)
+		return true
+	end,
+	info = function(self, t)
+		local targetcount = t.getTargetCount(self, t)
+		local damage = t.getDamage(self, t)
+		local nrgdrain = t.getDrain(self, t)
+		return ([[You immerse yourself in a fragment of the Great Storm, creating a maelstrom with a radius of 6 that follows you as long as this spell is active.
+							
 Each turn, a random bright-lightning bolt will hit up to %d targets, healing alies and damaging foes for %0.2f damage.
 This powerful spell will drain %0.2f negative energy each turn that it hits.]])
-	 :format(targetcount, damDesc(self, DamageType.GOOD_LIGHTNING, damage), -nrgdrain)
-   end,
+		:format(targetcount, damDesc(self, DamageType.GOOD_LIGHTNING, damage), -nrgdrain)
+	end,
 }

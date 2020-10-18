@@ -33,7 +33,7 @@ newTalent{
 		
 		return ([[Casting planetary spells in combat gives you charges of planetary energy for 10 turns, stacking up to %d times each.
 Kolal charges increase your casting and combat speeds by %d%%
-Luxam charges increase your resist all by %d%%
+Luxam charges increase your resistance to damage by %d%%
 Ponx charges increase your healing mod by %d%%]]):format(stacks, speed_flame, res_cold, hmod_wind)
 	end,
 }

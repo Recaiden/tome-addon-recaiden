@@ -18,7 +18,6 @@ newTalent{
 	getDamageChange = function(self, t)
 		return -self:combatTalentLimit(t, 50, 14, 30) -- Limit < 50% damage reduction
 	end,
-	
 	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, tmp, no_martyr)
 		if src and src.x and src.y then
 			-- assume instantaneous projection and check range to source
@@ -39,7 +38,7 @@ newTalent{
 		--Fire shield
 		if self:knowTalent(self.T_WANDER_PAEAN_FIRESHIELD) then
 			local t2 = self:getTalentFromId(self.T_WANDER_PAEAN_FIRESHIELD)
-			self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.FIRE]=t2.getDamageOnMeleeHit(self, t2)})
+			self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.METEOR_BLIND]=t2.getDamageOnMeleeHit(self, t2)})
 			self:talentTemporaryValue(ret, "combat_spellpower", t2.getSpellpowerIncrease(self, t2))
 		end
 		
@@ -104,7 +103,7 @@ newTalent{
 		--Fire shield
 		if self:knowTalent(self.T_WANDER_PAEAN_FIRESHIELD) then
 			local t2 = self:getTalentFromId(self.T_WANDER_PAEAN_FIRESHIELD)
-			self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.COLD]=t2.getDamageOnMeleeHit(self, t2)})
+			self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.LUXAM_COLD_SLOW]=t2.getDamageOnMeleeHit(self, t2)})
 			self:talentTemporaryValue(ret, "combat_spellpower", t2.getSpellpowerIncrease(self, t2))
 		end
 		
@@ -183,7 +182,7 @@ newTalent{
 		--Fire shield
 		if self:knowTalent(self.T_WANDER_PAEAN_FIRESHIELD) then
 			local t2 = self:getTalentFromId(self.T_WANDER_PAEAN_FIRESHIELD)
-			self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.LIGHTNING]=t2.getDamageOnMeleeHit(self, t2)})
+			self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.LIGHTNING_DAZE]=t2.getDamageOnMeleeHit(self, t2)})
 			self:talentTemporaryValue(ret, "combat_spellpower", t2.getSpellpowerIncrease(self, t2))
 		end
 		
@@ -250,6 +249,7 @@ newTalent{
 				local t2 = self:getTalentFromId(self.T_WANDER_PAEAN_LUXAM)
 				local t3 = self:getTalentFromId(self.T_WANDER_PAEAN_PONX)
 				ret = ([[You have learned to sing the praises of the Spheres, in the form of three defensive Paeans.
+								 
 								 Paean of Volcanic Fire: Reduces all damage that comes from nearby enemies (4 or fewer spaces) by %d%%
 								 Paean of Glacial Ice: Reduces the bonus damage taken from critical hits by %d%%
 								 Paean of Cleansing Wind: Increases your negative health threshold by %d.
@@ -270,10 +270,14 @@ newTalent{
    points = 5,
    mode = "passive",
    getDamageOnMeleeHit = function(self, t) return self:combatTalentSpellDamage(t, 5, 50) end,
-   getSpellpowerIncrease = function(self, t) return self:combatTalentScale(t, 5, 20, 0.75) end,
+   getSpellpowerIncrease = function(self, t) return self:combatTalentScale(t, 6, 30, 1.0) end,
    info = function(self, t)
-      return ([[Your Paeans now cover you in a shield of elemental energy, which increases your spellpower by %d and does %0.2f damage of the associated element to anyone who hits you in melee.
-		The elemental shield scales with your Spellpower.]]):format(t.getSpellpowerIncrease(self, t), t.getDamageOnMeleeHit(self, t))
+      return ([[Your Paeans now cover you in a shield of elemental energy, which increases your spellpower by %d and does %0.2f damage to anyone who hits you in melee.  
+
+								 Paean of Volcanic Fire: Fire damage that blinds attackers for 2 turns.
+								 Paean of Glacial Ice: Cold damage that slows attackers by 20%% for 3 turns.
+								 Paean of Cleansing Wind: Lightning damage with a 25%% chance to daze for 3 turns.
+		The elemental damage scales with your Spellpower.]]):format(t.getSpellpowerIncrease(self, t), t.getDamageOnMeleeHit(self, t))
    end,
 }
 
@@ -284,15 +288,15 @@ newTalent{
    points = 5,
    mode = "passive",
    getAffinity = function(self, t) return self:combatTalentLimit(t, 100, 10, 35) end, -- Limit < 100%
-	 getSaves = function(self, t) return self:getTalentLevel(t)*3.5 end,
-   getShield = function(self, t) return 7 + self:combatSpellpower(0.056) * self:combatTalentScale(t, 1, 4)  end,
+	 getSaves = function(self, t) return self:getTalentLevel(t)*8 end,
+   getShield = function(self, t) return 7 + self:combatSpellpower(0.092) * self:combatTalentScale(t, 1, 7)  end,
 	 getHealFactor = function(self, t) return self:combatTalentScale(t, 0.15, 0.30) end,
    info = function(self, t)
-      return ([[Your skill at singing paeans now extends the elemental cloak, increasing your affinity for the associated element by %d.
-		Also, each Paean has an additional effect while it's active.
-		Paean of Volcanic Fire increases all your saves by %d.
-		Paean of Glacial Ice reinforces existing damage shields by %d each turn.
-		Paean of Cleansing Wind increases your healing factor by %d%%. ]]):format(t.getAffinity(self, t), t.getSaves(self, t), t.getShield(self, t), t.getHealFactor(self, t)*100)
+      return ([[Your skill at singing paeans now extends the elemental cloak, increasing your affinity for the associated element by %d and giving each Paean an additional effect while it's active.
+
+		 Paean of Volcanic Fire increases all your saves by %d.
+		 Paean of Glacial Ice reinforces existing damage shields by %d each turn.
+		 Paean of Cleansing Wind increases your healing factor by %d%%. ]]):format(t.getAffinity(self, t), t.getSaves(self, t), t.getShield(self, t), t.getHealFactor(self, t)*100)
    end,
 }
 
@@ -306,6 +310,6 @@ newTalent{
    getResistPenalty = function(self, t) return self:combatTalentLimit(t, 100, 15, 40) end,
    info = function(self, t)
       return ([[Your passion for singing the praises of the spheres reaches its zenith.
-		Your Paeans now increases your damage penetration with fire, cold, and lightning by %d%%]]):format(t.getResistPenalty(self, t))
+		Your Paeans now increases your resistance penetration with fire, cold, and lightning by %d%%]]):format(t.getResistPenalty(self, t))
    end,
 }

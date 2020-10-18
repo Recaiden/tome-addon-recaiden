@@ -59,12 +59,11 @@ newTalent{
 	
 	info = function(self, t)
 		return ([[Shatter an orbiting meteor and rain down burning fragments on your enemies.
-		Each turn for the next %d turns, a meteor will fall on an enemy near you or your summons, dealing %0.2f meteor damage to enemies in radius 1.  Enemies are more likely to be struck if there are multiple party members near them.
+		Each turn for the next %d turns, a meteor will fall on an enemy near you or your summons, dealing %0.2f fire damage to enemies in radius 1.  Enemies are more likely to be struck if there are multiple party members near them.
 		The effects increase with spellpower.
 
-#ORANGE#Meteor damage is half physical and half fire.#{normal}#
 ]])
-		:format(t.getDuration(self, t), damDesc(self, DamageType.METEOR, t.getDam(self, t)))
+		:format(t.getDuration(self, t), damDesc(self, DamageType.FIRE, t.getDam(self, t)))
 	end,
 }
 
@@ -102,6 +101,7 @@ newTalent{
 			desc = [[Aether elementals, native to the void between the stars.  This one has hitched a ride on a meteor.]],
 			autolevel = "none",
 			ai = "summoned", ai_real = "tactical", ai_state = { talent_in=1, ally_compassion=10},
+			ignore_summon_cap = true,
 			ai_tactic = resolvers.tactic"ranged",
 			stats = {str=10, dex=8, con=16, cun=0, wil=0, mag=6},
 			inc_stats = t.incStats(self, t),
@@ -146,6 +146,7 @@ newTalent{
 			desc = [[Losgoroths which feed on magical energy. If they ever come in contact with a spellcaster, they latch on and start draining mana away.  This one has hitched a ride on a meteor]],
 			autolevel = "none",
 			ai = "summoned", ai_real = "tactical", ai_state = { talent_in=1, ally_compassion=10},
+			ignore_summon_cap = true,
 			ai_tactic = resolvers.tactic"ranged",
 			stats = {str=10, dex=80, con=16, cun=5, wil=5, mag=6},
 			inc_stats = t.incStats(self, t),
@@ -247,10 +248,10 @@ newTalent{
 	info = function(self, t)
 		local radius = self:getTalentRadius(t)
 		local damage = t.getDamage(self, t)
-		return ([[Call down several of your meteor fragments simultaneously, blasting a radius %d area for %0.2f meteor damage and stunning (#SLATE#Spellpower vs. Physical#LAST#) those within the area for 4 turns. 
+		return ([[Call down several of your meteor fragments simultaneously, blasting a radius %d area for %0.2f fire damage and stunning (#SLATE#Spellpower vs. Physical#LAST#) those within the area for 4 turns. 
 This can trigger Void Summons, with double chance.
 This talent requires an active Meteor Storm, and reduces its duration by 2.
-		The damage dealt will increase with your Spellpower.]]):format(radius, damDesc(self, DamageType.METEOR, damage))
+		The damage dealt will increase with your Spellpower.]]):format(radius, damDesc(self, DamageType.FIRE, damage))
 	end,
 }
 
@@ -277,7 +278,7 @@ newTalent{
       if not target then return nil end
       
       local dam = self:spellCrit(t.getDamage(self, t))
-      self:project(tg, x, y, DamageType.METEOR, {dam=dam})
+      self:project(tg, x, y, DamageType.FIRE, dam)
 
       -- Graphic
       if core.shader.active() then
@@ -290,9 +291,9 @@ newTalent{
    end,
    info = function(self, t)
       local damage = t.getDamage(self, t)
-      return ([[Strike an enemy from above with a tiny meteorite, doing %0.2f meteor damage
+      return ([[Strike an enemy from above with a tiny meteorite, doing %0.2f fire damage
 		Spellpower: Increases damage]]):
-      format(damDesc(self, DamageType.METEOR, damage))
+      format(damDesc(self, DamageType.FIRE, damage))
    end,
 }
 
@@ -325,7 +326,7 @@ newTalent{
 	
 	info = function(self, t)
 		local tv = self:getTalentFromId(self.T_WANDER_METEOR_MICROMETEOR)
-		return ([[The surging of your magic is synchronized with drifting meteors.  Whenever you hit with a spell, you have a %d%% chance to summon a meteor to strike them automatically.
+		return ([[The surging of your magic is synchronized with drifting meteors.  Whenever you hit with a spell, you have a %d%% chance to automatically summon a small meteor to strike the same target.
 
 							
 %s]]):format(t.getChance(self, t), self:getTalentFullDescription(tv, self:getTalentLevelRaw(t)):toString())

@@ -130,7 +130,7 @@ newTalent{
 Its attacks improve with your level and talent level.
 It will gain bonus stats (increased further by spell criticals): %d Constitution, %d Magic, %d Willpower.
 It gains bonus Spellpower equal to your own.
-It inherits your: increased damage%%, resistance penetration, pin immunity, armour penetration.]]):format(t.summonTime(self, t), incStats.con-15, incStats.mag-15, incStats.wil-15)
+It inherits your: increased damage%%, resistance penetration, pin immunity, armour penetration.]]):format(t.summonTime(self, t), incStats.con, incStats.mag, incStats.wil)
 	end,
 }
 
@@ -148,7 +148,7 @@ newTalent{
 	target = function(self, t)
 		return {type="hit", range=self:getTalentRange(t), talent=t}
 	end,
-	getDuration = function(self, t) return getExtensionModifier(self, t, 2 + math.ceil(self:combatTalentScale(t, 0.3, 2.3))) end,
+	getDuration = function(self, t) return math.max( 1, getExtensionModifier(self, t, 2 + math.ceil(self:combatTalentScale(t, 0.3, 2.3)))) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
@@ -158,7 +158,7 @@ newTalent{
 		if not target then return end
 		
 		if target:attr("timetravel_immune") then
-			game.logSeen(target, "%s is immune!", target.name:capitalize())
+			game.logSeen(target, "%s is immune to temporal manipulation!", target.name:capitalize())
 			return true
 		end
 		
@@ -277,7 +277,7 @@ newTalent{
    end,
    info = function(self, t)
       local ticks = math.min(1000, t.getTicks(self, t)) / 10
-      return ([[Diffuse your temporal energy across your allies, giving each of your summons %d%% of a turn.
+      return ([[Diffuse your temporal energy across your allies, giving each of your elemental summons %d%% of a turn.
 This has no cooldown.
 Paradox: Affects turn gain.]]):
 	 format(ticks)
@@ -334,7 +334,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Summon raw temporal energy from the weave and funnel it into yourself, causing your talents to recharge twice as fast.  This will increase your paradox by %d per turn, possibly causing an anomaly.  If it causes an major anomaly, the spell will be forcibly dectivated.]]):
+      return ([[Summon raw temporal energy from the weave and funnel it into yourself, causing your talents to recharge twice as fast.  This will increase your paradox by %d per turn, possibly causing an anomaly.  If it causes an major anomaly, the spell will be forcibly deactivated.]]):
 	 format(t.getParadox(self, t))
    end,
 }

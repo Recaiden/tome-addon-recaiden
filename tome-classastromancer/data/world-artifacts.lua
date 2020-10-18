@@ -27,14 +27,12 @@ newEntity{
 		dam = 20,
 		apr = 4,
 		dammod = {mag=1.3},
-		element = DamageType.PHYSICAL,
-		convert_damage = { [DamageType.FIRE] = 50,},
+		element = DamageType.FIRE
 	},
 	wielder = {
 		combat_spellpower = 35,
 		inc_damage={
-			[DamageType.FIRE] = 25,
-			[DamageType.PHYSICAL] = 25,
+			[DamageType.FIRE] = 25
 		},
 		talents_types_mastery = {
 			["celestial/meteor"] = 0.2,

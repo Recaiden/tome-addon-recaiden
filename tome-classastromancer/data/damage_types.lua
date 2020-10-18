@@ -66,21 +66,20 @@ newDamageType{
 }
 
 
--- 50% fire, 50% physical, spellshock
+-- fire that lowers resists
 newDamageType{
 	name = "volcanic rift", type = "WANDER_FIRE_CRUSH",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
 		useImplicitCrit(src, state)
 		if _G.type(dam) == "number" then
-			dam = {dam=dam/2, dur=3}
+			dam = {dam=dam, dur=3}
 		end
 		
 		local target = game.level.map(x, y, Map.ACTOR)
 		if not target or target.dead then return end
 		
 		if target and src:reactionToward(target) < 0 then
-			DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
 			DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam.dam, state)
 			if not target:attr("fly")
 				and not target:attr("levitation")
@@ -89,6 +88,20 @@ newDamageType{
 			end	 
 		end
 	end,
+}
+
+-- Cold damage + speed reduction (no wet or freeze)
+newDamageType{
+   name = "rime", type = "LUXAM_COLD_SLOW",
+   projector = function(src, x, y, type, dam, state)
+      state = initState(state)
+      useImplicitCrit(src, state)
+      local target = game.level.map(x, y, Map.ACTOR)
+      if target then
+				DamageType:get(DamageType.COLD).projector(src, x, y, DamageType.COLD, dam, state)
+				target:setEffect(target.EFF_SLOW, 3, {power=0.2, apply_power=src:combatSpellpower()})
+      end
+   end,
 }
 
 -- Cold damage + speed reduction +wet (but no freeze chance)
@@ -129,65 +142,60 @@ newDamageType{
 	end,
 }
 
--- physical, fire
+-- fire
 newDamageType{
-   name = "meteor", type = "METEOR", text_color = "#ORANGE#",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-
-      if _G.type(dam) == "number" then
-	 dam = {dam=dam/2}
-      end
-      
-      local target = game.level.map(x, y, Map.ACTOR)
-      if not target or target.dead then return end
-      
-      if target then
-	 DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
-	 DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam.dam, state)
-      end
-   end,
+	name = "meteor", type = "METEOR", text_color = "#ORANGE#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		
+		local target = game.level.map(x, y, Map.ACTOR)
+		if not target or target.dead then return end
+		
+		if target then
+			DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam.dam, state)
+		end
+	end,
 }
 
--- physical, fire, and blind
+-- fire and blind
 newDamageType{
-   name = "meteor flash", type = "METEOR_BLIND", text_color = "#ORANGE#",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      
-      local target = game.level.map(x, y, Map.ACTOR)
-      if not target or target.dead then return end
-      
-      if target then
-	 DamageType:get(DamageType.METEOR).projector(src, x, y, DamageType.METEOR, dam, state)
-	 -- try to blind
-	 if target:canBe("blind") then
-	    target:setEffect(target.EFF_BLINDED, 4, {apply_power=src:combatSpellpower()})
-	 end
-      end
-   end,
+	name = "meteor flash", type = "METEOR_BLIND", text_color = "#ORANGE#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		
+		local target = game.level.map(x, y, Map.ACTOR)
+		if not target or target.dead then return end
+		
+		if target then
+			DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam, state)
+			-- try to blind
+			if target:canBe("blind") then
+				target:setEffect(target.EFF_BLINDED, 2, {apply_power=src:combatSpellpower()})
+			end
+		end
+	end,
 }
 
--- physical, fire, and stun
+-- instant fire and stun (not flameshock)
 newDamageType{
-   name = "meteor blast", type = "METEOR_BLAST", text_color = "#ORANGE#",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      
-      local target = game.level.map(x, y, Map.ACTOR)
-      if not target or target.dead then return end
-      
-      if target then
-	 DamageType:get(DamageType.METEOR).projector(src, x, y, DamageType.METEOR, dam, state)
-	 -- try to stun
-	 if target:canBe("stun") then
-	    target:setEffect(target.EFF_STUNNED, 4, {apply_power=src:combatSpellpower()})
-	 end
-      end
-   end,
+	name = "meteor blast", type = "METEOR_BLAST", text_color = "#ORANGE#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		
+		local target = game.level.map(x, y, Map.ACTOR)
+		if not target or target.dead then return end
+		
+		if target then
+			DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam, state)
+			-- try to stun
+			if target:canBe("stun") then
+				target:setEffect(target.EFF_STUNNED, 4, {apply_power=src:combatSpellpower()})
+			end
+		end
+	end,
 }
 
 newDamageType{

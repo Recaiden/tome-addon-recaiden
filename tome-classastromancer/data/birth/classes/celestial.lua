@@ -5,7 +5,7 @@ newBirthDescriptor{
    locked_desc = "....",
    desc = {
       "Astromancers hail from the Gates of Morning, the last bastion of the free people in the Far East.",
-      "Their way of life is well represented by their motto 'Though we stand in darknest places, the stars still shine to guide us.  Across the horizons we seek our peoples' future.'",
+      "Their way of life is well represented by their motto 'Though we stand in darkest places, the stars still shine to guide us.  Across the horizons we seek our peoples' future.'",
 "These Celestial spellcasters use the power of the wandering stars to call forth elementals to fight beside them.",
       "They use: Magic and Cunning.",
       "#GOLD#Stat modifiers:",

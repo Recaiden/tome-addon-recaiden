@@ -2,14 +2,13 @@ local _M = loadPrevious(...)
 
 local base_blightedSummoning_info = Talents.talents_def.T_BLIGHTED_SUMMONING.info
 Talents.talents_def.T_BLIGHTED_SUMMONING.info = function(self, t)
-	return ([[%s
-#BLUE#Elemental Minions:#LAST#
-		- Faeros: Burning Hex
-		- Shivgoroth: Corrosive Vapor
-		- Gwelgoroth: Flame of Urhrok
-		- Losgoroth: Corrupted Negation
-		- Manaworm: Corrosive Manaworm
-		- Teluvorta: Dark Portal]]):format(base_blightedSummoning_info(self, t))
+	return ([[%s#LIGHT_BLUE#Elemental Minions:#LAST#
+	- Faeros: Burning Hex
+	- Shivgoroth: Corrosive Vapor
+	- Gwelgoroth: Flame of Urh'rok
+	- Losgoroth: Corrupted Negation
+	- Manaworm: Corrosive Manaworm
+	- Teluvorta: Dark Portal]]):format(base_blightedSummoning_info(self, t))
 end
 
 local doBaseSummon = Talents.talents_def.T_BLIGHTED_SUMMONING.doBlightedSummon
@@ -25,18 +24,18 @@ Talents.talents_def.T_BLIGHTED_SUMMONING.doBlightedSummon = function(self, t, wh
 		
 		who.is_blighted_summon = true
 		
-		if who.name == "Faeros" then
+		if who.subtype == "fire" then
 			who:learnTalent(who.T_BURNING_HEX,true,tlevel)
-		elseif who.name == "Gwelgoroth" then
+		elseif who.subtype == "air" then
 			who:learnTalent(who.T_FLAME_OF_URH_ROK,true,tlevel)
 			who:forceUseTalent(who.T_FLAME_OF_URH_ROK, {ignore_energy=true})
-		elseif who.name == "Shivgoroth" then
+		elseif who.subtype == "cold" then
 			who:learnTalent(who.T_CORROSIVE_VAPOUR,true,tlevel)
 		elseif who.name == "Losgoroth" then
 			who:learnTalent(who.T_CORRUPTED_NEGATION,true,tlevel)
 		elseif who.name == "Manaworm" then
 			who:learnTalent(who.T_WANDER_BLIGHTED_MANAWORM,true,tlevel)
-		elseif who.name == "Teluvorta" then
+		elseif who.subtype == "time" then
 			who:learnTalent(who.T_DARK_PORTAL,true,tlevel)
 		else
 			who:addTemporaryValue("all_damage_convert", DamageType.BLIGHT)
