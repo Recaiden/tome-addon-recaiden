@@ -83,19 +83,24 @@ end)
 
 
 function hookupdateModdableTileBack(self, data)
-	local base = data.base
-	local add = data.add
+	local base = data.base or {}
+	local add = data.add or {}
+	print("DEBUG moddable tile")
+	print(self.name)
+	print(#add)
 	if self:hasEffect(self.EFF_REK_DEML_RIDE) then
 		add[#add+1] = {image = "demolisher_ride_back.png", auto_tall=1}
 	end
+	data.add = add
 end
 
 function hookupdateModdableTileFront(self, data)
-	local base = data.base
-	local add = data.add
+	local base = data.base or {}
+	local add = data.add or {}
 	if self:hasEffect(self.EFF_REK_DEML_RIDE) then
 		add[#add+1] = {image = "demolisher_ride_front.png", auto_tall=1}
 	end
+	data.add = add
 end
 
 class:bindHook("Actor:updateModdableTile:back", hookupdateModdableTileBack)

@@ -43,6 +43,7 @@ newEffect{
 	status = "beneficial",
 	decrease = 0,
 	parameters = { hull=10, pin=10, armor=0, speed=0, def=0, knock=0 },
+	charges = function(self, eff) return math.ceil(self:getHull()) end,
 	-- Healing goes to your hull first
 	callbackPriorities={callbackOnHeal = 5},
 	callbackOnWear = function(self, t, o, fBypass)
@@ -79,8 +80,7 @@ newEffect{
 			cb.value = 0
 		end
 		game:delayedLogDamage(src, self, 0, ("#SLATE#(%d to hull)#LAST#"):format(hullLost), false)
-		cb.value = 0
-		return true
+		return cb.value
 	end,
 	-- on_merge = function(self, old_eff, new_eff)
 	-- 	return old_eff
@@ -90,15 +90,25 @@ newEffect{
 		if eff.pin then self:effectTemporaryValue(eff, "pin_immune", eff.pin) end
 		if eff.knock then
 			self:effectTemporaryValue(eff, "knockback_immune", eff.knock)
-			self:effectTemporaryValue(eff, "size_category", 1)
+			if eff.knock > 0 then
+				self:effectTemporaryValue(eff, "size_category", 1)
+			end
 		end
 		if eff.speed then self:effectTemporaryValue(eff, "movement_speed", eff.speed) end
 		if eff.armor then self:effectTemporaryValue(eff, "combat_armor", eff.armor) end
 		if eff.def then self:effectTemporaryValue(eff, "combat_def", eff.def) end
-		--self.hull = self:getMaxHull()
+		--self.hull = self:getMaxHull(
+
+		local selfbase = self.replace_display or self
+		if not selfbase.moddable_tile then
+			eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=1, oversize=1.0, a=225, appear=1, speed=0, img="demolisher_ride", radius=0}))
+		end		
 		self:updateModdableTile()
 	end,
 	deactivate = function(self, eff)
+		if eff.particle then
+			self:removeParticles(eff.particle)
+		end
 		--self.hull = 0
 		self:updateModdableTile()
 		if not self:isTalentCoolingDown(self.T_REK_DEML_PILOT_AUTOMOTOR) then

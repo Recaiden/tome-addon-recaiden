@@ -76,7 +76,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Launch a magnetic projectile at incredible speeds, doing %0.2f lightning damage in a line.
+		return ([[Launch a magnetic projectile at incredible speeds, doing %0.2f lightning damage (that ignores resistances) in a line.
 Steampower: increases damage.]]):format(damDesc(self, DamageType.LIGHTNING, t.getDamage(self, t)))
 	end,
 }
@@ -114,8 +114,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		local rad = self:getTalentRadius(t)
-		return ([[Fires a barrage of charged missiles from your tail-mounted steamgun at a radius %d area, dealing %d%% steamgun damage as lightning as well as dazing those within for 2 turns.
-		The daze chance increases with your Accuracy.]]):format(rad, damDesc(self, DamageType.LIGHTNING, t.getDamage(self, t)))
+		return ([[Fires a barrage of explosive missiles from your battlewagon at a radius %d area, dealing %0.2f fire damage and dazing those within for 2 turns (#SLATE#Steampower vs Physical#LAST#).
+]]):format(self:getTalentRadius(t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
 	end,
 }

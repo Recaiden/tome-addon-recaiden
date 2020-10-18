@@ -6,6 +6,7 @@ newTalent{
 	mode = "sustained",
 	cooldown = 5,
 	no_energy = true,
+	tactical = {BUFF = 1.5, STEAM = -1},
 	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 30, 165) end,
 	activate = function(self, t)
 		game:playSoundNear(self, "talents/fire")

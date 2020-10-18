@@ -40,6 +40,7 @@ end
 local base_levelup = _M.levelup
 function _M:levelup()
 	local rating = self.hull_rating or 3
+	rating = math.max(self:getRankLifeAdjust(rating), rating)
 	self:incMaxHull(rating * (1.1+(self.level/40)))
 	return base_levelup(self)
 end

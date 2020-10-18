@@ -142,22 +142,6 @@ newDamageType{
 	end,
 }
 
--- fire
-newDamageType{
-	name = "meteor", type = "METEOR", text_color = "#ORANGE#",
-	projector = function(src, x, y, type, dam, state)
-		state = initState(state)
-		useImplicitCrit(src, state)
-		
-		local target = game.level.map(x, y, Map.ACTOR)
-		if not target or target.dead then return end
-		
-		if target then
-			DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam.dam, state)
-		end
-	end,
-}
-
 -- fire and blind
 newDamageType{
 	name = "meteor flash", type = "METEOR_BLIND", text_color = "#ORANGE#",

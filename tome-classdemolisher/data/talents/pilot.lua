@@ -23,6 +23,7 @@ newTalent{
 	cooldown = 25,
 	no_unlearn_last = true,
 	autolearn_talent = "T_HULL_POOL",
+	tactical = {SPECIAL = 10},
 	getHull = function(self, t) return self.getMaxHull and self:getMaxHull() or 100 end,
 	getHullBoost = function(self, t) return self:combatTalentScale(t, 10, 50) end,
 	getPinImmune = function(self, t) return math.min(1, self:combatTalentScale(t, 0.1, 0.90, 0.5)) end,
@@ -64,7 +65,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[You travel in a peculiar contraption: a steam-powered, jet propelled, armored buggy.  While riding, you have %d%% resistance to pinning, and your vehicle's Hull protects you. Damage and Healing are applied to Hull before they are applied to your life.  Hull is based on level (5 life rating), Consitution (2 Hull/point), Willpower (4 Hull/point), and ranks in this talent (+%d Hull).
+		return ([[You travel in a peculiar contraption: a steam-powered, jet propelled, armored buggy.  While riding, you have %d%% resistance to pinning, and your vehicle's Hull protects you. Damage and Healing are applied to Hull before they are applied to your life.  Hull is based on level (5 life rating), Constitution (2 Hull/point), Willpower (4 Hull/point), and ranks in this talent (+%d Hull).
 
 Controlling your ride requires fine control that isn't possible while wearing massive armor.
 
@@ -115,6 +116,7 @@ newTalent{
 	steam = 30,
 	no_energy = true,
 	cooldown = 30,
+	tactical = {BUFF = 1},
 	getPower = function(self, t) return self:combatTalentScale(t, 0.1, 0.2) end,
 	getDuration = function(self, t) return self:combatTalentScale(t, 3, 6) end,
 	action = function(self, t)

@@ -95,14 +95,28 @@ newDamageType{
 		state = initState(state)
 		if target then
 			local old_pen = 0
-			-- Spike respen
-			old_pen = src.resists_pen and src.resists_pen[engine.DamageType.LIGHTNING] or 0
-			src.resists_pen[engine.DamageType.LIGHTNING] = 100
-
+			-- Cut resists
+			local rLID = nil
+			local rAID = nil
+			if target.resists[DamageType.LIGHTNING] and target.resists[DamageType.LIGHTNING] > 0 then
+				rLID = target:addTemporaryValue(
+					"resists", {[DamageType.LIGHTNING]=-1 * (target.resists[DamageType.LIGHTNING] or 0)})
+			end
+			if target.resists.all and target.resists.all > 0 then
+				rAID = target:addTemporaryValue(
+					"resists", {all=-1 * (target.resists.all or 0)})
+			end
+			
 			-- Damage
 			DamageType:get(DamageType.LIGHTNING).projector(src, x, y, DamageType.LIGHTNING, dam, state)
-			-- Reset respen
-			src.resists_pen[engine.DamageType.LIGHTNING] = old_pen
+
+			-- Restore resists
+			if rLID then
+				target:removeTemporaryValue("resists", rLID)
+			end
+			if rAID then
+				target:removeTemporaryValue("resists", rAID)
+			end
 		end
 	end,
 }

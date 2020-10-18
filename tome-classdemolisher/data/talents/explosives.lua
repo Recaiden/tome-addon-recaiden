@@ -13,17 +13,25 @@ newTalent{
 			 FIRE = function(self, t, target)
 				 if not game or not game.level then return 0 end
 				 local count = 0
+				 local tg = {type="ball", range=0, radius=10, no_restrict=true}
+				 if not self:canProject(tg, self.x, self.y) then return 0 end
 				 self:project(
-					 {type="ball", range=0, radius=10, no_restrict=true},
-					 self.x, self.y,
+					 tg, self.x, self.y,
 					 function(px, py)
 						 local trap = game.level.map(px, py, engine.Map.TRAP)
 						 if not trap then return end
 						 if trap.name ~= "remote explosive charge" then return end
 						 if trap.summoner ~= self then return end
-						 count = count + 1
+						 self:project(
+							 {type="ball", radius=self.radius, friendlyfire=false, x=px, y=py}, px, py,
+							 function(px, py)
+								 local target = game.level.map(px, py, engine.Map.ACTOR)
+								 if not target then return end
+								 if self:reactionToward(target) > 0 then return end
+								 count = count + 1
+							 end)
 					 end)
-				 return count
+				 return count * 0.75
 			 end },
 	 },
 	 on_pre_use = function(self, t, silent)
@@ -44,6 +52,30 @@ newTalent{
 	 end,
 	 action = function(self, t)
 		 local detonated = 0
+		 -- look for charges in a position to dig
+		 self:project(
+			 {type="ball", range=0, radius=10, no_restrict=true},
+			 self.x, self.y,
+			 function(px, py)
+				 local trap = game.level.map(px, py, engine.Map.TRAP)
+				 if not trap then return end
+				 if trap.name ~= "remote explosive charge" then return end
+				 if trap.summoner ~= self then return end
+				 local count = 0
+				 self:project(
+					 {type="ball", radius=trap.radius, selffire=false, x=px, y=py}, px, py,
+					 function(px, py)
+						 local target = game.level.map(px, py, engine.Map.TRAP)
+						 if not target then return end
+						 if target.name ~= "remote explosive charge" then return end
+						 if not target.summoner or target.summoner ~= trap.summoner then return end
+						 count = count + 1
+					 end)
+				 if count >= 3 then
+					 trap.digging = true
+				 end
+			 end)
+		 -- Blow them up for damage
 		 self:project(
 			 {type="ball", range=0, radius=10, no_restrict=true},
 			 self.x, self.y,
@@ -61,7 +93,9 @@ newTalent{
 		 return true
    end,
    info = function(self, t)
-      return ([[Detonate all of your explosive charges within range 10.]]):format()
+      return ([[Detonate all of your explosive charges within range 10.
+
+If an explosive charge has two other explosive charges adjacent to it, the combined force will knock down walls.]]):format()
    end,
 }
 
@@ -81,11 +115,11 @@ newTalent{
 		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then cost  = cost + 5 end
 		return cost
 	end,
-	cooldown = 1,
+	cooldown = 2,
 	range = 6,
 	radius = 1,
-	tactical = { ATTACKAREA = { FIRE = 1 } },
-	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 20, 400) end,
+	tactical = { ATTACKAREA = { FIRE = 1.5 } },
+	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 20, 340) end,
 	placeCharge = function(self, t, x, y)
 		local dam = self:steamCrit(t.getDamage(self, t))
 		local burn = 0
@@ -100,7 +134,7 @@ newTalent{
 			x = x, y = y,
 			faction = self.faction,
 			disarm_power = math.floor(self:combatSteampower() * 1.8),
-			detect_power = math.floor(self:combatSteampower() * 1.8),
+			detect_power = math.floor(self:combatSteampower()),
 			dam = dam,
 			radius = self:getTalentRadius(t),
 			canTrigger = function(self, x, y, who) return false end,
@@ -125,10 +159,15 @@ newTalent{
 				end
 				
 				game.level.map:particleEmitter(self.x, self.y, self.radius, "fireflash", {radius=self.radius})
+
+				local tg = {type="ball", radius=self.radius, friendlyfire=false, x=self.x, y=self.y}
+				--dig
+				if self.digging then
+					self.summoner:project(tg, self.x, self.y, DamageType.DIG, 1)
+				end
 				-- damage
-				local tg = {type="ball", radius=self.radius, friendlyfire=false, x=self.x, y=self.y},
 				self.summoner:project(
-					{type="ball", radius=self.radius, friendlyfire=false, x=self.x, y=self.y}, self.x, self.y,
+					tg, self.x, self.y,
 					function(px, py)
 						local target = game.level.map(px, py, engine.Map.ACTOR)
 						if not target then return end
@@ -254,7 +293,7 @@ newTalent{
 	points = 5,
 	cooldown = 10,
 	steam = 20,
-	tactical = { ATTACKAREA = { FIRE = 1, PHYSICAL = 1 }, ESCAPE = 2  },
+	tactical = { ATTACKAREA = { FIRE = 1, PHYSICAL = 1 }, ESCAPE = 1.5  },
 	requires_target = true,
 	radius = function(self, t) return math.floor(self:combatTalentScale(t, 1, 2)) end,
 	range = function(self, t) return math.min(8, math.floor(self:combatTalentScale(t, 4, 8, 0.5, 0, 1))) end,
@@ -371,7 +410,7 @@ newTalent{
 		return cost
 	end,
 	range = 1,
-	tactical = { ATTACK = { FIRE = 2 } },
+	tactical = { ATTACK = { FIRE = 2 }, SURROUNDED = 0,  },
 	requires_target = true,
 	radius = 3,
 	target = function(self, t)
@@ -517,6 +556,11 @@ newTalent{
 	end,
 	activate = function(self, t)
 		local ret = {}
+		if core.shader.active(4) then
+			local slow = rng.percent(50)
+			local h1x, h1y = self:attachementSpot("hand1", true) if h1x then ret.particle1 = self:addParticles(Particles.new("shader_shield", 1, {img="fireball", a=0.6, size_factor=0.3, x=h1x, y=h1y-0.1}, {type="flamehands", time_factor=slow and 700 or 1000})) end
+			local h2x, h2y = self:attachementSpot("hand2", true) if h2x then ret.particle2 = self:addParticles(Particles.new("shader_shield", 1, {img="fireball", a=0.6, size_factor=0.3, x=h2x, y=h2y-0.1}, {type="flamehands", time_factor=not slow and 700 or 1000})) end
+		end
 		return ret
 	end,
 	deactivate = function(self, t, p)

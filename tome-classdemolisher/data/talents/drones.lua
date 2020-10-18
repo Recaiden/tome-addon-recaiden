@@ -20,7 +20,7 @@ newTalent{
 						friendlyblock=false, friendlyfire=false}
 	end,
 	range = function(self, t) return math.min(10, self:combatTalentScale(t, 6, 10)) end,
-	getReload = function(self, t) return self:combatTalentScale(t,1,3) end,
+	getReload = function(self, t) return math.floor(self:combatTalentScale(t, 1, 3)) end,
 	autoshoot = function(self, range, dam, multiplier, power, x, y)
 		self.turn_procs.quickdraw = true
 		local tg = {
@@ -64,7 +64,9 @@ newTalent{
 			return
 		end
 		if ammo.combat.shots_left == 0 then
+			local reloading = self:addTemporaryValue('ammo_mastery_reload', t.getReload(self, t))
 			self:reload()
+			self:removeTemporaryValue("ammo_mastery_reload", reloading)
 		else
 			local tgts = {}
 			local grids = core.fov.circle_grids(self.x, self.y, self:getTalentRange(t), true)
@@ -109,14 +111,12 @@ newTalent{
 	activate = function(self, t)
 		local ret = {}		
 
-
 		if core.shader.active() then
 			-- custom size-scaling shader
-			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1.5, img="rotating_gunner_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderVerticalPos=0.0, cylinderRotationSpeed=2.0, appearTime=0.2}})
-			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1.5, img="rotating_gunner_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderVerticalPos=0.0, cylinderRotationSpeed=2.0, appearTime=0.2}})
+			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1.7, img="rotating_gunner_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderRadius=0.50, cylinderVerticalPos=-0.06, cylinderRotationSpeed=2.0, appearTime=0.2}})
+			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1.7, img="rotating_gunner_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderRadius=0.50, cylinderVerticalPos=-0.06, cylinderRotationSpeed=2.0, appearTime=0.2}})
 		end
 
-		self:talentTemporaryValue(ret, 'ammo_mastery_reload', t.getReload(self, t))
 		return ret
 	end,
 	deactivate = function(self, t, p)
@@ -182,7 +182,7 @@ newTalent{
 	range = 7,
 	tactical = { ATTACKAREA = {LIGHTNING = 2} },
 	requires_target = true,
-	getDam = function(self, t) return self:combatTalentSteamDamage(t, 20, 100) + self.level end,
+	getDam = function(self, t) return self:combatTalentSteamDamage(t, 10, 40) + self.level end,
 	getResist = function(self, t) return self:combatTalentSteamDamage(t, 20, 50) end,
 	getArmor = function(self, t) return self:combatTalentSteamDamage(t, 5, 45) end,
 	getHP = function(self, t) return self:combatTalentSteamDamage(t, 10, 1000) end,
@@ -264,13 +264,14 @@ newTalent{
 	cooldown = 10,
 	tactical = { DEFEND = 3 },
 	getShrug = function(self, t) return self:combatTalentSteamDamage(t, 1.5, 30) end,
+	getMaxShrug = function(self, t) return t.getShrug(self, t) * self:combatTalentStatDamage(t, "dex", 4, 8) end,
 	activate = function(self, t)
 		local ret = {
 			value = t.getShrug(self, t) * 5,
 		}
 		if core.shader.active() then
-			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1, img="rotating_guardian_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderRadius=0.26, cylinderVerticalPos=-0.13, cylinderRotationSpeed=1.5, appearTime=0.2}})
-			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1, img="rotating_guardian_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderRadius=0.26, cylinderVerticalPos=-0.13, cylinderRotationSpeed=1.5, appearTime=0.2}})
+			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1.2, img="rotating_guardian_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderRadius=0.42, cylinderHeight = 0.3, cylinderVerticalPos=-0.17, cylinderRotationSpeed=1.5, appearTime=0.2}})
+			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1.2, img="rotating_guardian_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderRadius=0.42, cylinderHeight = 0.3, cylinderVerticalPos=-0.17, cylinderRotationSpeed=1.5, appearTime=0.2}})
 		end
 		return ret
 	end,
@@ -283,7 +284,7 @@ newTalent{
 			return
 		end
 		local p = self:isTalentActive(t.id)
-		p.value = t.getShrug(self, t) * 5
+		p.value = t.getMaxShrug(self, t)
 	end,
 	callbackPriorities={callbackOnTakeDamage = 2},
 	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, state)
@@ -311,9 +312,10 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Deploy a tiny autonomous machine to hover around you and deflect incoming blows.  You reduce incoming damage by %d to %d (more for stronger hits), but the drone can only deflect %d total damage each round.
-Steampower: increases damage absorbed
+Steampower: increases damage deflected
+Dexterity: increases maximum deflection per round
 
-The drone deactivates if you run out of steam.]]):format(t.getShrug(self, t), t.getShrug(self, t)*2, t.getShrug(self, t)*5)
+The drone deactivates if you run out of steam.]]):format(t.getShrug(self, t), t.getShrug(self, t)*2, t.getMaxShrug(self, t))
 	end,
 }
 

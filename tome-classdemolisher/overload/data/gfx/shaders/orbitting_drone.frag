@@ -7,7 +7,7 @@ uniform float cylinderRotationSpeed; //rotation speed of the aura, min: 0, max: 
 uniform float cylinderRadius; //radius of the cylinder aura. min: 0.2, max: 0.5, def: 0.45
 uniform float cylinderVerticalPos; //vertical position of the cylinder. 0 is in the middle. min: -0.2, max: 0.2
 uniform float cylinderHeight; //height of the cylinder. min: 0.1, max: 1.0, default: 0.4
-uniform float appearTime; //normalized appearence time. min: 0.01, max: 3.0, default: 1.0f
+uniform float appearTime; //normalized appearance time. min: 0.01, max: 3.0, default: 1.0f
 uniform float unbalancedSize;
 
 void main(void)
@@ -28,7 +28,7 @@ void main(void)
   }
   vec2 tmp = vec2(0, 0) - gl_TexCoord[0].xy;
   tmp.x = tmp.x - (tmp.x * 0.1 * sin(alpha)) - cylinderRadius * 0.60 * cos(alpha);
-  tmp.y = tmp.y - (tmp.x * 0.05 * sin(alpha)) + startY + cylinderRadius * 0.4 * sin(alpha);
+  tmp.y = tmp.y - (tmp.x * 0.05 * sin(alpha)) + startY + cylinderRadius * cylinderHeight * sin(alpha);
   resultColor = texture2D(tex, tmp);
   if(sin(alpha)*dirY < 0)
   {
