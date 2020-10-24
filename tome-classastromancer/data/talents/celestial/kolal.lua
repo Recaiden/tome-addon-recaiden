@@ -43,8 +43,8 @@ newTalent{
 	require = spells_req1,
 	points = 5,
 	message = "@Source@ conjures a Faeros!",
-	negative = -5,
-	cooldown = 10,
+	negative = -4.5,
+	cooldown = 9,
 	range = 5,
 	requires_target = true,
 	is_summon = true,
@@ -67,7 +67,7 @@ newTalent{
 		format(t.speed(self, t)*100)
 	end,
 	summonTime = function(self, t)
-		local duration = math.floor(self:combatScale(self:getTalentLevel(t), 5, 0, 10, 5))
+		local duration = math.floor(self:combatScale(self:getTalentLevel(t), 4, 0, 9, 5))
 		local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
 		if augment then
 			duration = duration + augment.extend
@@ -167,16 +167,14 @@ newTalent{
 	range = function(self, t)
 		return math.floor(self:combatTalentScale(t, 4, 8))
 	end,
-	
 	tactical = { ATTACKAREA = {FIRE = 2}, DISABLE = 3 },
 	direct_hit = true,
 	requires_target = true,
 	target = function(self, t)
 		return {type="beam", range=self:getTalentRange(t), friendlyfire=false, talent=t}
 	end,
-	getDamage = function(self, t)
-		return self:combatTalentSpellDamage(t, 40, 400)
-	end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 400) end,
+	getMinion = function(self, t) return 10 + self:combatTalentSpellDamage(t, 10, 30) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
@@ -189,7 +187,7 @@ newTalent{
 		game.level.map:addEffect(self, self.x, self.y, 4,
 														 DamageType.WANDER_FIRE_CRUSH,
 														 {
-															 dam = dam/5,
+															 dam = {dam/5, pow=t.getMinion(self, t)}
 															 src = self, talent = t,
 															 dur = 3
 														 },
@@ -201,8 +199,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
-		return ([[Overlay the crushing volcanic rifts of Kolal onto a small line of land in front of you for %s turns.  Anyone standing on the rift will suffer %d fire damage each turn, and have their resistances lowered by 20%% (#SLATE#Spellpower vs. Spellsave#LAST#) for 3 turns.]])
-		:format(5, damDesc(self, DamageType.FIRE, damage / 5))
+		return ([[Overlay the crushing volcanic rifts of Kolal onto a small line of land in front of you for %s turns.  Anyone standing on the rift will suffer %d fire damage each turn, and be marked (#SLATE#Spellpower vs. Spellsave#LAST#) to take %d%% more damage from your elementals for 3 turns.]]):format(5, damDesc(self, DamageType.FIRE, damage / 5), t.getMinion(self, t))
 	end,
 }
 

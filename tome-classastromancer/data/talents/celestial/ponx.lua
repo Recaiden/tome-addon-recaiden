@@ -50,8 +50,8 @@ newTalent{
 	points = 5,
 	random_ego = "attack",
 	message = "@Source@ conjures a Gwelgoroth!",
-	cooldown = 10,
-	negative = -5,
+	cooldown = 9,
+	negative = -4.5,
 	tactical = { ATTACK = { LIGHTNING = 2 } },
 	range = 5,
 	
@@ -84,7 +84,7 @@ newTalent{
 	end,
 	
 	summonTime = function(self, t)
-		local duration = math.floor(self:combatScale(self:getTalentLevel(t), 5, 0, 10, 5))
+		local duration = math.floor(self:combatScale(self:getTalentLevel(t), 4, 0, 9, 5))
 		local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
 		if augment then
 			duration = duration + augment.extend
@@ -203,6 +203,7 @@ newTalent{
 										 affected[actor] = true
 										 first = actor
 										 
+										 
 										 self:project({type="ball", selffire=false, x=dx, y=dy, radius=10, range=0}, dx, dy, function(bx, by)
 																		local actor = game.level.map(bx, by, Map.ACTOR)
 																		if actor and not affected[actor] then
@@ -225,6 +226,9 @@ newTalent{
 		
 		local sx, sy = self.x, self.y
 		local dam = self:spellCrit(t.getDamage(self, t))
+		if self:reactionToward(first) >= 0 and first ~= self then
+			dam = dam * 1.1
+		end
 		for i, actor in ipairs(targets) do
 			local tgr = {type="beam", range=self:getTalentRange(t), selffire=true, talent=t, x=sx, y=sy}
 			
@@ -244,8 +248,8 @@ newTalent{
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
 		local targets = t.getTargetCount(self, t)
-		return ([[Invokes a forking beam of bright lightning doing %0.2f to %0.2f damage and forking to another target.  Allies are instead healed for this amount.
-		It can hit up to %d targets up to 10 grids apart.
+		return ([[Invokes a beam of bright lightning doing %0.2f to %0.2f damage and chaining to another target.  Allies are instead healed for this amount.  If the first target is another ally, the beam is 10%% stronger.
+		It can chain to up to %d targets up to 10 grids apart.
 		The damage will increase with your Spellpower.]]):
 		format(damDesc(self, DamageType.LIGHTNING, damage / 3),
 					 damDesc(self, DamageType.LIGHTNING, damage),

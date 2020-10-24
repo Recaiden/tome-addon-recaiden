@@ -73,7 +73,7 @@ newDamageType{
 		state = initState(state)
 		useImplicitCrit(src, state)
 		if _G.type(dam) == "number" then
-			dam = {dam=dam, dur=3}
+			dam = {dam=dam, dur=3, power=20}
 		end
 		
 		local target = game.level.map(x, y, Map.ACTOR)
@@ -84,7 +84,7 @@ newDamageType{
 			if not target:attr("fly")
 				and not target:attr("levitation")
 			then
-				target:setEffect(target.EFF_FLAWED_DESIGN, dam.dur, {power=20, apply_power=src:combatSpellpower()})
+				target:setEffect(target.EFF_WANDER_FISSURE_AMP, dam.dur, {power=dam.power, apply_power=src:combatSpellpower()})
 			end	 
 		end
 	end,
@@ -104,19 +104,23 @@ newDamageType{
    end,
 }
 
--- Cold damage + speed reduction +wet (but no freeze chance)
+-- Cold damage +speed reduction +speed allies +wet (but no freeze chance)
 newDamageType{
-   name = "glacial cold", type = "LUXAM_COLD",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      local target = game.level.map(x, y, Map.ACTOR)
-      if target then
-	 DamageType:get(DamageType.COLD).projector(src, x, y, DamageType.COLD, dam.dam, state)
-	 target:setEffect(target.EFF_SLOW, dam.dur, {power=dam.speed, apply_power=src:combatSpellpower()})
-	 target:setEffect(target.EFF_WET, 5, {})
+	name = "glacial cold", type = "LUXAM_COLD",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			if src:reactionToward(target) >= 0 then
+				target:setEffect(target.EFF_WANDER_INVIGORATING_CHILL, dam.dur, {power=dam.speed, src=src})
+			else
+				DamageType:get(DamageType.COLD).projector(src, x, y, DamageType.COLD, dam.dam, state)
+				target:setEffect(target.EFF_SLOW, dam.dur, {power=dam.speed, apply_power=src:combatSpellpower(), src=src})
+				target:setEffect(target.EFF_WET, 5, {})
       end
-   end,
+		end
+	end,
 }
 
 -- lightning damage to enemies, healing to allies

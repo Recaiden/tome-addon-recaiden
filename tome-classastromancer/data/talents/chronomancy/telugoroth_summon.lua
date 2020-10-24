@@ -6,8 +6,8 @@ newTalent{
 	require = spells_req_high1,
 	points = 5,
 	message = "@Source@ conjures a Teluvorata!",
-	paradox = function (self, t) return getParadoxCost(self, t, 20) end,
-	cooldown = 10,
+	paradox = function (self, t) return getParadoxCost(self, t, 18) end,
+	cooldown = 9,
 	range = 5,
 	requires_target = true,
 	is_summon = true,
@@ -30,7 +30,7 @@ newTalent{
 		format(t.speed(self, t)*100)
 	end,
 	summonTime = function(self, t)
-		local duration = math.floor(self:combatScale(self:getTalentLevel(t), 5, 0, 10, 5))
+		local duration = math.floor(self:combatScale(self:getTalentLevel(t), 4, 0, 9, 5))
 		local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
 		if augment then
 			duration = duration + augment.extend

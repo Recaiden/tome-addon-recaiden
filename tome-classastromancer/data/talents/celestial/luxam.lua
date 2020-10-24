@@ -98,8 +98,8 @@ newTalent{
 	require = spells_req1,
 	points = 5,
 	message = "@Source@ conjures a Shivgoroth!",
-	negative = -5,
-	cooldown = 10,
+	negative = -4.5,
+	cooldown = 9,
 	range = 5,
 	requires_target = true,
 	is_summon = true,
@@ -120,7 +120,7 @@ newTalent{
    end,
    
    summonTime = function(self, t)
-      local duration = math.floor(self:combatScale(self:getTalentLevel(t), 5, 0, 10, 5))
+      local duration = math.floor(self:combatScale(self:getTalentLevel(t), 4, 0, 9, 5))
       local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
       if augment then
          duration = duration + augment.extend
@@ -329,7 +329,7 @@ newTalent{
 	radius = 1,
 	direct_hit = true,
 	requires_target = true,
-	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), friendlyfire=false, talent=t, display={particle="bolt_ice", trail="icetrail"}} end,
+	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, talent=t, display={particle="bolt_ice", trail="icetrail"}} end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 18, 180) end,
 	getDur = function(self, t) return math.floor(self:combatTalentScale(t, 3.6, 6.3)) end,
 	getSpeed = function(self, t) return math.min(self:getTalentLevel(t) * 0.095, 0.6) end,
@@ -352,7 +352,7 @@ newTalent{
 		local damage = t.getDamage(self, t)
 		local speed = t.getSpeed(self, t) * 100
 		local dur = t.getDur(self, t)
-		return ([[Invoke a sphere of frost that deals %0.2f cold damage in a radius of %d. Every enemy hit will be chilled to the bone, reducing their global speed by %d%% for %d turns and making them wet.
+		return ([[Invoke a sphere of frost that deals %0.2f cold damage in a radius of %d. Every enemy hit will be chilled to the bone, reducing their global speed by %d%% for %d turns and making them wet.  Every ally will be sped up by the same amount.
 		The damage done will increase with your Spellpower.]]):
 		format(damDesc(self, DamageType.COLD, damage), self:getTalentRadius(t), speed, dur)
 	end,

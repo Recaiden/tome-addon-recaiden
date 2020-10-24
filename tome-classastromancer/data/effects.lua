@@ -440,3 +440,41 @@ newEffect{
       eff.src:project(tg, self.x, self.y, DamageType.MANABURN, eff.finaldam, {type="acid"})
    end,
 }
+
+newEffect{
+	name = "WANDER_FISSURE_AMP", image = "talents/wander_fire_fissure.png",
+	desc = "Tectonic Crush",
+	long_desc = function(self, eff) return ("The target is seared by otherworldly flame, causing them to take %d%% more damage from elementals."):format(eff.power) end,
+	type = "magical",
+	subtype = { arcane=true },
+	status = "detrimental",
+	parameters = { power=20 },
+	callbackOnTakeDamageBeforeResists = function(self, eff, src, x, y, type, dam, state)
+		if src and src.type == "elemental" then
+			dam = dam * (1 + eff.power/100)
+		end
+		return {dam=dam}
+	end,
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+	end,
+}
+
+newEffect{
+	name = "WANDER_INVIGORATING_CHILL", image = "talents/wander_ice_slow.png",
+	desc = "Invigorating Chill",
+	long_desc = function(self, eff) return ("Increases global speed by %d%%."):tformat(eff.power * 100) end,
+	type = "mental",
+	subtype = { telekinesis=true, speed=true },
+	status = "beneficial",
+	parameters = { power=0.1 },
+	on_gain = function(self, err) return "#Target# speeds up.", "+Quick" end,
+	on_lose = function(self, err) return "#Target# slows down.", "-Quick" end,
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("global_speed_add", eff.power)
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("global_speed_add", eff.tmpid)
+	end,
+}
