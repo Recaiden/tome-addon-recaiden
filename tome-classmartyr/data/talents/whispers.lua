@@ -103,24 +103,29 @@ newTalent{
    getDuration = function(self, t) return 4 end,
 	 checkForLight = function(self, t)
 		 local x, y = self.x, self.y
+		 local found = false
 		 local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_HEAL)
-		 if geff then
+		 if geff and geff.src == self then
 			 geff.src.__project_source = geff
 			 DamageType:get(geff.damtype).projector(geff.src, x, y, geff.damtype, geff.dam)
 			 geff.src.__project_source = nil
+			 found = true
 		 end
 		 geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_BUFF)
-		 if geff then
+		 if geff and geff.src == self then
 			 geff.src.__project_source = geff
 			 DamageType:get(geff.damtype).projector(geff.src, x, y, geff.damtype, geff.dam)
 			 geff.src.__project_source = nil
+			 found = true
 		 end
 		 geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_FLASH)
-		 if geff then
+		 if geff and geff.src == self then
 			 geff.src.__project_source = geff
 			 DamageType:get(geff.damtype).projector(geff.src, x, y, geff.damtype, geff.dam)
 			 geff.src.__project_source = nil
+			 found = true
 		 end
+		 if found then t.checkForLight(self, t) end
 	 end,
 	 callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
 		 if not moved then return end

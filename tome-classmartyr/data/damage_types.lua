@@ -38,23 +38,22 @@ newDamageType{
    end,
 }
 
-removeGroundEffect = function(eff)
-   eff.duration = 0
-   local e = eff
-	 if not e then return end
-	 --pop the effect on the ground
-	 if e.particles then
-		 for j, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
-	 end
-	 if e.overlay then
-		 game.level.map.z_effects[e.overlay.zdepth][e] = nil
-	 end
-	 for i, ee in ipairs(game.level.map.effects) do
-		 if ee == e then
-			 table.remove(game.level.map.effects, i)
-			 break
-		 end
-	 end
+removeGroundEffect = function(e)
+	if not e then return end
+	--e.duration = 0
+	--pop the effect on the ground
+	if e.particles then
+		for j, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
+	end
+	if e.overlay then
+		game.level.map.z_effects[e.overlay.zdepth][e] = nil
+	end
+	for i, ee in ipairs(game.level.map.effects) do
+		if ee == e then
+			table.remove(game.level.map.effects, i)
+			break
+		end
+	end
 end
 
 applyGuidanceBurn = function(target, t)
