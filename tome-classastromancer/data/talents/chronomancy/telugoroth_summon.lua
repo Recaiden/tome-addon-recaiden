@@ -235,53 +235,52 @@ Paradox: Affects duration]]):format(duration)
 
 --Give summons turns
 newTalent{
-   name = "Braided Threads", short_name = "WANDER_TIME_BOOST",
-   type = {"chronomancy/morass", 3},
-   require = spells_req_high3,
-   points = 5,
-   --cooldown = 1,
-   paradox = function (self, t) return getParadoxCost(self, t, 20) end,
-   getTicks = function(self, t) return self:combatTalentSpellDamage(t, 50, 750, getParadoxSpellpower(self, t)) end,
-   on_pre_use = function(self, t, silent)
-      if game.party and game.party:hasMember(self) then
-	 for act, def in pairs(game.party.members) do
-	    if act.summoner and act.summoner == self and act.type == "elemental" then
-	       return true
-	    end
-	 end
-      end
-      if not silent then game.logPlayer(self, "You require allies to speed up") end
-      return false
-   end,
-   action = function(self, t)
-      local apply = function(a)
-	 local gain = t.getTicks(self, t)
-	 gain = math.min(gain, 1000)
-	 a.energy.value = a.energy.value + gain
-      end
-      if game.party and game.party:hasMember(self) then
-	 for act, def in pairs(game.party.members) do
-	    if act.summoner and act.summoner == self and act.type == "elemental" then
-	       apply(act)
-	    end
-	 end
-      else
-	 for uid, act in pairs(game.level.entities) do
-	    if act.summoner and act.summoner == self and act.type == "elemental" then
-	       apply(act)
-	    end
-	 end
-      end
-      game:playSoundNear(self, "talents/wander_bell")
-      return true
-   end,
-   info = function(self, t)
-      local ticks = math.min(1000, t.getTicks(self, t)) / 10
-      return ([[Diffuse your temporal energy across your allies, giving each of your elemental summons %d%% of a turn.
+	name = "Braided Threads", short_name = "WANDER_TIME_BOOST",
+	type = {"chronomancy/morass", 3},
+	require = spells_req_high3,
+	points = 5,
+	--cooldown = 1,
+	paradox = function (self, t) return getParadoxCost(self, t, 20) end,
+	getTicks = function(self, t) return self:combatTalentSpellDamage(t, 50, 750, getParadoxSpellpower(self, t)) end,
+	on_pre_use = function(self, t, silent)
+		if game.party and game.party:hasMember(self) then
+			for act, def in pairs(game.party.members) do
+				if act.summoner and act.summoner == self and act.type == "elemental" then
+					return true
+				end
+			end
+		end
+		if not silent then game.logPlayer(self, "You require allies to speed up") end
+		return false
+	end,
+	action = function(self, t)
+		local apply = function(a)
+			local gain = t.getTicks(self, t)
+			gain = math.min(gain, 1000)
+			a.energy.value = a.energy.value + gain
+		end
+		if game.party and game.party:hasMember(self) then
+			for act, def in pairs(game.party.members) do
+				if act.summoner and act.summoner == self and act.type == "elemental" then
+					apply(act)
+				end
+			end
+		else
+			for uid, act in pairs(game.level.entities) do
+				if act.summoner and act.summoner == self and act.type == "elemental" then
+					apply(act)
+				end
+			end
+		end
+		game:playSoundNear(self, "talents/wander_bell")
+		return true
+	end,
+	info = function(self, t)
+		local ticks = math.min(1000, t.getTicks(self, t)) / 10
+		return ([[Diffuse your temporal energy across your allies, giving each of your elemental summons %d%% of a turn.
 This has no cooldown.
-Paradox: Affects turn gain.]]):
-	 format(ticks)
-   end,
+Paradox: Affects turn gain.]]):format(ticks)
+	end,
 }
 
 --Spells cooldown faster, generates paradox each turn, deactivates on major anomaly

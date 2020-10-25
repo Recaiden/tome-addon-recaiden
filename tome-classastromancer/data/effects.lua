@@ -478,3 +478,54 @@ newEffect{
 		self:removeTemporaryValue("global_speed_add", eff.tmpid)
 	end,
 }
+
+newEffect{
+	name = "WANDER_WATER_DANCE", image = "talents/wander_water_dance.png",
+	desc = "Dancing Waves",
+	long_desc = function(self, eff)
+		local str = ("The target's has been injured, but can recover with the power of water."):format
+		return str
+	end,
+	type = "magical",
+	subtype = { water=true },
+	status = "beneficial",
+	parameters = { damage=0, hits={{life = 2, power=10}}},
+	charges = function(self, eff)
+		return math.round(eff.damage)
+
+	end,
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+	end,
+	on_merge = function(self, old_eff, new_eff)
+		-- Merge the best part of each effect
+		old_eff.dur = new_eff.dur
+		-- add new damage instance
+		old_eff.hits[#old_eff.hits+1] = new_eff.hits[1]
+
+		local damageTotal = 0
+		for i, instance in pairs(eff.hits) do
+			damageTotal = damageTotal + instance.power
+		end
+		eff.damage = damageTotal
+		
+		return old_eff
+	end,
+	on_timeout = function(self, eff)
+		local damCurrent = 0
+		for i, instance in pairs(eff.hits) do
+			-- applications that have lived out their allotted time are cleared.
+			instance.life = instance.life - 1
+			if instance.life <= 0 then
+				eff.hits[i] = nil
+			end
+		end
+		
+		local damageTotal = 0
+		for i, instance in pairs(eff.hits) do
+			damageTotal = damageTotal + instance.power
+		end
+		eff.damage = damageTotal
+	end,
+}

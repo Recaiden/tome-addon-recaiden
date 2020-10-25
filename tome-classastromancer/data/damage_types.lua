@@ -206,3 +206,26 @@ newDamageType{
       return realdam
    end,
 }
+
+newDamageType{
+	name = "deep ocean", type = "WANDER_DEEP_OCEAN", text_color = "#A259D0#",
+	death_message = {"dragged to the abyss", "drowned in the deep", "crushed by the pressure"},
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+
+		if _G.type(dam) == "number" then
+			dam = {dam=dam, execute=10}
+		end
+		
+		local target = game.level.map(x, y, Map.ACTOR)
+		if not target or target.dead then return end
+		
+		if target then
+			DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
+			if not target.dead and target:canBe("instakill") and target.life <= target.max_life * dam.execute/100 then
+				target:die(self)
+			end
+		end
+	end,
+}
