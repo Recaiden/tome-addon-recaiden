@@ -106,7 +106,7 @@ newTalent{
 		local x, y = self:getTarget(tg)
 		local crit = self:mindCrit(1.0)
 		if not x or not y then return nil end
-		self:project(tg, x, y, DamageType.REK_GLR_CRYSTAL_LIGHT, {dam=t.getDamage(self, t)*crit, dur=t.getDuration(self, t)*crit, power=self:combatMindpower()})
+		self:project(tg, x, y, DamageType.REK_GLR_CRYSTAL_LIGHT, {dam=t.getDamage(self, t)*crit, dur=math.floor(t.getDuration(self, t)*crit), power=self:combatMindpower()})
 		game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_earth", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
 
 		return true

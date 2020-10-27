@@ -40,3 +40,18 @@ class:bindHook("DamageProjector:base", function(self, hd)
 	end
 	return hd
 end)
+
+class:bindHook("DamageProjector:base", function(self, hd)
+	local src = hd.src
+	local type = hd.type
+	local dam = hd.dam
+	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
+
+	if not src or not target then return end
+	if src:knowTalent(src.T_REK_EVOLUTION_GLR_STORM) then
+		local range = math.floor(core.fov.distance(src.x, src.y, target.x, target.y))
+		local mult = math.max(0, 2.0 - range * 0.5)
+		hd.dam = dam * mult
+	end
+	return hd
+end)

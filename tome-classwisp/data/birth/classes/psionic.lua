@@ -1,6 +1,6 @@
 newBirthDescriptor{
    type = "subclass",
-   name = "Harrower",
+   name = "Wisp",
    locked = function() return profile.mod.allow_build.psionic_mindslayer end,
    locked_desc = "I do not shoot with my hand; he who shoots with his hand has forgotten the face of his father. I shoot with my mind.",
    desc = {
@@ -63,4 +63,4 @@ newBirthDescriptor{
 }
 
 -- Add to metaclass
-getBirthDescriptor("class", "Psionic").descriptor_choices.subclass["Harrower"] = "allow"
+getBirthDescriptor("class", "Psionic").descriptor_choices.subclass["Wisp"] = "allow"

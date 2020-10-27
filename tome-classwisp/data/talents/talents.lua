@@ -173,3 +173,7 @@ if not Talents.talents_types_def["technique/arrowstorm"] then
 	newTalentType{ allow_random=true, is_mind=true, min_lev = 10, type="technique/arrowstorm", name = "Arrowstorm", description = "Let the winds of beyond carry your quarrels - and remember, killing should be done up close and personal." }
 	load("/data-classharrower/talents/arrowstorm.lua")
 end
+
+if not Talents.talents_def["REK_EVOLUTION_GLR_STORM"] then
+	load("/data-rec-evolutions/talents/uber.lua")
+end

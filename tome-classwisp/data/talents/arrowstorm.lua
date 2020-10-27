@@ -10,7 +10,7 @@ newTalent{
 	mode = "sustained",
 	target = function(self, t) return {type="ball", range=0, radius=self:getTalentRange(t), selffire=false, talent=t} end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.3, 0.65) end,
-	callbackOnActBase = function(self, t)
+	doStorm = function(self, t)
 		if not self:hasArcheryWeapon("bow") then return end
 		local tg = self:getTalentTarget(t)
 		local targets = self:projectCollect(tg, self.x, self.y, Map.ACTOR, "hostile")
@@ -26,6 +26,9 @@ newTalent{
 			end
 		end
 		game.target.forced = old_target_forced
+	end,
+	callbackOnActBase = function(self, t)
+		t.doStorm(self, t)
 	end,
 	activate = function(self, t)
 		--TODO particle

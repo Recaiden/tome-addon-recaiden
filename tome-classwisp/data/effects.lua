@@ -192,6 +192,34 @@ newEffect{
 }
 
 newEffect{
+	name = "REK_GLR_MIND_NET", image = "talents/rek_glr_mindprison_chorus.png",
+	desc = "Dream Chorus Net",
+	long_desc = function(self, eff) return ("The target's psyche is caught in a mental net, dealing %0.2f mind damage per turn."):format(eff.power) end,
+	type = "mental",
+	subtype = { psionic=true, possess=true, mind=true },
+	status = "detrimental",
+	parameters = { power=1 },
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+	end,
+	on_timeout = function(self, eff)
+		DamageType:get(DamageType.MIND).projector(eff.src or self, self.x, self.y, DamageType.MIND, eff.power)
+	end,
+	callbackOnDeath = function(self, eff, value, src, death_note)
+		if eff.death_triggered then return end
+		eff.death_triggered = true
+		if eff.src and eff.src ~= self then
+			if eff.src:callTalent(eff.src.T_REK_GLR_MINDPRISON_CHORUS, "captureMind", self, true) then
+				eff.src:logCombat(self, "#PURPLE##Source# draws out #Target#'s mind and absorbs it.")
+			else
+				eff.src:logCombat(self, "#PURPLE##Source# rips out #Target#'s mind, utterly destroying it.")
+			end
+		end
+	end,
+}
+
+newEffect{
 	name = "REK_GLR_OVERFLOW", image = "talents/rek_glr_mindprison_overflow.png",
 	desc = "Overflowed Thoughts",
 	long_desc = function(self, eff) return ("The target is conflicated and about to lose energy."):format() end,
