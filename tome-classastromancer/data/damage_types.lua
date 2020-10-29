@@ -207,8 +207,89 @@ newDamageType{
    end,
 }
 
+-- physical that uses highest fire/cold/lightnnig stats
 newDamageType{
-	name = "deep ocean", type = "WANDER_DEEP_OCEAN", text_color = "#A259D0#",
+   name = "water", type = "WANDER_WATER", text_color = "#A259D0#",
+   projector = function(src, x, y, type, dam, state)
+      state = initState(state)
+      useImplicitCrit(src, state)
+      local target = game.level.map(x, y, Map.ACTOR)
+      if target then
+
+				local old_pen = nil
+				local old_inc = nil
+				if src.resists_pen then
+					old_pen = src.resists_pen and src.resists_pen[engine.DamageType.PHYSICAL] or 0
+					src.resists_pen[engine.DamageType.PHYSICAL] = math.max(src.resists_pen[engine.DamageType.FIRE] or 0, src.resists_pen[engine.DamageType.COLD] or 0, src.resists_pen[engine.DamageType.LIGHTNING] or 0)
+				end
+				if src.inc_damage then
+					old_pen = src.inc_damage and src.inc_damage[engine.DamageType.PHYSICAL] or 0
+					src.inc_damage[engine.DamageType.PHYSICAL] = math.max(src.inc_damage[engine.DamageType.FIRE] or 0, src.inc_damage[engine.DamageType.COLD] or 0, src.inc_damage[engine.DamageType.LIGHTNING] or 0)
+				end
+				
+				DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam, state)
+
+				if old_pen then
+					src.resists_pen[engine.DamageType.PHYSICAL] = old_pen
+				end
+				if old_inc then
+					src.inc_damage[engine.DamageType.PHYSICAL] = old_inc
+				end
+      end
+   end,
+}
+
+-- water + direct off-balance
+newDamageType{
+	name = "water whip", type = "WANDER_WATER_WHIP", text_color = "#A259D0#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+
+		if _G.type(dam) == "number" then
+			dam = {dam=dam}
+		end
+		
+		local target = game.level.map(x, y, Map.ACTOR)
+		if not target or target.dead then return end
+
+		if target then
+			DamageType:get(DamageType.WANDER_WATER).projector(src, x, y, DamageType.WANDER_WATER, dam.dam, state)
+			target:crossTierEffect(target.EFF_OFFBALANCE, src:combatSpellpower())
+		end
+	end,
+}
+
+-- water + pull + wet
+newDamageType{
+	name = "riptide", type = "WANDER_WATER_PULL", text_color = "#A259D0#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		
+		if _G.type(dam) == "number" then
+			dam = {dam=dam, pull=5}
+		end
+		
+		local target = game.level.map(x, y, Map.ACTOR)
+		if not target or target.dead then return end
+		
+		if target then
+			DamageType:get(DamageType.WANDER_WATER).projector(src, x, y, DamageType.WANDER_WATER, dam.dam, state)
+			if target:checkHit(src:combatSpellpower(), target:combatPhysicalResist(), 0, 95, 5) and target:canBe("knockback") then
+				local source = src.__project_source or src
+				target:pull(source.x, source.y, dam.pull)
+				game.logSeen(target, "%s is pulled in!", target.name:capitalize())
+			else
+				game.logSeen(target, "%s resists the water's pull!", target.name:capitalize())
+			end
+			target:setEffect(target.EFF_WET, 3, {apply_power=math.max(src:combatSpellpower()), min_dur=1})
+		end
+	end,
+}
+
+newDamageType{
+	name = "deep ocean", type = "WANDER_WATER_DEEP", text_color = "#A259D0#",
 	death_message = {"dragged to the abyss", "drowned in the deep", "crushed by the pressure"},
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
@@ -220,10 +301,10 @@ newDamageType{
 		
 		local target = game.level.map(x, y, Map.ACTOR)
 		if not target or target.dead then return end
-		
+
 		if target then
-			DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
-			if not target.dead and target:canBe("instakill") and target.life <= target.max_life * dam.execute/100 then
+			DamageType:get(DamageType.WANDER_WATER).projector(src, x, y, DamageType.WANDER_WATER, dam.dam, state)
+			if not target.dead and target:canBe("instakill") and target.life <= target.max_life * dam.execute then
 				target:die(self)
 			end
 		end

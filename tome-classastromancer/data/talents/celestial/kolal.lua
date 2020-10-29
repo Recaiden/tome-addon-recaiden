@@ -187,7 +187,8 @@ newTalent{
 		game.level.map:addEffect(self, self.x, self.y, 4,
 														 DamageType.WANDER_FIRE_CRUSH,
 														 {
-															 dam = {dam/5, pow=t.getMinion(self, t)}
+															 dam = dam/5,
+															 pow=t.getMinion(self, t),
 															 src = self, talent = t,
 															 dur = 3
 														 },
@@ -203,7 +204,7 @@ newTalent{
 	end,
 }
 
-local what = {physical=true, mental=true, magical=true}
+
 newTalent{
 	name = "Fiery Purge", short_name = "WANDER_PURGE",
 	type = {"celestial/kolal", 3},
@@ -226,45 +227,28 @@ newTalent{
 		end
 	},
 	getCost = function(self, t) return math.max(7.5, 16.5 - self:getTalentLevel(t)) end,
-	getNb = function(self, t) return self:combatTalentScale(t, 2, 5) end,
-	on_pre_use = function(self, t) return self.life > self.max_life * t.getCost(self, t)/100 end,
+	getNb = function(self, t) return math.floor(self:combatTalentScale(t, 1, 4)) end,
+	on_pre_use = function(self, t)
+		if self.life <= self.max_life * t.getCost(self, t)/100 then return false end
+		for eff_id, p in pairs(self.tmp) do
+			local e = self.tempeffect_def[eff_id]
+			if e.status == "detrimental" and e.type ~= "other" then
+				return true
+			end
+		end
+		return false
+	end,
 	action = function(self, t)
 		self:takeHit(self.max_life * t.getCost(self, t)/100, self)
 		
 		local target = self
 		local effs = {}
 		local force = {}
-		local known = false
-		
-		-- Go through all temporary effects
-		for eff_id, p in pairs(target.tmp) do
-			local e = target.tempeffect_def[eff_id]
-			if what[e.type] and e.status == "detrimental" and e.subtype["cross tier"] then
-				force[#force+1] = {"effect", eff_id}
-			elseif what[e.type] and e.status == "detrimental" then
-				effs[#effs+1] = {"effect", eff_id}
-			end
-		end
-		
-		-- Cross tier effects are always removed
-		for i = 1, #force do
-			local eff = force[i]
-			if eff[1] == "effect" then
-				target:removeEffect(eff[2])
-				known = true
-			end
-		end
-		
-		for i = 1, t.getNb(self, t) do
-			if #effs == 0 then break end
-			local eff = rng.tableRemove(effs)
-			
-			if eff[1] == "effect" then
-				target:removeEffect(eff[2])
-				known = true
-			end
-		end
-		if known then
+
+		self:removeEffectsFilter(self, {subtype={["cross tier"] = true}, status="detrimental"}, 3)
+		local removed = self:removeEffectsFilter(self, function(t) return (t.type == "physical" or t.type == "mental" or t.type == "magical") and t.status == "detrimental" end, t.getNb(self, t))
+
+		if removed > 0 then
 			game.logSeen(self, "%s is cured!", self.name:capitalize())
 		end
 		
@@ -278,7 +262,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Spend %0.1f%% of your total life to burn away your afflictions, removing up to %d physical, mental or magical detrimental effects.]]):
+		return ([[Spend %0.1f%% of your total life to burn away your afflictions, removing up to %d physical, mental or magical detrimental effects and all cross-tier effects.]]):
 		format(t.getCost(self, t), t.getNb(self, t))
 	end,
 }

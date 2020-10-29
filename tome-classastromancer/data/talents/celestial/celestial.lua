@@ -162,6 +162,11 @@ if not Talents.talents_types_def["celestial/kolal"] then
    load("/data-classastromancer/talents/celestial/kolal.lua")
 end
 
+if not Talents.talents_types_def["celestial/nekal"] then
+   newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/nekal", name = "Nekal", description = "Celestial spellcasting drawn from the mysterious water-world of Nekal." }
+   load("/data-classastromancer/talents/celestial/nekal.lua")
+end
+
 if not Talents.talents_types_def["celestial/unity"] then
    newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/terrestrial_unity", name = "Terrestrial Unity", description = "Celestial augmentations based on keeping the planets in harmonious balance." }
    load("/data-classastromancer/talents/celestial/unity.lua")

@@ -22,6 +22,9 @@ newTalent{
 			self:setEffect(self.EFF_WANDER_LUXAM, 10, {stacks = 1, max_stacks = self:getTalentLevelRaw(t)})
 		elseif ab.type[1]:find("/ponx") then
 			self:setEffect(self.EFF_WANDER_PONX, 10, {stacks = 1, max_stacks = self:getTalentLevelRaw(t)})
+		elseif ab.type[1]:find("/nekal") then
+			local eff = rng.table({self.EFF_WANDER_LUXAM, self.EFF_WANDER_KOLAL, self.EFF_WANDER_PONX})
+			self:setEffect(eff, 10, {stacks = 1, max_stacks = self:getTalentLevelRaw(t)+1})
 		end
 	end,
 	
@@ -34,7 +37,8 @@ newTalent{
 		return ([[Casting planetary spells in combat gives you charges of planetary energy for 10 turns, stacking up to %d times each.
 Kolal charges increase your casting and combat speeds by %d%%
 Luxam charges increase your resistance to damage by %d%%
-Ponx charges increase your healing mod by %d%%]]):format(stacks, speed_flame, res_cold, hmod_wind)
+Ponx charges increase your healing mod by %d%%
+Nekal is a mercurial planet and will give you one of the other charges at random, potentially stacking 1 higher]]):format(stacks, speed_flame, res_cold, hmod_wind)
 	end,
 }
 
@@ -131,12 +135,14 @@ newTalent{
 Greater Gwelgoroth: Shocks and dazes enemies
 Greater Shivgoroth: Freezes enemies in place
 Greater Faeros: Launches bolts of fire when it attacks
+Greater Nenagoroth: Numbs enemies with fast whips of water
 Greater Teluvorta: Acts faster and faster over time
 
 If you have at least 5 of each charge, you will call an Ultimate Elemental, which have another additional talent.
 Ultimate Gwelgoroth: Forms hurricanes
 Ultimate Shivgoroth: Surrounded by an ice storm
 Ultimate Faeros: Continually launches fire at nearby enemies
+Ultimate Nenagoroth: Fill an area with slowing floods
 Ultimate Teluvorta: Steals speed from enemies]]):format(t.getCount(self, t), t.getDuration(self, t), t.getExtension(self, t))
 	end,
 }

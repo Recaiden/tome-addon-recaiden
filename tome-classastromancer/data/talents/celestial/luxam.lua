@@ -371,15 +371,15 @@ newTalent{
 	getAbsorb = function(self, t)
 		return self:combatTalentSpellDamage(t, 40, 400)
 	end,
-	
+	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t, first_target="friend", default_target=self, friendlyblock=false, nowarning=true} end,
 	action = function(self, t)
-		local tg = {type="hit", range=self:getTalentRange(t), talent=t, first_target="friend", default_target=self, friendlyblock=false, nowarning=true}
+		local tg = self:getTalentTarget(t)
 		local tx, ty, target = self:getTarget(tg)
 		if not tx or not ty or not target then return nil end
 		if target and self:reactionToward(target) >= 0 and target ~= self then
 			game:onTickEnd(function() self:alterTalentCoolingdown(t.id, -math.floor((self.talents_cd[t.id] or 0) * 0.8)) end)
 		end
-		target:setEffect(target.EFF_DAMAGE_SHIELD, 10, {power=self:spellCrit(t.getAbsorb(self, t))})
+		target:setEffect(target.EFF_DAMAGE_SHIELD, 10, {power=self:spellCrit(target:getShieldAmount(t.getAbsorb(self, t)))})
 		target:setEffect(target.EFF_WANDER_ICE_DAMAGE_SHIELD, 10, {power=100})
 		game:playSoundNear(self, "talents/spell_generic")
 		return true

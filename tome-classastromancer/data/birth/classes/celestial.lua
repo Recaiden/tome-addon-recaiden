@@ -21,6 +21,7 @@ newBirthDescriptor{
       ["celestial/kolal"]={true, 0.3},
       ["celestial/luxam"]={true, 0.3},
       ["celestial/ponx"]={true, 0.3},
+			["celestial/nekal"]={true, 0.3},
       ["celestial/terrestrial_unity"]={true, 0.3},
       --high level
       ["celestial/meteor"]={false, 0.3},

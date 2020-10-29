@@ -262,7 +262,7 @@ newEffect{
 	on_gain = function(self, err) return "#Target# accelerates out of sight!", "+Infinite Speed" end,
 	on_lose = function(self, err) return "#Target# has lost their manic speed.", "-Infinite Speed" end,
 	activate = function(self, eff)
-		self.did_energy = true
+		self:effectTemporaryValue(eff, "free_movement", 1)
 		eff.steps = 0
 		eff.ox = self.x
 		eff.oy = self.y
@@ -275,7 +275,6 @@ newEffect{
 		self:fireTalentCheck("callbackOnTeleport", true, eff.ox, eff.oy, self.x, self.y)
 	end,
 	callbackOnMove = function(self, eff, moved, force, ox, oy, x, y)
-		self.did_energy = true
 		if not moved then return end
 		if force then return end
 		if ox == self.x and oy == self.y then return end
@@ -286,7 +285,6 @@ newEffect{
 				self:reloadQS()
 			end
 		end
-		--self.energy.value = self.energy.value + game.energy_to_act * self:combatMovementSpeed(x, y)
 		
 		eff.steps = eff.steps + 1
 		local remaining = eff.max_steps - eff.steps +1

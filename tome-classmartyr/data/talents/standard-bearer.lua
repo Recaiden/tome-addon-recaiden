@@ -22,6 +22,7 @@ function martyrSetupSummon(self, def, x, y, level)
    m.inc_damage = table.clone(self.inc_damage, true)
    m.no_drops = true
 	 m.no_inventory_access = true
+	 m.ai_tactic.escape = 0
    
    if game.party:hasMember(self) then 
       m.remove_from_party_on_death = true

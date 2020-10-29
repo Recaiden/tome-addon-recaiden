@@ -1,8 +1,8 @@
 long_name = "Class: Martyr"
 short_name = "classmartyr"
 for_module = "tome"
-version = {1,6,0}
-addon_version = {0, 1, 14}
+version = {1,7,0}
+addon_version = {0, 2, 0}
 weight = 27661
 author = { 'recaiden' }
 requires_addons = {'cults'}

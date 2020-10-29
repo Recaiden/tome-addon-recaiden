@@ -464,7 +464,7 @@ newEffect{
 newEffect{
 	name = "WANDER_INVIGORATING_CHILL", image = "talents/wander_ice_slow.png",
 	desc = "Invigorating Chill",
-	long_desc = function(self, eff) return ("Increases global speed by %d%%."):tformat(eff.power * 100) end,
+	long_desc = function(self, eff) return ("Increases global speed by %d%%."):format(eff.power * 100) end,
 	type = "mental",
 	subtype = { telekinesis=true, speed=true },
 	status = "beneficial",
@@ -483,7 +483,7 @@ newEffect{
 	name = "WANDER_WATER_DANCE", image = "talents/wander_water_dance.png",
 	desc = "Dancing Waves",
 	long_desc = function(self, eff)
-		local str = ("The target's has been injured, but can recover with the power of water."):format
+		local str = ("The target has been injured, but can recover up to %d life with the power of water."):format(eff.damage)
 		return str
 	end,
 	type = "magical",
@@ -495,6 +495,11 @@ newEffect{
 
 	end,
 	activate = function(self, eff)
+		local damageTotal = 0
+		for i, instance in pairs(eff.hits) do
+			damageTotal = damageTotal + instance.power
+		end
+		eff.damage = damageTotal
 	end,
 	deactivate = function(self, eff)
 	end,
@@ -505,15 +510,14 @@ newEffect{
 		old_eff.hits[#old_eff.hits+1] = new_eff.hits[1]
 
 		local damageTotal = 0
-		for i, instance in pairs(eff.hits) do
+		for i, instance in pairs(old_eff.hits) do
 			damageTotal = damageTotal + instance.power
 		end
-		eff.damage = damageTotal
+		old_eff.damage = damageTotal
 		
 		return old_eff
 	end,
 	on_timeout = function(self, eff)
-		local damCurrent = 0
 		for i, instance in pairs(eff.hits) do
 			-- applications that have lived out their allotted time are cleared.
 			instance.life = instance.life - 1

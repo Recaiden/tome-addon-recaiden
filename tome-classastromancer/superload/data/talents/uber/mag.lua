@@ -6,6 +6,7 @@ Talents.talents_def.T_BLIGHTED_SUMMONING.info = function(self, t)
 	- Faeros: Burning Hex
 	- Shivgoroth: Corrosive Vapor
 	- Gwelgoroth: Flame of Urh'rok
+	- Nenagoroth: Blood Spray
 	- Losgoroth: Corrupted Negation
 	- Manaworm: Corrosive Manaworm
 	- Teluvorta: Dark Portal]]):format(base_blightedSummoning_info(self, t))
@@ -31,6 +32,8 @@ Talents.talents_def.T_BLIGHTED_SUMMONING.doBlightedSummon = function(self, t, wh
 			who:forceUseTalent(who.T_FLAME_OF_URH_ROK, {ignore_energy=true})
 		elseif who.subtype == "cold" then
 			who:learnTalent(who.T_CORROSIVE_VAPOUR,true,tlevel)
+		elseif who.subtype == "water" then
+			who:learnTalent(who.T_BLOOD_SPRAY,true,tlevel)
 		elseif who.name == "Losgoroth" then
 			who:learnTalent(who.T_CORRUPTED_NEGATION,true,tlevel)
 		elseif who.name == "Manaworm" then

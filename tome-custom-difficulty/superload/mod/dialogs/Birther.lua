@@ -126,9 +126,9 @@ function updateDifficulties(self)
    then
       copy["__game_difficulty"] = 4
       d["name"] = "Insane"
-   elseif (tonumber(self.c_rek_dif_zone_mul.text) or 1) >= 1.5
+   elseif (tonumber(self.c_rek_dif_zone_mul.text) or 1) >= 1.25
       and (tonumber(self.c_rek_dif_talent.text) or 1) >= 30
-      and self.c_rek_dif_randrare.value >= 7
+      and self.c_rek_dif_randrare.value >= 12.5
       and (tonumber(self.c_rek_dif_health.text) or 1) >= 1
       and (tonumber(self.c_rek_dif_stairwait.text) or 1) >= 3
    then
@@ -142,6 +142,8 @@ function updateDifficulties(self)
       d["name"] = "Normal"
    end
 
+	 copy["__game_difficulty"] = copy["__game_difficulty"] or 1
+	 
    if copy["__game_difficulty"] < 5
       and((tonumber(self.c_rek_dif_gold.text) or 0) > 0
        or (tonumber(self.c_rek_dif_life_bonus.text) or 0) > 0)
@@ -205,10 +207,10 @@ function setToStandardDifficulty(self, name)
       self.c_rek_dif_life_bonus:setText("0")
       self.c_rek_dif_gold:setText("0")
    elseif name == "Nightmare" then
-      self.c_rek_dif_zone_mul:setText("1.5")
+      self.c_rek_dif_zone_mul:setText("1.25")
       self.c_rek_dif_zone_add:setText("0")
       self.c_rek_dif_talent:setText("30")
-      numberSliderSetValue(self.c_rek_dif_randrare, 7)
+      numberSliderSetValue(self.c_rek_dif_randrare, 12.5)
       numberSliderSetValue(self.c_rek_dif_randboss, 0)
       self.c_rek_dif_bossscale:setText("1.3")
       self.c_rek_dif_stairwait:setText("3")

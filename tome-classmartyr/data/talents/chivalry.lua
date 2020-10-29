@@ -101,14 +101,28 @@ newTalent{
 		if not target then game.logPlayer(self, "You can only charge to a creature.") return nil end
 		
 		-- check movement to correct space
-		local block_actor = function(_, bx, by) return game.level.map:checkEntity(bx, by, Map.TERRAIN, "block_move", self) end
+		local block_actor = function(_, bx, by)
+			return game.level.map:checkEntity(bx, by, Map.TERRAIN, "block_move", self)
+		end
 		local linestep = self:lineFOV(x, y, block_actor)
 		local tx, ty, lx, ly, is_corner_blocked
+		local function isChargeBlockedHere(lx, ly, fx, fy, self)
+			local blocked = game.level.map:checkAllEntities(lx, ly, "block_move", self)
+			local target = game.level.map(lx, ly, Map.ACTOR)
+			-- can skip over flags
+			if target and target.summoner and target.summoner == self and target.is_tentacle_flag then
+				return false
+			end
+			return blocked
+		end
 		repeat  -- make sure each tile is passable
 			tx, ty = lx, ly
 			lx, ly, is_corner_blocked = linestep:step()
-		until is_corner_blocked or not lx or not ly or game.level.map:checkAllEntities(lx, ly, "block_move", self)
-		if not tx or not ty or core.fov.distance(x, y, tx, ty) > 1 then game.logPlayer(self, "Something is blocking your path.") return nil end 
+		until is_corner_blocked or not lx or not ly or isChargeBlockedHere(lx, ly, x, y, self)
+		if not tx or not ty or core.fov.distance(x, y, tx, ty) > 1 then game.logPlayer(self, "Something is blocking your path.") return nil end
+		local target = game.level.map(tx, ty, Map.ACTOR)
+		-- but can't skip flags on your ending space
+		if target then game.logPlayer(self, "Something is blocking your path.") return nil end
 		
 		doMartyrWeaponSwap(self, "melee", true)
 		
@@ -182,8 +196,7 @@ newTalent{
       if not hit or not x or not y then return nil end
       doMartyrWeaponSwap(self, "melee", true)
 
-			-- TODO 1.7 add 'self' as 1st parameter
-      self:removeEffectsFilter({subtype={stun=true, daze=true, pin=true, pinned=true, pinning=true}}, 1)
+      self:removeEffectsFilter(self, {subtype={stun=true, daze=true, pin=true, pinned=true, pinning=true}}, 1)
 
       if self:canMove(x, y) then
          self:move(x, y, true)
