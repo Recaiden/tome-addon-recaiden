@@ -210,7 +210,7 @@ newEffect{
 		if eff.death_triggered then return end
 		eff.death_triggered = true
 		if eff.src and eff.src ~= self then
-			if eff.src:callTalent(eff.src.T_REK_GLR_MINDPRISON_CHORUS, "captureMind", self, true) then
+			if self.rank >= 3.2 and eff.src:callTalent(eff.src.T_REK_GLR_MINDPRISON_CHORUS, "captureMind", self, true) then
 				eff.src:logCombat(self, "#PURPLE##Source# draws out #Target#'s mind and absorbs it.")
 			else
 				eff.src:logCombat(self, "#PURPLE##Source# rips out #Target#'s mind, utterly destroying it.")

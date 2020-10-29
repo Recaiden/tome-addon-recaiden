@@ -131,49 +131,49 @@ end
 
 if not Talents.talents_types_def["technique/psychic-marksman"] then
 	newTalentType{ allow_random=true, is_mind=true, type="technique/psychic-marksman", name = "Psychic Marksman", description = "A true warrior strikes perfectly, killing with only their mind.  But the bow and arrows help." }
-	load("/data-classharrower/talents/psychic-marksman.lua")
+	load("/data-classwisp/talents/psychic-marksman.lua")
 end
 
 if not Talents.talents_types_def["technique/psychic-shots"] then
 	newTalentType{ allow_random=true, is_mind=true, type="technique/psychic-shots", name = "Psychic Shots", description = "Special Psi-aimed archery techniques" }
-	load("/data-classharrower/talents/psychic-shots.lua")
+	load("/data-classwisp/talents/psychic-shots.lua")
 end
 
 if not Talents.talents_types_def["psionic/idol"] then
 	newTalentType{ allow_random=true, is_mind=true, type="psionic/idol", name = "Idol", description = "You're the best, and deep down everyone knows it." }
-	load("/data-classharrower/talents/idol.lua")
+	load("/data-classwisp/talents/idol.lua")
 end
 
 if not Talents.talents_types_def["psionic/noumena"] then
 	newTalentType{ allow_random=true, is_mind=true, type="psionic/noumena", name = "Noumena", description = "Sometimes things happen that don't belong here.  Things that no one can explain." }
-	load("/data-classharrower/talents/noumena.lua")
+	load("/data-classwisp/talents/noumena.lua")
 end
 
 if not Talents.talents_types_def["psionic/mindshaped-material"] then
 	newTalentType{ allow_random=true, is_mind=true, generic = true, type="psionic/mindshaped-material", name = "Mindshaped Materials", description = "Manipulate the battlefield with minutely mind-molded matter." }
-	load("/data-classharrower/talents/material.lua")
+	load("/data-classwisp/talents/material.lua")
 end
 
 if not Talents.talents_types_def["psionic/mindprison"] then
 	newTalentType{ allow_random=true, is_mind=true, generic = true, type="psionic/mindprison", name = "Mindprison", description = "You are vast; you can contain multitudes." }
-	load("/data-classharrower/talents/mindprison.lua")
+	load("/data-classwisp/talents/mindprison.lua")
 end
 
 if not Talents.talents_types_def["psionic/unleash-abomination"] then
 	newTalentType{ allow_random=true, is_mind=true, min_lev = 10, type="psionic/unleash-abomination", name = "Unleash Abomination", description = "Let the source of your power act more freely." }
-	load("/data-classharrower/talents/abomination.lua")
+	load("/data-classwisp/talents/abomination.lua")
 end
 
 if not Talents.talents_types_def["psionic/unleash-nightmare"] then
 	newTalentType{ allow_random=true, is_mind=true, min_lev = 10, type="psionic/unleash-nightmare", name = "Unleash Nightmare", description = "Let the source of your power awaken." }
-	load("/data-classharrower/talents/nightmare.lua")
+	load("/data-classwisp/talents/nightmare.lua")
 end
 
 if not Talents.talents_types_def["technique/arrowstorm"] then
 	newTalentType{ allow_random=true, is_mind=true, min_lev = 10, type="technique/arrowstorm", name = "Arrowstorm", description = "Let the winds of beyond carry your quarrels - and remember, killing should be done up close and personal." }
-	load("/data-classharrower/talents/arrowstorm.lua")
+	load("/data-classwisp/talents/arrowstorm.lua")
 end
 
 if not Talents.talents_def["REK_EVOLUTION_GLR_STORM"] then
-	load("/data-rec-evolutions/talents/uber.lua")
+	load("/data-classwisp/talents/uber.lua")
 end

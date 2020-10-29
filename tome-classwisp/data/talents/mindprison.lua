@@ -19,7 +19,7 @@ newTalent{
 		local critKill = self:combatTalentScale(t, 0.15, 0.60) * getMindPrisonKills(self)
 		return critTL + critKill
 	end,
-	getDamage = function(self, t) return self:combatTalentMindDamage(t, 25, 400) / t.getDur(self, t) end,
+	getDamage = function(self, t) return self:combatTalentMindDamage(t, 25, 400) / t.getDuration(self, t) end,
 	getDuration = function(self, t) return math.ceil(self:combatTalentScale(t, 5, 10)) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "combat_mindcrit", t.getScaling(self, t))
@@ -84,7 +84,7 @@ newTalent{
 	points = 5,
 	innate = true,
 	on_pre_use = function(self, t)
-		if getMindPrisonKills(self) < 1 then return false
+		if getMindPrisonKills(self) < 1 then return false end
 		for eff_id, p in pairs(self.tmp) do
 			local e = self.tempeffect_def[eff_id]
 			if e.status == "detrimental" and e.type == "mental" then

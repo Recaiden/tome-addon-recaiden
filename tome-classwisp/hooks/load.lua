@@ -7,10 +7,10 @@ local Zone = require "engine.Zone"
 local Map = require "engine.Map"
 
 class:bindHook("ToME:load", function(self, data)
-  Talents:loadDefinition('/data-classharrower/talents/talents.lua')
-  ActorTemporaryEffects:loadDefinition('/data-classharrower/effects.lua')
-  Birther:loadDefinition("/data-classharrower/birth/classes/psionic.lua")
-  DamageType:loadDefinition("/data-classharrower/damage_types.lua")
+  Talents:loadDefinition('/data-classwisp/talents/talents.lua')
+  ActorTemporaryEffects:loadDefinition('/data-classwisp/effects.lua')
+  Birther:loadDefinition("/data-classwisp/birth/classes/psionic.lua")
+  DamageType:loadDefinition("/data-classwisp/damage_types.lua")
 end)
 
 class:bindHook(
