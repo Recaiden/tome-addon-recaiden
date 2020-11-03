@@ -62,62 +62,66 @@ The damage improves with the stronger of your magic or willpower.
 }
 
 newTalent{
-   short_name = "REK_WIGHT_DRAIN",
-   name = "Draining Presence",
-   type = {"undead/wight", 2},
-   require = undeads_req2,
-   points = 5,
-   mode = "passive",
-   on_learn = function(self, t)
-      local level = self:getTalentLevelRaw(self.T_REK_WIGHT_DRAIN)
-      if level == 1 then
-         self.old_faction_cloak = self.faction
-         self.faction = "allied-kingdoms"
-         if self.descriptor and self.descriptor.race and self:attr("undead") then self.descriptor.fake_race = "Human" end
-         if self.descriptor and self.descriptor.subrace and self:attr("undead") then self.descriptor.fake_subrace = "Cornac" end
-         if self.player then engine.Map:setViewerFaction(self.faction) end
-      end
-   end,
-   on_unlearn = function(self, t)
-      local level = self:getTalentLevelRaw(self.T_REK_WIGHT_DRAIN)
-      if level == 0 then
-         if self.permanent_undead_cloak then return end
-         self.faction = self.old_faction_cloak
-         if self.descriptor and self.descriptor.race and self:attr("undead") then self.descriptor.fake_race = nil end
-         if self.descriptor and self.descriptor.subrace and self:attr("undead") then self.descriptor.fake_subrace = nil end
-         if self.player then engine.Map:setViewerFaction(self.faction) end
-      end
-   end,
-   getFearPower = function(self, t)
-      return -self:combatStatScale(math.max(self:getMag(), self:getWil()), 15, 40)
-   end,
-   getSpeed = function(self, t) return  end,
-   getFearlessDuration = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 20, 10)) end,
-   callbackOnActBase = function (self, t)
-      self:project(
-         {type="ball", radius=5}, self.x, self.y,
-         function(px, py)
-            local actor = game.level.map(px, py, Map.ACTOR)
-            local apply_power = math.max(self:combatPhysicalpower(), self:combatSpellpower(), self:combatMindpower())
-            if actor and self:reactionToward(actor) < 0 then
-               if actor:hasEffect(actor.EFF_REK_WIGHT_FEARLESS) then return end
-               if self:checkHit(apply_power, actor:combatMentalResist(), 0, 95, 5) then
-                  actor:setEffect(actor.EFF_REK_WIGHT_DESPAIR, 4, {statChange = t.getFearPower(self, t), apply_power=apply_power, no_ct_effect=true})
-               else
-                  actor:setEffect(actor.EFF_REK_WIGHT_FEARLESS, t.getFearlessDuration(self, t), {})
-               end
-            end
-         end)
-   end,
-   info = function(self, t)
-      return ([[Each round, enemies within range 5 may (#SLATE#Highest power vs. Mental#LAST#) despair of surviving, reducing their saves, defense, and armor by %d.  If they successfully resist, they are immune to your draining presence for %d turns.
+	short_name = "REK_WIGHT_DRAIN",
+	name = "Draining Presence",
+	type = {"undead/wight", 2},
+	require = undeads_req2,
+	points = 5,
+	mode = "passive",
+	on_learn = function(self, t)
+		if self.faction == 'free-whitehooves' then return end
+		local level = self:getTalentLevelRaw(self.T_REK_WIGHT_DRAIN)
+		if level == 1 then
+			self.old_faction_cloak = self.faction
+			self.faction = "allied-kingdoms"
+			if self.descriptor and self.descriptor.race and self:attr("undead") then self.descriptor.fake_race = "Human" end
+			if self.descriptor and self.descriptor.subrace and self:attr("undead") then self.descriptor.fake_subrace = "Cornac" end
+			if self.player then engine.Map:setViewerFaction(self.faction) end
+		end
+	end,
+	on_unlearn = function(self, t)
+		if self.faction == 'free-whitehooves' then return end
+		local level = self:getTalentLevelRaw(self.T_REK_WIGHT_DRAIN)
+		if level == 0 then
+			if self.permanent_undead_cloak then return end
+			self.faction = self.old_faction_cloak
+			if self.descriptor and self.descriptor.race and self:attr("undead") then self.descriptor.fake_race = nil end
+			if self.descriptor and self.descriptor.subrace and self:attr("undead") then self.descriptor.fake_subrace = nil end
+			if self.player then engine.Map:setViewerFaction(self.faction) end
+		end
+	end,
+	getFearPower = function(self, t)
+		return -self:combatStatScale(math.max(self:getMag(), self:getWil()), 15, 40)
+	end,
+	getSpeed = function(self, t) return  end,
+	getFearlessDuration = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 20, 10)) end,
+	callbackOnActBase = function (self, t)
+		self:project(
+			{type="ball", radius=5}, self.x, self.y,
+			function(px, py)
+				local actor = game.level.map(px, py, Map.ACTOR)
+				local apply_power = math.max(self:combatPhysicalpower(), self:combatSpellpower(), self:combatMindpower())
+				if actor and self:reactionToward(actor) < 0 then
+					if actor:hasEffect(actor.EFF_REK_WIGHT_FEARLESS) then return end
+					if self:checkHit(apply_power, actor:combatMentalResist(), 0, 95, 5) then
+						actor:setEffect(actor.EFF_REK_WIGHT_DESPAIR, 4, {statChange = t.getFearPower(self, t), apply_power=apply_power, no_ct_effect=true})
+					else
+						actor:setEffect(actor.EFF_REK_WIGHT_FEARLESS, t.getFearlessDuration(self, t), {})
+					end
+				end
+			end)
+	end,
+	info = function(self, t)
+		local disguise_str = self.faction == 'free-whitehooves' and "" or [[
+																																				 
+Learning this talent gives you enough control over your ghostly form to pass as a human.
+]]
+		return ([[Each round, enemies within range 5 may (#SLATE#Highest power vs. Mental#LAST#) despair of surviving, reducing their saves, defense, and armor by %d.  If they successfully resist, they are immune to your draining presence for %d turns.
 
 The depth of their despair improves with the stronger of your magic or willpower.
-
-Learning this talent gives you enough control over your ghostly form to pass as a human.
-
+%s
 #{italic}#Merely being close to these figments of death causes one's life force to sputter and fade...#{normal}# 
-]]):format(t.getFearPower(self, t), t.getFearlessDuration(self, t))
+]]):format(t.getFearPower(self, t), t.getFearlessDuration(self, t), disguise_str)
    end,
 }
 

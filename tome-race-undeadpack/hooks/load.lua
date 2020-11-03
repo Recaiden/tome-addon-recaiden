@@ -89,7 +89,7 @@ class:bindHook("Entity:loadList",
                            insertMastery(obj, masteryList[obj.name])
 			end
                         if obj.define_as == "GREATER_MUMMY_LORD" then
-                           obj.name = "[DEBUG] Greater Mummy Lord"
+                           obj.name = "Greater Mummy Lord"
                            obj.on_die = function(self, who)
                               world:gainAchievement("MUMMY_TRANSIENT_NIGHT", game.player)
                               game:setAllowedBuild("undead_mummy", true)

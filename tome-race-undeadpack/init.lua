@@ -1,8 +1,8 @@
 long_name = "Recaiden's Undead Racepack"
 short_name = "race-undeadpack"
 for_module = "tome"
-version = {1,6,0}
-addon_version = {1, 0, 3}
+version = {1,7,0}
+addon_version = {1, 1, 1}
 weight = 27561
 author = { 'Recaiden' }
 description = [[This is a compilation of my undead race addons:

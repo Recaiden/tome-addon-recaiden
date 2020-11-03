@@ -71,6 +71,91 @@ newTalentType{ type="undead/mummified", name = "mummified", is_spell=true, gener
    load("/data-race-undeadpack/talents/mummy.lua")
 end
 
+if Talents.talents_def["T_RAKSHOR_CUNNING"] then
+	local Dialog = require "engine.ui.Dialog"
+	local base_cbodb = Talents.talents_def["T_RAKSHOR_CUNNING"].callbackOnDeathbox
+
+	local function make_undead(self, choice, dialog)
+			self.rakshor_resurrected = true
+			dialog:cleanActor(self)
+			dialog:resurrectBasic(self, "rakshor_cunning")
+			dialog:restoreResources(self)
+
+			self:attr("undead", 1)
+			self:attr("true_undead", 1)
+			self.inscription_forbids = self.inscription_forbids or {}
+			self.inscription_forbids["inscriptions/infusions"] = true
+
+			self.descriptor.race = "Undead"
+			if choice == "banshee" then
+				self.descriptor.subrace = "Banshee"
+				if not self.has_custom_tile then
+					self.moddable_tile = "human_#sex#"
+					self.moddable_tile_base = "base_banshee_01.png"
+					self.moddable_tile_ornament = nil
+					self.attachement_spots = "race_human"
+				end
+				self.life_rating = 9
+				self:attr("silence_immune", 1)
+				self:attr("cut_immune", 1)
+				self:attr("fear_immune", 1)
+
+				self:learnTalentType("undead/banshee", true)
+				self:setTalentTypeMastery("undead/banshee", 1.1)
+				self:learnTalent(self.T_REK_BANSHEE_WAIL, true, 2)
+				self:learnTalent(self.T_REK_BANSHEE_RESIST, true, 2)
+				self:learnTalent(self.T_REK_BANSHEE_CURSE, true, 2)
+				self:learnTalent(self.T_REK_BANSHEE_GHOST, true, 2)
+			else
+				self.descriptor.subrace = "Wight"
+				if not self.has_custom_tile then
+					self.moddable_tile = "human_#sex#"
+					self.moddable_tile_base = "wight_hollow_blue.png"
+					self.moddable_tile_ornament = nil
+					self.attachement_spots = "race_human"
+				end
+				self.life_rating = 11
+
+				self:attr("poison_immune", 0.8)
+				self:attr("cut_immune", 1)
+				self:attr("fear_immune", 1)
+				self:attr("no_breath", 1)
+
+				self:learnTalentType("undead/wight", true)
+				self:setTalentTypeMastery("undead/wight", 1.1)
+				self:learnTalent(self.T_REK_WIGHT_FURY, true, 2)
+				self:learnTalent(self.T_REK_WIGHT_DRAIN, true, 2)
+				self:learnTalent(self.T_REK_WIGHT_DODGE, true, 2)
+				self:learnTalent(self.T_REK_WIGHT_GHOST_VISION, true, 2)
+			end
+
+			game.level.map:particleEmitter(self.x, self.y, 1, "demon_teleport")
+
+			self:updateModdableTile()
+			self:check("on_resurrect", "rakshor_cunning")
+			self:triggerHook{"Actor:resurrect", reason="rakshor_cunning"}
+
+			Dialog:yesnoLongPopup(_t"Rak'Shor's Cunning", _t"#GREY#Applying you cunning plans, you escape death by turning to undeath in an instant!\n\n#{italic}#You may now choose to customize your undead appearance, this can not be changed afterwards.", 600, function(ret) if ret then
+				require("mod.dialogs.Birther"):showCosmeticCustomizer(self, _t"Cosmetic Options")
+			end end, _t"Customize Appearance", _t"Use Default", true)
+		end
+	
+	Talents.talents_def["T_RAKSHOR_CUNNING"].callbackOnDeathbox = function(self, t, dialog, list)
+		list[#list+1] = {name=_t"Rak'Shor's Cunning (Wight)", action=function() make_undead(self, "wight", dialog) end, force_choice=true}
+		list[#list+1] = {name=_t"Rak'Shor's Cunning (Banshee)", action=function() make_undead(self, "banshee", dialog) end, force_choice=true}
+		base_cbodb(self, t, dialog, list)
+	end
+
+	local base_info = Talents.talents_def["T_RAKSHOR_CUNNING"].info
+
+	Talents.talents_def["T_RAKSHOR_CUNNING"].info = function(self, t)
+		return ([[%s
+
+You can also choose to become a Banshee or Wight.]]):format(base_info(self, t))
+	end
+	
+end
+
 if not Talents.talents_types_def["undead/dreadlord"] then
    newTalentType{ type="undead/dreadlord", name = "dreadlord", is_spell=true, generic = true, description = "The various racial bonuses a dark spirit can have."}
    newTalentType{ type="undead/dreadmaster", name = "dreadmaster", is_spell=true, description = "Summon undead minions of pure darkness to harass your foes."}

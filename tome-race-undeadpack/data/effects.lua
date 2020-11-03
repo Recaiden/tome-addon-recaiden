@@ -235,7 +235,7 @@ newEffect{
    parameters = { inc=1, max=5 },
    on_merge = function(self, old_eff, new_eff)
       self:removeTemporaryValue("resists", old_eff.tmpid)
-      old_eff.cur_inc = math.max(old_eff.cur_inc + new_eff.inc, new_eff.max)
+      old_eff.cur_inc = math.min(old_eff.cur_inc + new_eff.inc, new_eff.max)
       old_eff.tmpid = self:addTemporaryValue("resists", {all = old_eff.cur_inc})
       
       old_eff.dur = new_eff.dur
@@ -260,7 +260,7 @@ newEffect{
    parameters = { inc=1, max=5 },
    on_merge = function(self, old_eff, new_eff)
       self:removeTemporaryValue("resists", old_eff.tmpid)
-      old_eff.cur_inc = math.max(old_eff.cur_inc + new_eff.inc, new_eff.max)
+      old_eff.cur_inc = math.min(old_eff.cur_inc + new_eff.inc, new_eff.max)
       old_eff.tmpid = self:addTemporaryValue("resists", {all = old_eff.cur_inc})
       
       old_eff.dur = new_eff.dur

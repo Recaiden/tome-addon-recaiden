@@ -206,11 +206,10 @@ newTalent{
       local ret = [[Draw upon your liver, sealed in a canopic jar, and remember being whole and hale.  The memories purify your body, removing 1 detrimental physical effect.]]
       if not self:knowTalent(self.T_MUMMY_JAR) then
          ret = ret..[[
-                        
+
+											 
 Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]
       end
-
-
       return ret
    end,
 }
@@ -229,7 +228,7 @@ newTalent{
    getData = function(self, t)
       local base = t.getConversion(self, t)
       return {
-	 heal = base * 10,
+	 heal = base * 5.5,
 	 stamina = base,
 	 mana = base * 1.8,
 	 positive = base / 2,

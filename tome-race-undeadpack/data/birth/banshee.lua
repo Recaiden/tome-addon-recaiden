@@ -136,6 +136,8 @@ if orcs_def then
          self.starting_zone = "orcs+vaporous-emporium"
          self.starting_quest = "orcs+start-orc"
          self.starting_intro = "orcs-banshee"
+				 self.starting_level = 1
+				 self.starting_level_force_down = nil
       end
       if old_start then old_start(self) end
    end
