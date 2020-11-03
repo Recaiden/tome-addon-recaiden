@@ -5,7 +5,7 @@ newBirthDescriptor{
 	locked_desc = "I wish to have no connection with any vehicle that does not go fast; for I intend to go in harm's way.",
 	desc = {
 		"A demolisher turns their mastery of technology to two important tasks: going fast and blowing stuff up.",
-		"Steamtech drones handle weapons, crowd control, and defense, so the demolisher can concentrate on placing explosives and piliting their steam buggy.",
+		"Steamtech drones handle weapons, crowd control, and defense, so the demolisher can concentrate on placing explosives and piloting their steam buggy.",
 		"Their most important stat is Cunning.",
 		"#GOLD#Stat modifiers:",
 		"#LIGHT_BLUE# * +3 Dexterity, +5 Cunning",

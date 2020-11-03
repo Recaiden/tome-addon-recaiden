@@ -1,8 +1,8 @@
 long_name = "Class: Demolisher"
 short_name = "classdemolisher"
 for_module = "tome"
-version = {1,6,7}
-addon_version = {0, 1, 5}
+version = {1,7,0}
+addon_version = {0, 1, 6}
 weight = 27651
 author = { 'recaiden' }
 requires_addons = {'orcs'}
