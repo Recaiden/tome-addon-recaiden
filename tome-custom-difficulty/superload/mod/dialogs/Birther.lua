@@ -342,7 +342,7 @@ function _M:init(title, actor, order, at_end, quickbirth, w, h)
       fct=function() end
    }
    self.c_rek_dif_stairwait = Textbox.new{
-      title="Stair Delay: ", text="2", chars=3, max_len=5,
+      title="Stair Delay: ", text="2", chars=4, max_len=5,
       fct=function() end, on_change=function(s) updateDifficulties(self) end, on_mouse = function(button) end
    }
    self.c_rek_dif_health = Textbox.new{
@@ -350,7 +350,7 @@ function _M:init(title, actor, order, at_end, quickbirth, w, h)
       fct=function() end, on_change=function(s) updateDifficulties(self) end, on_mouse = function(button) end
    }
    self.c_rek_dif_level = Textbox.new{
-      title="Player Starting Level: ", text="1", chars=2, max_len=4,
+      title="Player Starting Level: ", text="1", chars=4, max_len=4,
       fct=function() end, on_change=function(s) updateDifficulties(self) end, on_mouse = function(button) end
    }
    self.c_rek_dif_gold = Textbox.new{
@@ -520,14 +520,14 @@ function _M:on_focus(id, ui)
       self.c_desc:switchItem(item, item.desc)
    -- Focus Descriptions for new difficulty options
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_zone_mul then
-      self.c_desc:switchItem(self.c_rek_dif_zone_mul, "Multiply the level of all zones by this amount.\nNightmare: 1.5 or higher\nMadness: 2.5 or higher")
+      self.c_desc:switchItem(self.c_rek_dif_zone_mul, "Multiply the level of all zones by this amount.\nNightmare: 1.25 or higher\nInsane: 1.5 or higher\nMadness: 2.5 or higher")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_zone_add then
       self.c_desc:switchItem(self.c_rek_dif_zone_add, "Increase the level of all enemies by this amount.\nInsane: 1 or more\nMadness: 2 or more")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_talent then
       self.c_desc:switchItem(self.c_rek_dif_talent, "Increase the level of all enemy talents by this percentage.\nNightmare: 30+\nInsane: 70+\nMadness: 170+")
       
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_randrare then
-      self.c_desc:switchItem(self.c_rek_dif_randrare, "The percentage of random enemies that will spawn with higher rank and extra talents.\nNightmare: 7 or higher\nInsane: 30 or higher")
+      self.c_desc:switchItem(self.c_rek_dif_randrare, "The percentage of random enemies that will spawn with higher rank and extra talents.\nNightmare: 12.5 or higher\nInsane: 30 or higher")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_randboss then
       self.c_desc:switchItem(self.c_rek_dif_randboss, "The percentage of random enemies that will spawn as bosses, in addition to the boss of each zone.\nBosses have additional talents and immunities and greatly increased health and attributes.\nInsane: 5+")
       
@@ -536,7 +536,7 @@ function _M:on_focus(id, ui)
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_health then
       self.c_desc:switchItem(self.c_rek_dif_health, "Multiply the health of all enemies by this amount.\nMadness: 3.0 or higher")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_bossscale then
-      self.c_desc:switchItem(self.c_rek_dif_bossscale, "Increase the talents given to fixed bosses.\nNightmare: 1.3+\nInsane: 1.8+\nMadness: 2.7+")
+      self.c_desc:switchItem(self.c_rek_dif_bossscale, "Increase the talents given to fixed bosses.\nNightmare: 1.3+\nInsane: 1.7+\nMadness: 2.7+")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_hunted then
       self.c_desc:switchItem(self.c_rek_dif_hunted, "Enemies will randomly discover where the player is located.\nIt is needed to qualify for Madness")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_ezstatus then
