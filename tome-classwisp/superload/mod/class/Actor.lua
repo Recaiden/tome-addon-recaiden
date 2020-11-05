@@ -49,4 +49,15 @@ function _M:onTakeHit(value, src, death_note)
 	return ret
 end
 
+--minqmay's horrible pseudo-instant arrows
+local base_on_projectile_fired = _M.on_projectile_fired
+function _M:on_projectile_fired(proj, typ, x, y, damtype, dam, particles, ...)
+	if proj.project and proj.project.def and proj.project.def.typ and proj.project.def.typ.archery and self:attr("instant_shot") then
+		proj.energy.value = game.energy_to_act*1000000000
+		proj.energy.mod = 1000000000
+		proj:act()
+	end
+	return base_on_projectile_fired(self, proj, typ, x, y, damtype, dam, particles, ...)
+end
+
 return _M

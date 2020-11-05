@@ -39,7 +39,7 @@ newTalent{
 			{
 			desc="You can learn 1 Idol Aura every 4 levels",
 			fct=function(self)
-				return self:knowTalent(self.T_GLR_IDOL_FASCINATING) or self.level >= numIdolAurasKnown(self)*4
+				return self:knowTalent(self.T_REK_GLR_IDOL_FASCINATING) or self.level >= numIdolAurasKnown(self)*4
 	    end
 			},
 	},
@@ -143,12 +143,12 @@ newTalent{
 			{
 			desc="You can learn 1 Idol Aura every 4 levels",
 			fct=function(self)
-				return self:knowTalent(self.T_GLR_IDOL_TERRIFIC) or self.level >= numIdolAurasKnown(self)*4
+				return self:knowTalent(self.T_REK_GLR_IDOL_TERRIFIC) or self.level >= numIdolAurasKnown(self)*4
 	    end
 			},
 	},
 	points = 5,
-	cooldown = 16,
+	cooldown = 20,
 	no_energy = function(self, t) return not self:isTalentActive(t.id) end,
 	mode = "sustained",
 	no_sustain_autoreset = true,
@@ -237,7 +237,7 @@ newTalent{
 			{
 			desc="You can learn 1 Idol Aura every 4 levels",
 			fct=function(self)
-				return self:knowTalent(self.T_GLR_IDOL_THOUGHT_DRINKER) or self.level >= numIdolAurasKnown(self)*4
+				return self:knowTalent(self.T_REK_GLR_IDOL_THOUGHT_DRINKER) or self.level >= numIdolAurasKnown(self)*4
 	    end
 			},
 	},
@@ -290,9 +290,10 @@ newTalent{
 		return ([[
 
 While Active: Each round, you gain %0.2f #4080ff#psi #LAST#for each visible enemy within range %d.
-When you kill an enemy, gain the deactivation bonus of this talent (but it stays active).
 
 Deactivate: You gain %0.2f #4080ff#psi #LAST#and %d%% movement speed (which lasts 2 turns or %d steps, whichever comes first).
+
+When you kill an enemy, gain the deactivation effect of this talent (but it stays active).
 
 #{italic}#Fighting is challenging.  Challenge is fun.  Winning is better.#{normal}#
 
@@ -314,11 +315,21 @@ newTalent{
 	on_learn = function(self, t) self:learnTalent(self.T_REK_GLR_IDOL_STARPOWER, true) end,
 	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
 	getThresh = function(self, t) return self:combatTalentLimit(t, 0.10, 0.33, 0.16) end,
+	callbackPriorities = {callbackOnTakeDamage = -100},
 	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
 		local thresh = t.getThresh(self, t) * self.max_life
-		--game.logPlayer(self, ("DEBUG: Beloved %d incoming damage"):format(dam))
 		if dam >= thresh then
-			--game.logPlayer(self, ("DEBUG: Beloved blocking damage"):format(dam))
+			-- ignore special immunities too
+			local immun_phys = self:attr("physical_negative_status_effect_immune")
+			local immun_all = self:attr("negative_status_effect_immune")
+			if immun_phys then
+				self:attr("physical_negative_status_effect_immune", -1*immun_phys)
+			end
+			if immun_phys then
+				self:attr("negative_status_effect_immune", -1*immun_all)
+			end
+
+			-- give effects
 			local caged = false
 			local dmg_src = self
 			if src.__is_actor then dmg_src = src end
@@ -332,20 +343,26 @@ newTalent{
 				self:setEffect(self.EFF_STUNNED, 3, {dmg_src=self})
 				caged = true
 			end
+
+			-- restore special immunities
+			if immun_phys then
+				self:attr("physical_negative_status_effect_immune", immun_phys)
+			end
+			if immun_phys then
+				self:attr("negative_status_effect_immune", immun_all)
+			end
+
+			-- ignore damage
 			if caged then
 				return {stopped=0}
 			end
 		end
-
+		
 		return {dam=dam}
 	end,
 	callbackOnDeath = function(self, t, src, death_note)
 		death_note.special_death_msg = ("was taken captive by %s and never seen again"):format(src.name or "someone")
 	end,
-	-- onHit is late
-	-- callbackOnHit = function(self, t, cb, src, death_note)
-	-- 	game.logPlayer(self, "DEBUG: - onHit.")
-	-- end,
 	activate = function(self, t)
 		game:playSoundNear(self, "talents/heal")
 		local particle = Particles.new("ultrashield", 1, {rm=204, rM=220, gm=102, gM=120, bm=0, bM=0, am=15, aM=60, radius=0.5, density=10, life=28, instop=100})

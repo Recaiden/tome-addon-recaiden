@@ -16,6 +16,7 @@ newTalent{
 		local targets = self:projectCollect(tg, self.x, self.y, Map.ACTOR, "hostile")
 
 		local old_target_forced = game.target.forced
+		self:attr("instant_shot", 1)
 		for i, target in pairs(targets) do
 			game.target.forced = {target.x, target.y, target}
 			local subtargets = self:archeryAcquireTargets({type = "hit", speed=200}, {one_shot=true, no_energy=true, no_sound=true, infinite=true})
@@ -25,18 +26,29 @@ newTalent{
 				break
 			end
 		end
+		self:attr("instant_shot", -1)
 		game.target.forced = old_target_forced
 	end,
 	callbackOnActBase = function(self, t)
 		t.doStorm(self, t)
 	end,
 	activate = function(self, t)
-		--TODO particle
 		local ret  = {}
+		ret.p1 = self:addParticles(Particles.new("circle", 1, {toback=true, oversize=1.5, a=220, appear=4, speed=-4.0, img="arrowstorm_1", radius=self:getTalentRange(t)}))
+		ret.p2 = self:addParticles(Particles.new("circle", 1, {toback=true, oversize=1.4, a=220, appear=4, speed=-6.0, img="arrowstorm_2", radius=self:getTalentRange(t)}))
+		ret.p3 = self:addParticles(Particles.new("circle", 1, {toback=true, oversize=1.3, a=220, appear=4, speed=-8.0, img="arrowstorm_3", radius=self:getTalentRange(t)}))
+		ret.p4 = self:addParticles(Particles.new("circle", 1, {toback=true, oversize=1.2, a=220, appear=4, speed=-11.0, img="arrowstorm_4", radius=self:getTalentRange(t)}))
+			
 		self:talentTemporaryValue(ret, 'ammo_mastery_reload', -1)
 		return ret
 	end,
 	deactivate = function(self, t, p)
+		local p = self:isTalentActive(self.T_REK_GLR_ARROWSTORM_KALMANKA)
+		if not p then return end
+		self:removeParticles(p.p1)
+		self:removeParticles(p.p2)
+		self:removeParticles(p.p3)
+		self:removeParticles(p.p4)
 		return true
 	end,
 	info = function(self, t)
@@ -65,6 +77,7 @@ newTalent{
 		if dist < 5 then
 			local tg = {type="ball", range=0, friendlyfire=false, radius=4-dist, talent=t}
 			self:project(tg, target.x, target.y, DamageType.BLINDPHYSICAL, t.getDuration(self, t))
+			game.level.map:particleEmitter(target.x, target.y, tg.radius, "sunburst", {radius=tg.radius, grids=grids, tx=target.x, ty=target.y, max_alpha=80})
 		end
 	end,
 	action = function(self, t)
@@ -79,7 +92,7 @@ newTalent{
 		local damage, distPenalty = t.getDamage(self, t), t.getPbDamage(self, t) * dist
 		
 		if distPenalty > 0  then
-			game:delayedLogMessage(self, target, "brilliant_exploit", "#DARK_ORCHID##Source# shoots #Target# (%-d%%%%%%%% penalty for range)!#LAST#", distPenalty*100)
+			game:delayedLogMessage(self, target, "brilliant_exploit", "#DARK_ORCHID##Source# shoots #Target# (%-d%%%%%%%% penalty for range)!#LAST#", math.min(90, distPenalty/damage*100))
 		end
 
 		local params = {mult = math.max(0.1, damage - distPenalty)}
@@ -88,7 +101,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Snap off a shot that shines with a gloriously incandescent light.  It does %d%% damage and releases a blinding (#SLATE#Accuracy vs Physical#LAST#, lasts %d turns) flash in radius 4.  The arrow loses light and momentum quickly; each space after the second reduces the damage by -%d%% and the blind radius by 1 (to a minimum of 10%% damage and no blind).
+		return ([[Snap off a shot that shines with a gloriously incandescent light.  It does %d%% damage and releases a blinding (#SLATE#Accuracy vs Physical#LAST#, lasts %d turns) flash in radius 4.  The arrow loses light and momentum quickly; each space it travels after the second reduces the damage by -%d%% and the blind radius by 1 (to a minimum of 10%% damage and no blind).
 
 #{italic}#A true marksman's arrows can race the sunlight ... and win#{normal}#]]):format(t.getDamage(self, t)*100, t.getDuration(self, t), t.getPbDamage(self, t)*100)
 	end,
@@ -153,6 +166,7 @@ newTalent{
 						end
 					end
 				end)
+			game.level.map:particleEmitter(x, y, tg.radius, "gravity_spike", {radius=math.ceil(self:getTalentRadius(t)/2), allow=core.shader.allow("distort")})
 			return true
 		else
 			-- Do knockback

@@ -117,13 +117,13 @@ newTalent{
 	type = {"psionic/mindprison", 4},
 	require = wil_req4,
 	points = 5,
-	psi = 20,
+	psi = 12,
 	cooldown = 30,
 	fixed_cooldown = true,
 	no_energy=true,
 	tactical = { BUFF = 2 },
 	points = 5,
-	getGain = function(self, t) return self:combatTalentMindDamage(t, 0.5, 1.5) + getMindPrisonKills(self) / 20 end,
+	getGain = function(self, t) return 0.25 + self:combatTalentMindDamage(t, 0.25, 1.25) + getMindPrisonKills(self) / 20 end,
 	action = function(self, t)
 		self.energy.value = self.energy.value + t.getGain(self, t) * game.energy_to_act
 		self:setEffect(self.EFF_REK_GLR_OVERFLOW, 1, {src=self})

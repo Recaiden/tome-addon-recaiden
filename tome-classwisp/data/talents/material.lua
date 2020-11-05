@@ -3,7 +3,7 @@ newTalent{
 	type = {"psionic/mindshaped-material", 1},
 	require = wil_req1,
 	points = 5,
-	range = function(self, t) return math.min(14, math.floor(self:combatTalentScale(t, 6, 10))) end,
+	range = function(self, t) return math.min(14, math.floor(self:combatTalentScale(t, 5, 9))) end,
 	cooldown = 18,
 	psi = 8,
 	on_pre_use = function(self, t)
@@ -33,7 +33,11 @@ newTalent{
 					hit = true
 				end
 			end)
-		
+
+		if core.shader.active(4) then
+			local bx, by = self:attachementSpot("back", true)
+			self:addParticles(Particles.new("shader_wings", 1, {img="icewings", x=bx, y=by, life=18, fade=-0.006, deploy_speed=14}))
+		end
 		--move us
 		self:move(tx, ty, true)
 		
@@ -69,17 +73,20 @@ newTalent{
 	tactical = { BUFF = 2 },
 	getCost = function(self, t) return 3 end,
 	getReduction = function(self, t) return self:combatTalentMindDamage(t, 10, 50) + self.level end,
+	callbackOnActBase = function(self, t)
+		self.silken_armor_trigger = nil
+	end,
 	callbackOnHit = function(self, t, cb, src, death_note)
 		if not self:hasLightArmor() then
 			--game.logPlayer(self, ("DEBUG - Not in light armor"):format(sx, sy))
 			return end
-		if self:getPsi() < (self:getMaxPsi() / 2) then
+		if not self.silken_armor_trigger and self:getPsi() < (self:getMaxPsi() / 2) then
 			--game.logPlayer(self, ("DEBUG - Not enough psi!"):format(sx, sy))
 			return end
 		local dam = cb.value
 		local cost = t.getCost(self, t)
 		if dam < t.getReduction(self, t) then cost = cost * dam / t.getReduction(self, t) end
-		if self:getPsi() < cost then return end -- in case max psi is really tiny?
+		if not self.silken_armor_trigger and self:getPsi() < cost then return end -- in case max psi is really tiny?
 		
 		if dam > 0 and not self:attr("invulnerable") then					
 			local reduce = math.min(t.getReduction(self, t), dam)
@@ -87,7 +94,11 @@ newTalent{
 			local d_color = "#4080ff#"
 			game:delayedLogDamage(src, self, 0, ("%s(%d to silken armor)"):format(d_color, reduce, stam_txt, d_color), false)
 			cb.value = dam
-			self:incPsi(-1 * cost)
+			if (not self.silken_armor_trigger) or (self.silken_armor_trigger < t.getCost(self, t)) then
+				local costFinal = math.min(cost, t.getCost(self, t) - (self.silken_armor_trigger or 0))
+				self:incPsi(-1 * costFinal)
+				self.silken_armor_trigger = (self.silken_armor_trigger or 0) + costFinal
+			end
 		end
 		return cb
 	end,
@@ -99,7 +110,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Rearrange the fibers of your armor into a psionically conductive matrix that protect you from harm. Incoming damage will be reduced by %d, costing up to #4080ff#%d psi#LAST# per hit.
+		return ([[Rearrange the fibers of your armor into a psionically conductive matrix that protect you from harm. Incoming damage will be reduced by %d, costing up to #4080ff#%d psi#LAST# per turn where it triggers.
 This only takes effect while wearing light or cloth armor and while your psi pool over 50%% full.
 Mindpower: increases damage reduction
 Character Level: increases damage reduction
@@ -135,9 +146,10 @@ newTalent{
 			no_breath = 1,
 			never_move = 1,
 			cant_be_moved = 1,
+			on_bump = function(self, bumper) return nil end,
 			name = "thread wall", color=colors.GRAY,
 			desc = "A wall of countless thin fibers blocks your path.",
-			resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/iceblock.png", display_h=1, display_y=-1}}},
+			resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/threadwall.png", display_h=1, display_y=-1}}},
 			level_range = {self.level, self.level}, exp_worth = 0,
 			rank = 2,
 			size_category = 4,

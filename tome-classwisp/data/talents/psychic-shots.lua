@@ -1,7 +1,7 @@
 newTalent{
 	name = "Drill Shot", short_name = "REK_GLR_SHOT_DRILL",
 	type = {"technique/psychic-shots", 1},
-	no_energy = "fake",
+	speed = "archery",
 	points = 5,
 	cooldown = 8,
 	psi = 7,
@@ -21,7 +21,7 @@ newTalent{
 	action = function(self, t)
 		if not self:hasArcheryWeapon("bow") then game.logPlayer(self, "You must wield a bow!") return nil end
 
-		local targets = self:archeryAcquireTargets({type="beam"}, {one_shot=true})
+		local targets = self:archeryAcquireTargets({type="beam"}, {one_shot=true, no_energy=true})
 		if not targets then return end
 		self:archeryShoot(targets, t, {type="beam"}, {mult=t.getDamage(self, t), apr=500})
 		return true
@@ -39,7 +39,6 @@ newTalent{
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.3, 0.75) end,
 	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
 	points = 5,
-	no_energy = "fake",
 	speed = "archery",
 	tactical = {ATTACKAREA = {weapon = 3}},
 	range = 0,
@@ -57,11 +56,15 @@ newTalent{
 			--cone_angle = 50, -- degrees
 		}
 	end,
+	targetCross = function(self, t)
+		return {type = "ball", range = 0, radius = math.ceil(self:getTalentRadius(t)/2), no_restrict=true, talent = t}
+	end,
 	action = function(self, t)
 		if not self:hasArcheryWeapon("bow") then game.logPlayer(self, "You must wield a bow!") return nil end
 
 		-- Collect targets in the cone
 		local tg = self:getTalentTarget(t)
+		local tgCross = t.targetCross(self, t)
 		local x, y = self:getTarget(tg)
 		if not x or not y then return end
 		local targets = {}
@@ -70,12 +73,21 @@ newTalent{
 			local target = game.level.map(x, y, game.level.map.ACTOR)
 			if target then
 				if self:reactionToward(target) < 0 and self:canSee(target) then
+					tgCross.x = target.x
+					tgCross.y = target.y
+					self:project(
+						tgCross, target.x, target.y,
+						function(px, py)
+							local target = game.level.map(px, py, game.level.map.ACTOR)
+							local terrain = game.level.map(px, py, Map.TERRAIN)
+							if not target and terrain and not terrain.does_block_move then
+								spaces[#spaces + 1] = {x=px, y=py}
+							end
+						end)
 					targets[#targets + 1] = target
 					targets[#targets + 1] = target
 					targets[#targets + 1] = target
 				end
-			else
-				spaces[#spaces + 1] = {x=x, y=y}
 			end
 		end
 		self:project(tg, x, y, add_target)
@@ -97,7 +109,7 @@ newTalent{
 				sy = s.y
 			end
 			--game.logPlayer(self, ("DEBUG - Aiming Crossfire from %d %d!"):format(sx, sy))
-			local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy = fired, no_sound=fired})
+			local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy=true, no_sound=fired})
 			if targets then
 				local target = targets.dual and targets.main[1] or targets[1]
 				--self:archeryShoot(targets, t, {type="bolt", start_x=eff.x, start_y=eff.y}, {mult=t.getDamage(self, t)})
@@ -129,6 +141,7 @@ newTalent{
 	requires_target = true,
 	range = archery_range,
 	proj_speed = 10,
+	speed = "archery",
 	target = function(self, t)
 		local weapon, ammo = self:hasArcheryWeapon()
 		local speed = 10 + (ammo.travel_speed or 0) + (weapon.travel_speed or 0) + (self.combat and self.combat.travel_speed or 0)
@@ -192,10 +205,11 @@ newTalent{
 	psi = 15,
 	require = dex_req4,
 	range = archery_range,
+	speed = "archery",
 	requires_target = true,
 	tactical = { ATTACK = { weapon = 2 }, DISABLE = { knockback = 2 }, ESCAPE = { knockback = 1 } },
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.5, 1.0) end,
-	getSlamDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 2.0) end,
+	getSlamDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.7, 1.4) end,
 	getDuration = function(self, t) return math.floor(self:combatTalentLimit(t, 6, 2, 4)) end,
 	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
 	archery_onhit = function(self, t, target, x, y)
