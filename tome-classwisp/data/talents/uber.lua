@@ -24,11 +24,12 @@ newTalent{
 		if not target then return end
 		if core.fov.distance(self.x, self.y, target.x, target.y) < 4 then return end
 		if target:hasProc("rek_glr_storm_dash") then return end
+		target:setProc("rek_glr_storm_dash", 1)
 		-- zip to target 
 		if not self:teleportRandom(target.x, target.y, 0) then game.logSeen(self, "The storm can't reach the target!") return end
 		-- trigger arrowtorm
 		self:callTalent(self.T_REK_GLR_ARROWSTORM_KALMANKA, "doStorm", self, true)
-		target:setProc("rek_glr_storm_dash", 1)
+		
 	end,
 	info = function(self, t)
 		return ([[#{italic}#It is dishonorable to fight at a distance.#{normal}#

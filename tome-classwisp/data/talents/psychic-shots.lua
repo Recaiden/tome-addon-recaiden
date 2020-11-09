@@ -57,7 +57,7 @@ newTalent{
 		}
 	end,
 	targetCross = function(self, t)
-		return {type = "ball", range = 0, radius = math.ceil(self:getTalentRadius(t)/2), no_restrict=true, talent = t}
+		return {type = "ball", range = 0, radius = math.ceil(self:getTalentRadius(t)/2), talent = t}
 	end,
 	action = function(self, t)
 		if not self:hasArcheryWeapon("bow") then game.logPlayer(self, "You must wield a bow!") return nil end
@@ -69,18 +69,21 @@ newTalent{
 		if not x or not y then return end
 		local targets = {}
 		local spaces = {}
+		game.logPlayer(self, ("DEBUG - Crossfire player at %d %d!"):format(self.x, self.y))
 		local add_target = function(x, y)
 			local target = game.level.map(x, y, game.level.map.ACTOR)
 			if target then
+				game.logPlayer(self, ("DEBUG - Crossfire target at %d %d!"):format(target.x, target.y))
 				if self:reactionToward(target) < 0 and self:canSee(target) then
 					tgCross.x = target.x
 					tgCross.y = target.y
 					self:project(
 						tgCross, target.x, target.y,
 						function(px, py)
-							local target = game.level.map(px, py, game.level.map.ACTOR)
+							local source = game.level.map(px, py, game.level.map.ACTOR)
 							local terrain = game.level.map(px, py, Map.TERRAIN)
-							if not target and terrain and not terrain.does_block_move then
+							if not source and terrain and not terrain.does_block_move then
+								game.logPlayer(self, ("DEBUG - considering space %d %d!"):format(px, py))
 								spaces[#spaces + 1] = {x=px, y=py}
 							end
 						end)
@@ -144,6 +147,9 @@ newTalent{
 	speed = "archery",
 	target = function(self, t)
 		local weapon, ammo = self:hasArcheryWeapon()
+		if not weapon or not ammo then
+			return {type="beam", range=self:getTalentRange(t), selffire=false, nolock=true, talent=t}
+		end
 		local speed = 10 + (ammo.travel_speed or 0) + (weapon.travel_speed or 0) + (self.combat and self.combat.travel_speed or 0)
 		return {type="beam", speed=speed, range=self:getTalentRange(t), selffire=false, nolock=true, talent=t, display=self:archeryDefaultProjectileVisual(weapon, ammo)}
 	end,
@@ -151,7 +157,9 @@ newTalent{
 	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
 	action = function(self, t)
 		if not self:hasArcheryWeapon("bow") then game.logPlayer(self, "You must wield a bow!") return nil end
-
+		local weapon, ammo = self:hasArcheryWeapon()
+		if not weapon or not ammo then return nil end
+		
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
@@ -167,7 +175,9 @@ newTalent{
 					local weapon, ammo = self:hasArcheryWeapon()
 					local t = self:getTalentFromId(self.T_REK_GLR_SHOT_BOOMERANG)
 					local targets = {{x=px, y=py, ammo=ammo.combat}}
+					self:attr("instant_shot", 1)
 					self:archeryShoot(targets, t, {start_x=px, start_y=py}, {mult=self.rek_boomerang_damage_bonus*t.getDamage(self, t)})
+					self:attr("instant_shot", -1)
 				end
 				if x == px and y == py and self and self.x and self.y then
 					local tgr = tg
@@ -182,7 +192,9 @@ newTalent{
 								local weapon, ammo = self:hasArcheryWeapon()
 								local t = self:getTalentFromId(self.T_REK_GLR_SHOT_BOOMERANG)
 								local targets = {{x=px, y=py, ammo=ammo.combat}}
+								self:attr("instant_shot", 1)
 								self:archeryShoot(targets, t, {start_x=px, start_y=py}, {mult=self.rek_boomerang_damage_bonus*t.getDamage(self, t)})
+								self:attr("instant_shot", -1)
 							end
 						end)
 				end

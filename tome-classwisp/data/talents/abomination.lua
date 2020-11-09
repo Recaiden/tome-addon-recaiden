@@ -29,7 +29,11 @@ newTalent{
 		local old_target_forced = game.target.forced
 		game.target.forced = {target.x, target.y, target}
 		local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy = true})
-		self:archeryShoot(targets, t, {type = "bolt"}, {mult=mult*t.getDamage(self, t)})
+		if targets then --this mostly checks that we still have ammo
+			self:attr("instant_shot", 1)
+			self:archeryShoot(targets, t, {type = "bolt", start_x=target.x, start_y=target.y}, {mult=mult*t.getDamage(self, t)})
+			self:attr("instant_shot", -1)
+		end
 		game.target.forced = old_target_forced
 	end,
 	callbackOnActBase = function(self, t)
@@ -158,6 +162,7 @@ newTalent{
 	type = {"psionic/unleash-abomination", 4},
 	require = wil_req_high4,
 	points = 5,
+	speed = "archery",
 	no_energy = "fake",
 	points = 5,
 	cooldown = 8,

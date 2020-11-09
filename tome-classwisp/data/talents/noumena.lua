@@ -164,7 +164,7 @@ newTalent{
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
 		local spreadFactor = t.getSpreadFactor(self, t)
-		return ([[Erase perceptions of yourself from the minds of nearby enemies, inflicing %0.2f mind damage and rendering you invisible (%d power) for %d turns. Each target after the first will reduce the damage by %d%% and the duration of the invisiblity by 1.
+		return ([[Erase perceptions of yourself from the minds of nearby enemies, inflicing %0.2f mind damage and rendering you invisible (%d power) for %d turns. Each target after the first will reduce the damage by %d%% and the duration of the invisiblity by 1.  You require an enemy in range to use this talent.
 Mindpower: increases damage and invisibility power]]):format(damDesc(self, DamageType.MIND, damage), t.getInvisibilityPower(self, t), t.getBaseDuration(self, t), (1 - spreadFactor) * 100)
 	end,
 }

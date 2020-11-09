@@ -120,7 +120,9 @@ newTalent{
 	info = function(self, t)
 		return ([[
 
-While Active: Each turn, non-fascinated enemies within range 10 will be fascinated, dazing them (#SLATE#Mindpower vs Mind#LAST#) for %d turns.  This can never inflict Brainlock. Once they recover from fascination, they are immune for %d turns.  If anyone is targeted, this costs #4080ff#1 Psi#LAST#.
+While Active: Each turn, nearby non-fascinated enemies will be fascinated, dazing them (#SLATE#Mindpower vs Mind#LAST#) for %d turns.  This can never inflict Brainlock. Once they recover from fascination, they are immune for %d turns.
+Costs #4080ff#1 Psi#LAST# when triggered
+Range: 10
 
 Deactivate: Focus your fascination to overwhelm a single creature, causing it to lose 1 turn for every 20%% of its life it was missing (up to %d turns).
 Costs #4080ff#%d psi#LAST#
@@ -319,6 +321,10 @@ newTalent{
 	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
 		local thresh = t.getThresh(self, t) * self.max_life
 		if dam >= thresh then
+			local caged = false
+			local dmg_src = self
+			if src.__is_actor then dmg_src = src end
+			
 			-- ignore special immunities too
 			local immun_phys = self:attr("physical_negative_status_effect_immune")
 			local immun_all = self:attr("negative_status_effect_immune")
@@ -328,19 +334,16 @@ newTalent{
 			if immun_phys then
 				self:attr("negative_status_effect_immune", -1*immun_all)
 			end
-
+			
 			-- give effects
-			local caged = false
-			local dmg_src = self
-			if src.__is_actor then dmg_src = src end
 			if not self:hasEffect(self.EFF_SLOW_MOVE) then
-				self:setEffect(self.EFF_SLOW_MOVE, 5, {power=50, dmg_src=self})
+				self:setEffect(self.EFF_SLOW_MOVE, 5, {power=0.50, src=dmg_src})
 				caged = true
-			elseif not self:hasEffect(self.EFF_PINNED) then
-				self:setEffect(self.EFF_PINNED, 4, {dmg_src=self})
-				caged = true
+			-- elseif not self:hasEffect(self.EFF_PINNED) then
+			-- 	self:setEffect(self.EFF_PINNED, 4, {dmg_src=self})
+			-- 	caged = true
 			else
-				self:setEffect(self.EFF_STUNNED, 3, {dmg_src=self})
+				self:setEffect(self.EFF_STUNNED, 3, {src=dmg_src})
 				caged = true
 			end
 
@@ -354,7 +357,7 @@ newTalent{
 
 			-- ignore damage
 			if caged then
-				return {stopped=0}
+				return {dam=0.05*self.max_life}
 			end
 		end
 		
@@ -375,9 +378,8 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[If you would take damage over %d%% of your maximum life, instead your movement is slowed by 50%% for 5 turns.
-If you are already slowed, you will be pinned for 4 turns.
-If you are already pinned, you will be stunned for 3 turns.
+		return ([[If you would take damage over %d%% of your maximum life, that damage is reduced to 5%% of your maximum life, but your movement is slowed by 50%% for 5 turns.
+If you are already slowed, you will be stunned for 3 turns.
 
 These effects ignore immunities and saves.
 

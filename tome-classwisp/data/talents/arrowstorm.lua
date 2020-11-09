@@ -9,13 +9,13 @@ newTalent{
 	cooldown = 20,
 	mode = "sustained",
 	target = function(self, t) return {type="ball", range=0, radius=self:getTalentRange(t), selffire=false, talent=t} end,
-	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.3, 0.65) end,
+	getDamage = function(self, t) return math.min(0.85, self:combatTalentWeaponDamage(t, 0.05, 0.60)) end,
 	doStorm = function(self, t)
 		if not self:hasArcheryWeapon("bow") then return end
 		local tg = self:getTalentTarget(t)
 		local targets = self:projectCollect(tg, self.x, self.y, Map.ACTOR, "hostile")
-
 		local old_target_forced = game.target.forced
+		
 		self:attr("instant_shot", 1)
 		for i, target in pairs(targets) do
 			game.target.forced = {target.x, target.y, target}
@@ -52,7 +52,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Use your telekinesis to set countless arrows, arrowheads, and bits of scrap whirling around you at high speeds.  Each round, enemies within range will be struck for %d%% weapon damage.
+		return ([[Use your telekinesis to set countless arrows, arrowheads, and bits of scrap whirling around you at high speeds.  Each round, enemies within range will be struck as if you had shot them for %d%% damage.
 
 Reduces your reload rate by 1 while active.]]):format(t.getDamage(self, t)*100)
 	end,

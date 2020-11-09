@@ -44,7 +44,7 @@ newEffect{
 newEffect{
 	name = "REK_GLR_QUENCHED_SPEED", image = "talents/rek_glr_idol_thought_drinker.png",
 	desc = "Mind-Quenched",
-	long_desc = function(self, eff) return ("Movement speed increased by %d%%."):format(eff.speed) end,
+	long_desc = function(self, eff) return ("Movement speed increased by %d%%."):format(eff.speed*100) end,
 	type = "mental",
 	subtype = { haste = true },
 	status = "beneficial",
