@@ -39,6 +39,7 @@ newTalent{
 			self:addParticles(Particles.new("shader_wings", 1, {img="icewings", x=bx, y=by, life=18, fade=-0.006, deploy_speed=14}))
 		end
 		--move us
+		game.level.map:particleEmitter(self.x, self.y, tg.range, "vapor_wave", {radius=tg.range, tx=tx-self.x, ty=ty-self.y})
 		self:move(tx, ty, true)
 		
 		--send out damage along the path

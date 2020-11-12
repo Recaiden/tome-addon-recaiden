@@ -202,6 +202,7 @@ newEffect{
 	status = "detrimental",
 	parameters = { power=1 },
 	activate = function(self, eff)
+		self:effectParticles(eff, {type="image", args={image="particles_images/dream_net", life=24, av=-0.6/24, size=64}})
 	end,
 	deactivate = function(self, eff)
 	end,
