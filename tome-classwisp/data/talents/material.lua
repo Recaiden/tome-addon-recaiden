@@ -10,7 +10,7 @@ newTalent{
 		return not self:attr("never_move")
 	end,
 	target = function(self, t) return {type="widebeam", radius=1, nolock=true, range=self:getTalentRange(t), selffire=false, talent=t} end,
-	getDamage = function(self, t) return self:combatTalentMindDamage(t, 20, 250) end,
+	getDamage = function(self, t) return self:combatTalentMindDamage(t, 30, 300) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local tx, ty, target = self:getTargetLimited(tg)
@@ -43,7 +43,7 @@ newTalent{
 		
 		--send out damage along the path
 		self:project(tg, ox, oy, function(px, py)
-									 DamageType:get(DamageType.PHYSICALBLEED).projector(self, px, py, DamageType.PHYSICALBLEED, dam)
+									 DamageType:get(DamageType.BLEED).projector(self, px, py, DamageType.BLEED, dam)
 			local target = game.level.map(px, py, Map.ACTOR)
 			if target then hit = true end
 		end)
@@ -53,11 +53,11 @@ newTalent{
 		if hit then
 			game:onTickEnd(function() self:alterTalentCoolingdown(t.id, -math.floor((self.talents_cd[t.id] or 0) * 0.67)) end)
 		end
-				
+		game:playSoundNear(self, "talents/windburst")
 		return true
 	end,
 	info = function(self, t)
-		return ([[Ultra-thin plates of crystal allow you to fly short distances on telekinetic currents.  Jump to a space within range %d, cutting creatures in your path with the crystal edges for %0.2f physical bleed damage.  If you land within range 4 of an enemy, this talent's cooldown is reduced by 2/3.
+		return ([[Ultra-thin plates of crystal allow you to fly short distances on telekinetic currents.  Jump to a space within range %d, cutting creatures in your path with the crystal edges for %0.2f bleed damage.  If you land within range 4 of an enemy, this talent's cooldown is reduced by 2/3.
 Mindpower: improves	damage]]):
 		format(self:getTalentRange(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)*1.5))
 	end,
@@ -77,7 +77,7 @@ newTalent{
 		self.silken_armor_trigger = nil
 	end,
 	callbackOnHit = function(self, t, cb, src, death_note)
-		if not self:hasLightArmor() then
+		if  self:hasHeavyArmor() then
 			--game.logPlayer(self, ("DEBUG - Not in light armor"):format(sx, sy))
 			return end
 		if not self.silken_armor_trigger and self:getPsi() < (self:getMaxPsi() / 2) then
@@ -103,6 +103,7 @@ newTalent{
 		return cb
 	end,
 	activate = function(self, t)
+		game:playSoundNear(self, "talents/cloth")
 		--TODO particle
 		return {}
 	end,
@@ -111,7 +112,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Rearrange the fibers of your armor into a psionically conductive matrix that protect you from harm. Incoming damage will be reduced by %d, costing up to #4080ff#%d psi#LAST# per turn where it triggers.
-This only takes effect while wearing light or cloth armor and while your psi pool over 50%% full.
+This only takes effect while while your psi pool over 50%% full and cannot be used in heavy armor.
 Mindpower: increases damage reduction
 Character Level: increases damage reduction
 ]]):format(t.getReduction(self, t), t.getCost(self, t))
@@ -132,7 +133,7 @@ newTalent{
 	target = function(self, t) return {type="hit", friendlyblock = false, nolock=true, range=self:getTalentRange(t)} end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 4, 8)) end,
 	getStats = function(self, t) return self:getWil()*0.5 end,
-	getLifeRating = function(self, t) return math.floor(self:combatStatScale("wil", 0.5, 2)) end,
+	getLifeRating = function(self, t) return 10+math.floor(self:combatStatScale("wil", 0.5, 2)) end,
 	makeWall = function(self, t, x, y)
 		local oe = game.level.map(x, y, Map.TERRAIN)
 		if not oe or oe.special then return end
@@ -154,11 +155,11 @@ newTalent{
 			rank = 2,
 			size_category = 4,
 			block_sight = true,
-			autolevel = "wildcaster",
-			life_rating = 10 + t.getLifeRating(self, t),
+			life_rating = t.getLifeRating(self, t),
 			negative_status_effect_immune = 1,
 			combat_armor = math.floor(self.level^.75),
 			combat_armor_hardiness = 100,
+			resists = { [DamageType.MIND] = 100 },
 			summoner = self, summoner_gain_exp=true,
 			summon_time = t.getDuration(self, t),
 			on_act = function(self)
@@ -187,22 +188,11 @@ newTalent{
 		game.logPlayer(self, "Target the end of the wall...")
 
 		tgEnd = {type="beam", start_x=sx, start_y=sy, nolock=true, range=self:getTalentRange(t), no_start_scan=true}
-		--game.target.target.x,game.target.target.y = defaultX,defaultY
-		--game.target.target.entity = nil
 		dx, dy = self:getTarget(tgEnd)
 		if not dx then
 			game.logPlayer(self, "Invalid end point")
 			return
 		end
-		if not self:canProject(tgEnd, dx, dy) then
-			game.logPlayer(self, "Can't reach endpoint")
-			return
-		end
-		if not self:hasLOS(dx, dy) then
-			game.logPlayer(self, "Need line of sight to the end of the wall")
-			return
-		end
-
 		self:project(
 			tgEnd, dx, dy,
 			function(px, py, tgEnd, self)
@@ -217,6 +207,7 @@ newTalent{
 				end
 			end game.level.map.changed = true
 		end
+		game:playSoundNear(self, "talents/cloth")
 		return true
 	end,
 	info = function(self, t)
@@ -245,6 +236,7 @@ newTalent{
 		local target = game.level.map(x, y, Map.ACTOR)
 		if not target then return end		
 		target:setEffect(target.EFF_REK_GLR_COCOONED, t.getDuration(self, t), {power=t.getVulnerability(self, t), src=self})
+		game:playSoundNear(self, "talents/cloth-wrap")
 		return true
 	end,
 	info = function(self, t)

@@ -9,6 +9,9 @@ newTalent{
 	getArmor = function(self, t) return self:combatTalentMindDamage(t, 5, 45) end,
 	getHP = function(self, t) return self:combatTalentMindDamage(t, 10, 1000) end,
 	target = function(self, t) return {type="ball", nowarning=true, radius=3, range=self:getTalentRange(t), nolock=true, simple_dir_request=true, talent=t} end,
+	passives = function(self, t, p)
+		self:talentTemporaryValue(p, "archery_pass_friendly", 1)
+	end,
 	callGuardian = function(self, t, target)
 		-- Find space
 		local x, y = util.findFreeGrid(target.x, target.y, 3, true, {[Map.ACTOR]=true})
@@ -80,7 +83,9 @@ newTalent{
 	info = function(self, t)
 		return ([[Something is watching over you.  When damaged, there is a 10%% chance that a psionic guardian will appear to distract your enemies.  The guardian lasts for 3 turns and does no damage but constantly taunts enemies within 2 spaces to attack it.
 The guardian has %d life (increased by mental critical), %d armor, and %d%% resistance to all damage.
-Mindpower: improves	damage, life, resists, and armor]]):
+Mindpower: improves	damage, life, resists, and armor
+
+Passively allows your arrows to travel harmlessly aroud friendly targets.]]):
 		format(t.getHP(self, t), t.getArmor(self, t), t.getResist(self, t))
 	end,
 }
@@ -90,7 +95,7 @@ newTalent{
 	type = {"psionic/noumena", 2},
 	require = wil_req2,
 	points = 5,
-	psi = 18,
+	psi = 10,
 	cooldown = 12,
 	tactical = { DISABLE = { blind = 2, } },
 	range = 0,
@@ -107,8 +112,8 @@ newTalent{
 		local crit = self:mindCrit(1.0)
 		if not x or not y then return nil end
 		self:project(tg, x, y, DamageType.REK_GLR_CRYSTAL_LIGHT, {dam=t.getDamage(self, t)*crit, dur=math.floor(t.getDuration(self, t)*crit), power=self:combatMindpower()})
-		game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_earth", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
-
+		game.level.map:particleEmitter(self.x, self.y, tg.radius, "light_cone", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
+		game:playSoundNear(self, "talents/shimmershine")
 		return true
 	end,
 	info = function(self, t)
@@ -153,7 +158,7 @@ newTalent{
 		for i, t2 in ipairs(table.shuffle(targets)) do
 			self:project({type="hit", talent=t, x=t2.x,y=t2.y}, t2.x, t2.y, DamageType.MIND, {dam=damage})
 			damage = damage
-			game.level.map:particleEmitter(t2.x, t2.y, 1, "reproach", { dx = self.x - t2.x, dy = self.y - t2.y })
+			game.level.map:particleEmitter(self.x, self.y, 1, "wide_stream", { dx = t2.x - self.x, dy = t2.y - self.y, dir_c=0, color_b=100, color_g=50, color_r=50})
 		end
 		local duration = t.getBaseDuration(self, t) - (#targets - 1)
 		self:setEffect(self.EFF_INVISIBILITY, duration, {power=t.getInvisibilityPower(self, t), src=self})
@@ -188,6 +193,7 @@ newTalent{
 		local target = game.level.map(x, y, Map.ACTOR)
 		if not target then return end		
 		target:setEffect(target.EFF_REK_GLR_BRAINSEALED, t.getDuration(self, t), {count=t.getCount(self, t) or 1, src=self, apply_power=self:combatMindpower()})
+		game:playSoundNear(self, "talents/chime")
 		return true
 	end,
 	info = function(self, t)

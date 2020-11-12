@@ -27,7 +27,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[You fire an arrow that cuts right through anything, piercing multiple targets for %d%% armor-piercing damage and shattering their armor (#SLATE#Physical Power vs Physical#LAST#), reducing it by %d for %d turns.]]):format(t.getDamage(self, t)*100, t.getShred(self, t), t.getDuration(self, t))
+		return ([[You spin up an arrow that cuts right through anything, hitting multiple targets in a line for %d%% armor-piercing damage and reducing their armor (#SLATE#Physical Power vs Physical#LAST#) by %d for %d turns.]]):format(t.getDamage(self, t)*100, t.getShred(self, t), t.getDuration(self, t))
 	end,
 }
 
@@ -69,11 +69,11 @@ newTalent{
 		if not x or not y then return end
 		local targets = {}
 		local spaces = {}
-		game.logPlayer(self, ("DEBUG - Crossfire player at %d %d!"):format(self.x, self.y))
+		--game.logPlayer(self, ("DEBUG - Crossfire player at %d %d!"):format(self.x, self.y))
 		local add_target = function(x, y)
 			local target = game.level.map(x, y, game.level.map.ACTOR)
 			if target then
-				game.logPlayer(self, ("DEBUG - Crossfire target at %d %d!"):format(target.x, target.y))
+				--game.logPlayer(self, ("DEBUG - Crossfire target at %d %d!"):format(target.x, target.y))
 				if self:reactionToward(target) < 0 and self:canSee(target) then
 					tgCross.x = target.x
 					tgCross.y = target.y
@@ -83,7 +83,7 @@ newTalent{
 							local source = game.level.map(px, py, game.level.map.ACTOR)
 							local terrain = game.level.map(px, py, Map.TERRAIN)
 							if not source and terrain and not terrain.does_block_move then
-								game.logPlayer(self, ("DEBUG - considering space %d %d!"):format(px, py))
+								--game.logPlayer(self, ("DEBUG - considering space %d %d!"):format(px, py))
 								spaces[#spaces + 1] = {x=px, y=py}
 							end
 						end)
@@ -112,7 +112,7 @@ newTalent{
 				sy = s.y
 			end
 			--game.logPlayer(self, ("DEBUG - Aiming Crossfire from %d %d!"):format(sx, sy))
-			local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy=true, no_sound=fired})
+			local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy=true, no_sound=true})
 			if targets then
 				local target = targets.dual and targets.main[1] or targets[1]
 				--self:archeryShoot(targets, t, {type="bolt", start_x=eff.x, start_y=eff.y}, {mult=t.getDamage(self, t)})
@@ -124,6 +124,7 @@ newTalent{
 			end
 		end
 		game.target.forced = old_target_forced
+		if fired then game:playSoundNear(self, "talents/triple-arrow") end
 		
 		return fired
 	end,
@@ -183,6 +184,7 @@ newTalent{
 					local tgr = tg
 					tgr.name = "Boomerang Shot"
 					tgr.x, tgr.y = px, py
+					game:playSoundNear(self, "talents/warp")
 					self:projectile(
 						tgr, self.x, self.y,
 						function(px, py, tgr, self)
@@ -199,12 +201,11 @@ newTalent{
 						end)
 				end
 			end)
-		
-		game:playSoundNear(self, "talents/warp")
+		game:playSoundNear(self, "actions/arrow")
 		return true
 	end,
 	info = function(self, t)
-		return ([[You fire an arrow that pierces through all targets for %d%% damage and then turns around and comes back, potentially damaging enemies again.  The damage increases by 8%% for each space the arrow crosses.]]):format(t.getDamage(self, t)*100)
+		return ([[You loose an arrow that pierces through all targets for %d%% damage and then turns around and comes back, potentially damaging enemies again.  The damage increases by 8%% for each space the arrow crosses.]]):format(t.getDamage(self, t)*100)
 	end,
 }
 
@@ -245,6 +246,7 @@ newTalent{
 						if target:canBe("stun") then
 							target:setEffect(target.EFF_STUNNED, t.getDuration(self, t), {apply_power=self:combatPhysicalpower()})
 						end
+						game:playSoundNear(self, "actions/melee_thud")
 					end
 				end)
 		end
@@ -257,6 +259,6 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Fire an arrow encased in a shell of tremendous kinetic energy, doing %d%% damage and knocking the target back 4 spaces.  If the target collides with anything, it takes %d%% additional physical damage and is stunned (#SLATE#Physical Power vs Physical#LAST#) for %d turns.  If it collided with a creature, that creature also takes the bonus damage (but is not stunned).]]):format(t.getDamage(self, t) * 100, t.getSlamDamage(self, t) * 100, t.getDuration(self, t))
+		return ([[Shoot an arrow encased in a shell of tremendous kinetic energy, doing %d%% damage and knocking the target back 4 spaces.  If the target collides with anything, it takes %d%% additional physical damage and is stunned (#SLATE#Physical Power vs Physical#LAST#) for %d turns.  If it collided with a creature, that creature also takes the bonus damage (but is not stunned).]]):format(t.getDamage(self, t) * 100, t.getSlamDamage(self, t) * 100, t.getDuration(self, t))
 	end,
 }

@@ -54,7 +54,7 @@ newTalent{
 	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
 	getSpikeCost = function(self, t) return 20 end,
 	spikeTarget = function(self, t) return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
-	getAuraCost = function(self, t) return 1.0 end,
+	getAuraCost = function(self, t) return 2.0 end,
 	auraRange = function(self, t) return 0 end,
 	auraRadius = function(self, t) return 10 end,
 	auraTarget = function(self, t)
@@ -114,6 +114,7 @@ newTalent{
 		if not actor then return end		
 		local missing = (actor.max_life - actor.life) / actor.max_life
 		actor.energy.value = actor.energy.value - game.energy_to_act * (missing / 0.2)
+		game:playSoundNear(self, "talents/distortion")
 		incPsi2(self, -cost)
 		return true
 	end,
@@ -121,7 +122,7 @@ newTalent{
 		return ([[
 
 While Active: Each turn, nearby non-fascinated enemies will be fascinated, dazing them (#SLATE#Mindpower vs Mind#LAST#) for %d turns.  This can never inflict Brainlock. Once they recover from fascination, they are immune for %d turns.
-Costs #4080ff#1 Psi#LAST# when triggered
+Costs #4080ff#2 Psi#LAST# when triggered
 Range: 10
 
 Deactivate: Focus your fascination to overwhelm a single creature, causing it to lose 1 turn for every 20%% of its life it was missing (up to %d turns).
@@ -170,6 +171,9 @@ newTalent{
 	getPower = function(self,t) return self:getTalentLevel(t) * 7.5 end,
 	activate = function(self, t)
 		local ret = {}
+		if core.shader.active(4) then
+			ret.particle = self:addParticles(Particles.new("shader_shield", 1, {size_factor=0.2+self:getTalentRange(t)*1.78, blend=true, img="glr_awesome_aura"}, {type="shield", shieldIntensity=0.02, ellipsoidalFactor=1, color={1,1,1}}))
+		end
 		return ret
 	end,
 	callbackOnAct = function(self, t)
@@ -186,7 +190,7 @@ newTalent{
 	end,
 	deactivate = function(self, t, p)
 		if self:attr("save_cleanup") then return true end
-		--self:removeParticles(p.particle)
+		if p.particle then self:removeParticles(p.particle) end
 
 		local cost = t.getSpikeCost(self, t)
 		if self:getPsi() <= cost and not self:attr("force_talent_ignore_ressources") then
@@ -211,6 +215,7 @@ newTalent{
 		if core.fov.distance(self.x, self.y, x, y) == 0 then return true end
 		if not actor then return end
 		actor:setEffect(actor.EFF_DELIRIOUS_CONCUSSION, t.getDuration(self, t), {apply_power=self:combatMindpower()})
+		game:playSoundNear(self, "talents/arcane")
 		incPsi2(self, -cost)
 		return true
 	end,
@@ -277,6 +282,8 @@ newTalent{
 			self:incPsi(t.getKillMultiplier(self, t) * t.getPsiRefund(self, t))
 		end
 		self:setEffect(self.EFF_REK_GLR_QUENCHED_SPEED, 2, {speed=t.getSpeedBoost(self, t), steps=math.ceil(t.getSpeedBoost(self, t)), src=self})
+		game.level.map:particleEmitter(self.x, self.y, 1, "wide_stream", { dx = src.x - self.x, dy = src.y - self.y, dir_c=2, color_b=200, color_g=50, color_r=50})
+		game:playSoundNear(self, "talents/drink")
 	end,
 	activate = function(self, t)
 		local ret = {}
@@ -357,6 +364,7 @@ newTalent{
 
 			-- ignore damage
 			if caged then
+				game:playSoundNear(self, "talents/heal")
 				return {dam=0.05*self.max_life}
 			end
 		end
@@ -368,7 +376,7 @@ newTalent{
 	end,
 	activate = function(self, t)
 		game:playSoundNear(self, "talents/heal")
-		local particle = Particles.new("ultrashield", 1, {rm=204, rM=220, gm=102, gM=120, bm=0, bM=0, am=15, aM=60, radius=0.5, density=10, life=28, instop=100})
+		local particle = Particles.new("ultrashield", 1, {rm=204, rM=220, gm=152, gM=170, bm=0, bM=0, am=15, aM=60, radius=0.5, density=10, life=14, instop=150})
 		return {
 			particle = self:addParticles(particle)
 					 }

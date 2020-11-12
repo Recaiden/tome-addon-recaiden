@@ -40,6 +40,7 @@ newTalent{
 		ret.p4 = self:addParticles(Particles.new("circle", 1, {toback=true, oversize=1.2, a=220, appear=4, speed=-11.0, img="arrowstorm_4", radius=self:getTalentRange(t)}))
 			
 		self:talentTemporaryValue(ret, 'ammo_mastery_reload', -1)
+		game:playSoundNear(self, "talents/windburst")
 		return ret
 	end,
 	deactivate = function(self, t, p)
@@ -167,7 +168,6 @@ newTalent{
 					end
 				end)
 			game.level.map:particleEmitter(x, y, tg.radius, "gravity_spike", {radius=math.ceil(self:getTalentRadius(t)/2), allow=core.shader.allow("distort")})
-			return true
 		else
 			-- Do knockback
 			local tgts = {}

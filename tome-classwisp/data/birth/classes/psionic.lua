@@ -2,7 +2,7 @@ newBirthDescriptor{
    type = "subclass",
    name = "Wisp",
    locked = function() return profile.mod.allow_build.psionic_mindslayer end,
-   locked_desc = "I do not shoot with my hand; he who shoots with his hand has forgotten the face of his father. I shoot with my mind.",
+   locked_desc = "I do not shoot with my hand; he who shoots with his hand has forgotten the Way. I shoot with my mind.",
    desc = {
       "There's something inside you, something terrible and strong.  But you've got it under control.  Your mental discipline allows you to use its power for constructive purposes.",
       "It's all perfectly safe.",

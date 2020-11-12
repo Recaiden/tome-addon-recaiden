@@ -167,12 +167,14 @@ newEffect{
 	on_gain = function(self, err) return "#Target# is snared.", "+Cocoon" end,
 	on_lose = function(self, err) return "#Target# is free of the snare.", "-Cocoon" end,
 	activate = function(self, eff)
+		eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=1, oversize=1.0, a=200, appear=8, speed=0, img="cocoon_binding", radius=0}))
 		self:effectTemporaryValue(eff, "never_move", 1)
 		self:effectTemporaryValue(eff, "resists", {
 			all = -eff.power,
 		})
 	end,
 	deactivate = function(self, eff)
+		self:removeParticles(eff.particle)
 	end,
 }
 
@@ -313,7 +315,7 @@ newEffect{
 																						[Stats.STAT_LCK] = -eff.power})
 		self.replace_display = mod.class.Actor.new{image="npc/vermin_rodent_cute_little_bunny.png",}
 		self:removeAllMOs()
-		self.life = min(self.life, self.max_life)
+		self.life = math.min(self.life, self.max_life)
 		game.level.map:updateMap(self.x, self.y)
 	end,
 	deactivate = function(self, eff)

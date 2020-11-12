@@ -12,14 +12,15 @@ newTalent{
 	points = 5,
 	cooldown = 30,
 	psi = 10,
-	range = 4,
+	range = 10,
 	requires_target = true,
+	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
 	getScaling = function(self, t)
 		local critTL = self:combatTalentScale(t, 1, 8)
 		local critKill = self:combatTalentScale(t, 0.15, 0.60) * getMindPrisonKills(self)
 		return critTL + critKill
 	end,
-	getDamage = function(self, t) return self:combatTalentMindDamage(t, 25, 400) / t.getDuration(self, t) end,
+	getDamage = function(self, t) return 10 + self:combatMindpower() / 3 end,
 	getDuration = function(self, t) return math.ceil(self:combatTalentScale(t, 5, 10)) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "combat_mindcrit", t.getScaling(self, t))
@@ -32,22 +33,24 @@ newTalent{
 		local target = game.level.map(tx, ty, Map.ACTOR)
 		if not target or target == self then return nil end
 
-		if not t.absorbCheck(self, t, target, true) then return nil end
 		if target.dead then game.logPlayer(self, "Your target is dead!") return nil end
 
-		target:setEffect(target.EFF_REK_GLR_MIND_NET, t.getDur(self, t), {apply_power=self:combatMindpower(), src=self, power=t.getDamage(self, t)})
+		target:setEffect(target.EFF_REK_GLR_MIND_NET, t.getDuration(self, t), {apply_power=self:combatMindpower(), src=self, power=t.getDamage(self, t)})
+		game:playSoundNear(self, "talents/chant_three")
 		return true
 	end,
 	captureMind = function(self, t, src, death_note)
-		if src.summoner then return end
-		if src:reactionToward(self) > 0 then return end
+		if src.summoner then return nil end
+		if src:reactionToward(self) > 0 then return nil end
 		self.rek_glr_mindprison_kills = (self.rek_glr_mindprison_kills or 0) + 1
 		self:updateTalentPassives(t)
+		return true
 	end,
 	info = function(self, t)
 		return ([[You project a psionic net around a target (#SLATE#Mindpower vs Mental#LAST#) that lasts for %d turns and deals %0.2f mind damage each turn.
 If a rare or stronger target dies with the net in place you will capture its mind and absorb it into your dreams.
-Their psychic energy grants you %d%% additional mental critical strike chance.
+Mindpower: increases damage.
+Their psychic energy grants you additional mental critical chance, currently: %d%%.
 Absorbed Psyches: %d / 20]]):
 		format(t.getDuration(self, t), t.getDamage(self, t), t.getScaling(self, t), getMindPrisonKills(self))
 	end,
@@ -69,6 +72,7 @@ newTalent{
 		local chat = Chat.new("rek-glr-reverie", {name="Reverie"}, self, {version=self, state=state, co=coroutine.running()})
 		local d = chat:invoke()
 		if not coroutine.yield() then return nil end
+		game:playSoundNear(self, "talents/chant_two")
 		return true
 	end,
 	info = function(self, t)
@@ -83,6 +87,7 @@ newTalent{
 	require = wil_req3,
 	points = 5,
 	innate = true,
+	no_energy = true,
 	on_pre_use = function(self, t)
 		if getMindPrisonKills(self) < 1 then return false end
 		for eff_id, p in pairs(self.tmp) do
@@ -95,10 +100,10 @@ newTalent{
 	end,
 	cooldown = function(self, t) return self:combatTalentLimit(t, 9, 30, 12) end, 
 	action = function(self, t)
-		who:removeEffectsFilter({status="detrimental", type="mental"}, 1)
+		self:removeEffectsFilter(self, {status="detrimental", type="mental"}, 1)
 		self.rek_glr_mindprison_kills = math.max(0, getMindPrisonKills(self) -1)
 		if self:knowTalent(self.T_REK_GLR_MINDPRISON_CHORUS) then
-			local t = a:getTalentFromId(self.T_REK_GLR_MINDPRISON_CHORUS)
+			local t = self:getTalentFromId(self.T_REK_GLR_MINDPRISON_CHORUS)
 			self:updateTalentPassives(t)
 		end
 	
@@ -127,6 +132,7 @@ newTalent{
 	action = function(self, t)
 		self.energy.value = self.energy.value + t.getGain(self, t) * game.energy_to_act
 		self:setEffect(self.EFF_REK_GLR_OVERFLOW, 1, {src=self})
+		game:playSoundNear(self, "talents/shimmerpower")
 		return true
 	end,
 	info = function(self, t)

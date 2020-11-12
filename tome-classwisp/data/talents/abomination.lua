@@ -3,7 +3,6 @@ newTalent{
 	type = {"psionic/unleash-abomination", 1},
 	require = wil_req_high1,
 	points = 5,
-	range = function(self, t) return math.min(14, math.floor(self:combatTalentScale(t, 6, 10))) end,
 	cooldown = 18,
 	no_energy = true,
 	mode = "sustained",
@@ -20,7 +19,6 @@ newTalent{
 			self:learnTalentType("psionic/unleash-nightmare", false)
 		end
 	end,
-	target = function(self, t) return {type="widebeam", radius=1, nolock=true, range=self:getTalentRange(t), selffire=false, talent=t} end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.5, 0.75) end,
 	getSpeed = function(self, t) return self:combatTalentScale(t, 0.5, 1.5) end,
 	callbackOnArcheryAttack = function(self, t, target, hitted, crit, weapon, ammo, damtype, mult, dam, talent)
@@ -120,9 +118,9 @@ newTalent{
 	require = wil_req_high3,
 	points = 5,
 	mode = "passive",
-	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.2, 0.6) end,
+	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.0, 0.6) end,
 	getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 40, 10, 30)) end,
-	getReduction = function(self, t) return math.min(0.75, self:combatTalentMindDamage(t, 0.20, 0.50)) end,
+	getReduction = function(self, t) return math.min(0.75, self:combatTalentScale(t, 0.20, 0.50)) end,
 	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, tmp)
 		if not src.__is_actor then return end
 		if src.turn_procs and src.turn_procs.rek_glr_telepathic_aim then return end
@@ -145,15 +143,15 @@ newTalent{
 		local params = table.clone(shot_params_base)
 		local target = targets.dual and targets.main[1] or targets[1]
 		params.phase_target = game.level.map(target.x, target.y, game.level.map.ACTOR)
+		self:attr("instant_shot", 1)
 		self:archeryShoot(targets, t, {type = "hit", speed = 200}, params)
-
+		self:attr("instant_shot", -1)
 		return {dam=dam}
 	end,
 
 	info = function(self, t)
 		return ([[Reading an enemy's subtle impulses, you know when they're going to strike before  they do, and can interrupt the attack with a well-timed arrow.  When you would be damaged by an enemy, there is a %d%% chance that they are instantly struck by an arrow that you already fired, doing %d%% damage and reducing their damage to you by %d%%.
-This can only happen once per enemy per turn.
-Mindpower: improves damage reduction]]):format(t.getChance(self, t), t.getDamage(self, t)*100, t.getReduction(self, t)*100)
+This can only happen once per enemy per turn.]]):format(t.getChance(self, t), t.getDamage(self, t)*100, t.getReduction(self, t)*100)
 	end,
 }
 
@@ -184,8 +182,8 @@ newTalent{
 		
 		local countEff = 0
 		for eff_id, p in pairs(target.tmp) do 
-			local e = src.tempeffect_def[eff_id]
-			if e.status == "detrimental" and src.save_for_effects[e.type] then
+			local e = target.tempeffect_def[eff_id]
+			if e.status == "detrimental" and target.save_for_effects[e.type] then
 				countEff = countEff + 1
 			end
 		end

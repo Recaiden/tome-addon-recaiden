@@ -120,7 +120,7 @@ newTalent{
 		return true
 		end,
 	info = function(self, t)
-		return ([[Transform a sleeping target into a harmless animal.  In this state all their stats are reduced by %d.
+		return ([[Transform a sleeping target into a harmless animal.  In this state all their stats are reduced by %d (based on your mindpower).
 They spend at least %d turns in animal form (turns while sleeping do not count).  After this they make a mental save each round to return to normal.]]):format(t.getStat(self, t), t.getDuration(self, t))
 	end,
 }
@@ -134,7 +134,7 @@ newTalent{
 	psi = 16,
 	range = function(self, t) return 10 - t.radius(self, t) end,
 	radius = function(self, t) return math.floor(self:combatTalentScale(t, 2, 4.5)) end,
-	getDamage = function(self, t) return self:combatTalentMindDamage(t, 1.0, 1.6) end,
+	getDamage = function(self, t) return self:combatTalentMindDamage(t, 1.0, 3.0) end,
 	getDuration = function(self, t) return math.floor(self:combatTalentLimit(t, 10, 4, 7)) end,
 	getHallucination = function(self, t) return math.min(0.5, self:combatTalentMindDamage(t, 0.20, 0.33)) end,
 	getNightmareSummon = function(self, t)
@@ -271,13 +271,13 @@ newTalent{
 			end,
 			false, false)
 		
-		game:playSoundNear(self, "talents/flame")
+		game:playSoundNear(self, "talents/scream")
 		return true
 	end,
 	info = function(self, t)
-		return ([[Merge dreams and reality within a radius %d area for %d turns. Within this area stun, daze, and sleep effects do not expire, and nightguants and hallucinations continually spawn.
+		return ([[Merge dreams and reality within a radius %d area for %d turns. Within this area, stun/daze/sleep effects do not expire, and nightguants and hallucinations continually spawn.
 Nightguants are weak attackers (%d%% damage) that do not interrupt sleep or daze.
-Hallucinations do no harm but reduce damage dealt to nearby non-hallucination targets by %d%%.
+Hallucinations do no harm but reduce damage nearby enemies deal to non-hallucination targets by %d%%.
 Mindpower: improves summon powers]]):format(self:getTalentRadius(t), t.getDuration(self, t), t.getDamage(self, t)*100, t.getHallucination(self, t)*100)
 	end,
 }
