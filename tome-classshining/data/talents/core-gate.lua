@@ -1,6 +1,6 @@
 newTalent{
-	name = "Solar Flare", short_name = "REK_SHINE_SUNLIGHT_SOLAR_FLARE",
-	type = {"demented/sunlight", 1},
+	name = "Solar Flare", short_name = "REK_SHINE_CORE-GATE_SOLAR_FLARE",
+	type = {"demented/core-gate", 1},
 	require = mag_req1,
 	cooldown = 12,
 	tactical = {ATTACKAREA = {LIGHT = 2}},
@@ -52,8 +52,8 @@ newTalent{
 }
 
 newTalent{
-	name = "Coronal Shield", short_name = "REK_SHINE_SUNLIGHT_CORONAL_SHIELD",
-	type = {"demented/sunlight", 2},
+	name = "Coronal Shield", short_name = "REK_SHINE_CORE-GATE_CORONAL_SHIELD",
+	type = {"demented/core-gate", 2},
 	require = mag_req2,
 	points = 5,
 	mode = "sustained",
@@ -125,15 +125,15 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Surround yourself with a protective shield of shining plamsa.
-		Whenever you would take elmental damage (neither physical nor mind) the shield condenses, blocking %d elemental damage over the next %d turns, and releasing a ray of sunlight towards the attacker that deals %d light damage and dazzles any affected creature (deal 10%% less damage) for 5 turns. 
+		Whenever you would take elmental damage (neither physical nor mind) the shield condenses, blocking %d elemental damage over the next %d turns, and releasing a ray of core-gate towards the attacker that deals %d light damage and dazzles any affected creature (deal 10%% less damage) for 5 turns. 
 The shield can only be triggered every %d turns.
 The shield power and beam damage will increase with your Spellpower.]]):tformat(t.getShield(self, t), t.getDuration(self, t), damDesc(self, DamageType.LIGHT, t.getDamage(self, t)), t.getRecharge(self, t))
 	end,
 }
 
 newTalent{
-	name = "Lightspeed Step", short_name = "REK_SHINE_SUNLIGHT_LIGHTSPEED_STEP",
-	type = {"demented/sunlight", 3},
+	name = "Lightspeed Step", short_name = "REK_SHINE_CORE-GATE_LIGHTSPEED_STEP",
+	type = {"demented/core-gate", 3},
 	require = mag_req3, points = 5,
 	tactical = { CLOSEIN = 2, ESCAPE = 2 },
 	positive = 30,
@@ -172,8 +172,8 @@ The range will increase with your Light Radius.]]):tformat(range)
 }
 
 newTalent{
-	name = "Nova Blast", short_name = "REK_SHINE_SUNLIGHT_NOVA_BLAST",
-	type = {"demented/sunlight", 4},
+	name = "Nova Blast", short_name = "REK_SHINE_CORE-GATE_NOVA_BLAST",
+	type = {"demented/core-gate", 4},
 	require = mag_req4,
 	points = 5,
 	positive = -40,

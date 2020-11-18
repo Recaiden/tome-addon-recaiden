@@ -1,50 +1,28 @@
-local function getMaxResistIncrease(self)
-	local combined_TL = self:getTalentLevel(self.T_REK_SHINE_NUCLEAR_SEARING_CORE) + self:getTalentLevel(self.T_REK_SHINE_NUCLEAR_FUEL_ENRICHMENT) + self:getTalentLevel(self.T_REK_SHINE_NUCLEAR_CRITICALITY_EXCURSION) + self:getTalentLevel(self.T_REK_SHINE_NUCLEAR_SUPERCRITICAL)
-	local resists = math.round(60 * (combined_TL / 20)^.5)
-	return resists
-end
-
-local function getResistBlurb(self)
-	return ("#GOLD#Working with solar energy improves your ability to survive it, increasing your resistance to Light and Fire Damage based on the combined level of your Nuclear talents (current bonus: %d)#LAST#"):format(getMaxResistIncrease(self))
-end
-
-
 newTalent{
-	name = "Searing Core", short_name = "REK_SHINE_NUCLEAR_SEARING_CORE",
-	type = {"demented/inner-power", 1},
+	name = "Split Reflections", short_name = "REK_SHINE_PRISM_REFLECTIONS",
+	type = {"demented/prism", 1},
 	require = mag_req1, points = 5,
 	mode = "passive",
 	getAffinity = function(self, t) return self:combatTalentScale(t, 10, 35, 0.75) end,
 	passives = function(self, t, p)
-		self:talentTemporaryValue(
-			p, "damage_affinity", {
-				[DamageType.LIGHT] = t.getAffinity(self, t),
-				[DamageType.FIRE] = t.getAffinity(self, t)
-														})
-		self:talentTemporaryValue(
-			p, "resists", {
-				[DamageType.LIGHT]=getMaxResistIncrease(self),
-				[DamageType.FIRE]=getMaxResistIncrease(self)
-										})
 	end,
 	info = function(self, t)
 		return ([[All life comes from the sun, and all brightness and warmth is a reminder of this.  You gain %d%% Light and Fire damage affinity.
 In addition, your light and fire peentration do not apply when damaging allies.
-
-%s]]):tformat(t.getAffinity(self, t), getResistBlurb(self))
+]]):tformat(t.getAffinity(self, t))
 	end,
 }
 
 newTalent{
-	name = "Fuel Enrichment", short_name = "REK_SHINE_NUCLEAR_FUEL_ENRICHMENT",
-	type = {"demented/inner-power", 2},
+	name = "Fuel Enrichment", short_name = "REK_SHINE_PRISM_CONVERGENCE",
+	type = {"demented/prism", 2},
 	require = mag_req2, points = 5,
 
 	on_learn = function(self, t)
-		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_NUCLEAR_SEARING_CORE))
+		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_PRISM_SEARING_CORE))
 	end,
 	on_unlearn = function(self, t)
-		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_NUCLEAR_SEARING_CORE))
+		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_PRISM_SEARING_CORE))
 	end,
 	
 	mode = "passive",
@@ -74,22 +52,20 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Whenever one of your spells fails to be a critical hit, you gain a stack of Enrichment (up to 5 stacks) for %d turns, which increases your spell critical strike chance by +%d%%.
-If your unenriched spell critical rate is over 50%%/60%%/70%%/80%%/90%%, you passively gain %d critical power for each.
-
-%s]]):tformat(t.getDuration(self, t), t.getChance(self, t), t.getBonusPower(self, t), getResistBlurb(self))
+If your unenriched spell critical rate is over 50%%/60%%/70%%/80%%/90%%, you passively gain %d critical power for each.]]):tformat(t.getDuration(self, t), t.getChance(self, t), t.getBonusPower(self, t))
 	end,
 }
 
 newTalent{
-	name = "Criticality Excursion", short_name = "REK_SHINE_NUCLEAR_CRITICALITY_EXCURSION",
-	type = {"demented/inner-power", 3},
+	name = "Criticality Excursion", short_name = "REK_SHINE_PRISM_SYNCHRONY",
+	type = {"demented/prism", 3},
 	require = mag_req3, points = 5,
 	
 	on_learn = function(self, t)
-		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_NUCLEAR_SEARING_CORE))
+		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_PRISM_SEARING_CORE))
 	end,
 	on_unlearn = function(self, t)
-		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_NUCLEAR_SEARING_CORE))
+		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_PRISM_SEARING_CORE))
 	end,
 	
 	mode = "sustained",
@@ -125,20 +101,19 @@ newTalent{
 		local range = self:getTalentRange(t)
 		return ([[Whenever one of your spells is a critical hit, the surging energy overflows your body, creating a radiant field in radius %d for %d turns.  This field does %0.2f light damage per turn and weakens enemies, reducing their strength and dexterity by %d.
 The field damage cannot trigger a critical hit but is increased by half your critical power.
-
-%s]]):tformat(self:getTalentRange(t), t.getDuration(self, t), damDesc(self, DamageType.LIGHT, t.getDamage(self, t)), t.getDisease(self, t), getResistBlurb(self))
+]]):tformat(self:getTalentRange(t), t.getDuration(self, t), damDesc(self, DamageType.LIGHT, t.getDamage(self, t)), t.getDisease(self, t))
 	end,
 }
 
 newTalent{
-	name = "Supercritical", short_name = "REK_SHINE_NUCLEAR_SUPERCRITICAL",
-	type = {"demented/inner-power", 4},	require = mag_req4,	points = 5,
+	name = "Supercritical", short_name = "REK_SHINE_PRISM_MIRROR_SHIELD",
+	type = {"demented/prism", 4},	require = mag_req4,	points = 5,
 
 	on_learn = function(self, t)
-		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_NUCLEAR_SEARING_CORE))
+		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_PRISM_SEARING_CORE))
 	end,
 	on_unlearn = function(self, t)
-		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_NUCLEAR_SEARING_CORE))
+		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_PRISM_SEARING_CORE))
 	end,
 	
 	mode = "sustained",
@@ -168,8 +143,6 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Your spells surge in barely-controlled chain reactions, burning through your mortal body.
-You gain %d critical power and %d spellpower on crit, but spell criticals burn up %d%% of your life (based on your critical power) (at most once per turn).
-
-%s]]):tformat(t.getBonusPower(self, t), t.getSurge(self, t), t.getPrice(self, t), getResistBlurb(self))
+You gain %d critical power and %d spellpower on crit, but spell criticals burn up %d%% of your life (based on your critical power) (at most once per turn).]]):tformat(t.getBonusPower(self, t), t.getSurge(self, t), t.getPrice(self, t))
 	end,
 }

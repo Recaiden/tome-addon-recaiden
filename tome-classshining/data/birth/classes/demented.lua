@@ -19,27 +19,28 @@ newBirthDescriptor{
 	talents_types = {
 		-- base talents
 		["celestial/sunlight"]={true, 0.3},
-		--["demented/prism"]={true, 0.3},
-		--["demented/nuclear"]={true, 0.3},
+		["demented/prism"]={true, 0.3},
+		["demented/inner-power"]={true, 0.3},
 		["demented/sunlight"]={true, 0.3},
 		
 		--advanced talents
 		["celestial/circles"]={false, 0.3},
-		--["demented/core-gate"]={false, 0.3},
-		--["demented/incinerator"]={false, 0.3},
+		["demented/core-gate"]={false, 0.3},
+		["demented/incinerator"]={false, 0.3},
 		
 		--generics
 		["cunning/survival"]={false, 0.0},
-		["technique/combat-training"]={true, 1.0},
+		["technique/combat-training"]={true, 0.0},
 		["celestial/chants"]={true, 0.3},
 		["celestial/light"]={true, 0.3},
+		["demented/beyond-sanity"]={true, 0.0},
 	},
 	birth_example_particles = "darkness_shield",
 	talents = {
 		[ActorTalents.T_REK_SHINE_SUNLIGHT_SOLAR_FLARE] = 1,
 		[ActorTalents.T_SEARING_LIGHT] = 1,
 		[ActorTalents.T_HEALING_LIGHT] = 1,
-		-- [ActorTalents.T_REK_MTYR_UNSETTLING_UNNERVE] = 1,
+		[ActorTalents.T_REK_SHINE_PRISM_REFLECTIONS] = 1,
 		-- [ActorTalents.T_REK_MTYR_POLARITY_DEEPER_SHADOWS] = 1,
 	},
 	

@@ -23,27 +23,29 @@ local useImplicitCrit = DamageType.useImplicitCrit
 local initState = DamageType.initState
 
 newDamageType{
-   name = "destructive guidance", type = "REK_MTYR_GUIDE_FLASH",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      local target = game.level.map(x, y, Map.ACTOR)
-      if target and target == src then         
-         -- do the bonus
-         target:setEffect(target.EFF_REK_MTYR_GUIDANCE_FLASH, 3, {power=dam*0.25})
-         
-         -- do the upgrade
-         if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
-            local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
-            applyGuidanceBurn(target, t3)
-         end
-         
-         local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_FLASH)
-         if geff then
-            removeGroundEffect(geff)
-            game.level.map:particleEmitter(x, y, 2, "generic_sploom", {rm=235, rM=255, gm=200, gM=220, bm=50, bM=70, am=35, aM=90, radius=2, basenb=30})
-         end
-         game:playSoundNear(target, "talents/tidalwave")
-      end
-   end,
+	name = _t"weakening light", type = "REK_SHINE_LIGHT_WEAK", text_color = "#GOLD#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local realdam = DamageType:get(DamageType.LIGHT).projector(src, x, y, DamageType.LIGHT, dam.dam, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target and src:reactionToward(target) < 0 then
+			target:setEffect(target.EFF_REK_SHINE_RADIANT_WEAKNESS, 1, {power=dam.power, src=src, apply_power=src:combatSpellpower(), no_ct_efffect=true})
+		end
+		return realdam
+	end,
+}
+
+newDamageType{
+	name = _t"stunning light", type = "REK_SHINE_LIGHT_STUN", text_color = "#GOLD#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local realdam = DamageType:get(DamageType.LIGHT).projector(src, x, y, DamageType.LIGHT, dam, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target and target:canBe("stun") then
+			target:setEffect(target.EFF_STUNNED, 3, {src=src, apply_power=src:combatSpellpower()})
+		end
+		return realdam
+	end,
 }
