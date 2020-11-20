@@ -2,54 +2,46 @@ local Talents = require "engine.interface.ActorTalents"
 local Tiles = require "engine.Tiles"
 local Entity = require "engine.Entity"
 
--- Not the best way to do this, might clean up later
-damDesc = function(self, type, dam)
-	-- Increases damage
-	if self.inc_damage then
-		local inc = (self.inc_damage.all or 0) + (self.inc_damage[type] or 0)
-		dam = dam + (dam * inc / 100)
-	end
-	return dam
-end
+damDesc = Talents.main_env.damDesc
 
 mag_req1 = {
-	stat = { cun=function(level) return 12 + (level-1) * 2 end },
+	stat = { mag=function(level) return 12 + (level-1) * 2 end },
 	level = function(level) return 0 + (level-1)  end,
 }
 mag_req2 = {
-	stat = { cun=function(level) return 20 + (level-1) * 2 end },
+	stat = { mag=function(level) return 20 + (level-1) * 2 end },
 	level = function(level) return 4 + (level-1)  end,
 }
 mag_req3 = {
-	stat = { cun=function(level) return 28 + (level-1) * 2 end },
+	stat = { mag=function(level) return 28 + (level-1) * 2 end },
 	level = function(level) return 8 + (level-1)  end,
 }
 mag_req4 = {
-	stat = { cun=function(level) return 36 + (level-1) * 2 end },
+	stat = { mag=function(level) return 36 + (level-1) * 2 end },
 	level = function(level) return 12 + (level-1)  end,
 }
 mag_req5 = {
-	stat = { cun=function(level) return 44 + (level-1) * 2 end },
+	stat = { mag=function(level) return 44 + (level-1) * 2 end },
 	level = function(level) return 16 + (level-1)  end,
 }
 mag_req_high1 = {
-	stat = { cun=function(level) return 22 + (level-1) * 2 end },
+	stat = { mag=function(level) return 22 + (level-1) * 2 end },
 	level = function(level) return 10 + (level-1)  end,
 }
 mag_req_high2 = {
-	stat = { cun=function(level) return 30 + (level-1) * 2 end },
+	stat = { mag=function(level) return 30 + (level-1) * 2 end },
 	level = function(level) return 14 + (level-1)  end,
 }
 mag_req_high3 = {
-	stat = { cun=function(level) return 38 + (level-1) * 2 end },
+	stat = { mag=function(level) return 38 + (level-1) * 2 end },
 	level = function(level) return 18 + (level-1)  end,
 }
 mag_req_high4 = {
-	stat = { cun=function(level) return 46 + (level-1) * 2 end },
+	stat = { mag=function(level) return 46 + (level-1) * 2 end },
 	level = function(level) return 22 + (level-1)  end,
 }
 mag_req_high5 = {
-	stat = { cun=function(level) return 54 + (level-1) * 2 end },
+	stat = { mag=function(level) return 54 + (level-1) * 2 end },
 	level = function(level) return 26 + (level-1)  end,
 }
 

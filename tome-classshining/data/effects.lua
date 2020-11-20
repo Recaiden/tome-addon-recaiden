@@ -65,3 +65,31 @@ newEffect{
 		self:removeTemporaryValue("inc_stats", eff.tmpid)
 	end,
 }
+
+newEffect{
+	name = "REK_SHINE_SOLAR_DISTORTION", image = "talents/rek_shine_sunlight_solar_flare.png",
+	desc = _t"Solar Waning",
+	long_desc = function(self, eff) return _t"Solar Flare has been used once recently." end,
+	type = "other",
+	subtype = { frenzy=true },
+	status = "detrimental",
+	parameters = { },
+	activate = function(self, eff)		
+	end,
+	deactivate = function(self, eff)
+	end,
+}
+
+newEffect{
+	name = "REK_SHINE_SOLAR_MINIMA", image = "talents/rek_shine_sunlight_solar_flare.png",
+	desc = _t"Solar Minima",
+	long_desc = function(self, eff) return _t"Solar Flare has been used twice recently." end,
+	type = "other",
+	subtype = { frenzy=true },
+	status = "detrimental",
+	parameters = { },
+	activate = function(self, eff)		
+	end,
+	deactivate = function(self, eff)
+	end,
+}

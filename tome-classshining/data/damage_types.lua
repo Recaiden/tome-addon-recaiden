@@ -49,3 +49,9 @@ newDamageType{
 		return realdam
 	end,
 }
+
+newDamageType{
+	name = _t"mirror barrier", type = "REK_SHINE_MIRROR", text_color = "#GOLD#",
+	projector = function(src, x, y, type, dam) end,
+	death_message = {_t"reflected"},
+}

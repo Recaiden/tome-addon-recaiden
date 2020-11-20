@@ -18,3 +18,28 @@ class:bindHook("ToME:load", function(self, data)
 -- 		     self:loadList("/data-classshining/world-artifacts.lua", data.no_default, data.res, data.mod, data.loaded)
 -- 		  end
 -- end)
+
+class:bindHook("DamageProjector:final", function(self, hd)
+	local src = hd.src
+	local dam = hd.dam
+	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
+
+	local seff = game.level.map:hasEffectType(src.x, src.y, DamageType.REK_SHINE_MIRROR)
+	local deff = game.level.map:hasEffectType(target.x, target.y, DamageType.REK_SHINE_MIRROR)
+	if deff and deff ~= seff and not hd.state.no_reflect then
+		local state = hd.state
+		local type = hd.type
+		local reflected = math.min(dam, deff.dam.dam)
+		deff.dam.dam = deff.dam.dam - reflected
+		if deff.dam.dam <= 0 then game.level.map:removeEffect(deff) end
+		game:delayedLogMessage(src, target, "reflect_damage"..(target.uid or ""), "#CRIMSON##Target# reflects damage back to #Source#!")
+		
+		game:delayedLogDamage(src, target, 0, ("#GOLD#(%d to mirror barrier)#LAST#"):format(reflected), false)
+		hd.dam = dam - reflected
+		state.no_reflect = true
+		reflected = reflected * 100 / (target:attr("reflection_damage_amp") or 100)
+		DamageType.defaultProjector(target, src.x, src.y, type, reflected, state)
+		state.no_reflect = nil
+	end
+	return hd
+end)

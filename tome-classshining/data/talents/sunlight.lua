@@ -1,10 +1,11 @@
 newTalent{
 	name = "Solar Flare", short_name = "REK_SHINE_SUNLIGHT_SOLAR_FLARE",
-	type = {"demented/sunlight", 1},
+	type = {"demented/sunlight", 1}, points = 5,
 	require = mag_req1,
-	cooldown = 12,
+	cooldown = function(self, t) if self:hasEffect(self.EFF_REK_SHINE_SOLAR_MINIMA) then return 14 else return 2 end end,
 	tactical = {ATTACKAREA = {LIGHT = 2}},
-	positive = 15,
+	positive = 10,
+	insanity = 8,
 	range = 7,
 	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t} end,
 	radius = function (self, t) return 2 end,
@@ -19,26 +20,38 @@ newTalent{
 		local duration = 1 + t.getDelay(self, t)
 		local radius = self:getTalentRadius(t)
 		
-		local map_eff = game.level.map:addEffect(self, x, y, duration, DamageType.NULL_TYPE, 
-		{dam = t.getDamage(self, t), radius = radius, self = self, talent = t}, 
-		0, 5, nil, 
-		{type="warning_ring", args = {radius = radius}},
-		function(e, update_shape_only)
-			if not update_shape_only and e.duration == 1 then
-				local DamageType = require("engine.DamageType") --block_path means that it will always hit the tile we've targeted here
-				local aoe = {type="ball", radius = e.dam.radius, friendlyfire=true, selffire=true, talent=e.dam.talent, block_path = function(self, t) return false, true, true end}
-				e.src.__project_source = e
-				local grids = e.src:project(aoe, e.x, e.y, DamageType.LITE_LIGHT, e.dam.dam)
-				e.src.__project_source = nil
-				game.level.map:particleEmitter(e.x, e.y, e.dam.radius, "sunburst", {radius=e.dam.radius * 0.92, grids=grids, tx=e.x, ty=e.y, max_alpha=80})
-				e.duration = 0
-				for _, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
-				e.particles = nil
-				game:playSoundNear(self, "talents/fireflash")
-				--let map remove it
-			end
-			
-		end)
+		local map_eff = game.level.map:addEffect(
+			self, x, y, duration, DamageType.COSMETIC, 
+			{dam = t.getDamage(self, t), radius = radius, self = self, talent = t}, 
+			0, 5, nil, 
+			{type="warning_ring", args = {radius = radius}},
+			function(e, update_shape_only)
+				if not update_shape_only and e.duration == 1 then
+					local DamageType = require("engine.DamageType") --block_path means that it will always hit the tile we've targeted here
+					local aoe = {type="ball", radius = e.dam.radius, friendlyfire=true, selffire=true, talent=e.dam.talent, block_path = function(self, t) return false, true, true end}
+					e.src.__project_source = e
+					local grids = e.src:project(aoe, e.x, e.y, DamageType.LITE_LIGHT, e.dam.dam)
+					e.src.__project_source = nil
+					game.level.map:particleEmitter(e.x, e.y, e.dam.radius, "sunburst", {radius=e.dam.radius * 0.92, grids=grids, tx=e.x, ty=e.y, max_alpha=80})
+					e.duration = 0
+					for _, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
+					e.particles = nil
+					game:playSoundNear(self, "talents/fireflash")
+					--let map remove it
+				end
+			end)
+		if self:hasEffect(self.EFF_REK_SHINE_SOLAR_MINIMA) then
+			-- do nothing
+		elseif self:hasEffect(self.EFF_REK_SHINE_SOLAR_DISTORTION) then
+			game:onTickEnd(function() 
+											 self:removeEffect(self.EFF_REK_SHINE_SOLAR_DISTORTION)
+											 self:setEffect(self.EFF_REK_SHINE_SOLAR_MINIMA, 14, {src=self})
+										 end)
+		else
+			game:onTickEnd(function() 
+											 self:setEffect(self.EFF_REK_SHINE_SOLAR_DISTORTION, 14, {src=self})
+										 end)
+		end
 		map_eff.name = t.name
 		return true
 	end,
@@ -46,7 +59,7 @@ newTalent{
 		local delay = t.getDelay(self, t)
 		local radius = self:getTalentRadius(t)
 		local damage = t.getDamage(self, t)
-		return ([[After %d turns, the target area in (radius %d) is blasted with a beam of light, dealing %0.2f damage and lighting the area]]):
+		return ([[After %d turns, the target area in (radius %d) is blasted with a beam of light, dealing %0.2f damage and lighting the area.  After being cast 3 times, this ability goes on a much longer cooldown.]]):
 		tformat(delay, radius, damDesc(self, DamageType.LIGHT, damage))
 	end,
 }
@@ -137,6 +150,7 @@ newTalent{
 	require = mag_req3, points = 5,
 	tactical = { CLOSEIN = 2, ESCAPE = 2 },
 	positive = 30,
+	insanity = -10,
 	no_energy = true,
 	cooldown = function(self, t) return math.floor(self:combatTalentLimit(t, 10, 20, 12)) end,
 	range = function(self, t) return math.floor(self.lite) end,
@@ -177,7 +191,7 @@ newTalent{
 	require = mag_req4,
 	points = 5,
 	positive = -40,
-	insanity = 25,
+	insanity = -25,
 	cooldown = 16,
 	tactical = { ATTACKAREA = { LIGHT = 4 } },
 	range = 10,
@@ -200,7 +214,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
-		return ([[Drawing on your deep insight into solar mysteries, you create a powerful 3-wide beam of radiance that always goes as far as possible.	The beam deals %0.2f light damage, stuns enemies for 3 turns.
+		return ([[Drawing on your deep insight into solar mysteries, you create a powerful 3-wide beam of radiance that always goes as far as possible.	The beam deals %0.2f light damage and stuns enemies for 3 turns.
 		The damage will increase with your Spellpower.]]):tformat(damDesc(self, DamageType.LIGHT, damage))
 	end,
 }

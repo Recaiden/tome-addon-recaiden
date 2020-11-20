@@ -95,13 +95,16 @@ newTalent{
 	mode = "sustained",
 	cooldown = 20,
 	range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6)) end,
+	getCost = function(self, t) return 5 end,
 	getDamage = function(self,t) return self:combatTalentScale(t, 10, 60) end,
 	getDisease = function(self,t) return math.floor(self:combatTalentSpellDamage(t, 2, 7)) end,
 	getDuration = function(self,t) return math.floor(self:combatTalentScale(t, 3, 5)) end,
 	callbackOnCrit = function(self, t, type, dam, chance, target)
 		if type ~= "spell" then return end
 		if self:hasProc("shining_excursion_field") then return end
+		if self:getInsanity() < t.getCost(self, t) and not self:attr("force_talent_ignore_ressources") then return end
 		self:setProc("shining_excursion_field", true, 1)
+		if not self:attr("zero_resource_cost") then self:incInsanity(-1*t.getCost(self, t)) end
 		local dam = t.getDamage(self, t) * (1.25 + (self.combat_critical_power or 0) / 200)
 		game.level.map:addEffect(
 			self, self.x, self.y,
@@ -126,7 +129,9 @@ newTalent{
 		return ([[Whenever one of your spells is a critical hit, the surging energy overflows your body, creating a radiant field in radius %d for %d turns.  This field does %0.2f light damage per turn and weakens enemies, reducing their strength and dexterity by %d.
 The field damage cannot trigger a critical hit but is increased by half your critical power.
 
-%s]]):tformat(self:getTalentRange(t), t.getDuration(self, t), damDesc(self, DamageType.LIGHT, t.getDamage(self, t)), t.getDisease(self, t), getResistBlurb(self))
+This costs #INSANE_GREEN#%d insanity#LAST# when it triggers and will only trigger if you have enough insanity.
+
+%s]]):tformat(self:getTalentRange(t), t.getDuration(self, t), damDesc(self, DamageType.LIGHT, t.getDamage(self, t)), t.getDisease(self, t), t.getCost(self, t), getResistBlurb(self))
 	end,
 }
 
