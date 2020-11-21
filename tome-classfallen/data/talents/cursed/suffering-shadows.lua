@@ -37,7 +37,7 @@ newTalent{
       local range = self:getTalentRange(t)
       local duration = t.getDuration(self, t)
       local chance = t.getChance(self, t)
-      return ([[Panic your enemies within a range of %d for %d turns. Anyone who fails to make a mental save against your summoner's Mindpower has a %d%% chance each turn of trying to run away from you.]]):format(range, duration, chance)
+      return ([[Panic your enemies within a range of %d for %d turns. Anyone who fails to make a mental save against your summoner's Mindpower has a %d%% chance each turn of trying to run away from you.]]):tformat(range, duration, chance)
    end,
 }
 
@@ -314,7 +314,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Reach into your memories and let out the darkness into nearby shadows.  Each of your shadows gains 1 turn, but you also summon %d shades of the past in random spaces nearby.  The shades do not know friend from foe, but are mostly harmless.]]):format(t.getCount(self, t))
+      return ([[Reach into your memories and let out the darkness into nearby shadows.  Each of your shadows gains 1 turn, but you also summon %d shades of the past in random spaces nearby.  The shades do not know friend from foe, but are mostly harmless.]]):tformat(t.getCount(self, t))
    end,
 }
 
@@ -373,7 +373,7 @@ newTalent{
    info = function(self, t)
       return ([[You draw distant from the sun, and sink into the shadows of your past.  The line between you and your shadows begins to blur.
 		You lose %d%% light resistance, but gain %d%% darkness resistance and affinity. You also gain %0.2f%% all resistance for each shadow in your party.]]):
-	 format(t.getLightResist(self, t), t.getDarkResist(self, t), t.getAllResScale(self, t))
+	 tformat(t.getLightResist(self, t), t.getDarkResist(self, t), t.getAllResScale(self, t))
    end,   
 }
 
@@ -456,7 +456,7 @@ newTalent{
 	 end
       end
       
-      game:playSoundNear(self, "talents/fallen_scream")
+      game:playSoundNear(self, "talents/scream")
       for _, actor in pairs(game.level.entities) do
          if actor.summoner and actor.summoner == self and actor.subtype == "shadow" then
             game.level.map:particleEmitter(actor.x, actor.y, 3, "shout", {additive=true, life=10, size=3, distorion_factor=0.5, radius=3, nb_circles=6, rm=0.1, rM=0.2, gm=0, gM=0, bm=0.8, bM=0.9, am=0.4, aM=0.6})
@@ -468,7 +468,7 @@ newTalent{
    end,
    info = function(self, t)
       local dur = t.getDuration(self, t)
-      return ([[Channel your raw anguish through your shadows, causing enemies near them (range 3) to be overcome by gloom (#SLATE#Mindpower vs. Mental#LAST#) for %d turns, inflicting stun, slow, or confusion at random.  Enemies near multiple shadows can be struck by multiple effects.]]):format(dur)
+      return ([[Channel your raw anguish through your shadows, causing enemies near them (range 3) to be overcome by gloom (#SLATE#Mindpower vs. Mental#LAST#) for %d turns, inflicting stun, slow, or confusion at random.  Enemies near multiple shadows can be struck by multiple effects.]]):tformat(dur)
    end,
 }
 
@@ -532,7 +532,7 @@ newTalent{
       shadow:forceLevelup(level)
       game.zone:addEntity(game.level, shadow, "actor", x, y)
       shadow:feed()
-      game:playSoundNear(self, "talents/fallen_tearing")
+      game:playSoundNear(self, "talents/tearing")
       game.level.map:particleEmitter(x, y, 1, "teleport_in")
       return true
    end,
@@ -542,6 +542,6 @@ newTalent{
       local strip = t.getResist(self, t)
       return ([[Attempt (#SLATE#Mindpower vs. Mental#LAST#) to rip away a target's shadow and pour in your pain to animate it, summoning a Shadow of Despair for %d turns and reducing their resistance to light and darkness damage by %d%%
 
-The Shadow of Despair has all of your shadows' normal powers and can panic foes into fleeing.]]):format(dur, strip)
+The Shadow of Despair has all of your shadows' normal powers and can panic foes into fleeing.]]):tformat(dur, strip)
    end,
 }

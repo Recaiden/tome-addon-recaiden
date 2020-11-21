@@ -34,22 +34,21 @@ newBirthDescriptor{
 
       --new generics
       ["celestial/dirge"]={true, 0.3},
-      ["cursed/self-hatred"]={true, 0.3},
+      ["cursed/hatred"]={true, 0.3},
       --old generics
       ["celestial/light"]={true, 0.0},
       ["technique/combat-training"]={true, 0.3},      
    },
-   birth_example_particles = "rek_dirge_shield", --"darkness_shield"
+   birth_example_particles = "dirge_shield",
    talents = {
       [ActorTalents.T_WEAPONS_MASTERY] = 1,
       [ActorTalents.T_WEAPON_COMBAT] = 1,
       [ActorTalents.T_ARMOUR_TRAINING] = 2,
       [ActorTalents.T_HEALING_LIGHT] = 1,
       [ActorTalents.T_WEAPON_OF_LIGHT] = 1,
-      --[ActorTalents.T_FLN_DIRGE_ACOLYTE] = 1,
-      [ActorTalents.T_FLN_DARKSIDE_SLAM] = 1,
-      [ActorTalents.T_FLN_BLOODSTAINED_RUSH] = 1,
-      [ActorTalents.T_FLN_SELFHATE_HARM] = 1,
+      [ActorTalents.T_BRUTALIZE] = 1,
+      [ActorTalents.T_BLOOD_RUSH] = 1,
+      [ActorTalents.T_SELF_SACRIFICE] = 1,
    },
    
    copy = {

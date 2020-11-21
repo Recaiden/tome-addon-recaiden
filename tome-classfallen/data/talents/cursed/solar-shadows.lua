@@ -39,7 +39,7 @@ newTalent{
       local heal = t.getHeal(self, t)
       return ([[An invigorating ray of Sunlight shines upon you, healing your body for %d life.
 		The amount healed will increase with your Spellpower.]]):
-      format(heal)
+      tformat(heal)
    end,
 }
 
@@ -70,7 +70,7 @@ newTalent{
       local damage = t.getDamage(self, t)
       return ([[You strike your foe, dealing %d%% weapon damage.
 		If the attack hits, the target will have their light resistance reduced by %d%% and grant 1 hate when hit for 5 turns.]]):
-      format(100 * damage, t.getWeakness(self, t))
+      tformat(100 * damage, t.getWeakness(self, t))
    end,
          }
 
@@ -137,7 +137,7 @@ newTalent{
       return false
    end,info = function(self, t)
       local multiplier = self:combatTalentWeaponDamage(t, 0.9, 1.9)
-      return ([[With blinding speed you suddenly appear next to a target up to %d spaces away and attack for %d%% damage.]]):format(self:getTalentRange(t), multiplier * 100)
+      return ([[With blinding speed you suddenly appear next to a target up to %d spaces away and attack for %d%% damage.]]):tformat(self:getTalentRange(t), multiplier * 100)
    end,
          }
 
@@ -166,7 +166,7 @@ newTalent{
       local damage = t.getDamage(self, t)
       return ([[Focuses the power of the Moon into a blast of shadows, doing %0.2f damage.
 		The damage dealt will increase with your Spellpower.]]):
-      format(damDesc(self, DamageType.DARKNESS, damage))
+      tformat(damDesc(self, DamageType.DARKNESS, damage))
    end,
 }
 
@@ -196,7 +196,7 @@ newTalent{
       local damage = t.getDamage(self, t)
       return ([[Calls the power of the Sun into a searing lance, doing %d damage to the target and leaving a radius 1 area of searing light on the ground for 4 turns that does %d light damage to all foes within it.
 		The damage dealt will increase with your Spellpower.]]):
-      format(damDesc(self, DamageType.LIGHT, damage), damDesc(self, DamageType.LIGHT, damage/2))
+      tformat(damDesc(self, DamageType.LIGHT, damage), damDesc(self, DamageType.LIGHT, damage/2))
    end,
 }
 
@@ -209,7 +209,7 @@ newTalent{
    getChance = function(self, t) return 50 end,
    info = function(self, t)
       local chance = t.getChance(self, t)
-      return ([[When a shadow is hit and killed, there is a %d%% chance it will reform unhurt.]]):format(chance)
+      return ([[When a shadow is hit and killed, there is a %d%% chance it will reform unhurt.]]):tformat(chance)
    end,
 }
 
@@ -501,7 +501,7 @@ newTalent{
       return ([[While this ability is active, you will continually call up to %d shadows to aid you in battle. Each shadow costs 5 hate to summon and has a level equal to your own. Shadows are weak combatants that can: Use Healing Light to heal themselves (level %d), Blindside their opponents (level %d), and Phase Door from place to place.
 		Shadows ignore %d%% of the damage dealt to them by their master.
 
-#{italic}#'Lomea', an elvish term for shadows, refers to something worse than the simple interruption of light.#{normal}#]]):format(maxShadows, healLevel, blindsideLevel, avoid_master_damage)
+#{italic}#'Lomea', an elvish term for shadows, refers to something worse than the simple interruption of light.#{normal}#]]):tformat(maxShadows, healLevel, blindsideLevel, avoid_master_damage)
    end,
          }
 
@@ -562,7 +562,7 @@ newTalent{
 The fury of their attacks gives them the ability to try to Absorb the defenses of their foes, increasing light damage taken and giving you  a small amount of hate when you strike them (level %d, %d%% chance at range 1).
 They also gain the ability to Fade when hit, avoiding all damage until their next turn (%d turn cooldown).
 
-#{italic}#Remember how you used to fight side by side?#{normal}#]]):format(combatAtk, incDamage, absorbLevel, absorbChance, fadeCooldown)
+#{italic}#Remember how you used to fight side by side?#{normal}#]]):tformat(combatAtk, incDamage, absorbLevel, absorbChance, fadeCooldown)
 end,
 }
 
@@ -640,7 +640,7 @@ Your shadows can strike adjacent foes with rays of Moonlight (%d%% chance).
 At level 3 your shadows can mark their enemies (%d%% chance at range 2 to 6), triggering a Searing Light if you hit the same target.
 At level 5 when your shadows are struck down they may (50%% chance) Reform, becoming whole again.
 
-#{italic}#Remember how you used to look to them for guidance?#{normal}#]]):format(spellpowerChange, closeAttackSpellChance, farAttackSpellChance)
+#{italic}#Remember how you used to look to them for guidance?#{normal}#]]):tformat(spellpowerChange, closeAttackSpellChance, farAttackSpellChance)
    end,
          }
 
@@ -723,6 +723,6 @@ newTalent{
       local blindsideChance = t.getBlindsideChance(self, t)
       return ([[Focus your shadows on a single target. Friendly targets will be defended for %d turns. Hostile targets will be attacked, with a %d%% chance the shadows will blindside the target.
 		If you have less than maximum shadows available, they will automatically be summoned before focusing.
-		This talent has no cost.]]):format(defenseDuration, blindsideChance)
+		This talent has no cost.]]):tformat(defenseDuration, blindsideChance)
    end,
          }

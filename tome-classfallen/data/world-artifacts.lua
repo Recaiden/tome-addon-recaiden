@@ -1,5 +1,0 @@
-local Stats = require "engine.interface.ActorStats"
-local Talents = require "engine.interface.ActorTalents"
-local Map = require "engine.Map"
-local DamageType = require "engine.DamageType"
-local Object = require "engine.Object"
