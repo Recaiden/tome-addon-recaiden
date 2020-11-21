@@ -1,206 +1,130 @@
 newTalent{
-	name = "Solar Flare", short_name = "REK_SHINE_INCINERATOR_SOLAR_FLARE",
-	type = {"demented/incinerator", 1},
-	require = mag_req1,
-	cooldown = 12,
-	tactical = {ATTACKAREA = {LIGHT = 2}},
-	positive = 15,
-	range = 7,
-	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t} end,
-	radius = function (self, t) return 2 end,
-	getDelay = function(self, t) return 3 end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 300) end,
-	action = function(self, t)
-		local tg = self:getTalentTarget(t)
-		local x, y = self:getTarget(tg)
-		if not x or not y then return nil end
-		local _ _, x, y = self:canProject(tg, x, y)
-		
-		local duration = 1 + t.getDelay(self, t)
-		local radius = self:getTalentRadius(t)
-		
-		local map_eff = game.level.map:addEffect(self, x, y, duration, DamageType.NULL_TYPE, 
-		{dam = t.getDamage(self, t), radius = radius, self = self, talent = t}, 
-		0, 5, nil, 
-		{type="warning_ring", args = {radius = radius}},
-		function(e, update_shape_only)
-			if not update_shape_only and e.duration == 1 then
-				local DamageType = require("engine.DamageType") --block_path means that it will always hit the tile we've targeted here
-				local aoe = {type="ball", radius = e.dam.radius, friendlyfire=true, selffire=true, talent=e.dam.talent, block_path = function(self, t) return false, true, true end}
-				e.src.__project_source = e
-				local grids = e.src:project(aoe, e.x, e.y, DamageType.LITE_LIGHT, e.dam.dam)
-				e.src.__project_source = nil
-				game.level.map:particleEmitter(e.x, e.y, e.dam.radius, "sunburst", {radius=e.dam.radius * 0.92, grids=grids, tx=e.x, ty=e.y, max_alpha=80})
-				e.duration = 0
-				for _, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
-				e.particles = nil
-				game:playSoundNear(self, "talents/fireflash")
-				--let map remove it
-			end
-			
-		end)
-		map_eff.name = t.name
-		return true
+	name = "Sunburn", short_name = "REK_SHINE_INCINERATOR_SUNBURN",
+	type = {"celestial/incinerator", 1}, require = mag_req_high1, points = 5,
+	mode = "passive",
+	getStacks = function(self, t)
+		local count = 12
+		if self:isTalentActive(self.T_REK_SHINE_INCINERATOR_INCINERATOR) then
+			count = count + self:callTalent("T_REK_SHINE_INCINERATOR_INCINERATOR", "getExtraBurn")
+		end
+		return count
 	end,
+	getTurns = function(self, t) return self:combatTalentLimit(t, 1, 10, 3) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 12, 25) end,
+	callbackOnDealDamage = function(self, t, val, target, dead, death_note)
+		if dead then return end
+		if target == self or target == self.summoner or (target.summoner and target.summoner == self) then return end
+		if not death_note or (death_note.damtype == DamageType.FIRE) then return end
+		if self:attr("sunburning") then return end
+		local procs = self.turn_procs.sunburn or 0
+		if self.summoner and self.summoner.turn_procs.sunburn then
+			procs = self.summoner.turn_procs.sunburn
+		end
+		if procs >= t.getStacks(self, t) then return end
+		
+		self:attr("sunburning",1)
+		local dam = self:spellCrit(t.getDamage(self, t))
+		DamageType:get(DamageType.FIRE).projector(self, target.x, target.y, DamageType.FIRE, dam)
+		self:attr("sunburning",-1)
+		if self.summoner then
+			self.summoner.turn_procs.sunburn = procs + 1
+		else
+			self.turn_procs.sunburn = procs + 1
+		end
+	end,
+
 	info = function(self, t)
-		local delay = t.getDelay(self, t)
-		local radius = self:getTalentRadius(t)
-		local damage = t.getDamage(self, t)
-		return ([[After %d turns, the target area in (radius %d) is blasted with a beam of light, dealing %0.2f damage and lighting the area]]):
-		tformat(delay, radius, damDesc(self, DamageType.LIGHT, damage))
+		return ([[Whenever you inflict non-fire damage to a target, they take an additional %0.2f fire damage.  This will not apply to you or your reflections.
+This can only hit a given target %d times per turn, and the cap is shared with your reflections.
+The damage increases with your Spellpower.
+		]]):tformat(damDesc(self, DamageType.FIRE, t.getDamage(self, t)), t.getStacks(self, t))
 	end,
 }
 
 newTalent{
-	name = "Coronal Shield", short_name = "REK_SHINE_INCINERATOR_CORONAL_SHIELD",
-	type = {"demented/incinerator", 2},
-	require = mag_req2,
-	points = 5,
+	name = "Scorched Earth", short_name = "REK_SHINE_INCINERATOR_WORLD_CUTTER",
+	type = {"celestial/incinerator", 2},	require = mag_req_high2,	points = 5,
 	mode = "sustained",
-	sustain_positive = 20,
-	cooldown = 22,
-	tactical = { BUFF = 2 },
-	iconOverlay = function(self, t, p)
-		local p = self.sustain_talents[t.id]
-		if not p then return "" end
-		if p.barrier then return ("%d"):format(p.barrier) end
-		if p.recharge then return ("%d/%d"):format(t.getRecharge(self, t) - p.recharge, t.getRecharge(self, t)), "buff_font_smaller" end
-		return "Ready", "buff_font_smaller"
-	end,
-	getShield = function(self, t) return self:combatTalentSpellDamage(t, 40, 200) end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 150) end,
-	getDuration = function(self, t) return 3 end,
-	getRecharge = function(self, t) return 7 end,
-	range = 10,
-	targetBeam = function(self, t) return {type="beam", force_max_range=true, range=self:getTalentRange(t), talent=t, selffire=false, friendlyfire=self:spellFriendlyFire()} end,
-	callbackOnActBase = function(self, t)
-		local p = self:isTalentActive(t.id)
-		if not p then return end
-		if not p.recharge then return end
-		p.recharge = p.recharge - 1
-		if p.recharge <= (t.getRecharge(self, t) - t.getDuration(self, t)) then p.barrier = nil end
-		if p.recharge <= 0 then p.recharge = nil end
-	end,
-	callbackOnHit = function(self, t, cb, src, dt)
-		local p = self:isTalentActive(t.id)
-		if not p then return end
-		if p.recharge and p.recharge <= (t.getRecharge(self, t) - t.getDuration(self, t)) then return end
-		if cb.value <= 0 or src == self then return end
-		if not dt or not dt.damtype or (dt.damtype == DamageType.PHYSICAL or dt.damtype == DamageType.MIND) then return end
-		local firing = false
-		if not p.recharge then
-			p.recharge = t.getRecharge(self, t)
-			p.barrier = self:spellCrit(t.getShield(self, t))
-			firing = true
+	sustain_positive = 10,
+	cooldown = 20,
+	tactical = { BUFF=2, ATTACKAREA = { LIGHT = 1 } },
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 55) end,
+	callbackOnTalentPost = function(self, t, ab)
+		if ab.short_name == "SUN_FLARE" then
+			local se_duration = 4
+			if self:isTalentActive(self.T_REK_SHINE_INCINERATOR_INCINERATOR) then
+				se_duration = se_duration + self:callTalent("T_REK_SHINE_INCINERATOR_INCINERATOR", "getExtraDuration")
+			end
+			local tg = self:getTalentTarget(ab)
+			local grids = self:project(tg, self.x, self.y, function() end)
+			game.level.map:addEffect(self, self.x, self.y, se_duration, DamageType.LIGHT, self:callTalent("T_REK_SHINE_INCINERATOR_WORLD_CUTTER", "getDamage"), 0, 5, grids, {type="inferno"}, nil, self:spellFriendlyFire())
 		end
-		if p.barrier then
-			local blocked = math.min(cb.value, p.barrier)
-			game:delayedLogDamage(src, self, 0, ("#GOLD#(%d to coronal shield)#LAST#"):format(blocked), false)
-			p.barrier = p.barrier - blocked
-			cb.value = cb.value - blocked
-			if p.barrier <= 0 then p.barrier = nil end
-		end
-		if firing and src.x and src.y then
-			local dam = self:spellCrit(t.getDamage(self, t))
-			local tg = t.targetBeam(self, t)
-			tg.x = src.x
-			tg.y = src.y
-			self:projectApply(tg, src.x, src.y, Map.ACTOR, function(target, x, y)
-				DamageType:get(DamageType.LIGHT).projector(self, x, y, DamageType.LIGHT, dam)
-				target:setEffect(target.EFF_DAZZLED, 5, {power=10, apply_power=self:combatSpellpower()})
-			end)
-			local _ _, x, y = self:canProject(tg, x, y)
-		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(src.x-self.x), math.abs(src.y-self.y)), "light_beam", {tx=src.x-self.x, ty=src.y-self.y})
-		end
-		return true
 	end,
 	activate = function(self, t)
-		game:playSoundNear(self, "talents/heal")
-		local ret = {}
-		self:talentParticles(ret, {type="phantasm_shield"})
-		return ret
+		game:playSoundNear(self, "talents/fire")
+		self:addShaderAura("burning_wake", "awesomeaura", {time_factor=3500, alpha=0.6, flame_scale=0.6}, "particles_images/wings.png")
+		return {}
 	end,
 	deactivate = function(self, t, p)
+		self:removeShaderAura("burning_wake")
 		return true
 	end,
 	info = function(self, t)
-		return ([[Surround yourself with a protective shield of shining plamsa.
-		Whenever you would take elmental damage (neither physical nor mind) the shield condenses, blocking %d elemental damage over the next %d turns, and releasing a ray of sunlight towards the attacker that deals %d light damage and dazzles any affected creature (deal 10%% less damage) for 5 turns. 
-The shield can only be triggered every %d turns.
-The shield power and beam damage will increase with your Spellpower.]]):tformat(t.getShield(self, t), t.getDuration(self, t), damDesc(self, DamageType.LIGHT, t.getDamage(self, t)), t.getRecharge(self, t))
+		return ([[Your Sun Flare, Solar Flare, Coronal Shield, and Nova Blast irradiate the ground they strike, searing all within for %0.2f light damage each turn for 4 turns.
+		The damage will increase with your Spellpower.]]):tformat(damDesc(self, DamageType.LIGHT, t.getDamage(self, t)))
 	end,
 }
 
 newTalent{
-	name = "Lightspeed Step", short_name = "REK_SHINE_INCINERATOR_LIGHTSPEED_STEP",
-	type = {"demented/incinerator", 3},
-	require = mag_req3, points = 5,
-	tactical = { CLOSEIN = 2, ESCAPE = 2 },
-	positive = 30,
-	no_energy = true,
-	cooldown = function(self, t) return math.floor(self:combatTalentLimit(t, 10, 20, 12)) end,
-	range = function(self, t) return math.floor(self.lite) end,
-	requires_target = true,
-	target = function(self, t)	return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
-	is_teleport = true,
-	action = function(self, t)
-		local tg = self:getTalentTarget(t)
-		local x, y, target = self:getTarget(tg)
-		if not x or not y then return nil end
-		if not self:hasLOS(x, y) or game.level.map:checkEntity(x, y, Map.TERRAIN, "block_move") then -- To prevent teleporting through walls
-			game.logPlayer(self, "You do not have line of sight.")
-			return nil
-		end
-		local _ _, x, y = self:canProject(tg, x, y)
-		
-		game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
-		if not self:teleportRandom(x, y, 0) then
-			game.logSeen(self, "%s's space-time folding fizzles!", self:getName():capitalize())
+	name = "Soletta", short_name = "REK_SHINE_INCINERATOR_SUCCESSION",
+	type = {"celestial/incinerator", 3}, require = mag_req_high3, points = 5,
+	mode= "passive",
+	getEnergy = function(self, t)	return self:combatTalentLimit(t, 50, 15, 30) end,
+	callbackOnTalentPost = function(self, t, ab)
+		if not self.in_combat then return end
+		if not ab.is_spell then return end
+		if ab.mode == "sustained" then return end
+		if util.getval(ab.no_energy, self, ab) == true then return end
+		self:setEffect(self.EFF_REK_SHINE_SOLETTA, 2, {power=t.getEnergy(self, t), stacks=1, src=self})
+	end,
+	info = function(self, t)
+		return ([[The sun shines on all, both heroes and monsters, but it shines especially bright for you.  Every %d spells you cast (that take a turn) in quick succession, you receive a burst of energy and gain %d%% of a turn. This is more effective the more it triggers, but never gives more than 1 whole turn.]]):tformat(3, t.getEnergy(self, t))
+	end,
+}
+
+newTalent{
+	name = "Incinerator", short_name = "REK_SHINE_INCINERATOR_INCINERATOR",
+	type = {"celestial/incinerator", 4},	require = mag_req_high4, points = 5,
+	mode = "sustained",
+	sustain_positive = 10,
+	cooldown = 30,
+	tactical = { BUFF = 2 },
+	getExtraBurn = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6)) end,
+	getExtraDuration = function(self, t) return math.floor(self:combatTalentScale(t, 1, 2)) end,
+	getResistPenalty = function(self, t) return self:combatTalentLimit(t, 60, 20, 50) end,
+	activate = function(self, t)
+		game:playSoundNear(self, "talents/fire")
+		local particle
+		if core.shader.active(4) then
+			local bx, by = self:attachementSpot("back", true)
+			particle = self:addParticles(Particles.new("shader_wings", 1, {infinite=1, x=bx, y=by}))
 		else
-			game.logSeen(self, "%s emerges from a space-time rift!", self:getName():capitalize())
-			game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
+			particle = self:addParticles(Particles.new("wildfire", 1))
 		end
-		
-		game:playSoundNear(self, "talents/teleport")
+		return {
+			dam = self:addTemporaryValue("resists_pen",
+																	 {[DamageType.LIGHT] = t.getDamageIncrease(self, t),
+																		[DamageType.FIRE] = t.getDamageIncrease(self, t)}),
+			particle = particle,
+		}
+	end,
+	deactivate = function(self, t, p)
+		self:removeParticles(p.particle)
+		self:removeTemporaryValue("resists_pen", p.resist)
 		return true
 	end,
 	info = function(self, t)
-		local range = self:getTalentRange(t)
-		return ([[Teleports you to up to %d tiles away, to a targeted location in line of sight.
-The range will increase with your Light Radius.]]):tformat(range)
-	end,
-}
-
-newTalent{
-	name = "Nova Blast", short_name = "REK_SHINE_INCINERATOR_NOVA_BLAST",
-	type = {"demented/incinerator", 4},
-	require = mag_req4,
-	points = 5,
-	positive = -40,
-	insanity = 25,
-	cooldown = 16,
-	tactical = { ATTACKAREA = { LIGHT = 4 } },
-	range = 10,
-	is_beam_spell = true,
-	requires_target = true,
-	target = function(self, t) return {type="widebeam", force_max_range=true, radius=1, range=self:getTalentRange(t), talent=t, selffire=false, friendlyfire=self:spellFriendlyFire()} end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 28, 370) end,
-	action = function(self, t)
-		local tg = self:getTalentTarget(t)
-		local x, y = self:getTarget(tg)
-		if not x or not y then return nil end
-
-		local dam = self:spellCrit(t.getDamage(self, t))
-		local grids = self:project(tg, x, y, DamageType.REK_SHINE_LIGHT_STUN, dam)
-		local _ _, x, y = self:canProject(tg, x, y)
-		game.level.map:particleEmitter(self.x, self.y, tg.radius, "flamebeam_wide", {tx=x-self.x, ty=y-self.y})
-		--game:shakeScreen(10, 3)
-		game:playSoundNear(self, "talents/reality_breach")
-		return true
-	end,
-	info = function(self, t)
-		local damage = t.getDamage(self, t)
-		return ([[Drawing on your deep insight into solar mysteries, you create a powerful 3-wide beam of radiance that always goes as far as possible.	The beam deals %0.2f light damage, stuns enemies for 3 turns.
-		The damage will increase with your Spellpower.]]):tformat(damDesc(self, DamageType.LIGHT, damage))
+		return ([[Dedicate yourself to destruction by fire, increasing your fire and light resistance penetration by %d%%, allowing your Sunburn to trigger %d additional times per turn, and incresing the duration of Scorched Earth effects by %d.]])
+		:tformat(t.getResistPenalty(self, t), t.getExtraBurn(self, t), t.getExtraDuration(self, t))
 	end,
 }

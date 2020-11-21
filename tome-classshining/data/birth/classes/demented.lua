@@ -1,17 +1,39 @@
+local start_zone = function(self)
+	if self.descriptor.world == "Maj'Eyal" and (
+		self.descriptor.race == "Human" or
+		self.descriptor.race == "Elf" or
+		self.descriptor.race == "Dwarf" or
+		self.descriptor.race == "Yeek" or
+		self.descriptor.race == "Halfling" or 
+		(self.descriptor.race == "Giant" and self.descriptor.subrace == "Ogre")
+	) and not self._forbid_start_override then
+		self.cults_race_start_quest = self.starting_quest
+		-- Some overrides
+		if self.descriptor.race == "Dwarf" then self.cults_race_start_quest = "start-allied" end
+		if self.descriptor.race == "Yeek" then self.cults_race_start_quest = "start-allied" end
+		--self.default_wilderness = {"zone-pop", "angolwen-portal"}  This erases Angolwen
+		self.default_wilderness = {20, 17}
+		self.starting_zone = "cults+town-kroshkkur"
+		self.starting_quest = "cults+start-cults"
+		self.starting_intro = "cults"
+	end
+	self:triggerHook{"BirthStartZone:cults"}
+end
+
+
 newBirthDescriptor{
 	type = "subclass",
 	name = "Shining One",
 	locked = function() return profile.mod.allow_build.divine_anorithil end,
 	locked_desc = _t"The balance of the heavens' powers is a daunting task. Blessed are those that venture east, into the house of the sun.",
 	desc = {
-		"Many in the east look to the sun for guidance and inspiration.  You have looked more closely than most.",
-		"You have seen the true nature of Shandral, and now you know that you must cleanse the world with holy fire.",
+		"Many in the east look to the sun for guidance and inspiration.  You have looked more closely than most. You have seen the true nature of Shandral, and now you know that you must cleanse the world with holy fire.",
 		"It will be #FIREBRICK#beautiful.#LAST#",
 		"Their most important stats are Magic and Cunning.",
 		"#GOLD#Stat modifiers:",
 		"#LIGHT_BLUE# * +0 Strength, +0 Dexterity, +2 Constitution",
 		"#LIGHT_BLUE# * +5 Magic, +0 Willpower, +3 Cunning",
-		"#GOLD#Life Rating:#LIGHT_BLUE# -1",
+		"#GOLD#Life Rating:#LIGHT_BLUE# -4",
 	},
 	power_source = {arcance=true},
 	stats = { con=2, mag=5, cun=3 },
@@ -26,7 +48,7 @@ newBirthDescriptor{
 		--advanced talents
 		["celestial/circles"]={false, 0.3},
 		["demented/core-gate"]={false, 0.3},
-		["demented/incinerator"]={false, 0.3},
+		["celestial/incinerator"]={false, 0.3},
 		
 		--generics
 		["cunning/survival"]={false, 0.0},
@@ -35,17 +57,25 @@ newBirthDescriptor{
 		["celestial/light"]={true, 0.3},
 		["demented/beyond-sanity"]={true, 0.0},
 	},
-	birth_example_particles = "darkness_shield",
+	birth_example_particles = {
+		"golden_shield",
+		function(actor)
+			if core.shader.active(4) then local x, y = actor:attachementSpot("back", true) actor:addParticles(Particles.new("shader_wings", 1, {x=x, y=y, infinite=1}))
+			else actor:addParticles(Particles.new("wildfire", 1))
+			end
+		end,
+	},
 	talents = {
 		[ActorTalents.T_REK_SHINE_SUNLIGHT_SOLAR_FLARE] = 1,
 		[ActorTalents.T_SEARING_LIGHT] = 1,
-		[ActorTalents.T_HEALING_LIGHT] = 1,
 		[ActorTalents.T_REK_SHINE_PRISM_REFLECTIONS] = 1,
-		-- [ActorTalents.T_REK_MTYR_POLARITY_DEEPER_SHADOWS] = 1,
+		[ActorTalents.T_HEALING_LIGHT] = 1,
+		[ActorTalents.T_CHAOS_ORBS] = 1,
 	},
 	
 	copy = {
-		max_life = 90,
+		class_start_check = start_zone,
+		max_life = 70,
 		resolvers.auto_equip_filters{
 			MAINHAND = {type="weapon", subtype="staff"},
 			OFFHAND = {special=function(e, filter)
@@ -63,7 +93,7 @@ newBirthDescriptor{
 												},
 	},
 	copy_add = {
-		life_rating = -1,
+		life_rating = -4,
 	},
 }
 

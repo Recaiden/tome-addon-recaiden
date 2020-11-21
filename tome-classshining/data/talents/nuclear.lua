@@ -15,6 +15,7 @@ newTalent{
 	require = mag_req1, points = 5,
 	mode = "passive",
 	getAffinity = function(self, t) return self:combatTalentScale(t, 10, 35, 0.75) end,
+	on_learn = function(self, t) self.blood_color = colors.GOLD end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(
 			p, "damage_affinity", {
@@ -29,7 +30,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[All life comes from the sun, and all brightness and warmth is a reminder of this.  You gain %d%% Light and Fire damage affinity.
-In addition, your light and fire peentration do not apply when damaging allies.
+In addition, your light and fire penetration do not apply when damaging allies.
 
 %s]]):tformat(t.getAffinity(self, t), getResistBlurb(self))
 	end,

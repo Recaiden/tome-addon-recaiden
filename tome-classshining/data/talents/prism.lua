@@ -56,6 +56,11 @@ makeMirrorClone = function(target, duration, alt_nodes)
 
 	-- Remove some timed effects
 	m:removeTimedEffectsOnClone()
+
+	-- shred life
+	m.max_life = math.floor(m.max_life / 2)
+	m.life = math.min(m.life, m.max_life)
+	m.die_at = math.ceil((m.die_at or 0) / 2)
 	
 	-- A bit of sanity in case anyone decides they should blow up the world.
 	if m.preferred_paradox and m.preferred_paradox > 600 then m.preferred_paradox = 600 end
@@ -91,7 +96,7 @@ end
 newTalent{
 	name = "Split Reflections", short_name = "REK_SHINE_PRISM_REFLECTIONS",
 	type = {"demented/prism", 1},
-	require = mag_req1, points = 5,
+	require = mag_req_slow, points = 5,
 	mode = "passive",
 	unlearn_on_clone = true,
 	getCount = function(self, t) return 2 end,
@@ -101,7 +106,6 @@ newTalent{
 		self:talentTemporaryValue(p, "reflection_damage_amp", t.getReduction(self, t))
 	end,
 	callReflections = function(self, t)
-		local clones = {self}
 		
 		-- Clone the caster
 		local function makePrismClone(self, t)
@@ -138,14 +142,14 @@ newTalent{
 			-- and the level
 			game.zone:addEntity(game.level, m, "actor", tx, ty)
 			game.level.map:particleEmitter(m.x, m.y, 1, "temporal_teleport")
-			clones[#clones+1] = m
 		end
-		
-		if #clones < 2 then
-			game.logPlayer(self, "Not enough space to summon!")
-			return
+
+		local clones = getPrisms(self)
+		clones[#clones+1] = self
+		for i = 1, #clones do
+			local target = clones[i]
+			target:setEffect(target.EFF_REK_SHINE_REFLECTION_LINK, 10, {targets=clones})
 		end
-		
 		return true
 	end,
 	callbackOnSummonDeath = function(self, t, summon, src, death_note)
@@ -155,6 +159,7 @@ newTalent{
 		--todo separate death timers
 	end,
 	callbackOnCombat = function(self, t, state)
+		if self.resting then self:restStop(_t"combat started!") end
 		if state == false then
 			for uid, minion in pairs(game.level.entities) do
 				if minion.is_luminous_reflection and minion.summoner and minion.summoner == self then
@@ -187,7 +192,10 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[Whenever you enter combat, you are joined by %d reflections of yourself.  They are identical to you except that they lack Prism talents.  You and your reflections deal %d%% less damage.  If killed, your reflections will reemerge after 10 turns.
+		return ([[Whenever you enter combat, you are joined by %d reflections of yourself.  They are identical to you except that they lack Prism talents and have half your life.  
+You and your reflections deal %d%% less damage.  
+All damage taken is shared between you and your reflections.
+If killed, your reflections will reemerge after 10 turns.
 ]]):tformat(t.getCount(self, t), t.getReduction(self, t))
 	end,
 }
@@ -217,9 +225,11 @@ newTalent{
 			tg.y = prism.y
 			local old_source = self.__project_source
 			self.__project_source = prism
-			local grids = self:project(tg, x, y, DamageType.LIGHT, dam)
-			local _ _, x, y = self:canProject(tg, x, y)
-			game.level.map:particleEmitter(prism.x, prism.y, math.max(math.abs(x-prism.x), math.abs(y-self.y)), "light_beam", {tx=x-prism.x, ty=y-prism.y})
+			local _ _, px, py = self:canProject(tg, x, y)
+			if px and py then
+				local grids = self:project(tg, x, y, DamageType.LIGHT, dam)
+				game.level.map:particleEmitter(prism.x, prism.y, math.max(math.abs(x-prism.x), math.abs(y-self.y)), "light_beam", {tx=x-prism.x, ty=y-prism.y})
+			end
 			self.__project_source = old_source
 		end
 		game:playSoundNear(self, "talents/reality_breach")
@@ -301,7 +311,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Bend light into a stationary circular barrier that encompasses you and your clones.  Any attacks from outside the barrier going inward will be reflected, up to %d%% points of damage total.  The barrier lasts %d turns.
+		return ([[Bend light into a stationary circular barrier that encompasses you and your clones.  Any attacks from outside the barrier going inward will be reflected, up to %d points of damage total.  The barrier lasts %d turns.
 The maximum damage reflected will increase with your spellpower.]]):tformat(t.getAbsorb(self, t), t.getDuration(self, t))
 	end,
 }

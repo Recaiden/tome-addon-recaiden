@@ -4,6 +4,10 @@ local Entity = require "engine.Entity"
 
 damDesc = Talents.main_env.damDesc
 
+mag_req_slow = {
+	stat = { mag=function(level) return 12 + (level-1) * 2 end },
+	level = function(level) return 0 + (level-1)*4  end,
+}
 mag_req1 = {
 	stat = { mag=function(level) return 12 + (level-1) * 2 end },
 	level = function(level) return 0 + (level-1)  end,
@@ -61,11 +65,11 @@ if not Talents.talents_types_def["demented/prism"] then
 end
 
 if not Talents.talents_types_def["demented/core-gate"] then
-   newTalentType{ allow_random=true, is_mind=true, type="demented/core-gate", name = "Core Gate", min_lev = 10, description = "Shandral is but a young and timid sun.  There are far greater powers, if you know to look for them." }
+   newTalentType{ allow_random=true, is_spell=true, type="demented/core-gate", name = "Core Gate", min_lev = 10, description = "Shandral is but a young and timid sun.  There are far greater powers, if you know to look for them." }
    load("/data-classshining/talents/core-gate.lua")
 end
 
-if not Talents.talents_types_def["demented/incinerator"] then
-   newTalentType{ allow_random=true, is_mind=true, type="demented/incinerator", name = "Incinerator", min_lev = 10, description = "There will be nothing left but ash." }
+if not Talents.talents_types_def["celestial/incinerator"] then
+   newTalentType{ allow_random=true, is_spell=true, type="celestial/incinerator", name = "Incinerator", min_lev = 10, description = "There will be nothing left but ash." }
    load("/data-classshining/talents/incinerator.lua")
 end

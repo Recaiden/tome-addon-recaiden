@@ -32,7 +32,18 @@ newTalent{
 					e.src.__project_source = e
 					local grids = e.src:project(aoe, e.x, e.y, DamageType.LITE_LIGHT, e.dam.dam)
 					e.src.__project_source = nil
+					
 					game.level.map:particleEmitter(e.x, e.y, e.dam.radius, "sunburst", {radius=e.dam.radius * 0.92, grids=grids, tx=e.x, ty=e.y, max_alpha=80})
+
+					-- scorched earth
+					if self:isTalentActive(self.T_REK_SHINE_INCINERATOR_WORLD_CUTTER) then
+						local se_duration = 4
+						if self:isTalentActive(self.T_REK_SHINE_INCINERATOR_INCINERATOR) then
+							se_duration = se_duration + self:callTalent("T_REK_SHINE_INCINERATOR_INCINERATOR", "getExtraDuration")
+						end
+						game.level.map:addEffect(self, e.x, e.y, se_duration, DamageType.LIGHT, self:callTalent("T_REK_SHINE_INCINERATOR_WORLD_CUTTER", "getDamage"), 0, 5, grids, {type="inferno"}, nil, self:spellFriendlyFire())
+					end
+					
 					e.duration = 0
 					for _, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
 					e.particles = nil
@@ -59,7 +70,7 @@ newTalent{
 		local delay = t.getDelay(self, t)
 		local radius = self:getTalentRadius(t)
 		local damage = t.getDamage(self, t)
-		return ([[After %d turns, the target area in (radius %d) is blasted with a beam of light, dealing %0.2f damage and lighting the area.  After being cast 3 times, this ability goes on a much longer cooldown.]]):
+		return ([[After %d turns, the target area in (radius %d) is blasted with a beam of light, dealing %0.2f damage and lighting the area.  After being cast 3 times, this ability goes on a 7x longer cooldown.]]):
 		tformat(delay, radius, damDesc(self, DamageType.LIGHT, damage))
 	end,
 }
@@ -96,6 +107,7 @@ newTalent{
 	end,
 	callbackOnHit = function(self, t, cb, src, dt)
 		local p = self:isTalentActive(t.id)
+		if src == self or src == self.summoner or (src and src.summoner == self) then return end
 		if not p then return end
 		if p.recharge and p.recharge <= (t.getRecharge(self, t) - t.getDuration(self, t)) then return end
 		if cb.value <= 0 or src == self then return end
@@ -113,7 +125,7 @@ newTalent{
 			cb.value = cb.value - blocked
 			if p.barrier <= 0 then p.barrier = nil end
 		end
-		if firing and src.x and src.y then
+		if firing and src and src.x and src.y then
 			local dam = self:spellCrit(t.getDamage(self, t))
 			local tg = t.targetBeam(self, t)
 			tg.x = src.x
@@ -122,6 +134,17 @@ newTalent{
 				DamageType:get(DamageType.LIGHT).projector(self, x, y, DamageType.LIGHT, dam)
 				target:setEffect(target.EFF_DAZZLED, 5, {power=10, apply_power=self:combatSpellpower()})
 			end)
+
+			-- scorched earth
+			if self:isTalentActive(self.T_REK_SHINE_INCINERATOR_WORLD_CUTTER) then
+				local grids = self:project(tg, self.x, self.y, function() end)
+				local se_duration = 4
+				if self:isTalentActive(self.T_REK_SHINE_INCINERATOR_INCINERATOR) then
+					se_duration = se_duration + self:callTalent("T_REK_SHINE_INCINERATOR_INCINERATOR", "getExtraDuration")
+				end
+				game.level.map:addEffect(self, self.x, self.y, se_duration, DamageType.LIGHT, self:callTalent("T_REK_SHINE_INCINERATOR_WORLD_CUTTER", "getDamage"), 0, 5, grids, {type="inferno"}, nil, self:spellFriendlyFire())
+			end
+			
 			local _ _, x, y = self:canProject(tg, x, y)
 		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(src.x-self.x), math.abs(src.y-self.y)), "light_beam", {tx=src.x-self.x, ty=src.y-self.y})
 		end
@@ -138,7 +161,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Surround yourself with a protective shield of shining plamsa.
-		Whenever you would take elmental damage (neither physical nor mind) the shield condenses, blocking %d elemental damage over the next %d turns, and releasing a ray of sunlight towards the attacker that deals %d light damage and dazzles any affected creature (deal 10%% less damage) for 5 turns. 
+		Whenever you would take elemental damage (neither physical nor mind) the shield condenses, blocking %d elemental damage over the next %d turns, and releasing a ray of sunlight towards the attacker that deals %d light damage and dazzles any affected creature (deal 10%% less damage) for 5 turns. 
 The shield can only be triggered every %d turns.
 The shield power and beam damage will increase with your Spellpower.]]):tformat(t.getShield(self, t), t.getDuration(self, t), damDesc(self, DamageType.LIGHT, t.getDamage(self, t)), t.getRecharge(self, t))
 	end,
@@ -149,7 +172,7 @@ newTalent{
 	type = {"demented/sunlight", 3},
 	require = mag_req3, points = 5,
 	tactical = { CLOSEIN = 2, ESCAPE = 2 },
-	positive = 30,
+	positive = 10,
 	insanity = -10,
 	no_energy = true,
 	cooldown = function(self, t) return math.floor(self:combatTalentLimit(t, 10, 20, 12)) end,
@@ -169,9 +192,9 @@ newTalent{
 		
 		game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
 		if not self:teleportRandom(x, y, 0) then
-			game.logSeen(self, "%s's space-time folding fizzles!", self:getName():capitalize())
+			game.logSeen(self, "%s's teleportation fizzles!", self:getName():capitalize())
 		else
-			game.logSeen(self, "%s emerges from a space-time rift!", self:getName():capitalize())
+			game.logSeen(self, "%s emerges in a flash of light!", self:getName():capitalize())
 			game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
 		end
 		
@@ -190,7 +213,7 @@ newTalent{
 	type = {"demented/sunlight", 4},
 	require = mag_req4,
 	points = 5,
-	positive = -40,
+	positive = -10,
 	insanity = -25,
 	cooldown = 16,
 	tactical = { ATTACKAREA = { LIGHT = 4 } },
@@ -208,6 +231,16 @@ newTalent{
 		local grids = self:project(tg, x, y, DamageType.REK_SHINE_LIGHT_STUN, dam)
 		local _ _, x, y = self:canProject(tg, x, y)
 		game.level.map:particleEmitter(self.x, self.y, tg.radius, "flamebeam_wide", {tx=x-self.x, ty=y-self.y})
+
+		-- scorched earth
+		if self:isTalentActive(self.T_REK_SHINE_INCINERATOR_WORLD_CUTTER) then
+			local se_duration = 4
+			if self:isTalentActive(self.T_REK_SHINE_INCINERATOR_INCINERATOR) then
+				se_duration = se_duration + self:callTalent("T_REK_SHINE_INCINERATOR_INCINERATOR", "getExtraDuration")
+			end
+			game.level.map:addEffect(self, self.x, self.y, se_duration, DamageType.LIGHT, self:callTalent("T_REK_SHINE_INCINERATOR_WORLD_CUTTER", "getDamage"), 0, 5, grids, {type="inferno"}, nil, self:spellFriendlyFire())
+		end
+		
 		--game:shakeScreen(10, 3)
 		game:playSoundNear(self, "talents/reality_breach")
 		return true
