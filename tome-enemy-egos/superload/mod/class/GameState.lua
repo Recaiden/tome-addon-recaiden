@@ -7,22 +7,20 @@ local NameGenerator2 = require "engine.NameGenerator2"
 local _M = loadPrevious(...)
 
 
-function _M:createRandomName(name_def, name_scheme, base_name)
+function _M:createRandomName(name_def, name_scheme, base_name, feminine, min, max)
 	local ngd, name
 	if not name_def and self.birth.world_base_random_name_def then name_def = self.birth.world_base_random_name_def end
 	if name_def then
-		ngd = NameGenerator2.new("/data/languages/names/"..name_def:gsub("#sex#", base.female and "female" or "male")..".txt")
-		name = ngd:generate(nil, base.random_name_min_syllables, base.random_name_max_syllables)
+		ngd = NameGenerator2.new("/data/languages/names/"..name_def:gsub("#sex#", feminine and "female" or "male")..".txt")
+		name = ngd:generate(nil, min or 1, max or 7)
 	else
 		ngd = NameGenerator.new(self:getRandartNameRule().default)
 		name = ngd:generate()
 	end
-	-- TODO add _t in 1.7
 	if name_scheme then
-
 		name = name_scheme:gsub("#rng#", name):gsub("#base#", (base_name))
 	else
-		name = ("%s the %s"):format(name, (base_name))
+		name = ("%s the %s"):tformat(name, (base_name))
 	end
 	return name
 end
@@ -188,7 +186,7 @@ function _M:createRandomBoss(base, data)
 	------------------------------------------------------------
 	-- Basic stuff, name, rank, ...
 	------------------------------------------------------------
-	b.name = self:createRandomName(base.random_name_def, data.name_scheme, b.name)
+	b.name = self:createRandomName(base.random_name_def, data.name_scheme, b.name, base.female or false, base.random_name_min_syllables, base.random_name_max_syllables)
 	
 	print("[createRandomBoss] Creating random boss ", b.name, data.level, "level", data.nb_classes, "classes")
 	if data.force_classes then print("  * force_classes:", (string.fromTable(data.force_classes))) end
@@ -245,124 +243,142 @@ end
 function _M:apply_enemy_ego(b, class, data)
 	local Birther = require "engine.Birther"
 	local mclasses = Birther.birth_descriptor_def.class
-		local mclass = nil
-		for name, data in pairs(mclasses) do
-			if data.descriptor_choices and data.descriptor_choices.subclass and data.descriptor_choices.subclass[class.name] then mclass = data break end
+	local mclass = nil
+	for name, data in pairs(mclasses) do
+		if data.descriptor_choices and data.descriptor_choices.subclass and data.descriptor_choices.subclass[class.name] then mclass = data break end
+	end
+	if not mclass then return end
+	
+	-- THE MOTHER OF ALL HACKS!
+	-- Make sure brawlers rares dont get absurdly powerful
+	if class.npc_class_use_default_combat_table then
+		b.combat_old = table.clone(b.combat or {}, true)
+		b.combat = {
+			dam=1,
+			atk=1, apr=0,
+			physcrit=0,
+			physspeed =1,
+			dammod = { str=1 },
+			damrange=1.1,
+			talented = "unarmed",
+			npc_brawler_combat_hack_enabled = true,
+		}
+		if b.combat_old.sound then b.combat.sound = b.combat_old.sound end
+		if b.combat_old.sound_miss then b.combat.sound_miss = b.combat_old.sound_miss end
+	end
+	
+	print("[applyRandomClass]", b.uid, b.name, "Adding class", class.name, mclass.name)
+	-- add class to list and build inherent power sources
+	b.descriptor = b.descriptor or {}
+	b.descriptor.classes = b.descriptor.classes or {}
+	table.append(b.descriptor.classes, {class.name})
+	
+	-- build inherent power sources and forbidden power sources
+	-- b.forbid_power_source --> b.not_power_source used for classes
+	b.power_source = table.merge(b.power_source or {}, class.power_source or {})
+	b.not_power_source = table.merge(b.not_power_source or {}, class.not_power_source or {})
+	-- update power source parameters with the new class
+	b.not_power_source, b.power_source = self:updatePowers(self:attrPowers(b, b.not_power_source), b.power_source)
+	print("   power types: not_power_source =", table.concat(table.keys(b.not_power_source),","), "power_source =", table.concat(table.keys(b.power_source),","))
+	
+	-- Update/initialize base stats, set stats auto_leveling
+	if class.stats or b.auto_stats then
+		b.stats, b.auto_stats = b.stats or {}, b.auto_stats or {}
+		for stat, v in pairs(class.stats or {}) do
+			local stat_id = b.stats_def[stat].id
+			b.stats[stat_id] = (b.stats[stat_id] or 10) + v
+			for i = 1, v do b.auto_stats[#b.auto_stats+1] = stat_id end
 		end
-		if not mclass then return end
-
-		-- THE MOTHER OF ALL HACKS!
-		-- Make sure brawlers rares dont get absurdly powerful
-		if class.npc_class_use_default_combat_table then
-			b.combat_old = table.clone(b.combat or {}, true)
-			b.combat = {
-				dam=1,
-				atk=1, apr=0,
-				physcrit=0,
-				physspeed =1,
-				dammod = { str=1 },
-				damrange=1.1,
-				talented = "unarmed",
-				npc_brawler_combat_hack_enabled = true,
-			}
-			if b.combat_old.sound then b.combat.sound = b.combat_old.sound end
-			if b.combat_old.sound_miss then b.combat.sound_miss = b.combat_old.sound_miss end
-		end
-
-		print("[applyRandomClass]", b.uid, b.name, "Adding class", class.name, mclass.name)
-		-- add class to list and build inherent power sources
-		b.descriptor = b.descriptor or {}
-		b.descriptor.classes = b.descriptor.classes or {}
-		table.append(b.descriptor.classes, {class.name})
-		
-		-- build inherent power sources and forbidden power sources
-		-- b.forbid_power_source --> b.not_power_source used for classes
-		b.power_source = table.merge(b.power_source or {}, class.power_source or {})
-		b.not_power_source = table.merge(b.not_power_source or {}, class.not_power_source or {})
-		-- update power source parameters with the new class
-		b.not_power_source, b.power_source = self:updatePowers(self:attrPowers(b, b.not_power_source), b.power_source)
-		print("   power types: not_power_source =", table.concat(table.keys(b.not_power_source),","), "power_source =", table.concat(table.keys(b.power_source),","))
-
-		-- Update/initialize base stats, set stats auto_leveling
-		if class.stats or b.auto_stats then
-			b.stats, b.auto_stats = b.stats or {}, b.auto_stats or {}
-			for stat, v in pairs(class.stats or {}) do
-				local stat_id = b.stats_def[stat].id
-				b.stats[stat_id] = (b.stats[stat_id] or 10) + v
-				for i = 1, v do b.auto_stats[#b.auto_stats+1] = stat_id end
+	end
+	if data.autolevel ~= false then b.autolevel = data.autolevel or "random_boss" end
+	
+	-- Class talent categories
+	local ttypes = {}
+	for tt, d in pairs(mclass.talents_types or {}) do
+		b:learnTalentType(tt, true)
+		b:setTalentTypeMastery(tt, (b:getTalentTypeMastery(tt, true) or 1) + d[2])
+		ttypes[tt] = table.clone(d)
+	end
+	for tt, d in pairs(mclass.unlockable_talents_types or {}) do
+		b:learnTalentType(tt, true)
+		b:setTalentTypeMastery(tt, (b:getTalentTypeMastery(tt, true) or 1) + d[2])
+		ttypes[tt] = table.clone(d)
+	end
+	for tt, d in pairs(class.talents_types or {}) do
+		b:learnTalentType(tt, true)
+		b:setTalentTypeMastery(tt, (b:getTalentTypeMastery(tt, true) or 1) + d[2])
+		ttypes[tt] = table.clone(d)
+	end
+	for tt, d in pairs(class.unlockable_talents_types or {}) do
+		b:learnTalentType(tt, true)
+		b:setTalentTypeMastery(tt, (b:getTalentTypeMastery(tt, true) or 1) + d[2])
+		ttypes[tt] = table.clone(d)
+	end
+	
+	-- Non-class talent categories
+	if data.add_trees then
+		for tt, d in pairs(data.add_trees) do
+			if not b:knowTalentType(tt) then
+				if type(d) ~= "number" then d = rng.range(1, 3)*0.1 end
+				b:learnTalentType(tt, true)
+				b:setTalentTypeMastery(tt, (b:getTalentTypeMastery(tt, true) or 1) + d)
+				ttypes[tt] = {true, d}
 			end
 		end
-		if data.autolevel ~= false then b.autolevel = data.autolevel or "random_boss" end
-		
-		-- Class talent categories
-		local ttypes = {}
-		for tt, d in pairs(mclass.talents_types or {}) do b:learnTalentType(tt, true) b:setTalentTypeMastery(tt, (b:getTalentTypeMastery(tt, true) or 1) + d[2]) ttypes[tt] = table.clone(d) end
-		for tt, d in pairs(mclass.unlockable_talents_types or {}) do b:learnTalentType(tt, true) b:setTalentTypeMastery(tt, (b:getTalentTypeMastery(tt, true) or 1) + d[2]) ttypes[tt] = table.clone(d) end
-		for tt, d in pairs(class.talents_types or {}) do b:learnTalentType(tt, true) b:setTalentTypeMastery(tt, (b:getTalentTypeMastery(tt, true) or 1) + d[2]) ttypes[tt] = table.clone(d) end
-		for tt, d in pairs(class.unlockable_talents_types or {}) do b:learnTalentType(tt, true) b:setTalentTypeMastery(tt, (b:getTalentTypeMastery(tt, true) or 1) + d[2]) ttypes[tt] = table.clone(d) end
-
-		-- Non-class talent categories
-		if data.add_trees then
-			for tt, d in pairs(data.add_trees) do
-				if not b:knowTalentType(tt) then
-					if type(d) ~= "number" then d = rng.range(1, 3)*0.1 end
-					b:learnTalentType(tt, true)
-					b:setTalentTypeMastery(tt, (b:getTalentTypeMastery(tt, true) or 1) + d)
-					ttypes[tt] = {true, d}
-				end
-			end
-		end
-
-		-- Add starting equipment
-		local apply_resolvers = function(k, resolver)
-			if type(resolver) == "table" and resolver.__resolver then
-				if resolver.__resolver == "equip" then
-					if not data.forbid_equip then
-						resolver[1].id = nil
-						-- Make sure we equip some nifty stuff instead of player's starting iron stuff
-						for i, d in ipairs(resolver[1]) do
-							d.name, d.id = nil, nil
-							d.ego_chance = nil
-							d.ignore_material_restriction = true
-							d.forbid_power_source = table.clone(b.not_power_source, nil, {nature=true})
-							d.tome_drops = data.loot_quality or "boss"
-							d.force_drop = (data.drop_equipment == nil) and true or data.drop_equipment
-						end
-						b[#b+1] = resolver
+	end
+	
+	-- Add starting equipment
+	local apply_resolvers = function(k, resolver)
+		if type(resolver) == "table" and resolver.__resolver then
+			if resolver.__resolver == "equip" then
+				if not data.forbid_equip then
+					resolver[1].id = nil
+					-- Make sure we equip some nifty stuff instead of player's starting iron stuff
+					for i, d in ipairs(resolver[1]) do
+						d.name, d.id = nil, nil
+						d.ego_chance = nil
+						d.ignore_material_restriction = true
+						d.forbid_power_source = table.clone(b.not_power_source, nil, {nature=true})
+						d.tome_drops = data.loot_quality or "boss"
+						d.force_drop = (data.drop_equipment == nil) and true or data.drop_equipment
 					end
-				elseif resolver.__resolver == "auto_equip_filters" then
-					if not data.forbid_equip then
-						b[#b+1] = resolver
-					end
-				elseif resolver._allow_random_boss then -- explicitly allowed resolver
 					b[#b+1] = resolver
 				end
-			elseif k == "innate_alchemy_golem" then 
-				b.innate_alchemy_golem = true
-			elseif k == "birth_create_alchemist_golem" then
-				b.birth_create_alchemist_golem = resolver
-			elseif k == "soul" then
-				b.soul = util.bound(1 + math.ceil(data.level / 10), 1, 10) -- Does this need to scale?
-			elseif k == "can_tinker" then
-				b[k] = table.clone(resolver)
+			elseif resolver.__resolver == "auto_equip_filters" then
+				if not data.forbid_equip then
+					b[#b+1] = resolver
+				end
+			elseif resolver._allow_random_boss then -- explicitly allowed resolver
+				b[#b+1] = resolver
 			end
+		elseif k == "innate_alchemy_golem" then 
+			b.innate_alchemy_golem = true
+		elseif k == "birth_create_alchemist_golem" then
+			b.birth_create_alchemist_golem = resolver
+		elseif k == "soul" then
+			b.soul = util.bound(1 + math.ceil(data.level / 10), 1, 10) -- Does this need to scale?
+		elseif k == "can_tinker" then
+			b[k] = table.clone(resolver)
 		end
-		for k, resolver in pairs(mclass.copy or {}) do apply_resolvers(k, resolver) end
-		for k, resolver in pairs(class.copy or {}) do apply_resolvers(k, resolver) end
-
-		-- Assign a talent resolver for class starting talents (this makes them autoleveling)
-		local tres = nil
-		for k, resolver in pairs(b) do if type(resolver) == "table" and resolver.__resolver and resolver.__resolver == "talents" then tres = resolver break end end
+	end
+	for k, resolver in pairs(mclass.copy or {}) do apply_resolvers(k, resolver) end
+	for k, resolver in pairs(class.copy or {}) do apply_resolvers(k, resolver) end
+	
+	-- Assign a talent resolver for class starting talents (this makes them autoleveling)
+	local tres = nil
+	for k, resolver in pairs(b) do if type(resolver) == "table" and resolver.__resolver and resolver.__resolver == "talents" then tres = resolver break end end
 		if not tres then tres = resolvers.talents{} b[#b+1] = tres end
 		for tid, v in pairs(class.talents or {}) do
 			local t = b:getTalentFromId(tid)
-			if not t.no_npc_use and not t.no_npc_autolevel and (not t.random_boss_rarity or rng.chance(t.random_boss_rarity)) and not (t.rnd_boss_restrict and util.getval(t.rnd_boss_restrict, b, t, data) ) then
+			-- skip random_boss_rarity check on starting talents
+			-- and (not t.random_boss_rarity or rng.chance(t.random_boss_rarity))
+			if not t.no_npc_use and not t.no_npc_autolevel and not (t.rnd_boss_restrict and util.getval(t.rnd_boss_restrict, b, t, data) ) then
 				local max = (t.points == 1) and 1 or math.ceil(t.points * 1.2)
 				local step = max / 70
 				tres[1][tid] = v + math.ceil(step * data.level)
 			end
 		end
-
+		
 		-- learn talents based on trees: focus trees we take 3-4 talents from with a decent amount of point investment, shallow trees we only take 1 or 2 with not many points
 		-- ideally rares should feel different even within the same class based on what focus trees they get
 		local nb_focus, nb_shallow = 0, 0
@@ -548,11 +564,13 @@ function _M:applyRandomEnemyEgo(b, data)
 	end
 
 	-- apply random classes
-	local to_apply = (data.nb_classes or 2)*3
+	local base_cost = 9 --4
+	local to_apply = (data.nb_classes or 2)*4
 	while to_apply > 0 do
 		local c = rng.tableRemove(list)
 		if not c then break end --repeat attempts until list is exhausted
-		if not c.enemy_ego_point_cost then c.enemy_ego_point_cost = 3 end
+		if not c.enemy_ego_point_cost then c.enemy_ego_point_cost = base_cost end
+		print("DEBUG [createRandomBoss] considering class ", c.name, c.enemy_ego_point_cost)
 		if c.enemy_ego_point_cost <= to_apply then 
 			if data.no_class_restrictions or self:checkPowers(b, c) then  -- recheck power restricts here to account for any previously picked classes
 				print("DEBUG [createRandomBoss] applying class ", c.name)
