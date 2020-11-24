@@ -124,7 +124,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Dedicate yourself to destruction by fire, increasing your fire and light resistance penetration by %d%%, allowing your Sunburn to trigger %d additional times per turn, and incresing the duration of Scorched Earth effects by %d.]])
+		return ([[Dedicate yourself to destruction by fire, increasing your fire and light resistance penetration by %d%%, allowing your Sunburn to trigger %d additional times per turn, and increasing the duration of Scorched Earth effects by %d.]])
 		:tformat(t.getResistPenalty(self, t), t.getExtraBurn(self, t), t.getExtraDuration(self, t))
 	end,
 }

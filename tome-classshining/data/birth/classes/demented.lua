@@ -46,7 +46,7 @@ newBirthDescriptor{
 		["demented/sunlight"]={true, 0.3},
 		
 		--advanced talents
-		["celestial/circles"]={false, 0.3},
+		["celestial/seals"]={false, 0.3},
 		["demented/core-gate"]={false, 0.3},
 		["celestial/incinerator"]={false, 0.3},
 		
@@ -59,11 +59,11 @@ newBirthDescriptor{
 	},
 	birth_example_particles = {
 		"golden_shield",
-		function(actor)
-			if core.shader.active(4) then local x, y = actor:attachementSpot("back", true) actor:addParticles(Particles.new("shader_wings", 1, {x=x, y=y, infinite=1}))
-			else actor:addParticles(Particles.new("wildfire", 1))
-			end
-		end,
+		-- function(actor)
+		-- 	if core.shader.active(4) then local x, y = actor:attachementSpot("back", true) actor:addParticles(Particles.new("shader_wings", 1, {x=x, y=y, infinite=1}))
+		-- 	else actor:addParticles(Particles.new("wildfire", 1))
+		-- 	end
+		-- end,
 	},
 	talents = {
 		[ActorTalents.T_REK_SHINE_SUNLIGHT_SOLAR_FLARE] = 1,

@@ -51,6 +51,48 @@ newDamageType{
 }
 
 newDamageType{
+	name = _t"light of the citadel", type = "REK_SHINE_SEAL", text_color = "#GOLD#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		if _G.type(dam) == "number" then dam = {dam=dam, knock=true, disarm=false} end
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target == src then target:setEffect(target.EFF_SANCTITY, 1, {src=src}) end
+		if target and src:reactionToward(target) < 0 then
+			local realdam = DamageType:get(DamageType.LIGHT).projector(src, x, y, DamageType.LIGHT, dam.dam, state)
+			if dam.damFire then realdam = realdam + DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam.damFire, state) end
+			if dam.disarm == true and target:canBe("disarm") then
+				target:setEffect(target.EFF_DISARMED, dam.dur or 3, {src=src, apply_power=src:combatSpellpower(), no_ct_effect=true})
+			end
+			if dam.knock == true and target:canBe("knockback") and target:checkHit(src:combatSpellpower(), target:combatMentalResist(), 0, 95, 5) then
+				target:knockback(src.x, src.y, 2)
+				target:crossTierEffect(target.EFF_BRAINLOCKED, src:combatSpellpower())
+				game.logSeen(target, "%s is knocked back!", target:getName():capitalize())
+			end
+			return realdam
+		end
+		return 0
+	end,
+}
+
+newDamageType{
+	name = _t"burning light", type = "REK_SHINE_SEAL_WALK", text_color = "#GOLD#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		if _G.type(dam) == "number" then dam = {dam=dam, numb=10} end
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target and src:reactionToward(target) < 0 then
+			local realdam = DamageType:get(DamageType.LIGHT).projector(src, x, y, DamageType.LIGHT, dam.dam, state)
+			realdam = realdam + DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam, state)
+			target:setEffect(target.EFF_WEIGHT_OF_THE_SUN, 3, {reduce=dam.numb, src=src, apply_power=src:combatSpellpower(), no_ct_effect=true})
+			return realdam
+		end
+		return 0
+	end,
+}
+
+newDamageType{
 	name = _t"mirror barrier", type = "REK_SHINE_MIRROR", text_color = "#GOLD#",
 	projector = function(src, x, y, type, dam) end,
 	death_message = {_t"reflected"},

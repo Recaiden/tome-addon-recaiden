@@ -282,7 +282,6 @@ newTalent{
 	insanity = -20,
 	getAbsorb = function(self, t) return self:combatTalentSpellDamage(t, 25, 555) end,
 	getDuration = function(self, t) return 6 end,
-		-- todo ground effect called by a hook?
 	action = function(self, t)
 		local duration = t.getDuration(self, t)
 		local x, y = self.x, self.y
@@ -315,3 +314,28 @@ newTalent{
 The maximum damage reflected will increase with your spellpower.]]):tformat(t.getAbsorb(self, t), t.getDuration(self, t))
 	end,
 }
+
+class:bindHook("DamageProjector:final", function(self, hd)
+	local src = hd.src
+	local dam = hd.dam
+	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
+
+	local seff = game.level.map:hasEffectType(src.x, src.y, DamageType.REK_SHINE_MIRROR)
+	local deff = game.level.map:hasEffectType(target.x, target.y, DamageType.REK_SHINE_MIRROR)
+	if deff and deff ~= seff and not hd.state.no_reflect then
+		local state = hd.state
+		local type = hd.type
+		local reflected = math.min(dam, deff.dam.dam)
+		deff.dam.dam = deff.dam.dam - reflected
+		if deff.dam.dam <= 0 then game.level.map:removeEffect(deff) end
+		game:delayedLogMessage(src, target, "reflect_damage"..(target.uid or ""), "#CRIMSON##Target# reflects damage back to #Source#!")
+		
+		game:delayedLogDamage(src, target, 0, ("#GOLD#(%d to mirror barrier)#LAST#"):format(reflected), false)
+		hd.dam = dam - reflected
+		state.no_reflect = true
+		reflected = reflected * 100 / (target:attr("reflection_damage_amp") or 100)
+		DamageType.defaultProjector(target, src.x, src.y, type, reflected, state)
+		state.no_reflect = nil
+	end
+	return hd
+end)

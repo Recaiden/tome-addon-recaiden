@@ -73,3 +73,8 @@ if not Talents.talents_types_def["celestial/incinerator"] then
    newTalentType{ allow_random=true, is_spell=true, type="celestial/incinerator", name = "Incinerator", min_lev = 10, description = "There will be nothing left but ash." }
    load("/data-classshining/talents/incinerator.lua")
 end
+
+if not Talents.talents_types_def["celestial/seals"] then
+   newTalentType{ allow_random=true, is_spell=true, type="celestial/seals", name = "Seals", min_lev = 10, description = "Bind the power of the sun into magical seals beneath your feet." }
+   load("/data-classshining/talents/seals.lua")
+end
