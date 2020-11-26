@@ -47,6 +47,8 @@ makeMirrorClone = function(target, duration, alt_nodes)
 	for tid, _ in pairs(m.talents) do
 		local t = m:getTalentFromId(tid)
 		if t.type[1]:find("^demented/prism") and m:knowTalent(tid) then tids[#tids+1] = t end
+		if t.type[1]:find("^demented/core-gate") and m:knowTalent(tid) then tids[#tids+1] = t end
+		if t.type[1]:find("^celestial/seals") and m:knowTalent(tid) then tids[#tids+1] = t end
 		if (t.no_npc_use or t.unlearn_on_clone) and not t.allow_temporal_clones then tids[#tids+1] = t end
 	end
 	for i, t in ipairs(tids) do
@@ -192,10 +194,12 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[Whenever you enter combat, you are joined by %d reflections of yourself.  They are identical to you except that they lack Prism talents and have half your life.  
+		return ([[Whenever you enter combat, you are joined by %d reflections of yourself,m each with half your maximum life.
 You and your reflections deal %d%% less damage.  
 All damage taken is shared between you and your reflections.
 If killed, your reflections will reemerge after 10 turns.
+
+Prism, Seal, and Core Gate talents do not appeaar on reflections.
 ]]):tformat(t.getCount(self, t), t.getReduction(self, t))
 	end,
 }

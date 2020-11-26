@@ -1,140 +1,140 @@
 newTalent{
-	name = "Solar Flare", short_name = "REK_SHINE_CORE-GATE_SOLAR_FLARE",
-	type = {"demented/core-gate", 1},
-	require = mag_req1,
-	cooldown = 12,
-	tactical = {ATTACKAREA = {LIGHT = 2}},
-	positive = 15,
-	range = 7,
-	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t} end,
-	radius = function (self, t) return 2 end,
-	getDelay = function(self, t) return 3 end,
+	name = "Stellar Nursery", short_name = "REK_SHINE_CORE_GATE_STELLAR_NURSERY",
+	type = {"demented/core-gate", 1},	require = mag_req_high1, points = 5,
+	mode = "passive",
+	range = 5,
+	target = function(self, t) return {type="ball", range=0, radius=self:getTalentRadius(t), talent=t} end,
+	getChance = function(self, t) return 30 end,
+	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2.4, 4.8)) end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 300) end,
-	action = function(self, t)
-		local tg = self:getTalentTarget(t)
-		local x, y = self:getTarget(tg)
-		if not x or not y then return nil end
-		local _ _, x, y = self:canProject(tg, x, y)
+	summon = function(self, t)
+		local stat = self:getMag()
+		local dur = t.getDuration(self, t)
+		local x, y = util.findFreeGrid(self.x, self.y, self:getTalentRange(t), true, {[Map.ACTOR]=true})
+		if not x then return nil end
 		
-		local duration = 1 + t.getDelay(self, t)
-		local radius = self:getTalentRadius(t)
+		local NPC = require "mod.class.NPC"
+		local m = NPC.new{
+			type = "horror", subtype = "eldritch",
+			display = "h", blood_color = colors.GOLD,
+			faction = self.faction,
+			stats = { stat=dam, stat=dam, stat=dam, stat=dam, stat=dam, stat=dam },
+			infravision = 10,
+			no_breath = 1,
+			fear_immune = 1,
+			blind_immune = 1,
+			sight = 15,
+			infravision = 15,
+			name = _t"glowing horror", color=colors.CRIMSON,
+			desc = _t"A bulbous inhuman shape composed of yellow light.",
+			image = "npc/horror_eldritch_glowing_horror.png",
+			level_range = {self.summoner.level, self.summoner.level}, exp_worth = 0,
+			rank = 2,
+			size_category = 2,
+			autolevel = "mage",
+			max_life = 100,
+			life_rating = 4,
+			life_regen = 4,
+			movement_speed = 2,
+			combat_armor = 16, combat_def = 1,
+			combat = { dam=math.floor(5 + self.summoner.level/2), atk=self.summoner.level*2.2, apr=0, dammod={str=1.1}, physcrit = 10 },
+			resolvers.talents{
+				[Talents.T_REK_SHINE_PRISM_CONVERGENCE]=1,			
+			},
+
+			ai = "summoned", ai_real = "tactical", ai_state = { ai_move="move_complex", talent_in=1, ally_compassion=0 },
+			no_drops = true, keep_inven_on_death = false,
+			faction = self.faction,
+			summoner = self:resolveSource(), -- Objects can't be summoners for various reasons, so just summon them for the highest source
+			summoner_gain_exp=true,
+			summon_time = dur,
+		}
+
+		--TODO if know 3rd talent teach them new talent
+
+		m:resolve()
+		m:resolve(nil, true)
+
+		game.zone:addEntity(game.level, m, "actor", x, y)
+		if target then m:setTarget(target) end
 		
-		local map_eff = game.level.map:addEffect(self, x, y, duration, DamageType.NULL_TYPE, 
-		{dam = t.getDamage(self, t), radius = radius, self = self, talent = t}, 
-		0, 5, nil, 
-		{type="warning_ring", args = {radius = radius}},
-		function(e, update_shape_only)
-			if not update_shape_only and e.duration == 1 then
-				local DamageType = require("engine.DamageType") --block_path means that it will always hit the tile we've targeted here
-				local aoe = {type="ball", radius = e.dam.radius, friendlyfire=true, selffire=true, talent=e.dam.talent, block_path = function(self, t) return false, true, true end}
-				e.src.__project_source = e
-				local grids = e.src:project(aoe, e.x, e.y, DamageType.LITE_LIGHT, e.dam.dam)
-				e.src.__project_source = nil
-				game.level.map:particleEmitter(e.x, e.y, e.dam.radius, "sunburst", {radius=e.dam.radius * 0.92, grids=grids, tx=e.x, ty=e.y, max_alpha=80})
-				e.duration = 0
-				for _, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
-				e.particles = nil
-				game:playSoundNear(self, "talents/fireflash")
-				--let map remove it
-			end
-			
-		end)
-		map_eff.name = t.name
-		return true
+		if game.party:hasMember(self.summoner) then
+			m.remove_from_party_on_death = true
+			game.party:addMember(m, {
+				control=false,
+				temporary_level = true,
+				type="summon",
+				title=_t"Summon",
+			})
+		end
+	end,
+	callbackOnTalentPost = function(self, t, ab)
+		if not self.in_combat then return end
+		if not ab.is_spell then return end
+		if ab.mode == "sustained" then return end
+		if util.getval(ab.no_energy, self, ab) == true then return end
+		if rng.percent(t.getChance(self, t)) then
+			t.summon(self, t)
+		end
 	end,
 	info = function(self, t)
 		local delay = t.getDelay(self, t)
 		local radius = self:getTalentRadius(t)
 		local damage = t.getDamage(self, t)
-		return ([[After %d turns, the target area in (radius %d) is blasted with a beam of light, dealing %0.2f damage and lighting the area]]):
-		tformat(delay, radius, damDesc(self, DamageType.LIGHT, damage))
+		return ([[Your light is a beacon in the vastness of existence.  Whenever you cast a spell (that takes a turn), you have a %d%% chance to summon a Glowing Horror nearby for %d turns.  Glowing horrors attack with a beam of light doing %d damage. The power of the horrors will ncrease with your Magic.
+
+--You can activate this talent to summon %d glowing horrors.]]):tformat(t.getChance(self, t), t.getDuration(self, t), t.getDamage(self, t)) --no damDesc since they're not you.
 	end,
 }
 
 newTalent{
-	name = "Coronal Shield", short_name = "REK_SHINE_CORE-GATE_CORONAL_SHIELD",
-	type = {"demented/core-gate", 2},
-	require = mag_req2,
-	points = 5,
-	mode = "sustained",
-	sustain_positive = 20,
-	cooldown = 22,
-	tactical = { BUFF = 2 },
-	iconOverlay = function(self, t, p)
-		local p = self.sustain_talents[t.id]
-		if not p then return "" end
-		if p.barrier then return ("%d"):format(p.barrier) end
-		if p.recharge then return ("%d/%d"):format(t.getRecharge(self, t) - p.recharge, t.getRecharge(self, t)), "buff_font_smaller" end
-		return "Ready", "buff_font_smaller"
-	end,
-	getShield = function(self, t) return self:combatTalentSpellDamage(t, 40, 200) end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 150) end,
-	getDuration = function(self, t) return 3 end,
-	getRecharge = function(self, t) return 7 end,
-	range = 10,
-	targetBeam = function(self, t) return {type="beam", force_max_range=true, range=self:getTalentRange(t), talent=t, selffire=false, friendlyfire=self:spellFriendlyFire()} end,
-	callbackOnActBase = function(self, t)
-		local p = self:isTalentActive(t.id)
-		if not p then return end
-		if not p.recharge then return end
-		p.recharge = p.recharge - 1
-		if p.recharge <= (t.getRecharge(self, t) - t.getDuration(self, t)) then p.barrier = nil end
-		if p.recharge <= 0 then p.recharge = nil end
-	end,
-	callbackOnHit = function(self, t, cb, src, dt)
-		local p = self:isTalentActive(t.id)
-		if not p then return end
-		if p.recharge and p.recharge <= (t.getRecharge(self, t) - t.getDuration(self, t)) then return end
-		if cb.value <= 0 or src == self then return end
-		if not dt or not dt.damtype or (dt.damtype == DamageType.PHYSICAL or dt.damtype == DamageType.MIND) then return end
-		local firing = false
-		if not p.recharge then
-			p.recharge = t.getRecharge(self, t)
-			p.barrier = self:spellCrit(t.getShield(self, t))
-			firing = true
+	name = "Supernova Shell", short_name = "REK_SHINE_CORE_GATE_SUPERNOVA_SHELL",
+	type = {"demented/core-gate", 2}, require = mag_req_high2, points = 5,
+	positive = function(self, t)
+		local count = 0
+		for uid, act in pairs(game.level.entities) do
+			if act.summoner and act.summoner == self and act.is_glowing_horror then
+				count = count + 1
+			end
 		end
-		if p.barrier then
-			local blocked = math.min(cb.value, p.barrier)
-			game:delayedLogDamage(src, self, 0, ("#GOLD#(%d to coronal shield)#LAST#"):format(blocked), false)
-			p.barrier = p.barrier - blocked
-			cb.value = cb.value - blocked
-			if p.barrier <= 0 then p.barrier = nil end
-		end
-		if firing and src.x and src.y then
-			local dam = self:spellCrit(t.getDamage(self, t))
-			local tg = t.targetBeam(self, t)
-			tg.x = src.x
-			tg.y = src.y
-			self:projectApply(tg, src.x, src.y, Map.ACTOR, function(target, x, y)
-				DamageType:get(DamageType.LIGHT).projector(self, x, y, DamageType.LIGHT, dam)
-				target:setEffect(target.EFF_DAZZLED, 5, {power=10, apply_power=self:combatSpellpower()})
-			end)
-			local _ _, x, y = self:canProject(tg, x, y)
-		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(src.x-self.x), math.abs(src.y-self.y)), "light_beam", {tx=src.x-self.x, ty=src.y-self.y})
-		end
-		return true
+		return -5 * count
 	end,
-	activate = function(self, t)
-		game:playSoundNear(self, "talents/heal")
-		local ret = {}
-		self:talentParticles(ret, {type="phantasm_shield"})
-		return ret
+	tactical = { DEFEND = 2 },
+	cooldown = 10,
+	getDuration = function(self, t) return 10 end,
+	getShield = function(self, t) return self:combatTalentSpellDamage(t, 30, 150) end,
+	on_pre_use = function(self, t, silent)
+		for uid, act in pairs(game.level.entities) do
+			if act.summoner and act.summoner == self and act.is_glowing_horror then
+				return true
+			end
+		end
+		if not silent then game.logPlayer(self, "You require a glowing horror to consume") end
+		return false
 	end,
-	deactivate = function(self, t, p)
+	action = function(self, t)
+		local count = 0
+		for uid, act in pairs(game.level.entities) do
+			if act.summoner and act.summoner == self and act.is_glowing_horror then
+				count = count + 1
+				act:die(self)
+			end
+		end
+		self:setEffect(self.EFF_DAMAGE_SHIELD, t.getDuration(self, t), {power=self:spellCrit(self:getShieldAmount(t.getAbsorb(self, t)*1.3^count))})
+		--give shield
 		return true
 	end,
 	info = function(self, t)
-		return ([[Surround yourself with a protective shield of shining plamsa.
-		Whenever you would take elmental damage (neither physical nor mind) the shield condenses, blocking %d elemental damage over the next %d turns, and releasing a ray of core-gate towards the attacker that deals %d light damage and dazzles any affected creature (deal 10%% less damage) for 5 turns. 
-The shield can only be triggered every %d turns.
-The shield power and beam damage will increase with your Spellpower.]]):tformat(t.getShield(self, t), t.getDuration(self, t), damDesc(self, DamageType.LIGHT, t.getDamage(self, t)), t.getRecharge(self, t))
+		return ([[Dissolve your assembled glowing horrors and forge them into a shield of celestial energy that blocks at least %d damage over %d turns.  Each glowing horror strengthens the shield by 30%% and gives you 5 positive energy.
+
+The shield power will increase with your Spellpower.]]):tformat(t.getShield(self, t), t.getDuration(self, t))
 	end,
 }
 
 newTalent{
-	name = "Lightspeed Step", short_name = "REK_SHINE_CORE-GATE_LIGHTSPEED_STEP",
+	name = "Protosolar Rays", short_name = "REK_SHINE_CORE_GATE_PROTOSOLAR_RAYS",
 	type = {"demented/core-gate", 3},
-	require = mag_req3, points = 5,
+	require = mag_req_high3, points = 5,
 	tactical = { CLOSEIN = 2, ESCAPE = 2 },
 	positive = 30,
 	no_energy = true,
@@ -172,35 +172,54 @@ The range will increase with your Light Radius.]]):tformat(range)
 }
 
 newTalent{
-	name = "Nova Blast", short_name = "REK_SHINE_CORE-GATE_NOVA_BLAST",
-	type = {"demented/core-gate", 4},
-	require = mag_req4,
-	points = 5,
-	positive = -40,
+	name = "Grave of Suns", short_name = "REK_SHINE_CORE_GATE_GRAVE_OF_SUNS",
+	type = {"demented/core-gate", 4},	require = mag_req_high4, points = 5,
 	insanity = 25,
-	cooldown = 16,
-	tactical = { ATTACKAREA = { LIGHT = 4 } },
-	range = 10,
-	is_beam_spell = true,
-	requires_target = true,
-	target = function(self, t) return {type="widebeam", force_max_range=true, radius=1, range=self:getTalentRange(t), talent=t, selffire=false, friendlyfire=self:spellFriendlyFire()} end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 28, 370) end,
+	cooldown = 15,
+	tactical = { ATTACKAREA = { DARKNESS = 3 } },
+	range = 8,
+	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t} end,
+	radius = function (self, t) return 2 end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 300) end,
+	getProcDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 300) end,
+	getDuration = function(self, t) return 5 end,
+	getSlow = function(self, t) return self:combatTalentLimit(t, 75, 20, 66) end,
+	getExecute = function(self, t) return 15 end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
-
-		local dam = self:spellCrit(t.getDamage(self, t))
-		local grids = self:project(tg, x, y, DamageType.REK_SHINE_LIGHT_STUN, dam)
 		local _ _, x, y = self:canProject(tg, x, y)
-		game.level.map:particleEmitter(self.x, self.y, tg.radius, "flamebeam_wide", {tx=x-self.x, ty=y-self.y})
-		--game:shakeScreen(10, 3)
-		game:playSoundNear(self, "talents/reality_breach")
+		
+		local radius = self:getTalentRadius(t)
+
+		local grids = self:project(tg, x, y, DamageType.REK_SHINE_DARKNESS_HINDER, {dam=t.getDamage(self, t), slow=t.getSlow(self, t)})
+
+		local map_eff = game.level.map:addEffect(
+			self, x, y, t.getDuration(self, t), DamageType.REK_SHINE_GRAVE, 
+			{dam = {dam=t.getProcDamage(self, t), cap=t.getExecute(self, t)}, radius = radius, self = self, talent = t}, 
+			0, 5, nil, 
+			{type="warning_ring", args = {radius = radius}},
+			function(e, update_shape_only) end)
+		map_eff.name = t.name
 		return true
 	end,
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
-		return ([[Drawing on your deep insight into solar mysteries, you create a powerful 3-wide beam of radiance that always goes as far as possible.	The beam deals %0.2f light damage, stuns enemies for 3 turns.
-		The damage will increase with your Spellpower.]]):tformat(damDesc(self, DamageType.LIGHT, damage))
+		return ([[Open a tenuous gate to the vast emtpiness at the center of everything.  Targets in a radius %d area take %0.1f darkness damage and have their movement slowed by %d%% for 1 turn(#SLATE# no save#LAST#).  When a creature in the affected area takes damage from outside the area, they are doomed for 5 turns.  Each stack of doom inflcits an additional %0.1f darkness damage.  At %d stacks of doom, creatures are drawn into the gate and instantly killed.
+The damage will increase with your Spellpower.]]):tformat(self:getTalentRadius(t), damDesc(self, DamageType.DARKNESS, t.getDamage(self, t)), t.getSlow(self, t), damDesc(self, DamageType.DARKNESS, t.getProcDamage(self, t)), t.getExecute(self, t))
 	end,
 }
+class:bindHook("DamageProjector:final", function(self, hd)
+	local src = hd.src
+	local dam = hd.dam
+	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
+
+	local seff = game.level.map:hasEffectType(src.x, src.y, DamageType.REK_SHINE_GRAVE)
+	local deff = game.level.map:hasEffectType(target.x, target.y, DamageType.REK_SHINE_GRAVE)
+
+	if deff and not seff then
+		target:setEffect(target.EFF_REK_SHINE_GRAVE_OF_SUNS_DOOM, 5, {pow=deff.dam.dam, stacks=1, max_stacks=deff.dam.cap, src=deff.src})
+	end
+	return hd
+end)

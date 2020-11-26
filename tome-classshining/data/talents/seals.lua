@@ -5,7 +5,7 @@ newTalent{
 	positive = function(self, t) return 20 + (self:knowTalent(self.T_REK_SHINE_SEALS_ARMAMENTS) and 10 or 0) + (self:knowTalent(self.T_REK_SHINE_SEALS_INSURMOUNTABLE) and 10 or 0) end,
 	no_energy = true,
 	tactical = { DEFEND = 1, ATTACKAREA = {LIGHT = 1} },
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 4, 30) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 4, 30) * 100 / (self:attr("reflection_damage_amp") or 100) end,
 	getDuration = function(self, t) return math.min(10, math.floor(self:combatTalentScale(t, 4, 8))) end,
 	range = 0,
 	radius = function(self, t) return 2 end,
@@ -49,7 +49,7 @@ newTalent{
 	mode = "passive",
 	getDuration = function(self, t) return 3 end,
 	getCooldown = function(self, t) return 3 end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 6, 45) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 6, 45) * 100 / (self:attr("reflection_damage_amp") or 100) end,
 	-- implemented in hook just below
 	info = function(self, t)
 		return ([[Enhance your solar citadel with the darkness of the void. Whenever anyone inside your solar citadel damages someone outside of it, they also deal do %0.1f darkness damage with a 25%% chance to blind for %d turns (#SLATE#Spellpower vs. Physical#LAST#).  This has a %d turn cooldown per attacker.
@@ -83,9 +83,9 @@ end)
 
 newTalent{
 	name = "Insurmountable Light", short_name = "REK_SHINE_SEALS_INSURMOUNTABLE",
-	type = {"celestial/seals", 3}, require = mag_req_high3, points = 5,
+	type = {"celestial/seals", 2}, require = mag_req_high3, points = 5,
 	mode = "passive",
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 4, 30) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 4, 30) * 100 / (self:attr("reflection_damage_amp") or 100) end,
 	info = function(self, t)
 		return ([[Enhance your solar citadel with unquenchable flames. You gain 100%% silence immunity while standing in it, while enemies take an additional %d%% fire damage each turn.
 The damage will increase with your spellpower.
@@ -98,10 +98,10 @@ The damage will increase with your spellpower.
 
 newTalent{
 	name = "Walking Citadel", short_name = "REK_SHINE_SEALS_WALKING_CITADEL",
-	type = {"celestial/seals", 4}, require = mag_req_high4, points = 5,
+	type = {"celestial/seals", 2}, require = mag_req_high4, points = 5,
 	cooldown = 20,
 	insanity = -15,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 75) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 75) * 100 / (self:attr("reflection_damage_amp") or 100) end,
 	getNumb = function(self, t) return 40 end,
 	getNumbDuration = function(self, t) return math.floor(self:combatTalentLimit(t, 7, 2, 5)) end,
 	on_pre_use = function(self, t, silent)

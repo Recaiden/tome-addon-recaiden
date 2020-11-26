@@ -84,7 +84,7 @@ newDamageType{
 		local target = game.level.map(x, y, Map.ACTOR)
 		if target and src:reactionToward(target) < 0 then
 			local realdam = DamageType:get(DamageType.LIGHT).projector(src, x, y, DamageType.LIGHT, dam.dam, state)
-			realdam = realdam + DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam, state)
+			realdam = realdam + DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam.dam, state)
 			target:setEffect(target.EFF_WEIGHT_OF_THE_SUN, 3, {reduce=dam.numb, src=src, apply_power=src:combatSpellpower(), no_ct_effect=true})
 			return realdam
 		end
@@ -97,3 +97,30 @@ newDamageType{
 	projector = function(src, x, y, type, dam) end,
 	death_message = {_t"reflected"},
 }
+
+newDamageType{
+	name = _t"hindering darkness", type = "REK_SHINE_SARKNESS_HINDER", text_color = "#GREY#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		if _G.type(dam) == "number" then dam = {dam=dam, slow=10} end
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			local realdam = DamageType:get(DamageType.DARKNESS).projector(src, x, y, DamageType.DARKNESS, dam.dam, state)
+			target:setEffect(target.EFF_SLOW_MOVE, 1, {power = dam.slow/100, src=src})
+			return realdam
+		end
+		return 0
+	end,
+}
+
+newDamageType{
+	name = _t"the black grave of suns", type = "REK_SHINE_GRAVE", text_color = "#GREY#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		if _G.type(dam) == "number" then dam = {dam=dam, cap=20} end
+		return 0
+	end,
+}
+
