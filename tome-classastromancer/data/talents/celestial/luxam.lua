@@ -104,21 +104,20 @@ newTalent{
 	requires_target = true,
 	is_summon = true,
 	tactical = { ATTACK = { COLD = 2 } },
-	
 	on_pre_use = function(self, t, silent)
 		if not self:canBe("summon") and not silent then game.logPlayer(self, "You cannot summon; you are suppressed!") return end
 		return not checkMaxSummonStar(self, silent)
 	end,
-	
+	getStatMultiplier = function(self, t) return self:combatTalentScale(t, 0.2, 1, 0.75) end,
 	incStats = function(self, t, fake)
 		local mp = self:combatSpellpower()
+		local mult = t.getStatMultiplier(self, t)
 		return{
-			con=(fake and mp or self:spellCrit(mp)) * 2 * self:combatTalentScale(t, 0.2, 1, 0.75),
-			mag=(fake and mp or self:spellCrit(mp)) * 1.0 * self:combatTalentScale(t, 0.2, 1, 0.75),
-			cun=(fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75)
+			con=(fake and mp or self:spellCrit(mp)) * 2 * mult,
+			mag=(fake and mp or self:spellCrit(mp)) * 1.0 * mult,
+			cun=(fake and mp or self:spellCrit(mp)) * 1.7 * mult
 					}
    end,
-   
    summonTime = function(self, t)
       local duration = math.floor(self:combatScale(self:getTalentLevel(t), 4, 0, 9, 5))
       local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
@@ -127,14 +126,12 @@ newTalent{
       end
       return duration
    end,
-
    speed = astromancerSummonSpeed,
-
    display_speed = function(self, t)
       return ("Swift Spell (#LIGHT_GREEN#%d%%#LAST# of a turn)"):
 	 format(t.speed(self, t)*100)
    end,
-   
+   getRetal = function(self, t) return self:combatTalentSpellDamage(t, 8, 40) end,
    action = function(self, t)
 		 local tg = {type="bolt", nowarning=true, range=self:getTalentRange(t), nolock=true, talent=t}
 		 local tx, ty, target = self:getTarget(tg)
@@ -160,7 +157,7 @@ newTalent{
 			 autolevel = "none",
 			 ai = "summoned", ai_real = "tactical", ai_state = { talent_in=1, ally_compassion=0},
 			 ai_tactic = resolvers.tactic"ranged",
-			 stats = {str=10, dex=6, con=16, cun=0, wil=0, mag=8},
+			 stats = {str=10, dex=6, con=16, cun=10, wil=10, mag=16},
 			 inc_stats = t.incStats(self, t),
 			 level_range = {self.level, self.level}, exp_worth = 0,
 			 
@@ -169,13 +166,14 @@ newTalent{
 			 life_rating = 8,
 			 infravision = 10,
 			 
-			 combat_armor = 0, combat_def = 20,
+			 combat_armor = self:getTalentLevel(t)*10 + self.level, combat_armor_hardiness = 100, combat_def = 20,
 			 combat = { dam=1, atk=1, },
-			 on_melee_hit = { [DamageType.COLD] = resolvers.mbonus(20, 10), },
+			 on_melee_hit = { [DamageType.COLD] = resolvers.mbonus(30, 15), },
 			 
 			 resolvers.talents{
 				 [self.T_WANDER_ICE_VAPOR]=self:getTalentLevelRaw(t),
 												},
+			 resolvers.tmasteries{ ["spell/other"]=self:getTalentMastery(t)-1, },
 			 resists = { [DamageType.COLD] = self:getTalentLevel(t)*20 },
 			 
 			 summoner = self, summoner_gain_exp=true, wild_gift_summon=false,
@@ -206,8 +204,8 @@ newTalent{
    end,
    info = function(self, t)
 		 local incStats = t.incStats(self, t, true)
-		 return ([[Summon a Shivgoroth for %d turns to freeze your foes. These Ice Elementals lock down enemies in an area with freezing vapour.
-Its attacks improve with your level and talent level.
+		 return ([[Summon a Shivgoroth for %d turns to freeze your foes. These heavily armored Ice Elementals lock down enemies in an area with freezing vapour.
+Its defenses and talents improve with your level and talent level.
 It will gain bonus stats (increased further by spell criticals): %d Constituation, %d Magic, %d Cunning.
 It gains bonus Spellpower equal to your own.
 It inherits your: increased damage%%, resistance penetration, stun/pin/confusion/blindness immunity, armour penetration.

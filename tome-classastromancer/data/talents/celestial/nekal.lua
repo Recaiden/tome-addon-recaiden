@@ -5,7 +5,7 @@ newTalent{
 	type = {"spell/other",1},
 	points = 5,
 	cooldown = 10,
-	range = function(self, t) return math.floor(self:combatTalentLimit(t, 10, 4, 9)) end,
+	range = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 4, 9)) end,
 	tactical = { DISABLE = 1, CLOSEIN = 3 },
 	requires_target = true,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 5, 140) end,
@@ -114,7 +114,7 @@ newTalent{
 	end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 360) end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 6, 10)) end,
-	getSlow = function(self, t) return self:combatTalentLimit(t, 100, 10, 40) end,
+	getSlow = function(self, t) return self:combatTalentLimit(t, 67, 10, 40) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
@@ -156,12 +156,14 @@ newTalent{
 		if not self:canBe("summon") and not silent then game.logPlayer(self, "You cannot summon; you are suppressed!") return end
 		return not checkMaxSummonStar(self, silent)
 	end,
+	getStatMultiplier = function(self, t) return self:combatTalentScale(t, 0.2, 1, 0.75) end,
 	incStats = function(self, t, fake)
 		local mp = self:combatSpellpower()
+		local mult = t.getStatMultiplier(self, t)
 		return{ 
-			str= (fake and mp or self:spellCrit(mp)) * 2 * self:combatTalentScale(t, 0.2, 1, 0.75),
-			dex= (fake and mp or self:spellCrit(mp)) * 1.6 * self:combatTalentScale(t, 0.2, 1, 0.75),
-			con= (fake and mp or self:spellCrit(mp)) * 1.6 * self:combatTalentScale(t, 0.2, 1, 0.75),
+			str= (fake and mp or self:spellCrit(mp)) * 2 * mult,
+			dex= (fake and mp or self:spellCrit(mp)) * 1.6 * mult,
+			con= (fake and mp or self:spellCrit(mp)) * 1.6 * mult,
 					}
 	end,
 	speed = astromancerSummonSpeed,
@@ -202,7 +204,7 @@ newTalent{
 			autolevel = "none",
 			ai = "summoned", ai_real = "tactical", ai_state = { talent_in=1, ally_compassion=10},
 			ai_tactic = resolvers.tactic"melee",
-			stats = {str=31, dex=23, con=25, cun=15, wil=15, mag=21},
+			stats = {str=16, dex=10, con=16, cun=6, wil=10, mag=10},
 			inc_stats = t.incStats(self, t),
 			level_range = {self.level, self.level}, exp_worth = 0,
 			
@@ -220,6 +222,7 @@ newTalent{
 			resolvers.talents{
 				[self.T_WANDER_ELEMENTAL_UNDERTOW]=self:getTalentLevelRaw(t),
 											 },
+			resolvers.tmasteries{ ["spell/other"]=self:getTalentMastery(t)-1},
 			resists = { [DamageType.PHYSICAL] = self:getTalentLevel(t)*10 },
 			
 			summoner = self, summoner_gain_exp=true, wild_gift_summon=false,
@@ -251,7 +254,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		local incStats = t.incStats(self, t, true)
-		return ([[Summon a Nenagoroth for %d turns to incinerate your foes. These Water Elementals drag enemies closer and crush them with waves.
+		return ([[Summon a Nenagoroth for %d turns to smash your foes. These Water Elementals drag enemies closer and crush them with waves.
 Its attacks improve with your level and talent level.
 It will gain bonus stats (increased further by spell criticals): %d Strength, %d Dexterity, %d Constitution.
 It gains bonus Spellpower equal to your own.
@@ -275,19 +278,19 @@ newTalent{
 	tactical = { ATTACKAREA = {PHYSICAL = 2}, PULL = 3 },
 	requires_target = true,
 	target = function(self, t)
-		return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), first_target="friend", nolock=true, friendlyfire=false, selffire=false, talent=t}
+		return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), first_target="friend", friendlyfire=false, selffire=false, talent=t}
 	end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 320) end,
 	on_pre_use = function(self, t, silent)
 		if game.party and game.party:hasMember(self) then
 			for act, def in pairs(game.party.members) do
-				if act.summoner and act.summoner == self and act.type == "elemental" then
+				if act.summoner and act.summoner == self and act.is_astromancer_elemental then
 					return true
 				end
 			end
 		else
 			for uid, act in pairs(game.level.entities) do
-				if act.summoner and act.summoner == self and act.type == "elemental" then
+				if act.summoner and act.summoner == self and act.is_astromancer_elemental then
 					return true
 				end
 			end
@@ -298,7 +301,7 @@ newTalent{
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local tx, ty, target = self:getTarget(tg)
-		if not tx or not ty or not target or not target.summoner or target.summoner ~= self or not target.type == elemental then return nil end
+		if not tx or not ty or not target or not target.summoner or target.summoner ~= self or target.is_astromancer_elemental ~= true then return nil end
 
 		self.__project_source = target
 		self:project(tg, tx, ty, DamageType.WANDER_WATER_PULL, self:spellCrit(t.getDamage(self, t)))
@@ -349,7 +352,7 @@ newTalent{
 		self:attr("allow_on_heal", -1)
 	end,
 	info = function(self, t)
-		return ([[The ocean is in constant flow, eternal renewal.  Whenever you move (and spend part of a turn), you regain life equal to %01.f%% of the damage you've taken in the last 2 turns.]]):format(t.getHeal(self, t)*100)
+		return ([[The ocean is in constant flow, eternal renewal.  Whenever you move (and spend part of a turn), you regain life equal to %01.f%% of the damage you have taken in the last 2 turns.]]):format(t.getHeal(self, t)*100)
 	end,
 }
 
@@ -364,7 +367,7 @@ newTalent{
 	radius = 1,
 	requires_target = true,
 	tactical = { ATTACK = { PHYSICAL = 1 } },
-	targetElemental = function(self, t) return {type="hit", nowarning=true, selffire=false, first_target=friend, range=self:getTalentRange(t), talent=t} end,
+	targetElemental = function(self, t) return {type="hit", selffire=false, first_target="friend", range=self:getTalentRange(t), talent=t} end,
 	targetSplash = function(self, t) return {type="ball", nowarning=true, selffire=false, friendlyfire=false, range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t} end,
 	getExecute = function(self, t) return self:combatTalentScale(t, 0.1, 0.2) end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 30, 200) end,
@@ -389,7 +392,9 @@ newTalent{
 		if summon.type == "elemental" and summon.subtype == "water" then
 			game.logSeen(summon, "%s's disappearing nenagoroth drags its foes with it!", self.name:capitalize())
 			local tg = t.targetSplash(self, t)
+			self.__project_source = summon
 			self:project(tg, summon.x, summon.y, DamageType.WANDER_WATER_DEEP, {dam=self:spellCrit(t.getDamage(self, t)), execute=t.getExecute(self, t)})
+			self.__project_source = nil
 			game.level.map:particleEmitter(summon.x, summon.y, tg.radius, "generic_sploom", {rm=50, rM=50, gm=100, gM=140, bm=220, bM=240, am=35, aM=90, radius=tg.radius, basenb=60})
 		end
 	end,

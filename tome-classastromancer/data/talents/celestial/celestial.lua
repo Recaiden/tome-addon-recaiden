@@ -52,33 +52,32 @@ spells_req_high5 = {
 }
 
 function astromancerSummonSpeed(self, t)
-   local speed = self:getSpeed('spell')
-   if self:knowTalent(self.T_WANDER_GRAND_ARRIVAL) then
-      speed = speed / (1 + self:getTalentLevelRaw(self.T_WANDER_GRAND_ARRIVAL) )
-   end
-   return speed
+	local speed = self:getSpeed('spell')
+	if self:knowTalent(self.T_WANDER_GRAND_ARRIVAL) then
+		speed = speed / (1 + math.floor(self:getTalentLevel(self.T_WANDER_GRAND_ARRIVAL)))
+	end
+	return speed
 end
-
 
 function checkMaxSummonStar(self, silent, div, check_attr)
 	div = div or 1
-	local nb = 0
 	
 	-- Count party members
+	local nb = 0
 	if game.party:hasMember(self) then
 		for act, def in pairs(game.party.members) do
-			if act.summoner and act.summoner == self and act.type == "elemental" and not act.ignore_summon_cap and (not check_attr or act:attr(check_attr)) then
+			if act.summoner and act.summoner == self and act.is_astromancer_elemental == true and not act.ignore_summon_cap and (not check_attr or act:attr(check_attr)) then
 				nb = nb + 1
 			end
 		end
 	elseif game.level then
 		for _, act in pairs(game.level.entities) do
-			if act.summoner and act.summoner == self and act.type == "elemental" and not act.ignore_summon_cap and (not check_attr or act:attr(check_attr)) then
+			if act.summoner and act.summoner == self and act.is_astromancer_elemental == true and not act.ignore_summon_cap and (not check_attr or act:attr(check_attr)) then
 				nb = nb + 1
 			end
 		end
 	end
-
+	
 	local max = 2 + util.bound(
 		math.floor(self:combatStatScale("cun", 10^.5, 10)),
 		1,
@@ -116,6 +115,7 @@ function setupSummonStar(self, m, x, y, no_control)
    m:attr("pin_immune", self:attr("pin_immune"))
    m:attr("confusion_immune", self:attr("confusion_immune"))
    m:attr("numbed", self:attr("numbed"))
+	 m.is_astromancer_elemental = true
    if game.party:hasMember(self) then
       local can_control = not no_control and self:knowTalent(self.T_SUMMON_CONTROL)
       
@@ -173,7 +173,8 @@ if not Talents.talents_types_def["celestial/unity"] then
 end
 
 if not Talents.talents_types_def["celestial/meteor"] then
-   newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/meteor", name = "Meteor", description = "Celestial combat magic that calls down meteors from above." }
+	newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="celestial/meteor", name = "Meteor", description = "Celestial combat magic that calls down meteors from above." }
+	newTalentType{ allow_random=false, no_silence=true, is_spell=true, type="celestial/micrometeor", name = "Meteor", description = "Celestial combat magic that calls down meteors from above." }
    load("/data-classastromancer/talents/celestial/meteor.lua")
 end
 

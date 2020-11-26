@@ -16,12 +16,15 @@ newTalent{
 		if not self:canBe("summon") and not silent then game.logPlayer(self, "You cannot summon; you are suppressed!") return end
 		return not checkMaxSummonStar(self, silent)
 	end,
+	getStatMultiplier = function(self, t) return self:combatTalentScale(t, 0.2, 1, 0.75) end,
 	incStats = function(self, t, fake)
 		local mp = self:combatSpellpower()
+		local mult = t.getStatMultiplier(self, t)
 		return{ 
-			mag=(fake and mp or self:spellCrit(mp)) * 1.25 * self:combatTalentScale(t, 0.2, 1, 0.75),
-			wil=(fake and mp or self:spellCrit(mp)) * 2 * self:combatTalentScale(t, 0.2, 1, 0.75),
-			con=(fake and mp or self:spellCrit(mp)) * 1.2 * self:combatTalentScale(t, 0.2, 1, 0.75)
+			mag=(fake and mp or self:spellCrit(mp)) * 1.25 * mult,
+			wil=(fake and mp or self:spellCrit(mp)) * 2 * mult,
+			con=(fake and mp or self:spellCrit(mp)) * 1.2 * mult,
+			cun=(fake and mp or self:spellCrit(mp)) * 1.2 * mult
 					}
 	end,
 	speed = astromancerSummonSpeed,
@@ -65,7 +68,7 @@ newTalent{
 			inc_stats = t.incStats(self, t),
 			level_range = {self.level, self.level}, exp_worth = 0,
 			
-			max_life = resolvers.rngavg(5,10),
+			max_life = resolvers.rngavg(7.5,7.5),
 			combat_spellpower = self:combatSpellpowerRaw(),
 			life_rating = 10,
 			infravision = 10,
@@ -76,11 +79,18 @@ newTalent{
 			on_melee_hit = { [DamageType.TEMPORAL] = resolvers.mbonus(20, 10), },
 			
 			resolvers.talents{
-				[self.T_DUST_TO_DUST]=self:getTalentLevel(t),
-				[self.T_REALITY_SMEARING]=self:getTalentLevel(t),
-				[self.T_TEMPORAL_WAKE]=self:getTalentLevel(t),
-				[self.T_DIMENSIONAL_STEP]=self:getTalentLevel(t),
+				[self.T_DUST_TO_DUST]=self:getTalentLevelRaw(t),
+				[self.T_REALITY_SMEARING]=self:getTalentLevelRaw(t),
+				[self.T_TEMPORAL_WAKE]=self:getTalentLevelRaw(t),
+				[self.T_DIMENSIONAL_STEP]=self:getTalentLevelRaw(t),
 											 },
+			resolvers.tmasteries{
+				["chronomancy/other"]=self:getTalentMastery(t)-1,
+				["chronomancy/matter"]=self:getTalentMastery(t)-1,
+				["chronomancy/speed-control"]=self:getTalentMastery(t)-1,
+				["chronomancy/spacetime-weaving"]=self:getTalentMastery(t)-1,
+				["chronomancy/flux"]=self:getTalentMastery(t)-1
+													},
 			talent_cd_reduction = {
 				[Talents.T_DUST_TO_DUST]=3,
 				[Talents.T_DIMENSIONAL_STEP]=8
@@ -127,10 +137,10 @@ newTalent{
 	info = function(self, t)
 		local incStats = t.incStats(self, t, true)
 		return ([[Conjure a teluvorta from the weave of time for %d turns. These living Time Storms disintegrate and stun enemies as they teleport around.
-Its attacks improve with your level and talent level.
-It will gain bonus stats (increased further by spell criticals): %d Constitution, %d Magic, %d Willpower.
+Its talenbts improve with talent level.
+It will gain bonus stats (increased further by spell criticals): %d Constitution, %d Magic, %d Willpower, %d Cunning.
 It gains bonus Spellpower equal to your own.
-It inherits your: increased damage%%, resistance penetration, pin immunity, armour penetration.]]):format(t.summonTime(self, t), incStats.con, incStats.mag, incStats.wil)
+It inherits your: increased damage%%, resistance penetration, pin immunity, armour penetration.]]):format(t.summonTime(self, t), incStats.con, incStats.mag, incStats.wil, incStats.cun)
 	end,
 }
 

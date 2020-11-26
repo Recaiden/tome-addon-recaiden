@@ -173,14 +173,18 @@ newDamageType{
 		state = initState(state)
 		useImplicitCrit(src, state)
 		
+		if _G.type(dam) == "number" then
+			dam = {dam=dam, dur=3}
+		end
+		
 		local target = game.level.map(x, y, Map.ACTOR)
 		if not target or target.dead then return end
 		
 		if target then
-			DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam, state)
+			DamageType:get(DamageType.FIRE).projector(src, x, y, DamageType.FIRE, dam.dam, state)
 			-- try to stun
 			if target:canBe("stun") then
-				target:setEffect(target.EFF_STUNNED, 4, {apply_power=src:combatSpellpower()})
+				target:setEffect(target.EFF_STUNNED, dam.dur, {apply_power=src:combatSpellpower()})
 			end
 		end
 	end,
@@ -223,7 +227,7 @@ newDamageType{
 					src.resists_pen[engine.DamageType.PHYSICAL] = math.max(src.resists_pen[engine.DamageType.FIRE] or 0, src.resists_pen[engine.DamageType.COLD] or 0, src.resists_pen[engine.DamageType.LIGHTNING] or 0)
 				end
 				if src.inc_damage then
-					old_pen = src.inc_damage and src.inc_damage[engine.DamageType.PHYSICAL] or 0
+					old_inc = src.inc_damage and src.inc_damage[engine.DamageType.PHYSICAL] or 0
 					src.inc_damage[engine.DamageType.PHYSICAL] = math.max(src.inc_damage[engine.DamageType.FIRE] or 0, src.inc_damage[engine.DamageType.COLD] or 0, src.inc_damage[engine.DamageType.LIGHTNING] or 0)
 				end
 				
@@ -296,7 +300,7 @@ newDamageType{
 		useImplicitCrit(src, state)
 
 		if _G.type(dam) == "number" then
-			dam = {dam=dam, execute=10}
+			dam = {dam=dam, execute=0.10}
 		end
 		
 		local target = game.level.map(x, y, Map.ACTOR)
@@ -305,6 +309,7 @@ newDamageType{
 		if target then
 			DamageType:get(DamageType.WANDER_WATER).projector(src, x, y, DamageType.WANDER_WATER, dam.dam, state)
 			if not target.dead and target:canBe("instakill") and target.life <= target.max_life * dam.execute then
+				game.logSeen(target, "%s is dragged to the abyss!", target.name:capitalize())
 				target:die(self)
 			end
 		end

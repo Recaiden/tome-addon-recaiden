@@ -17,14 +17,14 @@ newTalent{
 		if not self.in_combat then return end
 		if not ab.type[1]:find("^celestial/") then return end
 		if ab.type[1]:find("/kolal") then
-			self:setEffect(self.EFF_WANDER_KOLAL, 10, {stacks = 1, max_stacks = self:getTalentLevelRaw(t)})
+			self:setEffect(self.EFF_WANDER_KOLAL, 10, {stacks = 1, max_stacks = math.floor(self:getTalentLevel(t))})
 		elseif ab.type[1]:find("/luxam") then
-			self:setEffect(self.EFF_WANDER_LUXAM, 10, {stacks = 1, max_stacks = self:getTalentLevelRaw(t)})
+			self:setEffect(self.EFF_WANDER_LUXAM, 10, {stacks = 1, max_stacks = math.floor(self:getTalentLevel(t))})
 		elseif ab.type[1]:find("/ponx") then
-			self:setEffect(self.EFF_WANDER_PONX, 10, {stacks = 1, max_stacks = self:getTalentLevelRaw(t)})
+			self:setEffect(self.EFF_WANDER_PONX, 10, {stacks = 1, max_stacks = math.floor(self:getTalentLevel(t))})
 		elseif ab.type[1]:find("/nekal") then
 			local eff = rng.table({self.EFF_WANDER_LUXAM, self.EFF_WANDER_KOLAL, self.EFF_WANDER_PONX})
-			self:setEffect(eff, 10, {stacks = 1, max_stacks = self:getTalentLevelRaw(t)+1})
+			self:setEffect(eff, 10, {stacks = 1, max_stacks = math.floor(self:getTalentLevel(t)+1)})
 		end
 	end,
 	
@@ -32,7 +32,7 @@ newTalent{
 		local speed_flame = t.getSpeed(self, t)
 		local res_cold = t.getResist(self, t)
 		local hmod_wind = t.getHealMod(self, t)
-		local stacks = self:getTalentLevelRaw(t)
+		local stacks = math.floor(self:getTalentLevel(t))
 		
 		return ([[Casting planetary spells in combat gives you charges of planetary energy for 10 turns, stacking up to %d times each.
 Kolal charges increase your casting and combat speeds by %d%%
@@ -51,7 +51,7 @@ newTalent{
 	points = 5,
 	random_ego = "attack",
 	negative = 5,
-	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 5, 25, 6)) end, -- Limit > 5
+	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 5, 22, 8)) end,
 	range = 10,
 	requires_target = true,
 	np_npc_use = true,
@@ -60,7 +60,7 @@ newTalent{
 	on_pre_use = function(self, t, silent)
 		if game.party and game.party:hasMember(self) then
 			for act, def in pairs(game.party.members) do
-				if act.summoner and act.summoner == self and act.type == "elemental" then
+				if act.summoner and act.summoner == self and act.is_astromancer_elemental == true then
 					return true
 				end
 			end
@@ -99,7 +99,7 @@ newTalent{
 	cooldown = 1,
 	getDuration = function(self, t) return 3 end,
 	getCount = function(self, t) return math.floor(self:combatTalentScale(t, 1, 2.6)) end,
-	getExtension = function(self, t) return math.floor(self:combatTalentLimit(t, 6, 1, 2.8)) end,
+	getExtension = function(self, t) return math.floor(self:combatTalentLimit(t, 6, 1, 3)) end,
 	on_pre_use = function(self, t, silent)
 		if not self:hasEffect(self.EFF_WANDER_KOLAL)
 			or not self:hasEffect(self.EFF_WANDER_LUXAM)
@@ -131,7 +131,7 @@ newTalent{
 	end,
 	
 	info = function(self, t)
-		return ([[When the worlds align, great power flows through the void.  Consume your planetary charges to make your next %d summons (within %d turns) call a Greater Elemental, which has an additional talent and lasts for %d additional turns.
+		return ([[When the worlds align, great power flows through the void.  Consume all three planetary charges to make your next %d summons (within %d turns) call a Greater Elemental, which has an additional talent and lasts for %d additional turns.
 Greater Gwelgoroth: Shocks and dazes enemies
 Greater Shivgoroth: Freezes enemies in place
 Greater Faeros: Launches bolts of fire when it attacks
@@ -153,7 +153,7 @@ newTalent{
 	require = spells_req4,
 	points = 5,
 	mode = "passive",
-	getSummonsPerTurn = function(self, t) return 1 + self:getTalentLevelRaw(t) end,
+	getSummonsPerTurn = function(self, t) return 1 + math.floor(self:getTalentLevel(t)) end,
 	info = function(self, t)
 		return ([[Perfect your summoning techniques, increasing the speed of your summons.
 Each rank greatly improves the casting speed of your summons, allowing you to summon %d elementals in one turn.

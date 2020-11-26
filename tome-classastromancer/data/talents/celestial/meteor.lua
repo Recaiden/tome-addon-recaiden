@@ -123,12 +123,11 @@ newTalent{
 			resists = { [DamageType.ARCANE] = self:getTalentLevel(t)*20 },
 			
 			summoner = self, summoner_gain_exp=true, wild_gift_summon=false,
-			summon_time = t.getDuration(self, t),
-			ai_target = {actor=target}
+			summon_time = t.getDuration(self, t)
 										 }
+		if target then m.ai_target = {actor=target} end
 		setupSummonStar(self, m, x, y, false)
 	end,
-	
 	callManaworm = function(self, t, tx, ty, target)
 		if not tx or not ty then return nil end
 		
@@ -168,9 +167,9 @@ newTalent{
 			resists = { [DamageType.ARCANE] = self:getTalentLevel(t)*20 },
 			
 			summoner = self, summoner_gain_exp=true, wild_gift_summon=false,
-			summon_time = t.getDuration(self, t),
-			ai_target = {actor=target}
+			summon_time = t.getDuration(self, t)
 										 }
+		if target then m.ai_target = {actor=target} end
 		setupSummonStar(self, m, x, y, false)
 	end,
 	
@@ -196,7 +195,8 @@ newTalent{
 	target = function(self, t)
 		return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), friendlyfire=false, talent=t}
 	end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 28, 170) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 53, 280) end,
+	getDuration = function(self, t) return math.min(10, math.floor(self:combatTalentScale(t, 3, 6.5))) end,
 	on_pre_use = function(self, t, silent)
 		if not self:hasEffect(self.EFF_WANDER_METEOR_STORM) then
 			if not silent then game.logPlayer(self, "You require an active meteor storm.") end
@@ -213,19 +213,7 @@ newTalent{
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
-		local grids = self:project(tg, x, y, DamageType.METEOR_BLAST, self:spellCrit(t.getDamage(self, t)))
-		
-		-- Void summons hook
-		if self:knowTalent(self.T_WANDER_METEOR_VOID_SUMMONS) then
-			local tal_vs = self:getTalentFromId(self.T_WANDER_METEOR_VOID_SUMMONS)
-			if rng.percent(tal_vs.getChance(self, tal_vs)*2) then
-				if rng.percent(50) then
-					tal_vs.callLosgoroth(self, tal_vs, x, y, tg)
-				else
-					tal_vs.callManaworm(self, tal_vs, x, y, tg)
-				end
-			end
-		end
+		local grids = self:project(tg, x, y, DamageType.METEOR_BLAST, {dam=self:spellCrit(t.getDamage(self, t)), dur=t.getDuration(self, t)})
 		
 		local _ _, _, _, x, y = self:canProject(tg, x, y)
 		if core.shader.active() then
@@ -235,6 +223,18 @@ newTalent{
 			game.level.map:particleEmitter(x, y, tg.radius, "circle", {oversize=0.7, a=60, limit_life=16, appear=8, speed=-0.5, img="darkness_celestial_circle", radius=self:getTalentRadius(t)})
 		end
 		game:playSoundNear(self, "talents/fireflash")
+
+		-- Void summons hook
+		if self:knowTalent(self.T_WANDER_METEOR_VOID_SUMMONS) then
+			local tal_vs = self:getTalentFromId(self.T_WANDER_METEOR_VOID_SUMMONS)
+			if rng.percent(tal_vs.getChance(self, tal_vs)*2) then
+				if rng.percent(50) then
+					tal_vs.callLosgoroth(self, tal_vs, x, y, nil)
+				else
+					tal_vs.callManaworm(self, tal_vs, x, y, nil)
+				end
+			end
+		end
 		
 		-- Use up meteor charges
 		local e = self:hasEffect(self.EFF_WANDER_METEOR_STORM)
@@ -248,53 +248,52 @@ newTalent{
 	info = function(self, t)
 		local radius = self:getTalentRadius(t)
 		local damage = t.getDamage(self, t)
-		return ([[Call down several of your meteor fragments simultaneously, blasting a radius %d area for %0.2f fire damage and stunning (#SLATE#Spellpower vs. Physical#LAST#) those within the area for 4 turns. 
+		return ([[Call down several of your meteor fragments simultaneously, blasting a radius %d area for %0.2f fire damage and stunning (#SLATE#Spellpower vs. Physical#LAST#) enemies within the area for %d turns. 
 This can trigger Void Summons, with double chance.
 This talent requires an active Meteor Storm, and reduces its duration by 2.
-		The damage dealt will increase with your Spellpower.]]):format(radius, damDesc(self, DamageType.FIRE, damage))
+		The damage dealt will increase with your Spellpower.]]):format(radius, damDesc(self, DamageType.FIRE, damage), t.getDuration(self, t))
 	end,
 }
 
 newTalent{
-   name = "Micrometeorite Strike", short_name = "WANDER_METEOR_MICROMETEOR",
-   type = {"spell/other", 1},
-   require = spells_req_high4,
-   points = 5,
-   range = 10,
-   direct_hit = true,
-   requires_target = true,
-   tactical = { ATTACK = { FIRE = 1, PHYSICAL = 1 } },
-   getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 100) end,
-   target = function(self, t)
-      return {type="hit", range=self:getTalentRange(t), talent=t}
-   end,
-   action = function(self, t)
-      local tg = self:getTalentTarget(t)
-      local x, y = self:getTarget(tg)
-      if not x or not y then return nil end
-      local _ _, x, y = self:canProject(tg, x, y)
-      if not x or not y then return nil end
-      local target = game.level.map(x, y, Map.ACTOR)
-      if not target then return nil end
-      
-      local dam = self:spellCrit(t.getDamage(self, t))
-      self:project(tg, x, y, DamageType.FIRE, dam)
-
-      -- Graphic
-      if core.shader.active() then
-	 game.level.map:particleEmitter(x, y, 1, "starfall", {radius=0.5, tx=x, ty=y})
-      else
-	 game.level.map:particleEmitter(x, y, 1, "circle", {oversize=0.7, a=60, limit_life=16, appear=8, speed=-0.5, img="darkness_celestial_circle", radius=1})
-      end
-      
-      return true
-   end,
-   info = function(self, t)
-      local damage = t.getDamage(self, t)
-      return ([[Strike an enemy from above with a tiny meteorite, doing %0.2f fire damage
-		Spellpower: Increases damage]]):
-      format(damDesc(self, DamageType.FIRE, damage))
-   end,
+	name = "Micrometeorite Strike", short_name = "WANDER_METEOR_MICROMETEOR",
+	type = {"celestial/micrometeor", 1},
+	require = spells_req1,
+	points = 5,
+	range = 10,
+	direct_hit = true,
+	requires_target = true,
+	tactical = { ATTACK = { FIRE = 1 } },
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 100) end,
+	target = function(self, t)
+		return {type="hit", range=self:getTalentRange(t), talent=t}
+	end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+		local _ _, x, y = self:canProject(tg, x, y)
+		if not x or not y then return nil end
+		local target = game.level.map(x, y, Map.ACTOR)
+		if not target then return nil end
+		
+		local dam = self:spellCrit(t.getDamage(self, t))
+		self:project(tg, x, y, DamageType.FIRE, dam)
+		
+		-- Graphic
+		if core.shader.active() then
+			game.level.map:particleEmitter(x, y, 1, "starfall", {radius=0.5, tx=x, ty=y})
+		else
+			game.level.map:particleEmitter(x, y, 1, "circle", {oversize=0.7, a=60, limit_life=16, appear=8, speed=-0.5, img="darkness_celestial_circle", radius=1})
+		end
+		
+		return true
+	end,
+	info = function(self, t)
+		local damage = t.getDamage(self, t)
+		return ([[Strike an enemy from above with a tiny meteorite, doing %0.2f fire damage
+Spellpower: Increases damage]]): format(damDesc(self, DamageType.FIRE, damage))
+	end,
 }
 
 newTalent{
@@ -303,7 +302,10 @@ newTalent{
 	require = spells_req_high4,
 	points = 5,
 	mode = "passive",
-	getChance = function(self, t) return self:combatTalentLimit(t, 20, 5, 10) end,
+	getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 21, 6, 12)) end,
+	passives = function(self, t)
+		self:setTalentTypeMastery("celestial/micrometeor", self:getTalentMastery(t))
+	end,
 	learnOnHit = function(self, t)
 		self.talent_on_spell["WANDER_METEOR_BOMBARDMENT"] = {
 			chance=t.getChance(self,t),
@@ -341,11 +343,10 @@ newTalent{
 	callbackOnActBase = function(self, t)
 		local storm = self:hasEffect(self.EFF_WANDER_METEOR_STORM)
 		if not storm then return end
-		storm.dropMeteor(self, storm, 0.3)
-		storm.dropMeteor(self, storm, 0.3)
+		self:callEffect(self.EFF_WANDER_METEOR_STORM, "callbackOnActBase", 0.6)
 	end,
 	info = function(self, t)
 		return ([[Channeled through the staff, your meteor storms are wilder and more destructive.
-							While Meteor Storm is active, two additional smaller meteors will fall each turn, dealing 30%% normal damage.]]):format()
+							While Meteor Storm is active, an additional smaller meteor will fall each turn, dealing 60%% normal damage.]]):format()
 	end,
 }

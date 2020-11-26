@@ -7,40 +7,40 @@ local Map = require "engine.Map"
 local Level = require "engine.Level"
 
 newEffect{
-   name = "WANDER_ICE_DAMAGE_SHIELD", image = "talents/wander_ice_shield.png",
-   desc = "Icy Block",
-   long_desc = function(self, eff) return ("The target is surrounded by an elemental shield and cannot be stunned"):format() end,
-   type = "magical",
-   subtype = { arcane=true, shield=true },
-   status = "beneficial",
-   parameters = { power=100 },
-   
-   activate = function(self, eff)
-      self:effectTemporaryValue(eff, "stun_immune", 1.0)
-
-      if core.shader.active(4) then
-	 eff.particle = self:addParticles(Particles.new("shader_shield", 1, nil, {type="shield", shieldIntensity=0.2, color=eff.color or {0.2, 0.4, 0.8}}))
-      end
-      
-   end,
-
-   deactivate = function(self, eff)
-      self:removeParticles(eff.particle)
-   end,
-
-   --after each instance of damage, if you have no shield, the stun-proofing is set to expire
-   callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, state)
-      if not self:hasEffect(self.EFF_DAMAGE_SHIELD) then
-	 eff.dur = 0
-      end
-
-   end,
-
-   callbackOnActBase = function(self, eff)
-      if not self:hasEffect(self.EFF_DAMAGE_SHIELD) then
-	 eff.dur = 0
-      end
-   end,
+	name = "WANDER_ICE_DAMAGE_SHIELD", image = "talents/wander_ice_shield.png",
+	desc = "Icy Block",
+	long_desc = function(self, eff) return ("The target is surrounded by an elemental shield and cannot be stunned"):format() end,
+	type = "other",
+	subtype = { arcane=true, shield=true },
+	status = "beneficial",
+	parameters = { power=100 },
+	
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "stun_immune", 1.0)
+		
+		if core.shader.active(4) then
+			eff.particle = self:addParticles(Particles.new("shader_shield", 1, nil, {type="shield", shieldIntensity=0.1, color=eff.color or {0.2, 0.4, 0.8}}))
+		end
+		
+	end,
+	
+	deactivate = function(self, eff)
+		self:removeParticles(eff.particle)
+	end,
+	
+	--after each instance of damage, if you have no shield, the stun-proofing is set to expire
+	callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, state)
+		if not self:hasEffect(self.EFF_DAMAGE_SHIELD) then
+			eff.dur = 0
+		end
+		
+	end,
+	
+	callbackOnActBase = function(self, eff)
+		if not self:hasEffect(self.EFF_DAMAGE_SHIELD) then
+			eff.dur = 0
+		end
+	end,
 }
 
 
@@ -288,94 +288,90 @@ newEffect{
 	type = "magical",
 	subtype = { fire=true },
 	status = "beneficial",
-	parameters = {
-		power=100, range=4, radius=1, 
-		dropMeteor = function(self, eff, multiplier)
-			local rad = 1
-			if multiplier < 1 then rad = 0.5 + 0.5 * multiplier end
-			local meteor = function(src, x, y, dam)
-				game.level.map:particleEmitter(x, y, 5*rad, "meteor", {x=x, y=y}).on_remove = function(self)
-					local x, y = self.args.x, self.args.y
-					if core.shader.active() then
-						game.level.map:particleEmitter(x, y, rad, "starfall", {radius=rad, tx=tx, ty=ty})
-					else
-						game.level.map:particleEmitter(x, y, rad, "shadow_flash", {radius=rad, grids=grids, tx=tx, ty=ty})
-						game.level.map:particleEmitter(x, y, rad, "circle", {oversize=0.7, a=60, limit_life=16, appear=8, speed=-0.5, img="darkness_celestial_circle", radius=rad})
-					end
-					game:getPlayer(true):attr("meteoric_crash", 1)
-																																									 end
-			end
-			
-			--Collect possible targets
-			local list = {}
-			--Near the player
-			self:project({type="ball", radius=eff.range}, self.x, self.y, function(px, py)
-										 local actor = game.level.map(px, py, Map.ACTOR)
-										 if actor and self:reactionToward(actor) < 0 then list[#list+1] = actor end  
-																																		end)
-			
-			--Near summons
-			local apply = function(a)
-				a:project({type="ball", radius=eff.range}, a.x, a.y,
-									function(px, py)
-										local actor = game.level.map(px, py, Map.ACTOR)
-										if actor and self:reactionToward(actor) < 0 then
-											list[#list+1] = actor
-										end
-									end)
-			end
-			if game.party and game.party:hasMember(self) then
-				for act, def in pairs(game.party.members) do
-					if act.summoner and act.summoner == self and act.type == "elemental" then
-						apply(act)
-					end
+	parameters = {power=100, range=4, radius=1},
+	callbackOnActBase = function(self, eff, multiplier)
+		multiplier = multiplier or 1.0
+		local rad = 1
+		if multiplier < 1 then rad = 0.5 + 0.5 * multiplier end
+		local meteor = function(src, x, y, dam)
+			game.level.map:particleEmitter(x, y, 5*rad, "meteor", {x=x, y=y}).on_remove = function(self)
+				local x, y = self.args.x, self.args.y
+				if core.shader.active() then
+					game.level.map:particleEmitter(x, y, rad, "starfall", {radius=rad, tx=tx, ty=ty})
+				else
+					game.level.map:particleEmitter(x, y, rad, "shadow_flash", {radius=rad, grids=grids, tx=tx, ty=ty})
+					game.level.map:particleEmitter(x, y, rad, "circle", {oversize=0.7, a=60, limit_life=16, appear=8, speed=-0.5, img="darkness_celestial_circle", radius=rad})
 				end
-			else
-				for uid, act in pairs(game.level.entities) do
-					if act.summoner and act.summoner == self and act.type == "elemental" then
-						apply(act)
-					end
-				end
-			end
-			
-			-- determine damage for this turn
-			local dam = 0
-			if #list > 0 then
-				dam = self:spellCrit(eff.power)
-				if multiplier then dam = dam * multiplier end
-			end
-			
-			-- Hit a random enemy
-			local nb = 0
-			while #list > 0 and nb < 1 do
-				local a = rng.tableRemove(list)
-				
-				-- Hit within 1 space of the target so they're always included.
-				local tx = util.bound(a.x + rng.range(-1,1), 0, game.level.map.w-1)
-				local ty = util.bound(a.y + rng.range(-1,1), 0, game.level.map.h-1)
-				
-				-- Don't use the BIZARRE REALTIME METEOR for damage, just for visuals
-				meteor(self, tx, ty, 0)
-				self:project({type="ball", x=tx, y=ty, radius=1, friendlyfire=false}, tx, ty, DamageType.FIRE, dam)
-				
-				-- Void summons hook
-				if self:knowTalent(self.T_WANDER_METEOR_VOID_SUMMONS) then
-					local tal_vs = self:getTalentFromId(self.T_WANDER_METEOR_VOID_SUMMONS)
-					if rng.percent(tal_vs.getChance(self, tal_vs)) then
-						if rng.percent(50) then
-							tal_vs.callLosgoroth(self, tal_vs, a.x, a.y, a)
-						else
-							tal_vs.callManaworm(self, tal_vs, a.x, a.y, a)
-						end
-					end
-				end
-				
-				nb = nb + 1
-			end   
+				game:getPlayer(true):attr("meteoric_crash", 1)
+																																										end
 		end
-	},
-	callbackOnActBase = function(self, eff)
-		eff.dropMeteor(self, eff, 1.0)
+		
+		--Collect possible targets
+		local list = {}
+		--Near the player
+		self:project({type="ball", radius=eff.range}, self.x, self.y, function(px, py)
+									 local actor = game.level.map(px, py, Map.ACTOR)
+									 if actor and self:reactionToward(actor) < 0 then list[#list+1] = actor end  
+																																	end)
+		
+		--Near summons
+		local apply = function(a)
+			a:project({type="ball", radius=eff.range}, a.x, a.y,
+								function(px, py)
+									local actor = game.level.map(px, py, Map.ACTOR)
+									if actor and self:reactionToward(actor) < 0 then
+										list[#list+1] = actor
+									end
+								end)
+		end
+		if game.party and game.party:hasMember(self) then
+			for act, def in pairs(game.party.members) do
+				if act.summoner and act.summoner == self and act.type == "elemental" then
+					apply(act)
+				end
+			end
+		else
+			for uid, act in pairs(game.level.entities) do
+				if act.summoner and act.summoner == self and act.type == "elemental" then
+					apply(act)
+				end
+			end
+		end
+		
+		-- determine damage for this turn
+		local dam = 0
+		if #list > 0 then
+			dam = self:spellCrit(eff.power)
+			if multiplier then dam = dam * multiplier end
+		end
+		
+		-- Hit a random enemy
+		local nb = 0
+		while #list > 0 and nb < 1 do
+			local a = rng.tableRemove(list)
+			
+			-- Hit within 1 space of the target so they're always included.
+			local tx = util.bound(a.x + rng.range(-1,1), 0, game.level.map.w-1)
+			local ty = util.bound(a.y + rng.range(-1,1), 0, game.level.map.h-1)
+			
+			-- Don't use the BIZARRE REALTIME METEOR for damage, just for visuals
+			meteor(self, tx, ty, 0)
+			self:project({type="ball", x=tx, y=ty, radius=1, friendlyfire=false}, tx, ty, DamageType.FIRE, dam)
+			
+			-- Void summons hook
+			if self:knowTalent(self.T_WANDER_METEOR_VOID_SUMMONS) then
+				local tal_vs = self:getTalentFromId(self.T_WANDER_METEOR_VOID_SUMMONS)
+				if rng.percent(tal_vs.getChance(self, tal_vs)) then
+					if rng.percent(50) then
+						tal_vs.callLosgoroth(self, tal_vs, a.x, a.y, a)
+					else
+						tal_vs.callManaworm(self, tal_vs, a.x, a.y, a)
+					end
+				end
+			end
+			
+			nb = nb + 1
+		end
 	end,
 	on_gain = function(self, err)
 		return nil, true

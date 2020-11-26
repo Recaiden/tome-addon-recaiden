@@ -15,9 +15,7 @@ newTalent{
 	dont_provide_pool = true,
 	tactical = { BUFF = 2 },
 	range = 0,
-	getDamageChange = function(self, t)
-		return -self:combatTalentLimit(t, 50, 14, 30) -- Limit < 50% damage reduction
-	end,
+	getDamageChange = function(self, t) return -self:combatTalentLimit(t, 50, 15, 33) end,
 	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, tmp, no_martyr)
 		if src and src.x and src.y then
 			-- assume instantaneous projection and check range to source
@@ -287,7 +285,7 @@ newTalent{
    require = spells_req3,
    points = 5,
    mode = "passive",
-   getAffinity = function(self, t) return self:combatTalentLimit(t, 100, 10, 35) end, -- Limit < 100%
+   getAffinity = function(self, t) return self:combatTalentLimit(t, 100, 10, 35) end,
 	 getSaves = function(self, t) return self:getTalentLevel(t)*8 end,
    getShield = function(self, t) return 7 + self:combatSpellpower(0.092) * self:combatTalentScale(t, 1, 7)  end,
 	 getHealFactor = function(self, t) return self:combatTalentScale(t, 0.15, 0.30) end,
@@ -306,8 +304,7 @@ newTalent{
    require = spells_req4,
    points = 5,
    mode = "passive",
-   getBonusRegen = function(self, t) return 1 end,
-   getResistPenalty = function(self, t) return self:combatTalentLimit(t, 100, 15, 40) end,
+   getResistPenalty = function(self, t) return self:combatTalentLimit(t, 60, 20, 50) end,
    info = function(self, t)
       return ([[Your passion for singing the praises of the spheres reaches its zenith.
 		Your Paeans now increases your resistance penetration with fire, cold, and lightning by %d%%]]):format(t.getResistPenalty(self, t))

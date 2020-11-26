@@ -53,12 +53,14 @@ newTalent{
 		if not self:canBe("summon") and not silent then game.logPlayer(self, "You cannot summon; you are suppressed!") return end
 		return not checkMaxSummonStar(self, silent)
 	end,
+	getStatMultiplier = function(self, t) return self:combatTalentScale(t, 0.2, 1, 0.75) end,
 	incStats = function(self, t, fake)
 		local mp = self:combatSpellpower()
+		local mult = t.getStatMultiplier(self, t)
 		return{ 
-			str= (fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75),
-			dex= (fake and mp or self:spellCrit(mp)) * 2 * self:combatTalentScale(t, 0.2, 1, 0.75),
-			con= (fake and mp or self:spellCrit(mp)) * 1.2 * self:combatTalentScale(t, 0.2, 1, 0.75),
+			str= (fake and mp or self:spellCrit(mp)) * 1.7 * mult,
+			dex= (fake and mp or self:spellCrit(mp)) * 2 * mult,
+			con= (fake and mp or self:spellCrit(mp)) * 1.2 * mult,
 					}
 	end,
 	speed = astromancerSummonSpeed,
@@ -100,7 +102,7 @@ newTalent{
 			autolevel = "none",
 			ai = "summoned", ai_real = "tactical", ai_state = { talent_in=1, ally_compassion=10},
 			ai_tactic = resolvers.tactic"melee",
-			stats = {str=25, dex=31, con=23, cun=15, wil=15, mag=21},
+			stats = {str=16, dex=16, con=10, cun=10, wil=10, mag=10},
 			inc_stats = t.incStats(self, t),
 			level_range = {self.level, self.level}, exp_worth = 0,
 			
@@ -118,6 +120,9 @@ newTalent{
 			resolvers.talents{
 				[self.T_FIERY_HANDS]=self:getTalentLevelRaw(t),
 											 },
+			resolvers.tmasteries{ ["spell/other"]=self:getTalentMastery(t)-1,
+														["spell/fire-alchemy"]=self:getTalentMastery(t)-1,
+														["spell/enhancement"]=self:getTalentMastery(t)-1,},
 			resists = { [DamageType.FIRE] = self:getTalentLevel(t)*20 },
 			
 			summoner = self, summoner_gain_exp=true, wild_gift_summon=false,
@@ -210,7 +215,7 @@ newTalent{
 	type = {"celestial/kolal", 3},
 	require = spells_req3,
 	points = 5,
-	cooldown = function(self, t) return self:combatTalentLimit(t, 10, 30, 15) end,
+	cooldown = function(self, t) return self:combatTalentLimit(t, 10, 30, 12) end,
 	negative = 5,
 	no_energy = true,
 	tactical = {
@@ -219,7 +224,7 @@ newTalent{
 			local nb = 0
 			for eff_id, p in pairs(self.tmp) do
 				local e = self.tempeffect_def[eff_id]
-				if what[e.type] and e.status == "detrimental" then
+				if e.type ~= "other" and e.status == "detrimental" then
 					nb = nb + 1
 				end
 			end
@@ -227,7 +232,7 @@ newTalent{
 		end
 	},
 	getCost = function(self, t) return math.max(7.5, 16.5 - self:getTalentLevel(t)) end,
-	getNb = function(self, t) return math.floor(self:combatTalentScale(t, 1, 4)) end,
+	getNb = function(self, t) return math.floor(self:combatTalentScale(t, 1, 2.5)) end,
 	on_pre_use = function(self, t)
 		if self.life <= self.max_life * t.getCost(self, t)/100 then return false end
 		for eff_id, p in pairs(self.tmp) do
@@ -315,13 +320,14 @@ newTalent{
 				end
 				
 				-- Randomly take targets
-				local tg = {type="bolt", range=5, x=self.x, y=self.y, talent=self.summoner:getTalentFromId(self.summoner.T_VOLCANO), display={image="object/lava_boulder.png"}}
+				local tg = {type="bolt", range=5, x=self.x, y=self.y, talent=self.summoner:getTalentFromId(self.summoner.T_VOLCANO), display={image="object/lava_boulder.png"}, friendlyblock=false}
 				for i = 1, self.nb_projs do
 					if #tgts <= 0 then break end
 					local a, id = rng.table(tgts)
 					table.remove(tgts, id)
 					
-					self.summoner:projectile(tg, a.x, a.y, engine.DamageType.FIRE, self.dam, {type="flame"})
+					local proj = self.summoner:projectile(tg, a.x, a.y, engine.DamageType.FIRE, self.dam, {type="flame"})
+					proj.name = "volcano"
 					game:playSoundNear(self, "talents/fire")
 				end
 				

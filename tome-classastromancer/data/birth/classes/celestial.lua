@@ -30,8 +30,8 @@ newBirthDescriptor{
       --core
       ["celestial/chants"]={true, 0.3},
       ["celestial/paeans"]={true, 0.3},
-      ["celestial/light"]={false, 0.1},
-      ["cunning/survival"]={false, 0.1},
+      ["celestial/light"]={false, 0.0},
+      ["cunning/survival"]={false, 0.0},
       --["celestial/astronomy"]={false, 0.3},
    },
    birth_example_particles = "darkness_shield",

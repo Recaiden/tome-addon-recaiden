@@ -54,35 +54,31 @@ newTalent{
 	negative = -4.5,
 	tactical = { ATTACK = { LIGHTNING = 2 } },
 	range = 5,
-	
 	on_pre_use = function(self, t, silent)
 		if not self:canBe("summon") and not silent then game.logPlayer(self, "You cannot summon; you are suppressed!") return end
 		return not checkMaxSummonStar(self, silent)
 	end,
-	
 	on_arrival = function(self, t, m)
 		local tg = {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t, x=m.x, y=m.y}
 		local duration = self:callTalent(self.T_WANDER_ELEMENTAL_ARRIVAL, "effectDuration")
 		self:project(tg, m.x, m.y, DamageType.TEMP_EFFECT, {foes=true, eff=self.EFF_LOWER_FIRE_RESIST, dur=duration, p={power=self:combatTalentMindDamage(t, 15, 70)}})
 		game.level.map:particleEmitter(m.x, m.y, tg.radius, "ball_fire", {radius=tg.radius})
 	end,
-	
+	getStatMultiplier = function(self, t) return self:combatTalentScale(t, 0.2, 1, 0.75) end,
 	incStats = function(self, t, fake)
 		local mp = self:combatSpellpower()
+		local mult = t.getStatMultiplier(self, t)
 		return{
-			dex=(fake and mp or self:spellCrit(mp)) * 1.2 * self:combatTalentScale(t, 0.2, 1, 0.75),
-			mag=(fake and mp or self:spellCrit(mp)) * 1.0 * self:combatTalentScale(t, 0.2, 1, 0.75),
-			cun=(fake and mp or self:spellCrit(mp)) * 1.7 * self:combatTalentScale(t, 0.2, 1, 0.75)
+			dex=(fake and mp or self:spellCrit(mp)) * 1.2 * mult,
+			mag=(fake and mp or self:spellCrit(mp)) * 1.0 * mult,
+			cun=(fake and mp or self:spellCrit(mp)) * 1.7 * mult
 					}
 	end,
-	
 	speed = astromancerSummonSpeed,
-	
 	display_speed = function(self, t)
 		return ("Swift Spell (#LIGHT_GREEN#%d%%#LAST# of a turn)"):
 		format(t.speed(self, t)*100)
-	end,
-	
+	end,	
 	summonTime = function(self, t)
 		local duration = math.floor(self:combatScale(self:getTalentLevel(t), 4, 0, 9, 5))
 		local augment = self:hasEffect(self.EFF_WANDER_UNITY_CONVERGENCE)
@@ -115,7 +111,7 @@ newTalent{
 			autolevel = "none",
 			ai = "summoned", ai_real = "tactical", ai_state = { talent_in=1 }, ally_compassion=10,
 			ai_tactic = resolvers.tactic"ranged",
-			stats = {str=10, dex=8, con=16, mag=6, wil=0, cun=0},
+			stats = {str=10, dex=16, con=6, mag=16, wil=10, cun=10},
 			inc_stats = t.incStats(self, t),
 			level_range = {self.level, self.level}, exp_worth = 0,
 			
@@ -133,6 +129,8 @@ newTalent{
 			resolvers.talents{
 				[self.T_WANDER_LIGHTNING_GWEL]=self:getTalentLevelRaw(t),
 											 },
+			resolvers.tmasteries{ ["spell/other"]=self:getTalentMastery(t)-1,
+														["spell/storm"]=self:getTalentMastery(t)-1,},
 			resists = { [DamageType.LIGHTNING] = self:getTalentLevel(t)*20 },
 			
 			summoner = self, summoner_gain_exp=true, wild_gift_summon=false,
