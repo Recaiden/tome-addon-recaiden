@@ -1,5 +1,27 @@
 # image files
 *.png
+*.svg
+*.pdn
+
+
+# unpacked mods
+tome-tareyal
+tome-raider
+tome-improved-restauto
+
+# not-to-upload yet mods
+tome-race-yaech
+tome-speedbars
+tome-cleaner-descriptions
+tome-orcs-dev
+tome-orcs
+tome-Infinite100
+tome-classwitchdoctor
+
+# ToME files
+*.teaa
+*.teaac
+.keep
 
 # Compiled Lua sources
 luac.out
@@ -41,4 +63,3 @@ luac.out
 *.i*86
 *.x86_64
 *.hex
-
