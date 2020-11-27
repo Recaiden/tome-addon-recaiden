@@ -1,11 +1,70 @@
 newTalent{
+	name = "Glow Beam", short_name = "REK_SHINE_GLOW_BEAM",
+	type = {"demented/other", 1}, require = mag_req1, points = 5,
+	cooldown = 3,
+	tactical = { ATTACKAREA = { LIGHT = 2 } },
+	range = 10,
+	is_beam_spell = true,
+	requires_target = true,
+	target = function(self, t) return {type="beam",range=self:getTalentRange(t), talent=t, selffire=false, friendlyfire=self:spellFriendlyFire()} end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 180) end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+
+		local dam = self:spellCrit(t.getDamage(self, t))
+		local grids = self:project(tg, x, y, DamageType.LIGHT, dam)
+		local _ _, x, y = self:canProject(tg, x, y)
+		game.level.map:particleEmitter(self.x, self.y, tg.radius, "flamebeam", {tx=x-self.x, ty=y-self.y})
+		return true
+	end,
+	info = function(self, t)
+		local damage = t.getDamage(self, t)
+		return ([[Shine a beam of light that deals %0.2f light damage.
+		The damage will increase with your Spellpower.]]):tformat(damDesc(self, DamageType.LIGHT, damage))
+	end,
+}
+
+newTalent{
+	name = "Piercing Light", short_name = "REK_SHINE_PIERCING_LIGHT",
+	type = {"demented/other", 1}, require = mag_req1, points = 5,
+	cooldown = 10,
+	tactical = { ATTACKAREA = { LIGHT = 4 } },
+	range = 10,
+	is_beam_spell = true,
+	requires_target = true,
+	target = function(self, t) return {type="beam", force_max_range=true, range=self:getTalentRange(t), talent=t, selffire=false, friendlyfire=self:spellFriendlyFire()} end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 30, 240) end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+
+		local dam = self:spellCrit(t.getDamage(self, t))
+		local grids = self:project(tg, x, y, DamageType.REK_SHINE_LIGHT_SLOW, dam)
+		local _ _, x, y = self:canProject(tg, x, y)
+		game.level.map:particleEmitter(self.x, self.y, tg.radius, "flamebeam", {tx=x-self.x, ty=y-self.y})
+		return true
+	end,
+	info = function(self, t)
+		local damage = t.getDamage(self, t)
+		return ([[Shine a beam of light that deals %0.2f light damage with a 15%% chance to slow and always goes as far as possible.
+		The damage will increase with your Spellpower.]]):tformat(damDesc(self, DamageType.LIGHT, damage))
+	end,
+}
+
+newTalent{
 	name = "Stellar Nursery", short_name = "REK_SHINE_CORE_GATE_STELLAR_NURSERY",
 	type = {"demented/core-gate", 1},	require = mag_req_high1, points = 5,
-	mode = "passive",
+	cooldown = 14,
+	insanity = -10,
 	range = 5,
-	target = function(self, t) return {type="ball", range=0, radius=self:getTalentRadius(t), talent=t} end,
+	tactical = { ATTACKAREA = { LIGHT = 3 } },
+	target = function(self, t) return {type="ball", range=0, radius=10, talent=t} end,
+	getCount = function(self, t) return 3 end,
 	getChance = function(self, t) return 30 end,
-	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2.4, 4.8)) end,
+	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2.4, 4.8))+1 end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 300) end,
 	summon = function(self, t)
 		local stat = self:getMag()
@@ -25,24 +84,29 @@ newTalent{
 			blind_immune = 1,
 			sight = 15,
 			infravision = 15,
-			name = _t"glowing horror", color=colors.CRIMSON,
+			name = _t"glowing horror", color=colors.GOLD,
+			is_glowing_horror = true,
 			desc = _t"A bulbous inhuman shape composed of yellow light.",
 			image = "npc/horror_eldritch_glowing_horror.png",
-			level_range = {self.summoner.level, self.summoner.level}, exp_worth = 0,
+			level_range = {self.level, self.level}, exp_worth = 0,
 			rank = 2,
 			size_category = 2,
-			autolevel = "mage",
+			autolevel = "caster",
 			max_life = 100,
 			life_rating = 4,
 			life_regen = 4,
 			movement_speed = 2,
 			combat_armor = 16, combat_def = 1,
-			combat = { dam=math.floor(5 + self.summoner.level/2), atk=self.summoner.level*2.2, apr=0, dammod={str=1.1}, physcrit = 10 },
+			combat = { dam=math.floor(5 + self.level/2), atk=self.level*2.2, apr=0, dammod={str=1.1}, physcrit = 10 },
+			resists = { [DamageType.FIRE] = 100, [DamageType.LIGHT] = 100 },
+			affinity = { [DamageType.FIRE] = 50, [DamageType.LIGHT] = 50 },
 			resolvers.talents{
-				[Talents.T_REK_SHINE_PRISM_CONVERGENCE]=1,			
+				[Talents.T_REK_SHINE_GLOW_BEAM]=1,			
 			},
+			resolvers.tmasteries{ ["demented/other"]=self:getTalentMastery(t)-1, },
 
 			ai = "summoned", ai_real = "tactical", ai_state = { ai_move="move_complex", talent_in=1, ally_compassion=0 },
+			ai_tactic = resolvers.tactic"ranged",
 			no_drops = true, keep_inven_on_death = false,
 			faction = self.faction,
 			summoner = self:resolveSource(), -- Objects can't be summoners for various reasons, so just summon them for the highest source
@@ -50,15 +114,18 @@ newTalent{
 			summon_time = dur,
 		}
 
-		--TODO if know 3rd talent teach them new talent
-
+		if self:knowTalent(self.T_REK_SHINE_CORE_GATE_PROTOSOLAR_RAYS) then
+			m[#m+1] = resolvers.talents{
+					 [self.T_REK_SHINE_PIERCING_LIGHT]=self:getTalentLevelRaw(self.T_REK_SHINE_CORE_GATE_PROTOSOLAR_RAYS)}
+		end
+		
 		m:resolve()
 		m:resolve(nil, true)
 
 		game.zone:addEntity(game.level, m, "actor", x, y)
 		if target then m:setTarget(target) end
 		
-		if game.party:hasMember(self.summoner) then
+		if game.party:hasMember(self) then
 			m.remove_from_party_on_death = true
 			game.party:addMember(m, {
 				control=false,
@@ -67,6 +134,13 @@ newTalent{
 				title=_t"Summon",
 			})
 		end
+	end,
+	action = function(self, t)
+		t.summon(self, t)
+		t.summon(self, t)
+		t.summon(self, t)
+
+		return true
 	end,
 	callbackOnTalentPost = function(self, t, ab)
 		if not self.in_combat then return end
@@ -78,12 +152,9 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		local delay = t.getDelay(self, t)
-		local radius = self:getTalentRadius(t)
-		local damage = t.getDamage(self, t)
-		return ([[Your light is a beacon in the vastness of existence.  Whenever you cast a spell (that takes a turn), you have a %d%% chance to summon a Glowing Horror nearby for %d turns.  Glowing horrors attack with a beam of light doing %d damage. The power of the horrors will ncrease with your Magic.
+		return ([[Your light is a beacon in the vastness of existence.  Whenever you cast a spell (that takes a turn) in combat, you have a %d%% chance to summon a Glowing Horror nearby for %d turns.  Glowing horrors attack with a beam of light doing %0.1f damage. The power of the horrors will increase with your Magic.
 
---You can activate this talent to summon %d glowing horrors.]]):tformat(t.getChance(self, t), t.getDuration(self, t), t.getDamage(self, t)) --no damDesc since they're not you.
+--You can activate this talent to summon %d glowing horrors.]]):tformat(t.getChance(self, t), t.getDuration(self, t), t.getDamage(self, t), t.getCount(self, t)) --no damDesc since they're not you.
 	end,
 }
 
@@ -102,7 +173,7 @@ newTalent{
 	tactical = { DEFEND = 2 },
 	cooldown = 10,
 	getDuration = function(self, t) return 10 end,
-	getShield = function(self, t) return self:combatTalentSpellDamage(t, 30, 150) end,
+	getAbsorb = function(self, t) return self:combatTalentSpellDamage(t, 20, 220) end,
 	on_pre_use = function(self, t, silent)
 		for uid, act in pairs(game.level.entities) do
 			if act.summoner and act.summoner == self and act.is_glowing_horror then
@@ -127,7 +198,7 @@ newTalent{
 	info = function(self, t)
 		return ([[Dissolve your assembled glowing horrors and forge them into a shield of celestial energy that blocks at least %d damage over %d turns.  Each glowing horror strengthens the shield by 30%% and gives you 5 positive energy.
 
-The shield power will increase with your Spellpower.]]):tformat(t.getShield(self, t), t.getDuration(self, t))
+The shield power will increase with your Spellpower.]]):tformat(t.getAbsorb(self, t), t.getDuration(self, t))
 	end,
 }
 
@@ -135,56 +206,28 @@ newTalent{
 	name = "Protosolar Rays", short_name = "REK_SHINE_CORE_GATE_PROTOSOLAR_RAYS",
 	type = {"demented/core-gate", 3},
 	require = mag_req_high3, points = 5,
-	tactical = { CLOSEIN = 2, ESCAPE = 2 },
-	positive = 30,
-	no_energy = true,
-	cooldown = function(self, t) return math.floor(self:combatTalentLimit(t, 10, 20, 12)) end,
-	range = function(self, t) return math.floor(self.lite) end,
-	requires_target = true,
-	target = function(self, t)	return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
-	is_teleport = true,
-	action = function(self, t)
-		local tg = self:getTalentTarget(t)
-		local x, y, target = self:getTarget(tg)
-		if not x or not y then return nil end
-		if not self:hasLOS(x, y) or game.level.map:checkEntity(x, y, Map.TERRAIN, "block_move") then -- To prevent teleporting through walls
-			game.logPlayer(self, "You do not have line of sight.")
-			return nil
-		end
-		local _ _, x, y = self:canProject(tg, x, y)
-		
-		game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
-		if not self:teleportRandom(x, y, 0) then
-			game.logSeen(self, "%s's space-time folding fizzles!", self:getName():capitalize())
-		else
-			game.logSeen(self, "%s emerges from a space-time rift!", self:getName():capitalize())
-			game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
-		end
-		
-		game:playSoundNear(self, "talents/teleport")
-		return true
-	end,
+	mode = "passive",
+	-- implemented in first talent
 	info = function(self, t)
 		local range = self:getTalentRange(t)
-		return ([[Teleports you to up to %d tiles away, to a targeted location in line of sight.
-The range will increase with your Light Radius.]]):tformat(range)
+		return ([[Strengthen your glowing horrors with the ability to cast Piercing Light at talent level %d. This is a long-range beam with a chance to slow enemies.]]):tformat(self:getTalentLevel(t))
 	end,
 }
 
 newTalent{
 	name = "Grave of Suns", short_name = "REK_SHINE_CORE_GATE_GRAVE_OF_SUNS",
 	type = {"demented/core-gate", 4},	require = mag_req_high4, points = 5,
-	insanity = 25,
+	insanity = -25,
 	cooldown = 15,
 	tactical = { ATTACKAREA = { DARKNESS = 3 } },
 	range = 8,
 	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t} end,
 	radius = function (self, t) return 2 end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 300) end,
-	getProcDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 300) end,
+	getProcDamage = function(self, t) return self:combatTalentSpellDamage(t, 4, 30) end,
 	getDuration = function(self, t) return 5 end,
 	getSlow = function(self, t) return self:combatTalentLimit(t, 75, 20, 66) end,
-	getExecute = function(self, t) return 15 end,
+	getExecute = function(self, t) return 10 end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
@@ -206,8 +249,8 @@ newTalent{
 	end,
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
-		return ([[Open a tenuous gate to the vast emtpiness at the center of everything.  Targets in a radius %d area take %0.1f darkness damage and have their movement slowed by %d%% for 1 turn(#SLATE# no save#LAST#).  When a creature in the affected area takes damage from outside the area, they are doomed for 5 turns.  Each stack of doom inflcits an additional %0.1f darkness damage.  At %d stacks of doom, creatures are drawn into the gate and instantly killed.
-The damage will increase with your Spellpower.]]):tformat(self:getTalentRadius(t), damDesc(self, DamageType.DARKNESS, t.getDamage(self, t)), t.getSlow(self, t), damDesc(self, DamageType.DARKNESS, t.getProcDamage(self, t)), t.getExecute(self, t))
+		return ([[Open a tenuous gate to the vast emptiness at the center of everything that lasts for %d turns.  Targets in a radius %d area take %0.1f darkness damage and have their movement slowed by %d%% for 1 turn(#SLATE# no save#LAST#).  When a creature in the affected area takes damage from outside the area, they are doomed for 5 turns.  Each new stack of doom inflicts %0.1f darkness damage per stack.  At %d stacks of doom, creatures with less than 1/3 max life are instantly killed.
+The damage will increase with your Spellpower.]]):tformat(t.getDuration(self, t), self:getTalentRadius(t), damDesc(self, DamageType.DARKNESS, t.getDamage(self, t)), t.getSlow(self, t), damDesc(self, DamageType.DARKNESS, t.getProcDamage(self, t)), t.getExecute(self, t))
 	end,
 }
 class:bindHook("DamageProjector:final", function(self, hd)
@@ -218,8 +261,10 @@ class:bindHook("DamageProjector:final", function(self, hd)
 	local seff = game.level.map:hasEffectType(src.x, src.y, DamageType.REK_SHINE_GRAVE)
 	local deff = game.level.map:hasEffectType(target.x, target.y, DamageType.REK_SHINE_GRAVE)
 
-	if deff and not seff then
+	if deff and not seff and not target.grave_of_suns_proc then
+		target.grave_of_suns_proc = true
 		target:setEffect(target.EFF_REK_SHINE_GRAVE_OF_SUNS_DOOM, 5, {pow=deff.dam.dam, stacks=1, max_stacks=deff.dam.cap, src=deff.src})
+		target.grave_of_suns_proc = nil
 	end
 	return hd
 end)

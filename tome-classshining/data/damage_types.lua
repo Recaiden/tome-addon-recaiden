@@ -51,6 +51,21 @@ newDamageType{
 }
 
 newDamageType{
+	name = _t"slowing light", type = "REK_SHINE_LIGHT_SLOW", text_color = "#GOLD#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		if _G.type(dam) == "number" then dam = {dam=dam, chance=15} end
+		local realdam = DamageType:get(DamageType.LIGHT).projector(src, x, y, DamageType.LIGHT, dam.dam, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target and target:canBe("slow") and rng.percent(dam.chance) then
+			target:setEffect(target.EFF_SLOW, 3, {src=src, power=0.33, apply_power=src:combatSpellpower()})
+		end
+		return realdam
+	end,
+}
+
+newDamageType{
 	name = _t"light of the citadel", type = "REK_SHINE_SEAL", text_color = "#GOLD#",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
@@ -99,7 +114,7 @@ newDamageType{
 }
 
 newDamageType{
-	name = _t"hindering darkness", type = "REK_SHINE_SARKNESS_HINDER", text_color = "#GREY#",
+	name = _t"hindering darkness", type = "REK_SHINE_DARKNESS_HINDER", text_color = "#GREY#",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
 		useImplicitCrit(src, state)

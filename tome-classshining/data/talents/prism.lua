@@ -55,6 +55,7 @@ makeMirrorClone = function(target, duration, alt_nodes)
 		if t.mode == "sustained" and m:isTalentActive(t.id) then m:forceUseTalent(t.id, {ignore_energy=true, silent=true}) end
 		m:unlearnTalentFull(t.id)
 	end
+	m:learnTalent(m.T_WTW_DESTRUCT, true, 1)
 
 	-- Remove some timed effects
 	m:removeTimedEffectsOnClone()
@@ -236,7 +237,7 @@ newTalent{
 			end
 			self.__project_source = old_source
 		end
-		game:playSoundNear(self, "talents/reality_breach")
+		game:playSoundNear(self, "talents/stardust")
 		return true
 	end,
 	info = function(self, t)

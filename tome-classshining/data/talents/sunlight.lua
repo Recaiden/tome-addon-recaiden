@@ -36,18 +36,18 @@ newTalent{
 					game.level.map:particleEmitter(e.x, e.y, e.dam.radius, "sunburst", {radius=e.dam.radius * 0.92, grids=grids, tx=e.x, ty=e.y, max_alpha=80})
 
 					-- scorched earth
-					if self:isTalentActive(self.T_REK_SHINE_INCINERATOR_WORLD_CUTTER) then
+					if e.src:isTalentActive(e.src.T_REK_SHINE_INCINERATOR_WORLD_CUTTER) then
 						local se_duration = 4
-						if self:isTalentActive(self.T_REK_SHINE_INCINERATOR_INCINERATOR) then
-							se_duration = se_duration + self:callTalent("T_REK_SHINE_INCINERATOR_INCINERATOR", "getExtraDuration")
+						if e.src:isTalentActive(e.src.T_REK_SHINE_INCINERATOR_INCINERATOR) then
+							se_duration = se_duration + e.src:callTalent("T_REK_SHINE_INCINERATOR_INCINERATOR", "getExtraDuration")
 						end
-						game.level.map:addEffect(self, e.x, e.y, se_duration, DamageType.LIGHT, self:callTalent("T_REK_SHINE_INCINERATOR_WORLD_CUTTER", "getDamage"), 0, 5, grids, {type="inferno"}, nil, self:spellFriendlyFire())
+						game.level.map:addEffect(e.src, e.x, e.y, se_duration, DamageType.LIGHT, e.src:callTalent("T_REK_SHINE_INCINERATOR_WORLD_CUTTER", "getDamage"), 0, 5, grids, {type="inferno"}, nil, e.src:spellFriendlyFire())
 					end
 					
 					e.duration = 0
 					for _, ps in ipairs(e.particles) do game.level.map:removeParticleEmitter(ps) end
 					e.particles = nil
-					game:playSoundNear(self, "talents/fireflash")
+					game:playSoundNear(e.src, "talents/fireflash")
 					--let map remove it
 				end
 			end)
@@ -197,8 +197,8 @@ newTalent{
 			game.logSeen(self, "%s emerges in a flash of light!", self:getName():capitalize())
 			game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
 		end
-		
-		game:playSoundNear(self, "talents/teleport")
+
+		game:playSoundNear(self, "talents/sun_move")
 		return true
 	end,
 	info = function(self, t)

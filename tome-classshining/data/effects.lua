@@ -203,13 +203,13 @@ newEffect{
 }
 
 newEffect{
-	name = "EFF_REK_SHINE_GRAVE_OF_SUNS_DOOM", image = "talents/rek_shine_core_gate_grave_of_suns",
+	name = "REK_SHINE_GRAVE_OF_SUNS_DOOM", image = "talents/rek_shine_core_gate_grave_of_suns",
 	desc = "Doom of the Core",
 	long_desc = function(self, eff)
 		local source = eff.src or self
-		return ("Deals %0.2f darkness damge when a new stack is applied and kills the victim at %d stacks."):format(source:damDesc("DARKNESS", eff.power*eff.stacks), eff.cap)
+		return ("Deals %0.2f darkness damge when a new stack is applied and kills the victim at %d stacks."):format(source:damDesc("DARKNESS", eff.power*eff.stacks), eff.max_stacks)
 	end,
-	charges = function(self, eff) return (math.floor(eff.stacks * 10).."%") end,
+	charges = function(self, eff) return eff.stacks end,
 	type = "magical",
 	subtype = { darkness=true, gravity=true },
 	status = "detrimental",
@@ -220,10 +220,10 @@ newEffect{
 		old_eff.dur = new_eff.dur
 		old_eff.stacks = math.min(old_eff.stacks + new_eff.stacks, new_eff.max_stacks)
 		DamageType:get(DamageType.DARKNESS).projector(old_eff.src, self.x, self.y, DamageType.DARKNESS, old_eff.power * old_eff.stacks)
-		if old_eff.stacks >= old_eff.max_stacks and self:canBe("instakill") then
+		if old_eff.stacks >= old_eff.max_stacks and (self.life < self.max_life / 3) and self:canBe("instakill") then
 			self:die(old_eff.src)
-		end`
-		return old_eff		
+		end
+		return old_eff
 	end,
 	activate = function(self, eff)
 		DamageType:get(DamageType.DARKNESS).projector(eff.src, self.x, self.y, DamageType.DARKNESS, eff.power)
