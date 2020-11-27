@@ -21,12 +21,10 @@ newTalent{
 	end,
 	range = function(self, t) return math.min(10, self:combatTalentScale(t, 6, 10)) end,
 	getReload = function(self, t) return math.floor(self:combatTalentScale(t, 1, 3)) end,
-	autoshoot = function(self, range, dam, multiplier, power, x, y)
-		self.turn_procs.quickdraw = true
+	autoshoot = function(self, range, x, y)
 		local tg = {
 			speed = 6, type="bolt", range=range, selffire=false, friendlyfire=false, friendlyblock=false,
 			display=self:archeryDefaultProjectileVisual(nil, self:hasAmmo())
-			--{display='', particle="arrow", particle_args={tile="particles_images/particle_stone"} }
 		}
 		local proj = self:projectile(
 			tg, x, y,
@@ -44,10 +42,11 @@ newTalent{
 							combat["melee_project"] = v
 						end
 					end
-					--if not combat.multiplied then
-					 	combat.dam = combat.dam * (1 + multiplier)
-					 	combat.multiplied = true
-					--end
+					local multiplier = self:callTalent(self.T_REK_DEML_DRONE_GUNNER, "getPercentInc")
+					local dam = self:callTalent(self.T_REK_DEML_DRONE_GUNNER, "getDamage")
+					local power = self:callTalent(self.T_REK_DEML_DRONE_GUNNER, "getPower")
+
+					combat.dam = combat.dam * (1 + multiplier)
 					local tempPow = self:addTemporaryValue("combat_dam", power)
 					local hit = self:attackTargetWith(target, combat, nil, dam)
 					self:removeTemporaryValue("combat_dam", tempPow)
@@ -90,7 +89,7 @@ newTalent{
 			end
 			local _ _, x, y = self:canProject(tg, a.x, a.y)
 			game:playSoundNear(self, {"talents/single_steamgun", vol=0.8})
-			local proj = t.autoshoot(self, tg.range, t.getDamage(self, t),  t.getPercentInc(self, t), t.getPower(self, t), x, y)
+			local proj = t.autoshoot(self, tg.range, x, y)
 			proj.name = "gunner drone"
 			if not ammo.infinite then
 				if ammo.combat.shots_left <= 0 then return nil end
