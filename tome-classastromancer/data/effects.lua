@@ -408,33 +408,33 @@ newEffect{
 
 
 newEffect{
-   name = "WANDER_CORROSIVE_WORM", image = "talents/corrosive_worm.png",
-   desc = "Corrosive Worm",
-   long_desc = function(self, eff) return ("The target is infected with a lesser manaworm, reducing damage resistance by %d%%. When the effect ends, the worm will explode, dealing %d arcane damage in a 2 radius ball. This damage will increase by %d%% of all damage taken while under this effect"):format(eff.power, eff.finaldam, eff.rate*100) end,
-   type = "magical",
-   subtype = { arcane=true },
-   status = "detrimental",
-   parameters = { power=20, rate=10, finaldam=50, },
-   on_gain = function(self, err) return "#Target# is infected by a corrosive worm.", "+Corrosive Manaworm" end,
-   on_lose = function(self, err) return "#Target# is free from the corrosive worm.", "-Corrosive Manaworm" end,
-   activate = function(self, eff)
-      eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=0, oversize=0.7, a=255, appear=8, speed=0, img="blight_worms", radius=0}))
-      self:effectTemporaryValue(eff, "resists", {all=-eff.power})
-   end,
-   deactivate = function(self, eff)
-      local tg = {type="ball", radius=2, selffire=false, friendlyfire=false, x=self.x, y=self.y}
-      eff.src:project(tg, self.x, self.y, DamageType.MANABURN, eff.finaldam, {type="acid"})
-      self:removeParticles(eff.particle)
-   end,
-   callbackOnHit = function(self, eff, cb)
-      eff.finaldam = eff.finaldam + (cb.value * eff.rate)
-      return true
-   end,
-   
-   on_die = function(self, eff)
-      local tg = {type="ball", radius=2, selffire=false, x=self.x, y=self.y}
-      eff.src:project(tg, self.x, self.y, DamageType.MANABURN, eff.finaldam, {type="acid"})
-   end,
+	name = "WANDER_CORROSIVE_WORM", image = "talents/corrosive_worm.png",
+	desc = "Corrosive Worm",
+	long_desc = function(self, eff) return ("The target is infected with a lesser manaworm, reducing damage resistance by %d%%. When the effect ends, the worm will explode, dealing %d arcane damage in a 2 radius ball. This damage will increase by %d%% of all damage taken while under this effect"):format(eff.power, eff.finaldam, eff.rate*100) end,
+	type = "magical",
+	subtype = { arcane=true },
+	status = "detrimental",
+	parameters = { power=20, rate=10, finaldam=50, },
+	on_gain = function(self, err) return "#Target# is infected by a corrosive worm.", "+Corrosive Manaworm" end,
+	on_lose = function(self, err) return "#Target# is free from the corrosive worm.", "-Corrosive Manaworm" end,
+	activate = function(self, eff)
+		eff.projector = eff.src.summoner or eff.src
+		eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=0, oversize=0.7, a=255, appear=8, speed=0, img="blight_worms", radius=0}))
+		self:effectTemporaryValue(eff, "resists", {all=-eff.power})
+	end,
+	deactivate = function(self, eff)
+		local tg = {type="ball", radius=2, selffire=false, friendlyfire=false, x=self.x, y=self.y}
+		eff.src:project(tg, self.x, self.y, DamageType.MANABURN, eff.finaldam, {type="acid"})
+		self:removeParticles(eff.particle)
+	end,
+	callbackOnHit = function(self, eff, cb)
+		eff.finaldam = eff.finaldam + (cb.value * eff.rate)
+		return true
+	end,
+	on_die = function(self, eff)
+		local tg = {type="ball", radius=2, selffire=false, x=self.x, y=self.y}
+		eff.projector:project(tg, self.x, self.y, DamageType.MANABURN, eff.finaldam, {type="acid"})
+	end,
 }
 
 newEffect{

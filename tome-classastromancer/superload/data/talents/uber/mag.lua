@@ -31,7 +31,7 @@ Talents.talents_def.T_BLIGHTED_SUMMONING.doBlightedSummon = function(self, t, wh
 			who:learnTalent(who.T_FLAME_OF_URH_ROK,true,tlevel)
 			who:forceUseTalent(who.T_FLAME_OF_URH_ROK, {ignore_energy=true})
 		elseif who.subtype == "cold" then
-			who:learnTalent(who.T_CORROSIVE_VAPOUR,true,tlevel)
+			who:learnTalent(who.T_WANDER_CORROSIVE_VAPOUR,true,tlevel)
 		elseif who.subtype == "water" then
 			who:learnTalent(who.T_BLOOD_SPRAY,true,tlevel)
 		elseif who.name == "Losgoroth" then

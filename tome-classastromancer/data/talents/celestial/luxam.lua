@@ -2,19 +2,55 @@
 local Object = require "engine.Object"
 local Map = require "engine.Map"
 
+newTalent{
+	name = "Corrosive Vapour", short_name = "WANDER_CORROSIVE_VAPOUR",
+	type = {"spell/other",1},	require = spells_req1, points = 5,
+	mana = 20,
+	cooldown = 8,
+	tactical = { ATTACKAREA = { ACID = 2 } },
+	range = 8,
+	radius = 3,
+	requires_target = true,
+	target = function(self, t)
+		return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), friendlyfire=false}
+	end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 6, 75) end,
+	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+		local _ _, _, _, x, y = self:canProject(tg, x, y)
+		local ff = self:attr("nullify_all_friendlyfire") ~= nil
+		-- Add a lasting map effect
+		game.level.map:addEffect(self,
+			x, y, t.getDuration(self, t),
+			DamageType.ACID, self:spellCrit(t.getDamage(self, t)),
+			self:getTalentRadius(t),
+			5, nil,
+			{type="vapour"},
+			nil, false, not ff
+		)
+		game:playSoundNear(self, "talents/cloud")
+		return true
+	end,
+	info = function(self, t)
+		local damage = t.getDamage(self, t)
+		local duration = t.getDuration(self, t)
+		return ([[Corrosive fumes rise from the ground doing %0.2f acid damage in a radius of 3 each turn for %d turns.
+		The damage will increase with your Spellpower.]]):
+		tformat(damDesc(self, DamageType.ACID, damage), duration)
+	end,
+}
 
 newTalent{
 	name = "Glacial Vapor", short_name = "WANDER_ICE_VAPOR",
-	type = {"spell/other",1},
-	require = spells_req1,
-	points = 5,
-	random_ego = "attack",
+	type = {"spell/other",1}, require = spells_req1, points = 5,
 	mana = 12,
-	cooldown = 8,
+	cooldown = 5,
 	tactical = { ATTACKAREA = { COLD = 2 } },
 	range = 8,
 	radius = 3,
-	direct_hit = true,
 	requires_target = true,
 	target = function(self, t)
 		return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, friendlyfire=false }
@@ -29,7 +65,7 @@ newTalent{
 		-- Add a lasting map effect
 		game.level.map:addEffect(self,
 			x, y, t.getDuration(self, t),
-			DamageType.LUXAM_VAPOUR, t.getDamage(self, t),
+			DamageType.LUXAM_VAPOUR, self:spellCrit(t.getDamage(self, t)),
 			self:getTalentRadius(t),
 			5, nil,
 			{type="ice_vapour"},
