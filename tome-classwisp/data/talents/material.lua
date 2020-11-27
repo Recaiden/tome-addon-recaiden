@@ -60,7 +60,7 @@ newTalent{
 	info = function(self, t)
 		return ([[Ultra-thin plates of crystal allow you to fly short distances on telekinetic currents.  Jump to a space within range %d, cutting creatures in your path with the crystal edges for %0.2f bleed damage.  If you land within range 4 of an enemy, this talent's cooldown is reduced by 2/3.
 Mindpower: improves	damage]]):
-		format(self:getTalentRange(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)*1.5))
+		format(self:getTalentRange(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)))
 	end,
 }
 
@@ -142,7 +142,7 @@ newTalent{
 		local NPC = require "mod.class.NPC"
 		local wall = NPC.new{
 			type = "immovable", subtype = "wall",
-			display = "#", blood_color = colors.GRAY,
+			display = "#", blood_color = colors.GRAY, image = "npc/threadwall.png",
 			stats = { str=t.getStats(self, t), dex=t.getStats(self, t), wil=t.getStats(self, t), mag=t.getStats(self, t), con=t.getStats(self, t), cun=t.getStats(self, t) },
 			infravision = 10,
 			no_breath = 1,
@@ -151,7 +151,7 @@ newTalent{
 			on_bump = function(self, bumper) return nil end,
 			name = "thread wall", color=colors.GRAY,
 			desc = "A wall of countless thin fibers blocks your path.",
-			resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/threadwall.png", display_h=1, display_y=-1}}},
+			--resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/threadwall.png"}}},
 			level_range = {self.level, self.level}, exp_worth = 0,
 			rank = 2,
 			size_category = 4,

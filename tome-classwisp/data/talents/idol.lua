@@ -15,6 +15,33 @@ numIdolAurasKnown = function(self)
 	return num
 end
 
+local idol_on_pre_use_ai = function(self, t, silent, fake)
+	if self.ai_state._advanced_ai then return true end -- let the AI decide when to use
+	local aitarget = self.ai_target.actor
+	if not aitarget or self:reactionToward(aitarget) >= 0 then -- no hostile target, keep activated
+		return not self:isTalentActive(t.id)
+	end
+	return true -- requires_target controls if active
+end
+
+local idol_tactical = function(self, t, aitarget)
+	local log_detail = 2--config.settings.log_detail_ai or 0
+	local is_active = self:isTalentActive(t.id)
+	local psi_val, aura_cost = self:getPsi(), t.getAuraCost(self, t) or 0
+	
+	local tacs = {
+		self = {
+			BUFF =  1,
+			PSI = -1*aura_cost
+		},
+	}
+	if is_active and psi_val >= t.getSpikeCost(self, t) then --add spike tactics
+		table.merge(tacs, t.tactical_spike)
+	end
+	if log_detail > 1 then print(" == PROJECTION TACTICS == final tactics:", t.id) table.print(tacs, "\t_ft_") end
+	return tacs
+end
+
 newTalent{
 	name = "Star Power", short_name = "REK_GLR_IDOL_STARPOWER",
 	type = {"psionic/other", 1},
@@ -50,10 +77,16 @@ newTalent{
 	no_sustain_autoreset = true,
 	sustain_psi = 10,
 	range = 7,
+	on_pre_use_ai = idol_on_pre_use_ai,
+	tactical = idol_tactical,
+	tactical_spike = {
+		DISABLE = function(self, t, target)
+			return math.floor(((target.max_life - target.life) / target.max_life) * 5 ) - 1
+		end},
 	on_learn = function(self, t) self:learnTalent(self.T_REK_GLR_IDOL_STARPOWER, true) end,
 	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
 	getSpikeCost = function(self, t) return 20 end,
-	spikeTarget = function(self, t) return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
+	spikeTarget = function(self, t) return {type="hit", nolock=true, nowarning=true, range=self:getTalentRange(t)} end,
 	getAuraCost = function(self, t) return 2.0 end,
 	auraRange = function(self, t) return 0 end,
 	auraRadius = function(self, t) return 10 end,
@@ -69,7 +102,7 @@ newTalent{
 	end,
 	callbackOnAct = function(self, t)
 		local tg = t.auraTarget(self, t)
-		local dur = t.getDuration(self, t)
+		local dur = math.max(1, t.getDuration(self, t)-1)
 		local durImm = t.getImmunityDuration(self, t)
 		local paid = false
 		self:project(
@@ -111,6 +144,7 @@ newTalent{
 		end
 		local actor = game.level.map(x, y, Map.ACTOR)
 		if core.fov.distance(self.x, self.y, x, y) == 0 then return true end
+		if core.fov.distance(self.x, self.y, x, y) > self:getTalentRange(t) then return nil end
 		if not actor then return end		
 		local missing = (actor.max_life - actor.life) / actor.max_life
 		actor.energy.value = actor.energy.value - game.energy_to_act * (missing / 0.2)
@@ -153,6 +187,9 @@ newTalent{
 	points = 5,
 	cooldown = 20,
 	no_energy = function(self, t) return not self:isTalentActive(t.id) end,
+	on_pre_use_ai = idol_on_pre_use_ai,
+	tactical = idol_tactical,
+	tactical_spike = { DISABLE = 3 },
 	mode = "sustained",
 	no_sustain_autoreset = true,
 	sustain_psi = 10,
@@ -161,9 +198,9 @@ newTalent{
 	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
 	getSpikeCost = function(self, t) return 12 end,
 	getAuraCost = function(self, t) return 1.0 end,
-	spikeTarget = function(self, t) return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
+	spikeTarget = function(self, t) return {type="hit", nolock=true, nowarning=true, range=self:getTalentRange(t)} end,
 	auraRange = function(self, t) return 0 end,
-	auraRadius = function(self, t) return 4 end,
+	auraRadius = function(self, t) return self.getTalentRange and self:getTalentRange(t) or 4 end,
 	auraTarget = function(self, t)
 		return {type="ball", range=t.auraRange(self, t), radius=t.auraRadius(self, t), selffire=false, friendlyfire=false}
 	end,
@@ -213,6 +250,7 @@ newTalent{
 
 		local actor = game.level.map(x, y, Map.ACTOR)
 		if core.fov.distance(self.x, self.y, x, y) == 0 then return true end
+		if core.fov.distance(self.x, self.y, x, y) > self:getTalentRange(t) then return nil end
 		if not actor then return end
 		actor:setEffect(actor.EFF_DELIRIOUS_CONCUSSION, t.getDuration(self, t), {apply_power=self:combatMindpower()})
 		game:playSoundNear(self, "talents/arcane")
@@ -251,14 +289,21 @@ newTalent{
 	points = 5,
 	no_energy = true,
 	mode = "sustained",
+	on_pre_use_ai = idol_on_pre_use_ai,
+	tactical = idol_tactical,
+	tactical_spike = { ESCAPE = 2, CLOSEIN = 1 },
+	no_sustain_autoreset = true,
 	cooldown = 15,
+	range = 4,
 	on_learn = function(self, t) self:learnTalent(self.T_REK_GLR_IDOL_STARPOWER, true) end,
 	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
 	auraRange = function(self, t) return 0 end,
-	auraRadius = function(self, t) return 4 end,
+	auraRadius = function(self, t) return self.getTalentRange and self:getTalentRange(t) or 4 end,
 	auraTarget = function(self, t)
 		return {type="ball", range=t.auraRange(self, t), radius=t.auraRadius(self, t), selffire=false, friendlyfire=false}
 	end,
+	getAuraCost = function(self, t) return -1 end,
+	getSpikeCost = function(self, t) return -25 end,
 	getSpeedBoost = function(self, t) return 1 + self:getTalentLevel(t) end,
 	getPsiRefund = function(self, t) return self:combatTalentScale(t, 0.1, 0.8) end,
 	getKillMultiplier = function(self, t) return 25 end,
@@ -372,7 +417,11 @@ newTalent{
 		return {dam=dam}
 	end,
 	callbackOnDeath = function(self, t, src, death_note)
-		death_note.special_death_msg = ("was taken captive by %s and never seen again"):format(src.name or "someone")
+		if not death_note then
+			death_note = {special_death_msg = ("was taken captive by %s and never seen again"):format(src and src.name or "someone")}
+			return
+		end
+		death_note.special_death_msg = ("was taken captive by %s and never seen again"):format(src and src.name or "someone")
 	end,
 	activate = function(self, t)
 		game:playSoundNear(self, "talents/heal")

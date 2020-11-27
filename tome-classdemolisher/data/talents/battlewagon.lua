@@ -1,11 +1,39 @@
 newTalent{
 	name = "Heavy Tread", short_name = "REK_DEML_BATTLEWAGON_HEAVY",
-	type = {"steamtech/battlewagon", 1},
-	require = steam_req_high1,
-	points = 5,
+	type = {"steamtech/battlewagon", 1},	require = steam_req_high1,	points = 5,
 	mode = "passive",
-	on_learn = function(self, t) updateSteelRider(self) end,
-	on_unlearn = function(self, t) updateSteelRider(self) end,
+	no_unlearn_last = true,
+	on_learn = function(self, t)
+		local level = self:getTalentLevelRaw(t)
+		if level == 1 then
+			for inven_id, inven in pairs(self.inven) do
+				if inven.worn then
+					for item, o in ipairs(inven) do
+						if o and item and o.wielder and o.wielder.max_life then
+							t.callbackOnWear(self, t, o, false)
+						end
+					end
+				end
+			end
+		end
+		updateSteelRider(self)
+	end,
+	on_unlearn = function(self, t)
+		local level = self:getTalentLevelRaw(t)
+		if level == 0 then
+			for inven_id, inven in pairs(self.inven) do
+				if inven.worn then
+					for item, o in ipairs(inven) do
+						if o and item and o.wielder and o.wielder.max_life and o.wielder.max_hull then
+							self:onTakeoff(o, inven_id, true)
+							self:onWear(o, inven_id, true)
+						end
+					end
+				end
+			end
+		end
+		updateSteelRider(self)
+	end,
 	getHullBoost = function(self, t) return self:combatTalentScale(t, 50, 300) end,
 	getKnockImmune = function(self, t) return math.min(1, self:combatTalentScale(t, 0.1, 0.90, 0.5)) end,
 	getRamBoost = function(self, t) return self:combatTalentScale(t, 0.3, 0.90) end,

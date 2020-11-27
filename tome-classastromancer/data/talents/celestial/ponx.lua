@@ -17,7 +17,7 @@ newTalent{
 	direct_hit = true,
 	requires_target = true,
 	target = function(self, t)
-		return {type="beam", range=self:getTalentRange(t), talent=t}
+		return {type="beam", range=self:getTalentRange(t), talent=t, ignore_nullify_all_friendlyfire=true}
 	end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 13, 192) end,
 	action = function(self, t)
@@ -183,7 +183,7 @@ newTalent{
 	direct_hit = true,
 	reflectable = true,
 	requires_target = true,
-	target = function(self, t) return {type="bolt", range=self:getTalentRange(t), nowarning=true, talent=t} end,
+	target = function(self, t) return {type="bolt", range=self:getTalentRange(t), nowarning=true, talent=t, ignore_nullify_all_friendlyfire=true} end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 250) end,
 	getTargetCount = function(self, t) return math.floor(self:combatTalentScale(t, 4, 8, "log")) end,
 	action = function(self, t)
@@ -202,7 +202,7 @@ newTalent{
 										 first = actor
 										 
 										 
-										 self:project({type="ball", selffire=false, x=dx, y=dy, radius=10, range=0}, dx, dy, function(bx, by)
+										 self:project({type="ball", selffire=false, x=dx, y=dy, radius=10, range=0, ignore_nullify_all_friendlyfire=true}, dx, dy, function(bx, by)
 																		local actor = game.level.map(bx, by, Map.ACTOR)
 																		if actor and not affected[actor] then
 																			affected[actor] = true
@@ -228,7 +228,7 @@ newTalent{
 			dam = dam * 1.1
 		end
 		for i, actor in ipairs(targets) do
-			local tgr = {type="beam", range=self:getTalentRange(t), selffire=true, talent=t, x=sx, y=sy}
+			local tgr = {type="beam", range=self:getTalentRange(t), selffire=true, talent=t, x=sx, y=sy, ignore_nullify_all_friendlyfire=true}
 			
 			self:project(tgr, actor.x, actor.y, DamageType.GOOD_LIGHTNING, {dam=rng.avg(rng.avg(dam / 3, dam, 3), dam, 5)})
 			
@@ -405,19 +405,20 @@ newTalent{
 		end
 		
 		-- Randomly take targets
-		local tg = {type="hit", range=self:getTalentRange(t), talent=t, friendlyfire=true}
+		local tg = {type="hit", range=self:getTalentRange(t), talent=t, friendlyfire=true, ignore_nullify_all_friendlyfire=true}
 		if #tgts > 0 then
 			game:playSoundNear(self, "talents/lightning")
 			if not self:attr("zero_resource_cost") and not self:attr("force_talent_ignore_ressources") then
 				self:incNegative(nrg)
 			end
 		end
+		local dam = self:spellCrit(t.getDamage(self, t))
 		for i = 1, t.getTargetCount(self, t) do
 			if #tgts <= 0 then break end
 			local a, id = rng.table(tgts)
 			table.remove(tgts, id)
 			
-			self:project(tg, a.x, a.y, DamageType.GOOD_LIGHTNING, {dam=rng.avg(1, self:spellCrit(t.getDamage(self, t)), 3)})
+			self:project(tg, a.x, a.y, DamageType.GOOD_LIGHTNING, {dam=rng.avg(1, dam, 3)})
 			
 			game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(a.x-self.x), math.abs(a.y-self.y)), "lightning", {tx=a.x-self.x, ty=a.y-self.y})
 		end

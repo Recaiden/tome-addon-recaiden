@@ -1,7 +1,16 @@
 newTalent{
 	name = "Cosmic Awareness", short_name = "REK_GLR_NIGHTMARE_AWARENESS",
 	type = {"psionic/unleash-nightmare", 1},
-	require = wil_req_high1,
+	require = {
+		stat = { wil=function(level) return 22 + (level-1) * 2 end },
+		level = function(level) return 10 + (level-1)  end,
+		special={
+			desc="No other Unleash tree",
+			fct=function(self)
+				return not (self:knowTalentType("psionic/unleash-abomination") == true)
+			end
+		}
+	},
 	points = 5,
 	cooldown = 20,
 	no_energy = true,

@@ -140,7 +140,6 @@ newTalent{
 	cooldown = 8,
 	psi = 10,
 	require = dex_req3,
-	range = archery_range,
 	tactical = { ATTACK = { weapon = 2 } },
 	requires_target = true,
 	range = archery_range,

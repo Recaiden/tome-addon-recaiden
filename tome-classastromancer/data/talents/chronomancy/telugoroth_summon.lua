@@ -18,7 +18,7 @@ newTalent{
 	end,
 	getStatMultiplier = function(self, t) return self:combatTalentScale(t, 0.2, 1, 0.75) end,
 	incStats = function(self, t, fake)
-		local mp = self:combatSpellpower()
+		local mp = getParadoxSpellpower(self, t)
 		local mult = t.getStatMultiplier(self, t)
 		return{ 
 			mag=(fake and mp or self:spellCrit(mp)) * 1.25 * mult,
@@ -139,7 +139,7 @@ newTalent{
 		return ([[Conjure a teluvorta from the weave of time for %d turns. These living Time Storms disintegrate and stun enemies as they teleport around.
 Its talenbts improve with talent level.
 It will gain bonus stats (increased further by spell criticals): %d Constitution, %d Magic, %d Willpower, %d Cunning.
-It gains bonus Spellpower equal to your own.
+It gains bonus Spellpower equal to your Paradox Spellpower.
 It inherits your: increased damage%%, resistance penetration, pin immunity, armour penetration.]]):format(t.summonTime(self, t), incStats.con, incStats.mag, incStats.wil, incStats.cun)
 	end,
 }

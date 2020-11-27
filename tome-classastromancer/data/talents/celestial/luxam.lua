@@ -327,7 +327,7 @@ newTalent{
 	radius = 1,
 	direct_hit = true,
 	requires_target = true,
-	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, talent=t, display={particle="bolt_ice", trail="icetrail"}} end,
+	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, talent=t, display={particle="bolt_ice", trail="icetrail"}, ignore_nullify_all_friendlyfire=true} end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 18, 180) end,
 	getDur = function(self, t) return math.floor(self:combatTalentScale(t, 3.6, 6.3)) end,
 	getSpeed = function(self, t) return math.min(self:getTalentLevel(t) * 0.095, 0.6) end,

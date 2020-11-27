@@ -83,7 +83,7 @@ newTalent{
 	info = function(self, t)
 		return ([[Something is watching over you.  When damaged, there is a 10%% chance that a psionic guardian will appear to distract your enemies.  The guardian lasts for 3 turns and does no damage but constantly taunts enemies within 2 spaces to attack it.
 The guardian has %d life (increased by mental critical), %d armor, and %d%% resistance to all damage.
-Mindpower: improves	damage, life, resists, and armor
+Mindpower: improves the guardian's life, resists, and armor
 
 Passively allows your arrows to travel harmlessly aroud friendly targets.]]):
 		format(t.getHP(self, t), t.getArmor(self, t), t.getResist(self, t))
@@ -169,7 +169,7 @@ newTalent{
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
 		local spreadFactor = t.getSpreadFactor(self, t)
-		return ([[Erase perceptions of yourself from the minds of nearby enemies, inflicing %0.2f mind damage and rendering you invisible (%d power) for %d turns. Each target after the first will reduce the damage by %d%% and the duration of the invisiblity by 1.  You require an enemy in range to use this talent.
+		return ([[Erase perceptions of yourself from the minds of nearby enemies, inflicting %0.2f mind damage and rendering you invisible (%d power) for %d turns. Each target after the first will reduce the damage by %d%% and the duration of the invisiblity by 1.  You require an enemy in range to use this talent.
 Mindpower: increases damage and invisibility power]]):format(damDesc(self, DamageType.MIND, damage), t.getInvisibilityPower(self, t), t.getBaseDuration(self, t), (1 - spreadFactor) * 100)
 	end,
 }

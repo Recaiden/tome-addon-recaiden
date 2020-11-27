@@ -1,7 +1,16 @@
 newTalent{
 	name = "Telekinetic Supremacy", short_name = "REK_GLR_ABOMINATION_SUPREMACY",
 	type = {"psionic/unleash-abomination", 1},
-	require = wil_req_high1,
+	require = {
+		stat = { wil=function(level) return 22 + (level-1) * 2 end },
+		level = function(level) return 10 + (level-1)  end,
+		special={
+			desc="No other Unleash tree",
+			fct=function(self)
+				return not (self:knowTalentType("psionic/unleash-nightmare") == true)
+			end
+		}
+	},
 	points = 5,
 	cooldown = 18,
 	no_energy = true,
@@ -19,7 +28,7 @@ newTalent{
 			self:learnTalentType("psionic/unleash-nightmare", false)
 		end
 	end,
-	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.5, 0.75) end,
+	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.2, 0.6) end,
 	getSpeed = function(self, t) return self:combatTalentScale(t, 0.5, 1.5) end,
 	callbackOnArcheryAttack = function(self, t, target, hitted, crit, weapon, ammo, damtype, mult, dam, talent)
 		if talent == t then return end
@@ -29,7 +38,7 @@ newTalent{
 		local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy = true})
 		if targets then --this mostly checks that we still have ammo
 			self:attr("instant_shot", 1)
-			self:archeryShoot(targets, t, {type = "bolt", start_x=target.x, start_y=target.y}, {mult=mult*t.getDamage(self, t)})
+			self:archeryShoot(targets, t, {type = "bolt", start_x=target.x, start_y=target.y}, {mult=mult*t.getDamage(self, t) / (self.__global_accuracy_damage_bonus or 1), glr_pinpoint=true})
 			self:attr("instant_shot", -1)
 		end
 		game.target.forced = old_target_forced
@@ -79,9 +88,11 @@ newTalent{
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t)} end,
 	getCount = function (self, t) return 3 end,
 	getConversionDamage = function (self, t) return self:combatTalentWeaponDamage(t, 0.30, 0.65) end,
-	getAmmo = function (self, t) return self:combatTalentScale(t, 3, 8) end,
+	getAmmo = function (self, t) return math.ceil(self:combatTalentScale(t, 3, 8)) end,
 	getReadySpeed = function (self, t) return self:combatTalentMindDamage(t, 0.20, 0.90) end,
-	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
+	--on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
+	on_pre_use = function(self, t, silent) if not self:hasArcheryWeapon("bow") then if not silent then game.logPlayer(self, "You require a bow for this talent.") end return false end return true end,
+
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y, target = self:getTarget(tg)
@@ -130,12 +141,12 @@ newTalent{
 		local old_target_forced = game.target.forced
 		game.target.forced = {src.x, src.y, src}
 		local targets = self:archeryAcquireTargets({type = "hit", speed = 200}, {infinite=true, one_shot=true, no_energy = true})
-		if not targets then return end --no ammo
-		game.target.forced = old_target_forced
-
-
+		if not targets then
+			game.target.forced = old_target_forced
+			return {dam=dam}
+		end
+		
 		game.logSeen(src, "%s is interrupted by a telepathically aimed shot!", src.name:capitalize())
-
 		src.turn_procs = src.turn_procs or {}
 		src.turn_procs.rek_glr_telepathic_aim = true
 		dam = dam * (1 - t.getReduction(self, t))
@@ -146,6 +157,7 @@ newTalent{
 		self:attr("instant_shot", 1)
 		self:archeryShoot(targets, t, {type = "hit", speed = 200}, params)
 		self:attr("instant_shot", -1)
+		game.target.forced = old_target_forced
 		return {dam=dam}
 	end,
 
