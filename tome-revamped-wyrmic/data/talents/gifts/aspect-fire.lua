@@ -30,6 +30,7 @@ newTalent{
 	    talent=self.T_REK_WYRMIC_FIRE
 	 }
       end
+      onLearnAspect(self, t)
    end,
    on_unlearn = function(self, t) onUnLearnAspect(self) end,
    
@@ -100,7 +101,8 @@ newTalent{
    },
    points = 5,
    mode = "passive",
-   getLeech = function(self, t) return self:combatTalentScale(t, 3, 8) end,
+   getLeech = function(self, t) return self:combatTalentScale(t, 1, 3) end,
+   getMaxHeal = function(self, t) return self:combatTalentMindDamage(t, 20, 120) end,
    on_learn = function(self, t) onLearnHigherAbility(self, t) end,
    on_unlearn = function(self, t) onUnLearnHigherAbility(self, t) end,
    callbackOnDealDamage = function(self, t, val, target, dead, death_note)
@@ -114,8 +116,16 @@ newTalent{
       end
       if not burning then return end
       
-      local leech = t.getLeech(self, t)
-      self:heal(leech * val / 100, self)
+      local cap = t.getMaxHeal(self, t)
+      local used = self.turn_procs.rek_wyrmic_fire_heal or 0
+      if used > 0 then cap = cap - used end
+      if used < cap then
+         local amt = t.getLeech(self, t) * val / 100
+         self:attr("allow_on_heal", 1)
+         self:heal(amt, self)
+         self:attr("allow_on_heal", -1)
+         self.turn_procs.rek_wyrmic_fire_heal = used + amt
+      end
    end,
    
    info = function(self, t)
@@ -123,7 +133,7 @@ newTalent{
 
 
 #YELLOW#Learning the advanced flame talents costs a category point.#LAST#]] or ""
-      return ([[The fire wyrm is sutained by destruction.  All damage you do to burning targets heals you for %d%% of the damage done.%s]]):format(t.getLeech(self, t), notice)
+return ([[The fire wyrm is sutained by destruction.  All damage you do to burning targets heals you for %d%% of the damage done, up to a maximum of %d healed each turn.%s]]):format(t.getLeech(self, t), t.getMaxHeal(self, t), notice)
    end,
 }
 

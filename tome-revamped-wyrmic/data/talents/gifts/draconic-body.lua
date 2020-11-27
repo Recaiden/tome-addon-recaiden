@@ -75,33 +75,31 @@ Mindpower: improves healing factor.]]):format(t.getHealing(self, t) / 2, t.getHe
          }
 
 newTalent{
-   name = "Scaled Skin", short_name = "REK_WYRMIC_COMBAT_SCALES",
-   type = {"wild-gift/draconic-body", 2},
-   require = techs_req2,
-   mode = "passive",
-   points = 5,
-   getArmor = function(self, t) return self:combatTalentMindDamage(t, 5, 25) end,
-   getArmorHardiness = function(self, t) return self:combatTalentLimit(t, 30, 10, 22) end,
-   getLightArmorHardiness = function(self, t) return 15 end,
-   passives = function(self, t)
-      self:talentTemporaryValue("combat_armor", t.getArmor(self, t))
-      local hardi = 0
-      if not self:hasHeavyArmor() then
-	 hardi = hardi + t.getLightArmorHardiness(self, t)
-      end
-      self:talentTemporaryValue("combat_armor_hardiness", hardi)
-   end,
-   updateHardiness = function(self, t)  self:updateTalentPassives(t.id)  end,
-   callbackOnWear = function(self, t, o, bypass_set) t.updateHardiness(self, t) end,
-   callbackOnTakeoff = function(self, t, o, bypass_set) t.updateHardiness(self, t) end,  
-   
-   info = function(self, t)
-      return ([[Your skin forms a coat of scales and your flesh toughens, increasing your Armour by %d.
+	name = "Scaled Skin", short_name = "REK_WYRMIC_COMBAT_SCALES",
+	type = {"wild-gift/draconic-body", 2},
+	require = techs_req2,
+	mode = "passive",
+	points = 5,
+	getArmor = function(self, t) return self:combatTalentMindDamage(t, 5, 25) end,
+	getLightArmorHardiness = function(self, t) return 15 end,
+	passives = function(self, t, p)
+		self:talentTemporaryValue(p, "combat_armor", t.getArmor(self, t))
+		local hardi = 0
+		if not self:hasHeavyArmor() then
+			hardi = hardi + t.getLightArmorHardiness(self, t)
+		end
+		self:talentTemporaryValue(p, "combat_armor_hardiness", hardi)
+	end,
+	updateHardiness = function(self, t) self:updateTalentPassives(t.id)  end,
+	callbackOnWear = function(self, t, o, bypass_set) t.updateHardiness(self, t) end,
+	callbackOnTakeoff = function(self, t, o, bypass_set) t.updateHardiness(self, t) end,  
+	info = function(self, t)
+		return ([[Your skin forms a coat of scales and your flesh toughens, increasing your Armour by %d.
 If you are wearing leather armor or lighter, your armor hardiness is increased by +%d%%.
 
 Mindpower: improves Armour bonus.
-]]):format(t.getArmorHardiness(self, t), t.getArmor(self, t), t.getLightArmorHardiness(self, t))
-   end,
+]]):format(t.getArmor(self, t), t.getLightArmorHardiness(self, t))
+	end,
 }
 
 newTalent{

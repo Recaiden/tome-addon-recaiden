@@ -499,7 +499,7 @@ newEffect{
 
 newEffect{
    name = "REK_WYRMIC_PRISMATIC_SPEED",
-   desc = "Dissolution", image = "talents/rek_wyrmic_multicolor_blood.png",
+   desc = "Speed", image = "talents/rek_wyrmic_multicolor_blood.png",
    long_desc = function(self, eff) return ("Action speed is increased by %d%%."):format(eff.power*100) end,
    type = "physical",
    subtype = { nature=true, speed=true },
@@ -530,6 +530,7 @@ newEffect{
    callbackOnDealDamage = function(self, eff, val, target, dead, death_note)
       local x, y = target.x, target.y
       if not target or not self:canProject(target, x, y) then return nil end
+      self:removeEffect(self.EFF_REK_WYRMIC_PRISMATIC_BURST)
 
       local aspects = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_BLOOD, "getOptions") or {
          {
@@ -545,7 +546,7 @@ newEffect{
 	 local aspect = rng.table(aspects)
 	 local nameBall = "rek_wyrmic_"..DamageType:get(aspect.damtype).name.."_ball"
 
-	 local tg = {type="ball", range=10, selffire=false, friendlyfire=false, radius=self:getTalentRadius(t), talent=t}
+	 local tg = {type="ball", range=10, selffire=false, friendlyfire=false, radius=eff.radius}
 	 local grids = self:project(tg, x, y, aspect.status,
 				    {
 				       dam=self:mindCrit(eff.power),
@@ -555,11 +556,24 @@ newEffect{
 				       fail=15
 				    }
 	 )
-	 game.level.map:particleEmitter(x, y, eff.radius, nameBall, {radius=tg.radius, grids=grids, tx=x, ty=y, max_alpha=80})
+	 game.level.map:particleEmitter(x, y, tg.radius, nameBall, {radius=tg.radius, grids=grids, tx=x, ty=y, max_alpha=80})
 	 game:playSoundNear(self, "talents/flame")
       end
-      self:removeEffect(self.EFF_REK_WYRMIC_PRISMATIC_BURST)
    end,
+   activate = function(self, eff)
+   end,
+   deactivate = function(self, eff)
+   end,
+         }
+
+newEffect{
+   name = "REK_WYRMIC_ELEMENT_EXPLOIT",
+   desc = "Wyrmic Vulnerability", image = "talents/rek_wyrmic_element_exploit.png",
+   long_desc = function(self, eff) return ("Takes extra damage from weapon attacks."):format() end,
+   type = "other",
+   subtype = { nature=true },
+   status = "detrimental",
+   parameters = {power = 0},
    activate = function(self, eff)
    end,
    deactivate = function(self, eff)

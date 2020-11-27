@@ -203,7 +203,7 @@ function onUnLearnHigherAbility(self, t)
 end
 
 function onLearnAspect(self, t)
-   self:learnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY)
+   self:learnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY, true)
 end
 
 -- If you unlearn your last level of your last aspect, remove your element.
@@ -222,18 +222,18 @@ function onUnLearnAspect(self)
    end
 end
    
-if not Talents.talents_types_def["demented/wyrmic"] then
-   newTalentType{ allow_random=false, is_spell=true, no_silence=true,
-		  type="demented/wyrmic",
-		  name = "Tentacle Dragon",
-		  description = "Wyrmic techniques used when infested with otherworldly tentacles" }
-end
+-- if not Talents.talents_types_def["demented/wyrmic"] then
+--    newTalentType{ allow_random=false, is_spell=true, no_silence=true,
+-- 		  type="demented/wyrmic",
+-- 		  name = "Tentacle Dragon",
+-- 		  description = "Wyrmic techniques used when infested with otherworldly tentacles" }
+-- end
 
 if not Talents.talents_types_def["wild-gift/draconic-energy"] then
    newTalentType{ allow_random=true, is_mind=true, is_nature=true,
 		  type="wild-gift/draconic-energy",
-		  name = "Draconic Energy",
-		  description = "Fire breath, freezing claws - strike with the elemental power of a dragon." }
+		  name = "Dragon's Breath",
+		  description = "Inhale air, exhale destruction." }
    load("/data-revamped-wyrmic/talents/gifts/draconic-energy.lua")
 end
 
@@ -265,26 +265,26 @@ end
 
 -- Talent categories for the six elements
 if not Talents.talents_types_def["wild-gift/wyrm-fire"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-fire", name = "Fire Wyrm", description = "The power of the dragons: burning, ash, and desperation" }
+   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-fire", name = "Fire Wyrm", description = "The power of the fire dragons: fiery destruction and burning vigor." }
    load("/data-revamped-wyrmic/talents/gifts/aspect-fire.lua")
 end
 if not Talents.talents_types_def["wild-gift/wyrm-ice"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-ice", name = "Ice Wyrm", description = "The power of the dragons: armor and ice" }
+   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-ice", name = "Ice Wyrm", description = "The power of the ice dragons: layer upon layer of frozen defenses" }
    load("/data-revamped-wyrmic/talents/gifts/aspect-ice.lua")
 end
 if not Talents.talents_types_def["wild-gift/wyrm-storm"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-storm", name = "Storm Wyrm", description = "The power of the dragons: shock and awe" }
+   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-storm", name = "Storm Wyrm", description = "The power of the storm dragons: shock and awe" }
    load("/data-revamped-wyrmic/talents/gifts/aspect-storm.lua")
 end
 if not Talents.talents_types_def["wild-gift/wyrm-sand"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-sand", name = "Sand Wyrm", description = "The power of the dragons: crushing weight, eyeless sight" }
+   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-sand", name = "Sand Wyrm", description = "The power of the sand dragons: eyeless sight and the crushing weight of the earth" }
    load("/data-revamped-wyrmic/talents/gifts/aspect-sand.lua")
 end
 if not Talents.talents_types_def["wild-gift/wyrm-acid"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-acid", name = "Acid Wyrm", description = "The power of the dragons: scour and dissolve" }
+   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-acid", name = "Acid Wyrm", description = "The power of the acid dragons: melt away attributes, effects, and sustains" }
    load("/data-revamped-wyrmic/talents/gifts/aspect-acid.lua")
 end
 if not Talents.talents_types_def["wild-gift/wyrm-venom"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-venom", name = "Venom Wyrm", description = "The power of the dragons: poison and pain" }
+   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-venom", name = "Venom Wyrm", description = "The power of the venom dragons: poison and pain" }
    load("/data-revamped-wyrmic/talents/gifts/aspect-venom.lua")
 end

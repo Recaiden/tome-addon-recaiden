@@ -30,6 +30,7 @@ newTalent{
 	    talent=self.T_REK_WYRMIC_ACID
 	 }
       end
+      onLearnAspect(self, t)
    end,
    on_unlearn = function(self, t) onUnLearnAspect(self) end,
       

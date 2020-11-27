@@ -101,9 +101,8 @@ Scourge is blight that can inflict a virulent disease (#SLATE#Spellpower vs. Spe
       Talents.talents_def.T_RAZE.getResists = function(self, t) return self:combatTalentScale(t, 2, 25) end
 
       Talents.talents_def.T_RAZE.on_learn = function(self, t)
-         self:learnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY)
+         self:learnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY, true, nil)
       end
-
       Talents.talents_def.T_RAZE.on_unlearn = function(self, t)
          self:unlearnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY)
       end

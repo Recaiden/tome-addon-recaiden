@@ -32,85 +32,75 @@ newTalent{
 }
 
 newTalent{
-   name = "Jeweled Hide", short_name = "REK_WYRMIC_PREDATOR_GEM",
-   type = {"wild-gift/apex-predator", 2},
-   require = gifts_req2,
-   points = 5,
-   mode = "passive",
-   no_npc_use = true,
-   no_unlearn_last = true,
-   getGemBonus = function(self, t)
-      if self:getTalentLevel(t) <= 5 then return 0 end
-      return self:combatScale(self:getTalentLevel(t), 0.01, 5, 0.3, 10)
-   end,
-   on_learn = function(self, t)
-      -- Reinitializing body will smash any existing gems in the slots, so unequip
-      local gem = self:getInven("REK_WYRMIC_GEM") or false 
-      if gem and self:getTalentLevel(t) < 6 then
-	 return true
-      end
-      
-      if self.body then
-	 if not self.body.REK_WYRMIC_GEM then
-	    self.body.REK_WYRMIC_GEM = 1
-	 end
-      else
-	 self.body = { REK_WYRMIC_GEM = 1 }
-      end
-      
-      -- if self:getTalentLevel(t) >= 6 then
-      --    if gem then
-      --       self:doTakeoff("REK_WYRMIC_GEM", 1, gem, false, self)
-      --    end
-      --    if self.body then
-      --       self.body.REK_WYRMIC_GEM = 2
-      --    else
-      --       self.body = { REK_WYRMIC_GEM = 2 }
-      --    end
-      -- end
-      self:initBody()
-   end,
-   
-   -- If you wear an illegal gem, take it back off
-   callbackOnWear = function(self, t, o, fBypass)
-      local allowed = true
-      if o.type ~= "gem" then return end
-      if not self:knowTalent(self.T_REK_WYRMIC_PREDATOR_GEM) then
-	 game.logPlayer(self, "Must know the Jeweled Hide talent")
-	 allowed = false
-      end 
-      if not o.material_level then
-	 game.logPlayer(self, "Impossible to use this gem")
-	 allowed = false
-      end
-      if o.material_level > math.floor(self:getTalentLevel(self.T_REK_WYRMIC_PREDATOR_GEM)) then
-	 game.logPlayer(self, "Jeweled Hide talent too low for this gem")
-	 allowed = false
-      end
-
-      if not allowed then 
-	 for inven_id, inven in pairs(self.inven) do
-	    for i = #inven, 1, -1 do
-	       local so = inven[i]
-	       if so == o then
-		  local o = self:removeObject(inven, i, true)
-		  self:addObject(self.INVEN_INVEN, o)
-		  self:sortInven()
-	       end
-	    end
-	 end
-      end
-   end,
-   
-   info = function(self, t)
-      return ([[As the dragons plate their underbellies with coats of crystal, so do you imbue yourself with the power of gems.
+	name = "Jeweled Hide", short_name = "REK_WYRMIC_PREDATOR_GEM",
+	type = {"wild-gift/apex-predator", 2},
+	require = gifts_req2,
+	points = 5,
+	mode = "passive",
+	no_npc_use = true,
+	no_unlearn_last = true,
+	getGemBonus = function(self, t)
+		if self:getTalentLevel(t) <= 5 then return 0 end
+		return self:combatScale(self:getTalentLevel(t), 0.01, 5, 0.3, 10)
+	end,
+	-- initialize talent only if you actually spend the point
+	on_levelup_close = function(self, t, lvl, old_lvl, lvl_raw, old_lvl_raw)
+		if old_lvl_raw == 0 and lvl_raw >= 1 then
+			if self.body then
+				if not self.body.REK_WYRMIC_GEM then
+					self.body.REK_WYRMIC_GEM = 1
+				end
+			else
+				self.body = { REK_WYRMIC_GEM = 1 }
+			end
+			self:initBody()
+		end
+		t.on_levelup_close = nil
+	end,
+	on_learn = function(self, t)
+		local gem = self:getInven("REK_WYRMIC_GEM") or false 
+		if gem then
+			return true
+		end
+	end,
+	
+	-- If you wear an illegal gem, take it back off
+	callbackOnWear = function(self, t, o, fBypass)
+		local allowed = true
+		if o.type ~= "gem" then return end
+		if not self:knowTalent(self.T_REK_WYRMIC_PREDATOR_GEM) then
+			game.logPlayer(self, "Must know the Jeweled Hide talent")
+			allowed = false
+		end 
+		if not o.material_level then
+			game.logPlayer(self, "Impossible to use this gem")
+			allowed = false
+		end
+		if o.material_level > math.floor(self:getTalentLevel(self.T_REK_WYRMIC_PREDATOR_GEM)) then
+			game.logPlayer(self, "Jeweled Hide talent too low for this gem")
+			allowed = false
+		end
+		
+		if not allowed then 
+			for inven_id, inven in pairs(self.inven) do
+				for i = #inven, 1, -1 do
+					local so = inven[i]
+					if so == o then
+						local o = self:removeObject(inven, i, true)
+						self:addObject(self.INVEN_INVEN, o)
+						self:sortInven()
+					end
+				end
+			end
+		end
+	end,
+	
+	info = function(self, t)
+		return ([[As the dragons plate their underbellies with coats of crystal, so do you imbue yourself with the power of gems.
 You can equip a gem (up to tier %d), activating its powers.
 
-Talent levels higher than 5 increase the stats of equipped gems, currently %d%%.
-
-At talent level 6, you can equip a second gem.
-Warning: Ranking up to talent level 6 will unequip any currently equipped gems]]):format(math.floor(math.min(5,self:getTalentLevel(t))), t.getGemBonus(self, t)*100)
-   end,
+Talent levels higher than 5 increase the stats of equipped gems, currently %d%%.]]):format(math.floor(math.min(5,self:getTalentLevel(t))), t.getGemBonus(self, t)*100)
+	end,
 }
 
 newTalent{

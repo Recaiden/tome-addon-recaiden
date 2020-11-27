@@ -409,6 +409,20 @@ newDamageType{
    end,
 }
 
+-- Silently marks enemy with vulnerability to your weapon attacks
+newDamageType{
+   name = "vulnerable energy", type = "REK_SILENT_ELEMENT_EXPLOIT",
+   hideMessage=true,
+   projector = function(src, x, y, type, dam, state)
+      state = initState(state)
+      useImplicitCrit(src, state)
+      local target = game.level.map(x, y, Map.ACTOR)
+      if target then
+	 target:setEffect(target.EFF_REK_WYRMIC_ELEMENT_EXPLOIT, 1, {})
+      end
+   end,
+}
+
 -- Half now, half over 4 turns, and circle-of-death status
 newDamageType{
    name = "doom", type = "REK_WYRMIC_DARK",

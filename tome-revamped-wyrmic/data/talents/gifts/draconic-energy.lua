@@ -41,6 +41,9 @@ newTalent{
 	    local atk = self:callTalent(self.T_REK_WYRMIC_ACID, "getAtk")
 	    self:project(tg, x, y, DamageType.REK_SILENT_CORRODE, {dam=0, dur=cordur, atk=atk}, nil)
 	 end
+         if self:knowTalent(self.T_REK_WYRMIC_ELEMENT_EXPLOIT) then
+	    self:project(tg, x, y, DamageType.REK_SILENT_ELEMENT_EXPLOIT, {dam=0}, nil)
+	 end
 	 local _ _, x, y = self:canProject(tg, x, y)
 
 	 -- Visual depends on Aspect
@@ -77,61 +80,15 @@ Passively increases Mindpower by %d]]):format(damDesc(self, damtype, damage), na
 }
 
 newTalent{
-   name = "Elemental Crash",short_name = "REK_WYRMIC_ELEMENT_PBAOE",
+   name = "Elemental Exploits",short_name = "REK_WYRMIC_ELEMENT_EXPLOIT",
    type = {"wild-gift/draconic-energy", 2},
    require = gifts_req2,
    points = 5,
-   random_ego = "attack",
-   message = "@Source@ explodes with energy!",
-   equilibrium = 8,
-   cooldown = 6,
-   range = 0,
-   radius = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
-   getDamage = function(self, t) return self:combatTalentMindDamage(t, 20, 200) end,
-   target = function(self, t)
-      return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), friendlyfire=false, talent=t}
-   end,
-   tactical = { DEFEND = 1, ATTACK = { PHYSICAL = 1, COLD = 1, FIRE = 1, LIGHTNING = 1, ACID = 1 } },
-   requires_target = true,
-   action = function(self, t)
-      -- Main crash
-      local damtype = DamageType.REK_WYRMIC_NULL
-      local vistype = DamageType.PHYSICAL
-      local source = self.rek_wyrmic_dragon_damage
-      if source then
-	 damtype = source.status
-	 vistype = source.damtype
-      end
-	 
-      local tg = self:getTalentTarget(t)
-      self:project(tg, self.x, self.y, damtype,
-		   {dam=self:mindCrit(t.getDamage(self, t)),
-		    dur=3,
-		    chance=100,
-		    fail=40
-		   }
-      )
-      local nameBall = "rek_wyrmic_"..DamageType:get(vistype).name.."_ball"
-      game.level.map:particleEmitter(self.x, self.y, self:getTalentRadius(t), nameBall, {tx=self.x, ty=self.y, radius=self:getTalentRadius(t)})
-      game:playSoundNear(self, "talents/tidalwave")
-      return true
-   end,
+   mode = "passive",
+   getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.1, 1.0) end,
    info = function(self, t)
-      local radius = self:getTalentRadius(t)
-      local damage = t.getDamage(self, t)
-      local name = "Physical"
-      local nameStatus = "unaffected otherwise (you don't have an aspect)"
-      local source = self.rek_wyrmic_dragon_damage
-      if source then
-	 name = DamageType:get(source.damtype).text_color..DamageType:get(source.damtype).name.."#LAST#"
-	 damtype = source.damtype
-	 nameStatus = source.nameStatus
-      end
-      return ([[You let out a wave of primal energy in a radius of %d.
-		Your foes take %0.1f %s damage and will be %s for 3 turns.
-
-Mindpower: improves damage
-]]):format(radius, damDesc(self, damtpye, damage), name, nameStatus)
+      return ([[Weave together breath and claw to set up deadly attacks. Enemies hit by elemental Spray or Dragon's Breath are left vulnerable, and take %d%% additional damage if you hit them with a weapon attack the next turn.
+]]):format(t.getDamage(self, t)*100)
    end,
 }
 
@@ -140,7 +97,6 @@ newTalent{
    type = {"wild-gift/draconic-energy", 3},
    require = gifts_req3,
    points = 5,
-   random_ego = "attack",
    equilibrium = 6,
    cooldown = 20,
    tactical = { ATTACKAREA = { FIRE = 2 } },
@@ -261,7 +217,10 @@ newTalent{
 		    chance=100,
 		    fail=40
 		   }
-      )
+                  )
+      if self:knowTalent(self.T_REK_WYRMIC_ELEMENT_EXPLOIT) then
+         self:project(tg, x, y, DamageType.REK_SILENT_ELEMENT_EXPLOIT, {dam=0}, nil)
+      end
 
       --Visuals
       -- exceptions till I can properly add it to the particle generator
@@ -322,4 +281,64 @@ Mindpower: Improves damage
 Talent Level: Improves Radius and Cooldown
 ]]):format(radius, damDesc(self, damtpye, damage), name, nameStatus)
    end, 
+}
+
+--old
+newTalent{
+   name = "Elemental Crash",short_name = "REK_WYRMIC_ELEMENT_PBAOE",
+   type = {"wild-gift/other", 2},
+   require = gifts_req2,
+   points = 5,
+   random_ego = "attack",
+   message = "@Source@ explodes with energy!",
+   equilibrium = 8,
+   cooldown = 6,
+   range = 0,
+   radius = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
+   getDamage = function(self, t) return self:combatTalentMindDamage(t, 20, 200) end,
+   target = function(self, t)
+      return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), friendlyfire=false, talent=t}
+   end,
+   tactical = { DEFEND = 1, ATTACK = { PHYSICAL = 1, COLD = 1, FIRE = 1, LIGHTNING = 1, ACID = 1 } },
+   requires_target = true,
+   action = function(self, t)
+      -- Main crash
+      local damtype = DamageType.REK_WYRMIC_NULL
+      local vistype = DamageType.PHYSICAL
+      local source = self.rek_wyrmic_dragon_damage
+      if source then
+	 damtype = source.status
+	 vistype = source.damtype
+      end
+	 
+      local tg = self:getTalentTarget(t)
+      self:project(tg, self.x, self.y, damtype,
+		   {dam=self:mindCrit(t.getDamage(self, t)),
+		    dur=3,
+		    chance=100,
+		    fail=40
+		   }
+      )
+      local nameBall = "rek_wyrmic_"..DamageType:get(vistype).name.."_ball"
+      game.level.map:particleEmitter(self.x, self.y, self:getTalentRadius(t), nameBall, {tx=self.x, ty=self.y, radius=self:getTalentRadius(t)})
+      game:playSoundNear(self, "talents/tidalwave")
+      return true
+   end,
+   info = function(self, t)
+      local radius = self:getTalentRadius(t)
+      local damage = t.getDamage(self, t)
+      local name = "Physical"
+      local nameStatus = "unaffected otherwise (you don't have an aspect)"
+      local source = self.rek_wyrmic_dragon_damage
+      if source then
+	 name = DamageType:get(source.damtype).text_color..DamageType:get(source.damtype).name.."#LAST#"
+	 damtype = source.damtype
+	 nameStatus = source.nameStatus
+      end
+      return ([[You let out a wave of primal energy in a radius of %d.
+		Your foes take %0.1f %s damage and will be %s for 3 turns.
+
+Mindpower: improves damage
+]]):format(radius, damDesc(self, damtpye, damage), name, nameStatus)
+   end,
 }

@@ -92,6 +92,7 @@ newTalent{
    equilibrium = 5,
    cooldown = 10,
    range = 0,
+   speed = "weapon",
    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.1, 1.7) end,
    radius = function(self, t) return 3 end,
    direct_hit = true,
@@ -161,7 +162,7 @@ newTalent{
    end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)
-      local damtype = DamageType.PHYSICAL
+      local damtype = DamageType.FIRE
       local source = self.rek_wyrmic_dragon_damage
       if source then
 	 damtype = source.status
@@ -191,7 +192,7 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      local name = "Physical"
+      local name = "Fire"
       local nameStatus = "unaffected otherwise (you don't have an aspect)"
       local source = self.rek_wyrmic_dragon_damage
       if source then
@@ -227,10 +228,10 @@ newTalent{
 
       local s = self.rek_wyrmic_dragon_damage or
 	 {
-	    name="Physical",
-	    damtype=DamageType.PHYSICAL,
-	    nameStatus="Blinded",
-	    status=DamageType.REK_WYRMIC_SAND
+	    name="Fire",
+	    damtype=DamageType.FIRE,
+	    nameStatus="N/A",
+	    status=DamageType.FIRE
 	 }
       local damtype = s.damtype
       local numAttacks = 4
@@ -257,7 +258,7 @@ newTalent{
    end,
 
    info = function(self, t)
-      local name = "Physical"
+      local name = "Fire"
       local nameStatus = "unaffected otherwise (you don't have an aspect)"
       local source = self.rek_wyrmic_dragon_damage
       if source then
