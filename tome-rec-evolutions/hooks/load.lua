@@ -13,6 +13,6 @@ local load = function(self, data)
 end
 class:bindHook('ToME:load', load)
 
-class:bindHook("ToME:birthDone", function()
-	dofile("/data-rec-evolutions/talents/dlc.lua")
-end)
+-- class:bindHook("ToME:birthDone", function()
+-- 	dofile("/data-rec-evolutions/talents/dlc.lua")
+-- end)

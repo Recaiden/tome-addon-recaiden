@@ -1,4 +1,5 @@
 local ActorTalents = require "engine.interface.ActorTalents"
+local Dialog = require "engine.ui.Dialog"
 
 newTalent{
 	name = "Purge Talent", short_name = "REK_EVOLUTION_WRITHING_HUNGRY_PURGE",

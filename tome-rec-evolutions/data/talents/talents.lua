@@ -45,3 +45,7 @@ if not Talents.talents_types_def["undead/shadow-destruction"] then
 	load("/data-rec-evolutions/talents/magic.lua")
 	load("/data-rec-evolutions/talents/hollow.lua")
 end
+
+if Talents.talents_types_def["demented/slow-death"] then
+	load("/data-rec-evolutions/talents/gourmand.lua")
+end

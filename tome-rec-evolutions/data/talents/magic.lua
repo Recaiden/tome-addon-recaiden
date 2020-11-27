@@ -1,3 +1,5 @@
+local Emote = require "engine.Emote"
+
 newTalent{
    name = "Tenebrous Reconstruction", short_name = "REK_HOLLOW_SHADOW_HEAL",
    type = {"undead/shadow-magic",1},
@@ -98,17 +100,21 @@ newTalent{
    getChance = function(self, t)
       return math.min(66, 10 + self:combatTalentStatDamage(t, "wil", 10, 40))
    end,
-   callbackOnHit = function(self, t, cb, src)
-      if cb.value >= (self.life - self.die_at) then
+   --callbackOnHit = function(self, t, cb, src)
+	 -- happen on TakeDamage instead of Hit to pre-empt Shadow Decoy
+	 callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
+
+      if dam >= (self.life - self.die_at) then
          if not self:isTalentCoolingDown(t) and rng.percent(t.getChance(self, t)) then
             -- successful reform
-            cb.value = 0
+            dam = 0
             self.life = self.max_life
             game.logSeen(self, "%s fades for a moment and then reforms whole again!", self.name:capitalize())
             game.level.map:particleEmitter(self.x, self.y, 1, "teleport_out")
             game:playSoundNear(self, "talents/heal")
             game.level.map:particleEmitter(self.x, self.y, 1, "teleport_in")
             self:startTalentCooldown(t)
+						return {stopped=0}
          else
             -- try to transfer to a new shadow
             if game.party and game.party:hasMember(self) then
@@ -130,16 +136,21 @@ newTalent{
                   goat.can_reform = false
                   goat:die(self, "was sacrificed for their master")
                   self.life = self.max_life * life_prop
-                  cb.value = 0
-									game.logSeen(self, "%s fades for a moment and then reforms; it was only a shadow that died!", self.name:capitalize())
+                  dam = 0
+									game.logSeen(self, "%s is struck down but then reforms; it was only a shadow that died!", self.name:capitalize())
+									if self.player then
+										self:setEmote(Emote.new("Fools, that was only my shadow!", 45))
+										world:gainAchievement("AVOID_DEATH", self)
+									end
+									return {stopped=0}
                end
             end
          end
       end
-      return cb.value
+      return {dam=dam}
    end,
    info = function(self, t)
-      return ([[If hit by an attack that would kill you, you have a %d%% chance to instead reform fully healed.  This has a cooldown.
+      return ([[If hit by damage that would kill you, you have a %d%% chance to instead reform fully healed.  This has a cooldown.
 
 Willpower: improves reform chance.
 
@@ -158,7 +169,7 @@ newTalent{
    radius = function(self, t) return math.floor(self:combatTalentScale(t, 1, 15, 1)) end,
    on_pre_use = function(self, t) return self:callTalent(self.T_CALL_SHADOWS, "nbShadowsUp") > 0 end,
    action = function(self, t) --closest friend will be a shadow almost all the time
-      local tg = {type="hit", nolock=true, first_target="friend", range=self:getTalentRadius(t)}
+      local tg = {type="hit", nolock=true, pass_terrain = true, first_target="friend", range=self:getTalentRadius(t)}
       local x, y, target = self:getTarget(tg)
       if not x or not y or not target then return nil end
       if core.fov.distance(self.x, self.y, target.x, target.y) > self:getTalentRadius(t) then return nil end
@@ -170,6 +181,9 @@ newTalent{
       self.x = nil self.y = nil
       target:move(sx, sy, true)
       self:move(tx, ty, true)
+			if self:attr("defense_on_teleport") or self:attr("resist_all_on_teleport") or self:attr("effect_reduction_on_teleport") then
+				self:setEffect(self.EFF_OUT_OF_PHASE, 4, {})
+			end
       
       return true
    end,

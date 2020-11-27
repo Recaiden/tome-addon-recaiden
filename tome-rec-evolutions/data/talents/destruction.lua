@@ -10,8 +10,7 @@ newTalent{
 	proj_speed = 20,
 	requires_target = true,
 	target = function(self, t)
-		local tg = {type="bolt", range=self:getTalentRange(t), talent=t, display={particle="bolt_fire", trail="firetrail"}}
-		if self:getTalentLevel(t) >= 5 then tg.type = "beam" end
+		local tg = {type="beam", range=self:getTalentRange(t), talent=t, display={particle="bolt_fire", trail="firetrail"}}
 		return tg
 	end,
 	allow_for_arcane_combat = true,
@@ -27,21 +26,17 @@ newTalent{
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
 		local grids = nil
-		self:projectile(
-			tg, x, y, DamageType.FIREBURN, self:mindCrit(t.getDamage(self, t)),
-			function(self, tg, x, y, grids)
-				game.level.map:particleEmitter(x, y, 1, "flame")
-				if self:attr("burning_wake") then
-					game.level.map:addEffect(self, x, y, 4, engine.DamageType.INFERNO, self:attr("burning_wake"), 0, 5, nil, {type="inferno"}, nil, self:spellFriendlyFire())
-				end
-			end)
+		self:project({type="beam", friendlyfire=false, selffire=false, talent=t, self.x, self.y}, x, y, DamageType.FIREBURN, self:mindCrit(t.getDamage(self, t)))
+
+		local _ _, x, y = self:canProject(tg, x, y)
+		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "light_beam", {tx=x-self.x, ty=y-self.y})
 		game:playSoundNear(self, "talents/fire")
 		return true
 	end,
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
       return ([[Conjures up a beam of shadow flames, setting the targets ablaze and doing %0.2f fire damage over 3 turns.
-Your fire damage with use your highest damage bonus and resistance penetration among all elements.
+Your fire damage will use your highest damage bonus and resistance penetration among all elements.
 Mindpower: increases damage
 ]]):
       format(damDesc(self, DamageType.FIRE, damage))
@@ -80,7 +75,7 @@ newTalent{
    info = function(self, t)
       local damage = t.getDamage(self, t)
       return ([[Strikes the target with a pulse of shadow lightning doing %0.2f to %0.2f damage (%0.2f average).
-Your lightning damage with use your highest damage bonus and resistance penetration among all elements.
+Your lightning damage will use your highest damage bonus and resistance penetration among all elements.
 Mindpower: increases damage]]):
       format(damDesc(self, DamageType.LIGHTNING, damage / 3),
              damDesc(self, DamageType.LIGHTNING, damage),
@@ -143,7 +138,7 @@ newTalent{
 		local duration = t.getDuration(self, t)
 		local armorChange = t.getArmorChange(self, t)
 		local defenseChange = t.getDefenseChange(self, t)
-		return ([[Turn your attention to a nearby foe, and dominate (#SLATE#Mindpower vs Mental#LAST#) them with your shadowy presence. A dominated creature will be unable to move for %d turns and vulnerable to attacks. They will lose %d Armour, %d Defense and Mental Save, and 10%% resistance to all damage.If the target is adjacent to you, your domination will include a melee attack.
+		return ([[Turn your attention to a nearby foe, and dominate (#SLATE#Mindpower vs Mental#LAST#) them with your shadowy presence. A dominated creature will be unable to move for %d turns and vulnerable to attacks. They will lose %d Armour, %d Defense and Mental Save, and 10%% resistance to all damage. If the target is adjacent to you, your domination will include a melee attack.
 		Effects will improve with your Willpower.
                 
 		This talent will also attack with your shield, if you have one equipped.]]):format(duration, -armorChange, -defenseChange)
@@ -190,6 +185,6 @@ newTalent{
       return ([[With blinding speed you suddenly appear next to a target up to %d spaces away and attack, dealing up to %d bonus darkness damage (based on hate).
 Your sudden appearance catches everyone off-guard, giving you %d damage reduction for 1 turn.
 
-Dexterity: improves Defense bonus]]):format(self:getTalentRange(t), multiplier * 100, t.getDefenseChange(self, t))
+Dexterity: improves damage reduction]]):format(self:getTalentRange(t), multiplier * 100, t.getDefenseChange(self, t))
    end,
 }
