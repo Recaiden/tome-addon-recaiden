@@ -65,6 +65,7 @@ newTalent{
 	getDuration = function(self, t) return 2 end,
 	callbackOnHit = function(self, t, cb, src, death_note)
 		if cb.value >= self.max_life * t.getThreshold(self, t) then
+			local effs = {}
 			for eff_id, p in pairs(self.tmp) do
 				local e = self.tempeffect_def[eff_id]
 				if e.subtype.stun or e.subtype.pin then
