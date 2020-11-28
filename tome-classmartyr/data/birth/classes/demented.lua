@@ -41,8 +41,9 @@ newBirthDescriptor{
    birth_example_particles = "darkness_shield",
    talents = {
       [ActorTalents.T_SHOOT] = 1,
-      --[ActorTalents.T_WEAPONS_MASTERY] = 1,
+      [ActorTalents.T_WEAPONS_MASTERY] = 1,
       [ActorTalents.T_WEAPON_COMBAT] = 1,
+			[ActorTalents.T_ARMOUR_TRAINING] = 1,
       [ActorTalents.T_REK_MTYR_WHISPERS_SLIPPING_PSYCHE] = 1,
       [ActorTalents.T_REK_MTYR_UNSETTLING_UNNERVE] = 1,
       [ActorTalents.T_REK_MTYR_POLARITY_DEEPER_SHADOWS] = 1,
@@ -63,6 +64,7 @@ newBirthDescriptor{
       resolvers.equipbirth{ id=true,
                             {type="weapon", subtype="sling", name="rough leather sling", autoreq=true, ego_chance=-1000},
                             {type="ammo", subtype="shot", name="pouch of iron shots", autoreq=true, ego_chance=-1000},
+														{type="armor", subtype="heavy", name="iron mail armour", autoreq=true, ego_chance=-1000, ego_chance=-1000},
                           },
       resolvers.inventorybirth{
          id=true, inven="QS_MAINHAND",

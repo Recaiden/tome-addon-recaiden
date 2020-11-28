@@ -155,7 +155,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[You make unusual modifications to your sling bullets, causing them to inflict a 10%% movement speed slow (#SLATE#no save#LAST#) that stacks up to 5 times and deals %0.2f mind damage per stack. This counts as a disease (but ignores immunity).  If the target breaks free from the slow, they'll be immune to it for the next five turns. 
+		return ([[You make unusual modifications to your sling bullets, causing them to inflict a 10%% movement speed slow (#SLATE#no save#LAST#) that stacks up to 10 times and deals %0.2f mind damage per stack. This counts as a disease (but ignores immunity).  If the target breaks free from the slow, they'll be immune to it for the next five turns. 
 Mindpower: increases damage.
 
 All your shots, including bullets from Shoot and other talents, now travel around friendly targets without causing them harm (regardless of whether this talent is sustained).

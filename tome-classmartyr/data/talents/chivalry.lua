@@ -188,7 +188,7 @@ newTalent{
    speed = "weapon",
    target = function(self, t) return {type="hitball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), simple_dir_request=true} end,
    getDamage = function(self, t, hate)
-      return self:combatTalentIntervalDamage(t, "str", 0.25, 0.8, 0.4)
+      return self:combatTalentWeaponDamage(t, -0.5, 1.6)
    end,
    action = function(self, t)
       local tg = self:getTalentTarget(t)

@@ -820,7 +820,7 @@ newEffect{
 	type = "physical",
 	subtype = { disease=true, slow=true },
 	status = "detrimental",
-	parameters = { power=3, stacks=1, max_stacks=5 },
+	parameters = { power=3, stacks=1, max_stacks=10 },
 	on_gain = function(self, err) return "#Target# is slowed by the taint", "+Tainted Slow" end,
 	on_lose = function(self, err) return "#Target# speeds up.", "-Tainted Slow" end,
 	on_merge = function(self, old_eff, new_eff)
@@ -833,7 +833,9 @@ newEffect{
 	end,
 	activate = function(self, eff)
 		eff.speed = self:addTemporaryValue("movement_speed", -eff.stacks*0.1)
-		DamageType:get(DamageType.MIND).projector(eff.src, self.x, self.y, DamageType.MIND, eff.power)
+		local dam = eff.power
+		if eff.src and eff.src.mindCrit then dam = eff.src:mindCrit(dam) end
+		DamageType:get(DamageType.MIND).projector(eff.src, self.x, self.y, DamageType.MIND, dam)
 	end,
 	deactivate = function(self, eff)
 		self:removeTemporaryValue("movement_speed", eff.tmpid)

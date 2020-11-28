@@ -1,4 +1,4 @@
-function martyrSetupSummon(self, def, x, y, level)
+function martyrSetupSummon(self, def, x, y, level, stats)
    local m = require("mod.class.NPC").new(def)
    m.creation_turn = game.turn
    m.faction = self.faction
@@ -23,6 +23,7 @@ function martyrSetupSummon(self, def, x, y, level)
    m.no_drops = true
 	 m.no_inventory_access = true
 	 m.ai_tactic.escape = 0
+	 m.inc_stats = stats
    
    if game.party:hasMember(self) then 
       m.remove_from_party_on_death = true
@@ -94,7 +95,7 @@ newTalent{
       end
       return true
    end,
-   getDamageTentacle = function(self, t) return self:combatTalentWeaponDamage(t, 1.8, 3) end,
+   getDamageTentacle = function(self, t) return self:combatTalentWeaponDamage(t, 1.8, 4) end,
    getInsanity = function(self, t) return 20 end,
    action = function(self, t)
       local tentacle = self:callTalent(self.T_MUTATED_HAND, "getTentacleCombat")
@@ -155,6 +156,17 @@ newTalent{
 		end
 		return cd
 	end,
+	incStats = function(self, t, fake)
+		local val = self:getWil()-10
+		return{
+			str= val*0.3,
+			dex= val*0.6,
+			con= val*0.3,
+			mag= val*0.6,
+			wil= val*0.15,
+			cun= val*0.3,
+					}
+	end,
 	flag = {
 		type = "horror", subtype = "eldritch",
 		display = "h", color=colors.WHITE,
@@ -170,7 +182,7 @@ newTalent{
 		is_tentacle_tree = 1,
 		is_tentacle_flag = 1,
 		combat_armor = resolvers.levelup(30, 1, 1.5), combat_def = 0,
-		combat = { dam=resolvers.levelup(resolvers.mbonus(100, 15), 1, 2.2), atk=500, apr=10, damtype=DamageType.DARKNESS },
+		combat = { dam=resolvers.levelup(resolvers.mbonus(100, 15), 1, 2.2), atk=500, apr=10, dammod={mag=1.0}, damtype=DamageType.DARKNESS },
 		never_move = 1,
 		body = { MAINHAND=1, OFFHAND=1, INVEN = 10 },
 		force_tentacle_hand = 1,
@@ -251,7 +263,7 @@ newTalent{
                            weakest:die()
                         end
                         
-                        local flag = martyrSetupSummon(self, t.flag, x, y, lev)
+                        local flag = martyrSetupSummon(self, t.flag, x, y, lev, t.incStats(self, t))
                         if self:knowTalent(self.T_REK_MTYR_STANDARD_CONTROL) then
                            local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_CONTROL))
                            flag:learnTalent(flag.T_TENTACLE_CONSTRICT, true, lvl)
@@ -263,6 +275,9 @@ newTalent{
                         if self:knowTalent(self.T_REK_MTYR_STANDARD_SYMBIOSIS) then
                            local lvl = math.floor(self:getTalentLevel(self.T_REK_MTYR_STANDARD_SYMBIOSIS))
                            flag:learnTalent(flag.T_REK_MTYR_FLAG_ERUPTION, true, lvl)
+													 if core.shader.active(4) then
+														 flag:addParticles(Particles.new("shader_shield", 1, {size_factor=0.2+3*1.78, blend=true, img="mtyr_confidence_aura"}, {type="shield", shieldIntensity=0.03, ellipsoidalFactor=1, color={0.5,0.4,1}}))
+													 end
                         end
 
                         if self:hasEffect(self.EFF_REK_MTYR_INSANE) then
@@ -274,9 +289,9 @@ newTalent{
       return true
    end,
    info = function(self, t)
-		 return ([[When you kill an enemy, summon a Flag  where they died that magically strikes nearby enemies. You also summon a flag when you have done enough damage to a powerful enemy: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
+		 return ([[When you kill an enemy, summon a Flag where they died that magically strikes nearby enemies. You also summon a flag when you have done enough damage to a powerful enemy: %d%% of the life of a rare enemy, %d%% of the life of a boss, or %d%% of the life of an elite boss or stronger.  In this case, the flag appears adjacent to them.
 Summoning a flag has a cooldown.
-The flag's level is your level + %d, and its damage is increased by %d%%.
+The flag's level is your level + %d, its stats increase with your Willpower, and its damage is increased by %d%%.
 Flags last until destroyed or until you leave the level, but you can only have 3 placed at a time.
 ]]):format(t.thRare(self, t)*100, t.thBoss(self, t)*100, t.thEBoss(self, t)*100, t.getLevel(self, t), t.getPercentInc(self, t)*100)
    end,
@@ -343,7 +358,7 @@ newTalent{
    mode = "passive",
    getRange = function(self, t) return 3 end,
    getResist = function(self, t) return math.floor(self:combatTalentScale(t, 15, 25)) end,
-   getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.8, 3) end,
+   getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.8, 4) end,
    callbackOnActBase = function(self, t)
       local list = {}
       --Near the player
