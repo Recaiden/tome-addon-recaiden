@@ -99,4 +99,22 @@ function _M:getTalentCooldown(t, base)
    return base_getTalentCooldown(self, t, base)
 end
 
+local base_updateObjectRequirements = _M.updateObjectRequirements
+function _M:updateObjectRequirements(o)
+	local oldreq = rawget(o, "require")
+	if not oldreq then return oldreq end
+	local newreq
+	if o.type == "weapon" or o.type == "armor" or o.type == "ammo" and self:knowTalent(self.T_REK_MTYR_VAGABOND_SLING_PRACTICE) then
+		newreq = newreq or table.clone(oldreq, true)
+		if newreq.stat and newreq.stat.str and self:getDex() > self:getStr() then
+			newreq.stat.dex, newreq.stat.str = newreq.stat.str, nil
+		elseif newreq.stat and newreq.stat.dex and self:getStr() > self:getDex() then
+			newreq.stat.str, newreq.stat.dex = newreq.stat.dex, nil
+		end
+	end
+	if newreq then o.require = newreq end
+	local ret, reason = base_updateObjectRequirements(self, o)
+	return ret, reason
+end
+
 return _M

@@ -31,6 +31,7 @@ newTalent{
 	info = function(self, t)
 		return ([[You can't really call it 'mastery', but you've used a sling before, along with a variety of other weapons.
 This increases Physical Power by %d and weapon damage by %d%% when using a sling and increases your reload rate by %d.
+It also allows you to equip weapons and armor using the higher of your strength and dexterity.
 
 Whenever you hit with a ranged weapon, you will gain #INSANE_GREEN#5 insanity.#LAST#
 

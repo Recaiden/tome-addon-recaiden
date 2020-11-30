@@ -10,7 +10,7 @@ newBirthDescriptor{
       "#GOLD#Stat modifiers:",
       "#LIGHT_BLUE# * +3 Strength, +0 Dexterity, +0 Constitution",
       "#LIGHT_BLUE# * +0 Magic, +5 Willpower, +3 Cunning",
-      "#GOLD#Life per level:#LIGHT_BLUE# +1",
+      "#GOLD#Life per level:#LIGHT_BLUE# +0",
    },
    power_source = {psionic=true},
    stats = { str=3, wil=5, cun=3 },
@@ -50,7 +50,7 @@ newBirthDescriptor{
    },
    
    copy = {
-      max_life = 105,
+      max_life = 100,
       resolvers.auto_equip_filters{
          MAINHAND = {type="weapon", subtype="sling"},
          OFFHAND = {type="none"},
@@ -75,7 +75,7 @@ newBirthDescriptor{
                         end),
    },
    copy_add = {
-      life_rating = 1,
+      life_rating = 0,
    },
 }
 

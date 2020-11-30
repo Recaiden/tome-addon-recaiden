@@ -53,10 +53,10 @@ newTalent{
    requires_target = true,
    radius = function(self, t) return 1 end,
    tactical = { ATTACK = { [moment_tactical] = 1 } },
-   getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.2, 1.8) end,
+   getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.6, 1.6) end,
    getBaseDamage = function(self, t) return self:combatTalentMindDamage(t, 0, 60) end,
    getBaseAtk = function(self, t) return self:combatTalentMindDamage(t, 0, 20) end,
-   getBaseApr = function(self, t) return self:combatTalentMindDamage(t, 0, 20) end,
+   getBaseApr = function(self, t) return self:combatTalentMindDamage(t, 5, 25) end,
    getBaseCrit = function(self, t) return self:combatTalentMindDamage(t, 0, 20) end,
    target = function(self, t)
       return {type="ball", range=self:getTalentRange(t), selffire=false, radius=self:getTalentRadius(t)}
@@ -124,7 +124,7 @@ newTalent{
 	speed = "weapon",
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t, nolock=true} end,
 	getChance = function(self, t) return self:combatTalentLimit(t, 50, 10, 30) end,
-	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1, 1.5) end,
+	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.6, 1.5) end,
 	getAttack = function(self, t) return self:getTalentLevel(t) * 10 end,
 	getAttackTotal = function(self, t)
 		local base_atk = 0
