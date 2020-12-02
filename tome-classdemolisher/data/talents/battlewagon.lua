@@ -185,7 +185,7 @@ newTalent{
 	require = steam_req_high4,
 	points = 5,
 	steam = 10,
-	cooldown = function(self, t) return math.max(10, math.floor(self:combatTalentScale(t, 45, 25, 0.75))) end,
+	cooldown = function(self, t) return math.max(10, math.floor(self:combatTalentScale(t, 30, 12, 0.75))) end,
 	innate = true,
 	on_pre_use = function(self, t) return self:hasEffect(self.EFF_REK_DEML_RIDE) end,
 	on_learn = function(self, t)
@@ -212,7 +212,9 @@ newTalent{
 			local o = self.runeplate_inscription
 			self.__inscription_data_fake = o.inscription_data
 			local tal = self:getTalentFromId("T_"..o.inscription_talent.."_1")
-			return util.getval(tal.no_energy, self, tal)
+			local energy = util.getval(tal.no_energy, self, tal)
+			self.__inscription_data_fake = nil
+			return energy
 		end
 		return false
 	end,
