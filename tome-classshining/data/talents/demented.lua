@@ -60,12 +60,12 @@ if not Talents.talents_types_def["demented/inner-power"] then
 end
 
 if not Talents.talents_types_def["demented/prism"] then
-   newTalentType{ allow_random=true, type="demented/prism", name = "Prism", description = "And I, only one of three", is_spell=true }
+   newTalentType{ allow_random=true, type="demented/prism", name = "Prism", description = "-and I, only one of three.", is_spell=true }
    load("/data-classshining/talents/prism.lua")
 end
 
 if not Talents.talents_types_def["demented/core-gate"] then
-   newTalentType{ allow_random=true, is_spell=true, type="demented/core-gate", name = "Core Gate", min_lev = 10, description = "Shandral is but a young and timid sun.  There are far greater powers, if you know to look for them." }
+   newTalentType{ allow_random=true, is_spell=true, type="demented/core-gate", name = "Core Gate", min_lev = 10, description = "Shandral is but the nearest of countless suns.  Reach out further." }
    load("/data-classshining/talents/core-gate.lua")
 end
 
