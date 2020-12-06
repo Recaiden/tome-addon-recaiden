@@ -3,7 +3,7 @@ newBirthDescriptor {
   name = 'Wight',
   locked = function()
 		if profile.mod.allow_build.undead_wight then return true end
-		if profile.mod.achievements.EVENT_OLDBATTLEFIELD then
+		if profile.mod and profile.mod.achievements and profile.mod.achievements.EVENT_OLDBATTLEFIELD then
 			profile.mod.allow_build.undead_wight = true
 			return true
 		end
@@ -12,11 +12,11 @@ newBirthDescriptor {
   locked_desc = "In forests dark the dead still sleep, waiting for one to dig too deep.",
   desc = {
 		"Wights are undead that arise spontaneously in places of great slaughter.",
-		"They have access to #GOLD#special undead talents#WHITE# and a wide range of undead abilities:",
-		"- poison immunity",
-		"- bleeding immunity",
-		"- fear immunity",
-		"- absorb energy",
+		"They have access to #GOLD#special undead talents#WHITE#:",
+		"- poison, bleeding, and fear immunity",
+		"- elemental blasts",
+		"- draining aura",
+		"- use infusion while undead",
 		"- teleport through walls",
 		'#GOLD#Stat modifiers:',
 		'#LIGHT_BLUE# * +0 Strength, +3 Dexterity, +0 Constitution',

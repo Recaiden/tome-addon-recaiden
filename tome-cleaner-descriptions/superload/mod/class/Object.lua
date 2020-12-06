@@ -11,12 +11,12 @@ local Combat = require("mod.class.interface.Combat")
 
 local _M = loadPrevious(...)
 
-local mod_max_tpl_len = { Minimalist = { small = { fantasy = 83, web = 83, basic = 83 },
-                                         normal = { fantasy = 61, web = 61, basic = 71 },
-                                         big = { fantasy = 55, web = 50, basic = 61 } },
-                          Classic =    { small = { fantasy = 60, web = 50, basic = 50 },
-                                         normal = { fantasy = 43, web = 43, basic = 43 },
-                                         big = { fantasy = 37, web = 37, basic = 37 } } }
+local mod_max_tpl_len = { Minimalist = { small = { fantasy = 73, web = 73, basic = 73 },
+                                         normal = { fantasy = 55, web = 55, basic = 59 },
+                                         big = { fantasy = 45, web = 45, basic = 49 } },
+                          Classic =    { small = { fantasy = 45, web = 45, basic = 45 },
+                                         normal = { fantasy = 33, web = 33, basic = 33 },
+                                         big = { fantasy = 29, web = 29, basic = 29 } } }
 
 function mod_get_tlp_len( mode, font_size, font_type )
    assert(mod_max_tpl_len[mode],
@@ -35,8 +35,9 @@ local mod_USABLE_COLOR = "ffff66"
 local mod_USABLE_COLOR2 = "999900"
 local mod_PASS_PWR_COLOR = "4682B4"
 local mod_DPS_sep = "#595959#offense ------#LAST#"
-local mod_DEF_sep = "#595959#--- defense ---#LAST#"
-local mod_MISC_sep = "#595959#-------- other#LAST#"
+local mod_DEF_sep = "#595959#defense ------#LAST#"
+-- local mod_DEF_sep = "#595959#--- defense ---#LAST#"
+local mod_MISC_sep = "#595959#other -------#LAST#"
 
 DamageType.dam_def.PHYSICALBLEED.name = "phys.bleed"
 DamageType.dam_def.SPLIT_BLEED.name = "phys.bleed"
@@ -369,7 +370,7 @@ function _M:getTextualDesc(compare_with, use_actor)
       end
       compare_scaled(w, compare_with, field, "combat_spellpower", {"combatSpellpower"}, "%+d #LAST#(%+d eff.)", mod_align_stat( "Spellpower"))
       compare_scaled(w, compare_with, field, "combat_mindpower", {"combatMindpower"}, "%+d #LAST#(%+d eff.)", mod_align_stat( "Mindpower"))
-      compare_fields(w, compare_with, field, "spellsurge_on_crit", "%+d", mod_align_stat( "Spellpower on crit") )
+      compare_fields(w, compare_with, field, "spellsurge_on_crit", "%+d", mod_align_stat( "Spellpower/crit") )
       -- Speed mod
       compare_fields(w, compare_with, field, "global_speed_add", "%+d%%", mod_align_stat( "Global Speed"), 100)
       compare_fields(w, compare_with, field, "movement_speed", "%+d%%", mod_align_stat( "Move Speed"), 100)
@@ -426,7 +427,7 @@ function _M:getTextualDesc(compare_with, use_actor)
                               local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
                               return col[2], (" %s"):format(item == "all" and "all" or (DamageType.dam_def[item] and DamageType.dam_def[item].name or "??")), {"color","LAST"}
                                                                                                         end)
-      compare_fields(w, compare_with, field, "damage_shield_penetrate", "%+d%%", mod_align_stat( "Shield Penetration"))
+      compare_fields(w, compare_with, field, "damage_shield_penetrate", "%+d%%", mod_align_stat( "Ignore Shields"))
       
       compare_table_fields(w, compare_with, field, "inc_damage_actor_type", "%+d%% ", mod_align_stat( "Against" ), function(item)
                               local _, _, t, st = item:find("^([^/]+)/?(.*)$")
@@ -587,23 +588,32 @@ function _M:getTextualDesc(compare_with, use_actor)
 
       --		desc:add({"color","ORANGE"}, "General effects: ", {"color","LAST"}, true)
 
-      compare_table_fields(w, compare_with, field, "resists", "%+d%%", mod_align_stat( "Resistance" ), function(item)
-                              local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
-                              return col[2], (" %s"):format(item == "all" and "all" or (DamageType.dam_def[item] and DamageType.dam_def[item].name or "??")), {"color","LAST"}
-                                                                                                    end)
-      compare_table_fields(w, compare_with, field, "resists_cap", "%+d%%", mod_align_stat( "Max Resistance" ), function(item)
-                              local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
-                              return col[2], (" %s"):format(item == "all" and "all" or (DamageType.dam_def[item] and DamageType.dam_def[item].name or "??")), {"color","LAST"}
-                                                                                                        end)
-      compare_table_fields(w, compare_with, field, "flat_damage_armor", "%+d", mod_align_stat( "Damage Reduction" ), function(item)
-                              local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
-                              return col[2], (" %s"):format(item == "all" and "all" or (DamageType.dam_def[item] and DamageType.dam_def[item].name or "??")), {"color","LAST"}
-                                                                                                            end)
+      compare_table_fields(
+				w, compare_with, field,
+				"resists", "%+d%%", mod_align_stat( "Resistance" ),
+				function(item)
+					local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
+					return col[2], (" %s"):format(item == "all" and "all" or (DamageType.dam_def[item] and DamageType.dam_def[item].name or "??")), {"color","LAST"}
+				end)
+      compare_table_fields(
+				w, compare_with, field,
+				"resists_cap", "%+d%%", mod_align_stat( "Max Resistance" ),
+				function(item)
+					local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
+					return col[2], (" %s"):format(item == "all" and "all" or (DamageType.dam_def[item] and DamageType.dam_def[item].name or "??")), {"color","LAST"}
+				end)
+      compare_table_fields(
+				w, compare_with, field,
+				"flat_damage_armor", "%+d", mod_align_stat( "Damage Reduction" ),
+				function(item)
+					local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
+					return col[2], (" %s"):format(item == "all" and "all" or (DamageType.dam_def[item] and DamageType.dam_def[item].name or "??")), {"color","LAST"}
+				end)
 
       compare_fields(w, compare_with, field, "ignore_direct_crits", "%-.2f%%", mod_align_stat( "Crit Resistance") )
       compare_fields(w, compare_with, field, "combat_crit_reduction", "%-d%%", mod_align_stat( "Crit Avoidance" ) )
       -- Evasion
-      compare_fields(w, compare_with, field, "projectile_evasion", "%+d%%", mod_align_stat( "Deflect Projectiles"))
+      compare_fields(w, compare_with, field, "projectile_evasion", "%+d%%", mod_align_stat( "Deflect Projectile"))
       compare_fields(w, compare_with, field, "evasion", "%+d%%", mod_align_stat( "Evasion"))
       compare_fields(w, compare_with, field, "cancel_damage_chance", "%+d%%", mod_align_stat( "Damage Avoidance"))
       compare_fields(w, compare_with, field, "damage_resonance", "%+d%%", mod_align_stat( "Resonance"))
@@ -611,7 +621,7 @@ function _M:getTextualDesc(compare_with, use_actor)
       compare_fields(w, compare_with, field, "shield_factor", "%+d%%", mod_align_stat( "Shield Power"))
       compare_fields(w, compare_with, field, "shield_windwall", "%+d", mod_align_stat("Windwall"))
       
-      compare_table_fields(w, compare_with, field, "resists_actor_type", "%+d%% ", mod_align_stat( "Resistance Against" ), function(item)
+      compare_table_fields(w, compare_with, field, "resists_actor_type", "%+d%% ", mod_align_stat( "Resist Against" ), function(item)
                               local _, _, t, st = item:find("^([^/]+)/?(.*)$")
                               if st and st ~= "" then
                                  return st:capitalize()
@@ -638,9 +648,9 @@ function _M:getTextualDesc(compare_with, use_actor)
       compare_scaled(w, compare_with, field, "combat_spellresist", {"combatSpellResist", true}, "%+d #LAST#(%+d eff.)", mod_align_stat( "Spell save"))
       compare_scaled(w, compare_with, field, "combat_mentalresist", {"combatMentalResist", true}, "%+d #LAST#(%+d eff.)", mod_align_stat( "Mind save"))
       
-      compare_fields(w, compare_with, field, "iceblock_pierce", "%+d%%", mod_align_stat( "Iceblock penetration"))
+      compare_fields(w, compare_with, field, "iceblock_pierce", "%+d%%", mod_align_stat( "Pierce Iceblocks"))
       compare_fields(w, compare_with, field, "slow_projectiles", "%+d%%", mod_align_stat( "Slow Projectiles"))
-      compare_fields(w, compare_with, field, "resist_unseen", "%-d%%", mod_align_stat( "Resistance against unseen"))
+      compare_fields(w, compare_with, field, "resist_unseen", "%-d%%", mod_align_stat( "Resist unseen"))
       compare_fields(w, compare_with, field, "paradox_reduce_anomalies", "%+d", mod_align_stat( "Anomaly Control"))
       compare_fields(w, compare_with, field, "inc_stealth", "%+d", mod_align_stat( "Stealth" ) )
       compare_fields(w, compare_with, field, "invisible", "%+d", mod_align_stat( "Invisibility"))
@@ -682,7 +692,7 @@ function _M:getTextualDesc(compare_with, use_actor)
          desc:add( mod_MISC_sep,true )
       end
       compare_fields(w, compare_with, field, "ammo_reload_speed", "%+d", mod_align_stat( "Reload" ))
-      compare_fields(w, compare_with, field, "disarm_bonus", "%+d", mod_align_stat( "T.Disarm" ) )
+      compare_fields(w, compare_with, field, "disarm_bonus", "%+d", mod_align_stat( "Disarm Traps" ) )
       compare_fields(w, compare_with, field, "max_encumber", "%+d", mod_align_stat( "Encumbrance" ) )
       --
       compare_fields(w, compare_with, field, "stamina_regen", "%+.2f", mod_align_stat( "Stamina/turn" ))
@@ -1230,10 +1240,10 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
             end
          end
          if any_diff then
-            local s = ( mod_align_stat( "Power",-1 ) .. " %3d%% (%s)  Range: %.1fx (%s)"):format(base_power * 100, table.concat(power_diff, " / "), base_range, table.concat(range_diff, " / "))
+            local s = ( mod_align_stat( "Weapon Damage",-1 ) .. " %3d%% (%s)  Range: 1.0x-%.1fx (%s)"):format(base_power * 100, table.concat(power_diff, " / "), base_range, table.concat(range_diff, " / "))
             desc:merge(s:toTString())
          else
-            desc:add(( mod_align_stat( "Power",-1 ) .. " %3d%%  Range: %.1fx"):format(base_power * 100, base_range))
+            desc:add(( mod_align_stat( "Weapon Damage",-1 ) .. " %3d%%  Range: 1.0x-%.1fx"):format(base_power * 100, base_range))
          end
       else
          local power_diff = {}
@@ -1254,7 +1264,7 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
          else
             power_diff = ("(%s)"):format(table.concat(power_diff, " / "))
          end
-         desc:add(( mod_align_stat( "Power",-1) .. " %.1f - %.1f"):format((combat.dam or 0) + (add_table.dam or 0), ((combat.damrange or (1.1 - (add_table.damrange or 0))) + (add_table.damrange or 0)) * ((combat.dam or 0) + (add_table.dam or 0))))
+         desc:add(( mod_align_stat( "Weapon Damage",-1) .. " %.1f - %.1f"):format((combat.dam or 0) + (add_table.dam or 0), ((combat.damrange or (1.1 - (add_table.damrange or 0))) + (add_table.damrange or 0)) * ((combat.dam or 0) + (add_table.dam or 0))))
          desc:merge(power_diff:toTString())
          local col = (combat.damtype and DamageType:get(combat.damtype) and DamageType:get(combat.damtype).text_color or "#WHITE#"):toTString()
          desc:add(" ",col[2],DamageType:get(combat.damtype or DamageType.PHYSICAL).name:capitalize(),{"color","LAST"})
@@ -1292,7 +1302,7 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
       if compare_with then return ("%+.0f%%"):format(orig - 100 / compare_with)
       else return ("%2.0f%%"):format(orig) end
    end
-   compare_fields(combat, compare_with, field, "physspeed", physspeed_compare, mod_align_stat( "Speed" ), 1, false, true, add_table)
+   compare_fields(combat, compare_with, field, "physspeed", physspeed_compare, mod_align_stat( "Attack Speed" ), 1, false, true, add_table)
    compare_fields(combat, compare_with, field, "block", "%+d",                 mod_align_stat( "Block" ), 1, false, false, add_table)
    compare_fields(combat, compare_with, field, "dam_mult", "%d%%",             mod_align_stat( "Damage Multiplier" ), 100, false, false, add_table)
    compare_fields(combat, compare_with, field, "range", "%+d",                 mod_align_stat( "Range" ), 1, false, false, add_table)
@@ -1323,7 +1333,7 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
       nil, nil,
       function(k, v) return not DamageType.dam_def[k].tdesc end)
    
-   compare_table_fields(combat, compare_with, field, "convert_damage", "%d%%", mod_align_stat( "Damage conversion" ), function(item)
+   compare_table_fields(combat, compare_with, field, "convert_damage", "%d%%", mod_align_stat( "Damage Conversion" ), function(item)
                            local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
                            return col[2], (" %s"):format(DamageType.dam_def[item].name),{"color","LAST"}
                                                                                                              end)
