@@ -231,3 +231,28 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+newEffect{
+	name = "REK_SHINE_HELIOCENTRISM", image = "talents/rek_shine_mantra_heliocentrism.png",
+	desc = "Heliocentrism",
+	long_desc = function(self, eff) return ("Increased damage by %d"):format(eff.power*eff.stacks) end,
+	type = "magical",
+	subtype = { arcane=true },
+	status = "beneficial",
+	charges = function(self, eff) return eff.stacks end,
+	parameters = { power = 2, stacks = 1, max_stacks = 10 },
+	on_merge = function(self, old_eff, new_eff)
+		old_eff.dur = new_eff.dur		
+		old_eff.stacks = math.min(old_eff.max_stacks, old_eff.stacks + 1)
+		self:removeTemporaryValue("inc_damage", old_eff.damid)
+		old_eff.damid = self:addTemporaryValue("inc_damage", {all=old_eff.stacks*new_eff.power})
+		return old_eff
+	end,
+	activate = function(self, eff)
+		eff.stacks = 1
+		eff.damid = self:addTemporaryValue("inc_damage", {all=old_eff.stacks*new_eff.power})
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("inc_damage", eff.damid)
+	end,
+}
