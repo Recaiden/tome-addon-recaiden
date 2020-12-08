@@ -250,9 +250,27 @@ newEffect{
 	end,
 	activate = function(self, eff)
 		eff.stacks = 1
-		eff.damid = self:addTemporaryValue("inc_damage", {all=old_eff.stacks*new_eff.power})
+		eff.damid = self:addTemporaryValue("inc_damage", {all=eff.stacks*eff.power})
 	end,
 	deactivate = function(self, eff)
 		self:removeTemporaryValue("inc_damage", eff.damid)
 	end,
+}
+
+newEffect{
+	name = "REK_SHINE_REPETITION", image = "talents/rek_shine_mantra_recitator.png",
+	desc = "Mantra Repetition",
+	long_desc = function(self, eff) return ("%s"):format(string.rep("THESUN", eff.stacks)) end,
+	type = "magical",
+	subtype = { arcane=true },
+	status = "beneficial",
+	charges = function(self, eff) return eff.stacks end,
+	parameters = { stacks = 1, max_stacks = 10 },
+	on_merge = function(self, old_eff, new_eff)
+		old_eff.dur = new_eff.dur		
+		old_eff.stacks = math.min(old_eff.max_stacks, old_eff.stacks + 1)
+		return old_eff
+	end,
+	activate = function(self, eff)	eff.stacks = 1 end,
+	deactivate = function(self, eff) end,
 }

@@ -64,6 +64,13 @@ if not Talents.talents_types_def["demented/prism"] then
    load("/data-classshining/talents/prism.lua")
 end
 
+if not Talents.talents_types_def["celestial/shining-mantras"] then
+	newTalentType{ allow_random=false, type="celestial/shining-mantra-mantras", name = "Mantras", description = "Three truths of the sun", generic=true, is_spell=true }
+	newTalentType{ allow_random=true, type="celestial/shining-mantras", name = "Mantras", description = "Simple sounds spoken over and over and over.", generic=true, is_spell=true }
+	
+	load("/data-classshining/talents/mantra.lua")
+end
+
 if not Talents.talents_types_def["demented/core-gate"] then
    newTalentType{ allow_random=true, is_spell=true, type="demented/core-gate", name = "Core Gate", min_lev = 10, description = "Shandral is but the nearest of countless suns.  Reach out further." }
    load("/data-classshining/talents/core-gate.lua")

@@ -5,7 +5,7 @@ local function getMaxResistIncrease(self)
 end
 
 local function getResistBlurb(self)
-	return ("#GOLD#Working with solar energy improves your ability to survive it, increasing your resistance to Light and Fire Damage based on the combined level of your Nuclear talents (current bonus: %d)#LAST#"):format(getMaxResistIncrease(self))
+	return ("#GOLD#Working with solar energy improves your ability to survive it, increasing your resistance to Light and Fire Damage based on the combined level of your Inner Power talents (current bonus: %d)#LAST#"):format(getMaxResistIncrease(self))
 end
 
 

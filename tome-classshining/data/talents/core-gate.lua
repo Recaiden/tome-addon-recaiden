@@ -154,7 +154,7 @@ newTalent{
 	info = function(self, t)
 		return ([[Your light is a beacon in the vastness of existence.  Whenever you cast a spell (that takes a turn) in combat, you have a %d%% chance to summon a Glowing Horror nearby for %d turns.  Glowing horrors attack with a beam of light doing %0.1f damage. The power of the horrors will increase with your Magic.
 
---You can activate this talent to summon %d glowing horrors.]]):tformat(t.getChance(self, t), t.getDuration(self, t), t.getDamage(self, t), t.getCount(self, t)) --no damDesc since they're not you.
+You can activate this talent to summon %d glowing horrors.]]):tformat(t.getChance(self, t), t.getDuration(self, t), t.getDamage(self, t), t.getCount(self, t)) --no damDesc since they're not you.
 	end,
 }
 

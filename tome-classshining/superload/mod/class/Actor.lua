@@ -10,7 +10,7 @@ function _M:insanityEffect(min, max)
 		end
 	
 		if madness > 0 and self:knowTalent(self.T_REK_SHINE_MANTRA_PROPHET) then
-			madness = math.min(50 * self:callTalent(self.T_REK_SHINE_MANTRA_PROPHET, "getCapBoost"), madness * (1 + self:callTalent(self.T_REK_SHINE_MANTRA_PROPHET, "getBoost")/100)
+			madness = math.min(50 * self:callTalent(self.T_REK_SHINE_MANTRA_PROPHET, "getCapBoost"), madness * (1 + self:callTalent(self.T_REK_SHINE_MANTRA_PROPHET, "getBoost")/100))
 		end
 	end
 	return madness

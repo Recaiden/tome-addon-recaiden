@@ -7,7 +7,8 @@ newTalent{
 	hide = true,
 	no_energy = true,
 	tactical = { ESCAPE = 1, CLOSEIN = 1 },
-	getMovementSpeed = function(self, t) return self:combatTalentLimit(t, 5, 0.3, 1.0) end,
+	getMovementSpeed = function(self, t) return self:combatTalentLimit(t, 5, 0.2, 0.75) end,
+	callbackOnActBase = function(self, t) mantraRecite(self) end,
 	callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
 		if not moved or force or (ox == self.x and oy == self.y) then return end
 		if self.moving == true then return end
@@ -48,10 +49,11 @@ newTalent{
 	no_energy = true,
 	tactical = { BUFF = 2 },
 	getDamage = function(self, t) return self:combatTalentLimit(t, 100, 5, 10) end,
+	callbackOnActBase = function(self, t) mantraRecite(self) end,
 	callbackOnAct = function(self, t)
 		if not self.old_x then self.old_x, self.old_y = self.x, self.y return end
 		if self.old_x == self.x and self.old_y == self.y then
-			self:setEffect(self.EFF_REK_SHINE_HELIOCENTRISM, 1, {power=t.getDamage(self, t)})
+			self:setEffect(self.EFF_REK_SHINE_HELIOCENTRISM, 2, {power=t.getDamage(self, t)})
 		end
 		self.old_x, self.old_y = self.x, self.y
 	end,
@@ -82,7 +84,9 @@ newTalent{
 	hide = true,
 	no_energy = true,
 	tactical = { DEFEND = 1 },
-	range = function(self, t) return self:combatTalentLimit(t, 10, 2, 5) end,
+	range = function(self, t) return t.getRadius(self, t) end,
+	getRadius = function(self, t) return math.floor(self:combatTalentLimit(t, 10, 2, 5)) end,
+	callbackOnActBase = function(self, t) mantraRecite(self) end,
 	callbackOnTalentPost = function(self, t, ab)
 		if not self.in_combat then return end
 		if not ab.is_spell then return end
@@ -130,7 +134,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[In singsong voice you repeat the futility of action.  Every time you cast a spell (that takes a turn), enemies within range %d are knocked back (#SLATE#Spellpwoer vs. Physical#LAST#)
-You may only have one Mantra active at once.]]):format(t.getMovementSpeed(self, t)*100)
+You may only have one Mantra active at once.]]):format(self:getTalentRange(t))
 	end,
 }
 
@@ -162,12 +166,11 @@ newTalent{
 						local t1 = self:getTalentFromId(self.T_REK_SHINE_MANTRA_PRECESSION)
 						local t2 = self:getTalentFromId(self.T_REK_SHINE_MANTRA_HELIOCENTRISM)
 						local t3 = self:getTalentFromId(self.T_REK_SHINE_MANTRA_ENTROPY)
-						ret = ([[[You have learned to sing the truth of the Sun, in the form of three magical Mantras.
+						ret = ([[You have learned to sing the truth of the Sun, in the form of three magical Mantras.
 			Mantra of Precession: Increases your movement speed by %d%% and you move 2 spaces at a time if possible.
 			Mantra of Helocentrism: Each round where you do not move, you gain +%d%% damage, stacking 5 times.
 			Mantra of Entropy: When you cast a spell (that takes a turn) enemies within range %d are knocked back.
-    You may only have one Mantra active at a time.]]):
-						tformat(t1.getSpeed(self, t1), t2.getDamage(self, t), self:getTalentRadius(t3))
+You may only have one Mantra active at a time.]]):tformat(t1.getMovementSpeed(self, t1), t2.getDamage(self, t2), t3.getRadius(self, t3))
 					end)
 		self.talents[self.T_REK_SHINE_MANTRA_PRECESSION] = old1
 		self.talents[self.T_REK_SHINE_MANTRA_HELIOCENTRISM] = old2
@@ -177,7 +180,6 @@ newTalent{
 }
 
 mantraFireshield = function(self, t, ret)
-	--Fire shield
 	if self:knowTalent(self.T_REK_SHINE_MANTRA_ADEPT) then
 		local t2 = self:getTalentFromId(self.T_REK_SHINE_MANTRA_ADEPT)
 		self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.FIRE]=t2.getDamageOnMeleeHit(self, t2)})
@@ -192,25 +194,68 @@ newTalent{
 	-- insanity effect implemented in superload mod/class/Actor.lua:insanityEffect
 	-- fireshield implemented in each mantra talent
 	info = function(self, t)
-		return ([[Your Mantras sear the air with unassailable truth, which does %0.1f fire damageto anyone who hits you in melee.  Additionally, whenever you would generate an insanity effect, you instead generate two and use the more extreme effect.
-
-Spellpower: increases damage.]]):tformat(t.getDuration(self, t), t.getChance(self, t), t.getBonusPower(self, t), getResistBlurb(self))
+		return ([[Your Mantras sear the air with unassailable truth, which does %0.1f fire damageto anyone who hits you in melee.  Additionally, your insanity effects are twice as likely to have high values, both positive and negative.
+Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.FIRE, t.getDamageOnMeleeHit(self, t)))
 	end,
 }
+
+mantraRecite = function(self)
+	if not self.in_combat then return end
+	if not self:knowTalent(self.T_REK_SHINE_MANTRA_RECITATOR) then return end
+	self:setEffect(self.EFF_REK_SHINE_REPETITION, 2, {})
+end
+
+mantraRecitation = function(self)
+	if not self:knowTalent(self.T_REK_SHINE_MANTRA_RECITATOR) then return end
+	local r = self:hasEffect(self.EFF_REK_SHINE_REPETITION)
+	if not r then return end
+	local t = self:getTalentFromId(self.T_REK_SHINE_MANTRA_RECITATOR)
+
+	local damInc = self:combatGetDamageIncrease(DamageType.FIRE, true)
+
+	--heal
+	self:attr("allow_on_heal", 1)
+	self:heal(self:spellCrit(t.getHeal(self, t) * (1+damInc/100) * r.stacks / r.max_stacks), self)
+	self:attr("allow_on_heal", -1)
+	
+	--fireblasts
+	local tgts = {}
+	local grids = core.fov.circle_grids(self.x, self.y, 10, true)
+	for x, yy in pairs(grids) do
+		for y, _ in pairs(grids[x]) do
+			local a = game.level.map(x, y, Map.ACTOR)
+			if a and self:reactionToward(a) < 0 then
+				tgts[#tgts+1] = a
+			end
+		end
+	end
+	if #tgts <= 0 then return true end
+	
+	local dam = self:spellCrit(t.getDamage(self, t) * r.stacks / r.max_stacks)
+	for i = 1, r.stacks do
+		if #tgts <= 0 then break end
+		local a, id = rng.table(tgts)
+		table.remove(tgts, id)
+		self:project({type="hit", talent=t, self.x, self.y}, a.x, a.y, DamageType.FIRE, dam)
+		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(a.x-self.x), math.abs(a.y-self.y)), "light_beam", {tx=a.x-self.x, ty=a.y-self.y})
+	end
+
+	self:removeEffect(self.EFF_REK_SHINE_REPETITION)
+	game:playSoundNear(self, "talents/spell_generic")
+end
 
 newTalent{
 	name = "Mantra Recitator", short_name = "REK_SHINE_MANTRA_RECITATOR",
 	type = {"celestial/shining-mantras", 3}, require = mag_req3, points = 5,
 	mode = "passive",
-	range = function(self, t) 10 end,
+	range = 10,
 	getMaxStacks = function(self, t) return 10 end,
 	getHeal = function(self,t) return self:combatTalentScale(t, 10, 440) end,
 	getDamage = function(self,t) return self:combatTalentScale(t, 10, 330) end,
-	-- implemented in deactivate of mantras
 	info = function(self, t)
 		return ([[Conclude your mantras with a word of purifying flame.  While in combat, your Mantras generate stacks of Repetition each round, up to %d stacks.  When you deactivate a mantra, you are healed for up to %0.1f life and up to %d enemies in sight suffer up to %0.1f fire damage, based on your stacks of Repetition.
 The healing is increased based on your increased fire damage.
-Spellpower: increases healing and damage.]]):tformat(t.getMaxStacks(self, t), damDesc(self, DamageType.FIRE, t.getHeal(self, t)), damDesc(self, DamageType.FIRE, t.getDamage(self, t)), t.getMaxStacks(self, t))
+Spellpower: increases healing and damage.]]):tformat(t.getMaxStacks(self, t), damDesc(self, DamageType.FIRE, t.getHeal(self, t)), t.getMaxStacks(self, t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
 	end,
 }
 
@@ -218,7 +263,7 @@ newTalent{
 	name = "Mantra Prophet", short_name = "REK_SHINE_MANTRA_PROPHET",
 	type = {"celestial/shining-mantras", 4},	require = mag_req4,	points = 5,
 	mode = "passive",
-	getBoost = function(self, t) return self:combatTalentScale(t, 0.4, 1.2) end,
+	getBoost = function(self, t) return self:combatTalentScale(t, 0.3, 0.6) end,
 	getCapBoost = function(self, t) return 1.2 end,
 	-- implemented in superload mod/class/Actor.lua:insanityEffect
 	info = function(self, t)

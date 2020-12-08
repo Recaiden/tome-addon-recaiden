@@ -13,7 +13,7 @@ local base_bumpInto = _M.bumpInto
 function _M:bumpInto(target)
 	local reaction = self:reactionToward(target)
 	if reaction < 0 and self:isTalentActive(self.T_REK_SHINE_MANTRA_PRECESSION) then
-		self.shining_precession_jumnp = true
+		self.shining_precession_jump = true
 		local dx = target.x - self.x
 		local dy = target.y - self.y
 		if not game.level.map:checkAllEntities(self.x+dx*2, self.y+dy*2, "block_move", self) then

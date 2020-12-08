@@ -41,9 +41,9 @@ newBirthDescriptor{
 	talents_types = {
 		-- base talents
 		["celestial/sunlight"]={true, 0.3},
+		["demented/sunlight"]={true, 0.3},
 		["demented/prism"]={true, 0.3},
 		["demented/inner-power"]={true, 0.3},
-		["demented/sunlight"]={true, 0.3},
 		
 		--advanced talents
 		["celestial/seals"]={false, 0.3},
@@ -54,11 +54,12 @@ newBirthDescriptor{
 		["cunning/survival"]={false, 0.0},
 		["technique/combat-training"]={true, 0.0},
 		["celestial/chants"]={true, 0.3},
+		["celestial/shining-mantras"]={true, 0.3},
 		["celestial/light"]={true, 0.3},
-		["demented/beyond-sanity"]={true, 0.0},
+		--["demented/beyond-sanity"]={true, 0.0},
 	},
 	birth_example_particles = {
-		"golden_shield",
+		"mantra_shield",
 		-- function(actor)
 		-- 	if core.shader.active(4) then local x, y = actor:attachementSpot("back", true) actor:addParticles(Particles.new("shader_wings", 1, {x=x, y=y, infinite=1}))
 		-- 	else actor:addParticles(Particles.new("wildfire", 1))
@@ -70,7 +71,7 @@ newBirthDescriptor{
 		[ActorTalents.T_SEARING_LIGHT] = 1,
 		[ActorTalents.T_REK_SHINE_PRISM_REFLECTIONS] = 1,
 		[ActorTalents.T_HEALING_LIGHT] = 1,
-		[ActorTalents.T_CHAOS_ORBS] = 1,
+		[ActorTalents.T_REK_SHINE_MANTRA_INITIATE] = 1,
 	},
 	
 	copy = {
