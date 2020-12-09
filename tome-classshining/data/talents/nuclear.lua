@@ -36,6 +36,35 @@ In addition, your light and fire penetration do not apply when damaging allies.
 	end,
 }
 
+-- 'superload' damage projectors for fire and light
+local base_FireProjector = DamageType.dam_def.FIRE.projector
+DamageType.dam_def.FIRE.projector = function(src, x, y, type, dam, state)
+	local target = game.level.map(x, y, Map.ACTOR)
+	local pen_old = src:combatGetResistPen(type) or 0
+	local penalty = nil
+	if src:knowTalent(src.T_REK_SHINE_NUCLEAR_SEARING_CORE) and target and src:reactionToward(target) < 0 then
+		penalty = src:addTemporaryValue("resists_pen", {[DamageType.FIRE]= -1 * pen_old})
+	end
+	base_FireProjector(src, x, y, type, dam, state)
+	if penalty then
+		src:removeTemporaryValue("resists_pen", penalty)
+	end
+end
+
+local base_LightProjector = DamageType.dam_def.LIGHT.projector
+DamageType.dam_def.LIGHT.projector = function(src, x, y, type, dam, state)
+	local target = game.level.map(x, y, Map.ACTOR)
+	local pen_old = src:combatGetResistPen(type) or 0
+	local penalty = nil
+	if src:knowTalent(src.T_REK_SHINE_NUCLEAR_SEARING_CORE) and target and src:reactionToward(target) < 0 then
+		penalty = src:addTemporaryValue("resists_pen", {[DamageType.LIGHT]= -1 * pen_old})
+	end
+	base_LightProjector(src, x, y, type, dam, state)
+	if penalty then
+		src:removeTemporaryValue("resists_pen", penalty)
+	end
+end
+
 newTalent{
 	name = "Fuel Enrichment", short_name = "REK_SHINE_NUCLEAR_FUEL_ENRICHMENT",
 	type = {"demented/inner-power", 2},
@@ -51,18 +80,20 @@ newTalent{
 	mode = "passive",
 	getChance = function(self, t) return math.floor(self:combatTalentScale(t, 4.4, 9)) end,
 	getDuration = function(self, t) return 5 end,
-	getBonusPower = function(self, t) return 5 end,
 	passives = function(self, t, p)
 		local crit = self:combatSpellCrit()
 		local eff = self:hasEffect(self.EFF_REK_SHINE_ENRICHMENT)
 		if eff then crit = crit - eff.power end
-		local boost = 0
-		while crit >= 50 do
-			boost = boost + t.getBonusPower(self, t)
-			crit = crit - 10
+		if crit >= 40 then
+			local boost = (crit-40) / 2
+			self:talentTemporaryValue(p, "combat_critical_power", boost)
 		end
-		self:talentTemporaryValue(p, "combat_critical_power", boost)
 	end,
+	callbackOnStatChange = function(self, t, stat, v)
+		if stat == self.STAT_CUN or stat == self.STAT_LCK then self:updateTalentPassives(t) end
+	end,
+	callbackOnWear = function(self, t, o, fBypass) self:updateTalentPassives(t) end,
+	callbackOnTakeoff = function(self, t, o, fBypass) self:updateTalentPassives(t) end,
 	-- triggered in Combat.lua:spellCrit superload
 	critFailed = function(self, t)
 		self:setEffect(self.EFF_REK_SHINE_ENRICHMENT, t.getDuration(self,t), {power=t.getChance(self, t), src=self})
@@ -75,9 +106,9 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Whenever one of your spells fails to be a critical hit, you gain a stack of Enrichment (up to 5 stacks) for %d turns, which increases your spell critical strike chance by +%d%%.
-If your unenriched spell critical rate is over 50%%/60%%/70%%/80%%/90%%, you passively gain %d critical power for each.
+If your unenriched spell critical rate is over 40%%, you passively gain 1%% critical power for every 2%% extra critical rate.
 
-%s]]):tformat(t.getDuration(self, t), t.getChance(self, t), t.getBonusPower(self, t), getResistBlurb(self))
+%s]]):tformat(t.getDuration(self, t), t.getChance(self, t), getResistBlurb(self))
 	end,
 }
 
@@ -96,7 +127,7 @@ newTalent{
 	mode = "sustained",
 	cooldown = 20,
 	range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6)) end,
-	getCost = function(self, t) return 5 end,
+	getCost = function(self, t) return 3 end,
 	getDamage = function(self,t) return self:combatTalentScale(t, 10, 60) end,
 	getDisease = function(self,t) return math.floor(self:combatTalentSpellDamage(t, 2, 7)) end,
 	getDuration = function(self,t) return math.floor(self:combatTalentScale(t, 3, 5)) end,
@@ -113,7 +144,7 @@ newTalent{
 			DamageType.REK_SHINE_LIGHT_WEAK, {dam=dam, power=t.getDisease(self, t)},
 			self:getTalentRange(t),
 			5, nil,
-			MapEffect.new{color_br=255, color_bg=187, color_bb=10, alpha=120, effect_shader="shader_images/radiation_effect.png"},
+			MapEffect.new{color_br=187, color_bg=132, color_bb=10, alpha=100, effect_shader="shader_images/radiation_effect.png"},
 				nil, self:spellFriendlyFire()
 			)
 	end,
@@ -150,7 +181,7 @@ newTalent{
 	mode = "sustained",
 	cooldown = 0,
 	no_energy = true,
-	getSurge = function(self, t) return self:combatTalentScale(t, 10, 50, 1.0) end,
+	getSurge = function(self, t) return self:combatTalentScale(t, 5, 25, 1.0) end,
 	getBonusPower = function(self, t) return self:combatTalentScale(t, 5, 25) end,
 	getPrice = function(self, t) return 4 * (1.5 + (self.combat_critical_power or 0) / 100) end,
 	callbackOnCrit = function(self, t, type, dam, chance, target)

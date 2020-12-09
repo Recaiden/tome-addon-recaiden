@@ -8,6 +8,7 @@ newTalent{
 	no_energy = true,
 	tactical = { ESCAPE = 1, CLOSEIN = 1 },
 	getMovementSpeed = function(self, t) return self:combatTalentLimit(t, 5, 0.2, 0.75) end,
+	getDefense = function(self, t) return math.floor(self:combatScale(self:getTalentLevel(t) * self:getMag(), 4, 0, 50, 500, 0.375)) end,
 	callbackOnActBase = function(self, t) mantraRecite(self) end,
 	callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
 		if not moved or force or (ox == self.x and oy == self.y) then return end
@@ -23,7 +24,7 @@ newTalent{
 	activate = function(self, t)
 		game:playSoundNear(self, "talents/spell_generic2")
 		local ret = {}
-		self:talentTemporaryValue(ret, "movement_speed", t.getMovementSpeed(self, t))
+		self:talentTemporaryValue(ret, "combat_def", t.getDefense(self, t))
 		ret.particle = self:addParticles(Particles.new("mantra_shield", 1))
 		mantraFireshield(self, t, ret)
 		return ret
@@ -34,8 +35,8 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[In singsong voice you repeat the secrets of motion, which increases your movement speed by %d%% and causes you to move 2 spaces at a time if possible.
-You may only have one Mantra active at once.]]):format(t.getMovementSpeed(self, t)*100)
+		return ([[In singsong voice you repeat the secrets of motion, which increases your Defense by %d%% (based on Magic) and causes you to move 2 spaces at a time if possible.
+You may only have one Mantra active at once.]]):format(t.getDefense(self, t))
 	end,
 }
 
@@ -167,10 +168,10 @@ newTalent{
 						local t2 = self:getTalentFromId(self.T_REK_SHINE_MANTRA_HELIOCENTRISM)
 						local t3 = self:getTalentFromId(self.T_REK_SHINE_MANTRA_ENTROPY)
 						ret = ([[You have learned to sing the truth of the Sun, in the form of three magical Mantras.
-			Mantra of Precession: Increases your movement speed by %d%% and you move 2 spaces at a time if possible.
+			Mantra of Precession: Increases your defense by %d and you move 2 spaces at a time if possible.
 			Mantra of Helocentrism: Each round where you do not move, you gain +%d%% damage, stacking 5 times.
 			Mantra of Entropy: When you cast a spell (that takes a turn) enemies within range %d are knocked back.
-You may only have one Mantra active at a time.]]):tformat(t1.getMovementSpeed(self, t1), t2.getDamage(self, t2), t3.getRadius(self, t3))
+You may only have one Mantra active at a time.]]):tformat(t1.getDefense(self, t1), t2.getDamage(self, t2), t3.getRadius(self, t3))
 					end)
 		self.talents[self.T_REK_SHINE_MANTRA_PRECESSION] = old1
 		self.talents[self.T_REK_SHINE_MANTRA_HELIOCENTRISM] = old2
@@ -190,11 +191,11 @@ newTalent{
 	name = "Mantra Adept", short_name = "REK_SHINE_MANTRA_ADEPT",
 	type = {"celestial/shining-mantras", 2}, require = mag_req2, points = 5,
 	mode = "passive",
-	getDamageOnMeleeHit = function(self, t) return self:combatTalentSpellDamage(t, 5, 50) end,
+	getDamageOnMeleeHit = function(self, t) return self:combatTalentSpellDamage(t, 5, 50) * 100 / (self:attr("reflection_damage_amp") or 100) end,
 	-- insanity effect implemented in superload mod/class/Actor.lua:insanityEffect
 	-- fireshield implemented in each mantra talent
 	info = function(self, t)
-		return ([[Your Mantras sear the air with unassailable truth, which does %0.1f fire damageto anyone who hits you in melee.  Additionally, your insanity effects are twice as likely to have high values, both positive and negative.
+		return ([[Your Mantras sear the air with unassailable truth, which does %0.1f fire damage to anyone who hits you in melee.  Additionally, your insanity effects are twice as likely to have high values, both positive and negative.
 Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.FIRE, t.getDamageOnMeleeHit(self, t)))
 	end,
 }
@@ -250,8 +251,8 @@ newTalent{
 	mode = "passive",
 	range = 10,
 	getMaxStacks = function(self, t) return 10 end,
-	getHeal = function(self,t) return self:combatTalentScale(t, 10, 440) end,
-	getDamage = function(self,t) return self:combatTalentScale(t, 10, 330) end,
+	getHeal = function(self,t) return self:combatTalentSpellDamage(t, 10, 440) end,
+	getDamage = function(self,t) return self:combatTalentSpellDamage(t, 10, 330) end,
 	info = function(self, t)
 		return ([[Conclude your mantras with a word of purifying flame.  While in combat, your Mantras generate stacks of Repetition each round, up to %d stacks.  When you deactivate a mantra, you are healed for up to %0.1f life and up to %d enemies in sight suffer up to %0.1f fire damage, based on your stacks of Repetition.
 The healing is increased based on your increased fire damage.

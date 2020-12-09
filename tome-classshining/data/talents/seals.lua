@@ -57,7 +57,7 @@ The damage will increase with your spellpower.
 
 #{italic}#After the light comes darkness, deep and hungry.#{normal}#
 
-#YELLOW#Learning this talent increases the cost of Solar Citadel by 10 Positive Energy#LAST#]]):tformat(damDesc(self, DamageType.DARKNESS, t.getDamage(self, t)), t.getDuration(self, t), t.getCooldown(self, t))
+#YELLOW#Learning this talent is optional and increases the cost of Solar Citadel by 10 Positive Energy#LAST#]]):tformat(damDesc(self, DamageType.DARKNESS, t.getDamage(self, t)), t.getDuration(self, t), t.getCooldown(self, t))
 	end,
 }
 class:bindHook("DamageProjector:final", function(self, hd)
@@ -75,7 +75,7 @@ class:bindHook("DamageProjector:final", function(self, hd)
 			src:setProc("shining_empyreal_darkness", true, 3)
 			local damBolt = t.getDamage(seff.src, t)
 			src:project(target, target.x, target.y, DamageType.DARKNESS_BLIND, damBolt)
-			--TODO visual effect
+			game.level.map:particleEmitter(target.x, target.y, 1, "quick_fade_image", {img="empyreal_arms"})
 		end
 	end
 	return hd
@@ -87,12 +87,12 @@ newTalent{
 	mode = "passive",
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 4, 30) * 100 / (self:attr("reflection_damage_amp") or 100) end,
 	info = function(self, t)
-		return ([[Enhance your solar citadel with unquenchable flames. You gain 100%% silence immunity while standing in it, while enemies take an additional %d%% fire damage each turn.
+		return ([[Enhance your solar citadel with unquenchable flames. You gain 100%% silence immunity while standing in it, while enemies take an additional %0.1f fire damage each turn.
 The damage will increase with your spellpower.
 
-#{italic}#Together, out light will be visible in all places, forevermore.#{normal}#
+#{italic}#Together, our light will be visible in all places, forevermore.#{normal}#
 
-#YELLOW#Learning this talent increases the cost of Solar Citadel by 10 Positive Energy#LAST#]]):tformat((damDesc (self, DamageType.FIRE, t.getDamage(self, t))))
+#YELLOW#Learning this talent is optional and increases the cost of Solar Citadel by 10 Positive Energy#LAST#]]):tformat((damDesc (self, DamageType.FIRE, t.getDamage(self, t))))
 	end,
 }
 
@@ -100,7 +100,7 @@ newTalent{
 	name = "Walking Citadel", short_name = "REK_SHINE_SEALS_WALKING_CITADEL",
 	type = {"celestial/seals", 2}, require = mag_req_high4, points = 5,
 	cooldown = 20,
-	insanity = -15,
+	insanity = -10,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 75) * 100 / (self:attr("reflection_damage_amp") or 100) end,
 	getNumb = function(self, t) return 40 end,
 	getNumbDuration = function(self, t) return math.floor(self:combatTalentLimit(t, 7, 2, 5)) end,

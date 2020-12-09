@@ -11,15 +11,15 @@ return { blend_mode=core.particles.BLEND_SHINY, generator = function()
 	return {
 		trail = 0,
 		life = rng.range(10, 20),
-		size = rng.range(2, 6), sizev = -0.1, sizea = 0,
+		size = rng.range(3, 5), sizev = -0.1, sizea = 0,
 
 		x = r * math.cos(a), xv = 0, xa = 0,
 		y = r * math.sin(a), yv = 0, ya = 0,
 		dir = dir, dirv = -dirv, dira = 0,
-		vel = rng.percent(50) and -1 or 1, velv = 0, vela = 0,
+		vel = 1, velv = 0, vela = 0,
 
-		r = rng.range(200, 230)/255,  rv = 0, ra = 0,
-		g = rng.range(150, 180)/255,  gv = 0, ga = 0,
+		r = rng.range(220, 255)/255,  rv = 0, ra = 0,
+		g = rng.range(120, 150)/255,  gv = 0, ga = 0,
 		b = rng.range(000, 030)/255,  bv = 0, ba = 0,
 		a = rng.range(065, 160)/255,  av = -0.03, aa = 0,
 	}

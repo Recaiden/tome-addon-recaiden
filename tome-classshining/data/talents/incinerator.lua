@@ -9,35 +9,20 @@ newTalent{
 		end
 		return count
 	end,
-	getTurns = function(self, t) return self:combatTalentLimit(t, 1, 10, 3) end,
+	getDuration = function(self, t) return 5 end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 12, 25) end,
+	getBaseDamage = function(self, t) return 5 end,
 	callbackOnDealDamage = function(self, t, val, target, dead, death_note)
 		if dead then return end
-		if target == self or target == self.summoner or (target.summoner and target.summoner == self) then return end
-		if not death_note or (death_note.damtype == DamageType.FIRE) then return end
-		if self:attr("sunburning") then return end
-		local procs = self.turn_procs.sunburn or 0
-		if self.summoner and self.summoner.turn_procs.sunburn then
-			procs = self.summoner.turn_procs.sunburn
-		end
-		if procs >= t.getStacks(self, t) then return end
-		
-		self:attr("sunburning",1)
-		local dam = self:spellCrit(t.getDamage(self, t))
-		DamageType:get(DamageType.FIRE).projector(self, target.x, target.y, DamageType.FIRE, dam)
-		self:attr("sunburning",-1)
-		if self.summoner then
-			self.summoner.turn_procs.sunburn = procs + 1
-		else
-			self.turn_procs.sunburn = procs + 1
+		if not death_note or (death_note.damtype ~= DamageType.LIGHT) then return end
+		if target and self:reactionToward(target) < 0 then
+			target:setEffect(target.EFF_REK_SHINE_SUNBURN, t.getDuration(self, t), {power=t.getBaseDamage(self, t), dam=t.getDamage(self, t), max_stacks=t.getStacks(self,t), src=self})
 		end
 	end,
 
 	info = function(self, t)
-		return ([[Whenever you inflict non-fire damage to a target, they take an additional %0.2f fire damage.  This will not apply to you or your reflections.
-This can only hit a given target %d times per turn, and the cap is shared with your reflections.
-The damage increases with your Spellpower.
-		]]):tformat(damDesc(self, DamageType.FIRE, t.getDamage(self, t)), t.getStacks(self, t))
+		return ([[Whenever you inflict light damage on an enemy, they suffer from Sunburn, which does %0.2f fire damage per turn for %d turns.  Whenever a sunburned target takes non-fire damage, their sunburn's intensity increases by %0.2f for one turn, up to %d times per turn.
+The damage increases with your Spellpower.]]):tformat(damDesc(self, DamageType.FIRE, t.getBaseDamage(self, t)), t.getDuration(self, t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)), t.getStacks(self, t))
 	end,
 }
 

@@ -235,7 +235,7 @@ newEffect{
 newEffect{
 	name = "REK_SHINE_HELIOCENTRISM", image = "talents/rek_shine_mantra_heliocentrism.png",
 	desc = "Heliocentrism",
-	long_desc = function(self, eff) return ("Increased damage by %d"):format(eff.power*eff.stacks) end,
+	long_desc = function(self, eff) return ("Increased damage by %d%%"):format(eff.power*eff.stacks) end,
 	type = "magical",
 	subtype = { arcane=true },
 	status = "beneficial",
@@ -260,7 +260,7 @@ newEffect{
 newEffect{
 	name = "REK_SHINE_REPETITION", image = "talents/rek_shine_mantra_recitator.png",
 	desc = "Mantra Repetition",
-	long_desc = function(self, eff) return ("%s"):format(string.rep("THESUN", eff.stacks)) end,
+	long_desc = function(self, eff) return ("%s"):format(string.rep("THE SUN, ", eff.stacks)) end,
 	type = "magical",
 	subtype = { arcane=true },
 	status = "beneficial",
@@ -273,4 +273,35 @@ newEffect{
 	end,
 	activate = function(self, eff)	eff.stacks = 1 end,
 	deactivate = function(self, eff) end,
+}
+
+newEffect{
+	name = "REK_SHINE_SUNBURN", image = "talents/rek_shine_mantra_recitator.png",
+	desc = "Sunburn",
+	long_desc = function(self, eff) return ("%s"):format(string.rep("THESUN", eff.stacks)) end,
+	type = "magical",
+	subtype = { fire=true },
+	status = "beneficial",
+	charges = function(self, eff) return eff.power end,
+	parameters = { power=5, stacks = 1, max_stacks = 5 },
+	on_merge = function(self, old_eff, new_eff)
+		return old_eff -- cannot be reapplied early
+	end,
+	activate = function(self, eff)
+		eff.stacks = 1
+		eff.power_base = eff.power
+		eff.power = eff.power_base + eff.stacks * eff.dam
+	end,
+	deactivate = function(self, eff) end,
+	callbackOnHit = function(self, eff, cb, src, dt)
+		if cb.value <= 0 or src == self then return end
+		if not dt or not dt.damtype or dt.damtype == DamageType.FIRE then return end
+		eff.stacks = math.min(eff.max_stacks, eff.stacks + 1)
+		eff.power = eff.power_base + eff.stacks * eff.dam
+	end,
+	on_timeout = function(self, eff)
+		DamageType:get(DamageType.FIRE).projector(eff.src, self.x, self.y, DamageType.FIRE, eff.power)
+		eff.stacks = 0
+		eff.power = eff.power_base
+	end,
 }

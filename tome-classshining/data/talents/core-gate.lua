@@ -217,7 +217,7 @@ newTalent{
 newTalent{
 	name = "Grave of Suns", short_name = "REK_SHINE_CORE_GATE_GRAVE_OF_SUNS",
 	type = {"demented/core-gate", 4},	require = mag_req_high4, points = 5,
-	insanity = -25,
+	insanity = -15,
 	cooldown = 15,
 	tactical = { ATTACKAREA = { DARKNESS = 3 } },
 	range = 8,

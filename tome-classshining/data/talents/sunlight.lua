@@ -5,7 +5,7 @@ newTalent{
 	cooldown = function(self, t) if self:hasEffect(self.EFF_REK_SHINE_SOLAR_MINIMA) then return 14 else return 2 end end,
 	tactical = {ATTACKAREA = {LIGHT = 2}},
 	positive = 10,
-	insanity = 8,
+	insanity = function(self, t) if self:hasEffect(self.EFF_REK_SHINE_SOLAR_DISTORTION) then return 16 else return 8 end end,
 	range = 7,
 	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t} end,
 	radius = function (self, t) return 2 end,
@@ -70,7 +70,7 @@ newTalent{
 		local delay = t.getDelay(self, t)
 		local radius = self:getTalentRadius(t)
 		local damage = t.getDamage(self, t)
-		return ([[After %d turns, the target area in (radius %d) is blasted with a beam of light, dealing %0.2f damage and lighting the area.  After being cast 3 times, this ability goes on a 7x longer cooldown.]]):
+		return ([[After %d turns, the target area in (radius %d) is blasted with a beam of light, dealing %0.2f damage and lighting the area.  After being cast 3 times, this ability goes on a 7x longer cooldown.  The third cast grants twice as much insanity.]]):
 		tformat(delay, radius, damDesc(self, DamageType.LIGHT, damage))
 	end,
 }

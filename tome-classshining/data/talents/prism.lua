@@ -200,7 +200,7 @@ You and your reflections deal %d%% less damage.
 All damage taken is shared between you and your reflections.
 If killed, your reflections will reemerge after 10 turns.
 
-Prism, Seal, and Core Gate talents do not appeaar on reflections.
+Prism, Seal, and Core Gate talents do not appear on reflections.
 ]]):tformat(t.getCount(self, t), t.getReduction(self, t))
 	end,
 }
@@ -210,13 +210,34 @@ newTalent{
 	type = {"demented/prism", 2}, require = mag_req2, points = 5,
 	cooldown = 3,
 	positive = -5,
-	insanity = 4,
+	insanity = 8,
 	tactical = { ATTACKAREA = { LIGHT = 2 } },
 	range = 10,
 	is_beam_spell = true,
 	requires_target = true,
 	target = function(self, t) return {type="beam", range=self:getTalentRange(t), talent=t, selffire=false} end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 120) end,
+	getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 25, 5, 15)) end,
+	learnOnHit = function(self, t)
+		self.talent_on_spell["REK_SHINE_PRISM_CONVERGENCE"] = {
+			chance=t.getChance(self,t),
+			talent=Talents.T_REK_SHINE_PRISM_CONVERGENCE,
+			level=self:getTalentLevel(t)
+		}
+	end,
+	-- TODO make this not an on-learn.
+	on_learn = function(self, t)
+		self.talent_on_spell = self.talent_on_spell or {}
+		self.talent_on_spell["REK_SHINE_PRISM_CONVERGENCE"] = nil
+		t.learnOnHit(self, t)
+	end,
+	on_unlearn = function(self, t)
+		self.talent_on_spell = self.talent_on_spell or {}
+		self.talent_on_spell["REK_SHINE_PRISM_CONVERGENCE"] = nil
+		if self:getTalentLevel(t) > 0 then
+			t.learnOnHit(self, t)
+		end
+	end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
@@ -241,41 +262,31 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Fire a beam of solar energy, dealing %0.2f light damage.  Your reflections also cast an identical beam at the same target.]]):tformat(damDesc(self, DamageType.LIGHT, t:_getDamage(self)))
+		return ([[You and your reflections each fire a beam of solar energy, dealing %0.2f light damage.
+Whenever you deal damage with a spell, you have a %d%% chance to cast this talent automatically, ignoring cost and cooldown.]]):tformat(damDesc(self, DamageType.LIGHT, t:_getDamage(self)), t:_getChance(self))
 	end,
 }
 
 newTalent{
-	name = "Synchronicity", short_name = "REK_SHINE_PRISM_SYNCHRONY",
+	name = "Trinary", short_name = "REK_SHINE_PRISM_SYNCHRONY",
 	type = {"demented/prism", 3},
 	require = mag_req3, points = 5,
 	mode = "passive",
-	getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 25, 5, 15)) end,
-	learnOnHit = function(self, t)
-		self.talent_on_spell["REK_SHINE_PRISM_CONVERGENCE"] = {
-			chance=t.getChance(self,t),
-			talent=Talents.T_REK_SHINE_PRISM_CONVERGENCE,
-			level=self:getTalentLevel(t)
-		}
-	end,
-	-- TODO make this not an on-learn.
-	on_learn = function(self, t)
-		self.talent_on_spell = self.talent_on_spell or {}
-		self.talent_on_spell["REK_SHINE_PRISM_CONVERGENCE"] = nil
-		t.learnOnHit(self, t)
-	end,
-	on_unlearn = function(self, t)
-		self.talent_on_spell = self.talent_on_spell or {}
-		self.talent_on_spell["REK_SHINE_PRISM_CONVERGENCE"] = nil
-		if self:getTalentLevel(t) > 0 then
-			t.learnOnHit(self, t)
+	getSpellpowerIncrease = function(self, t) return self:combatTalentScale(t, 5, 25, 1.0) end,
+	passives = function(self, t, p)
+		local nb = 0
+		for i = 1, #self.fov.actors_dist do
+			local act = self.fov.actors_dist[i]
+			if act and core.fov.distance(act.x, act.y, self.x, self.y) <= 1 and act.is_luminous_reflection and act.summoner == self then nb = nb + 1 end
 		end
+		self:talentTemporaryValue(p, "combat_spellpower", t.getSpellpowerIncrease(self, t)*nb)
+	end,
+	callbackOnAct = function(self, t)
+		self:updateTalentPassives(t)
 	end,
 	info = function(self, t)
 		local range = self:getTalentRange(t)
-		return ([[Your magic is aligned with solar cycles: day and night, zenith and nadir, apsis...in any case, not under your full control.
-Whenever you deal damage with a spell, you have a %d%% chance to freely cast Convergence.
-]]):tformat(t.getChance(self, t))
+		return ([[Your and your reflections are three suns shining as one.  You gain %d spellpower for each reflection adjacent to you.]]):tformat(t.getSpellpowerIncrease(self, t))
 	end,
 }
 
@@ -309,7 +320,7 @@ newTalent{
 			self, ax, ay, duration, DamageType.REK_SHINE_MIRROR, 
 			{dam = self:getShieldAmount(self:spellCrit(t.getAbsorb(self, t))), radius = radius, self = self, talent = t}, 
 			0, 5, nil, 
-			{type="warning_ring", args = {radius = radius}},
+			{type="warning_ring", args = {r=220, g=220, b=220, nb=120, size=3, radius=radius}},
 			function(e, update_shape_only) end)
 		map_eff.name = t.name
 		return true
