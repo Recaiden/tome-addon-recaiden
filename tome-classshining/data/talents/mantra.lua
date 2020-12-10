@@ -21,10 +21,10 @@ newTalent{
 		end
 		self.shining_precession_jump = nil
 	end,
+	-- defense implemented in superload mod/class/interface/Combat.lua to avoid snapshotting
 	activate = function(self, t)
 		game:playSoundNear(self, "talents/spell_generic2")
 		local ret = {}
-		self:talentTemporaryValue(ret, "combat_def", t.getDefense(self, t))
 		ret.particle = self:addParticles(Particles.new("mantra_shield", 1))
 		mantraFireshield(self, t, ret)
 		return ret
@@ -35,7 +35,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[In singsong voice you repeat the secrets of motion, which increases your Defense by %d%% (based on Magic) and causes you to move 2 spaces at a time if possible.
+		return ([[In singsong voice you repeat the secrets of motion, which increases your Defense by %d (based on Magic) and causes you to move 2 spaces at a time if possible.
 You may only have one Mantra active at once.]]):format(t.getDefense(self, t))
 	end,
 }
@@ -270,6 +270,6 @@ newTalent{
 	info = function(self, t)
 		return ([[While repeating a mantra, your positive insanity effects are %d%% stronger, and the maximum power of positive insanity effects is increased from 50%% to %d%%.
 
-The twists and turns of fate all lead to the inevitable end you have foretold.  Each setback is all part of the design. ]]):tformat(t.getBoost(self, t)*100, 50*t.getCapBoost(self, t))
+#{italic}#The twists and turns of fate all lead to the inevitable end you have foretold.  Each setback is all part of the design.#{normal}#]]):tformat(t.getBoost(self, t)*100, 50*t.getCapBoost(self, t))
 	end,
 }

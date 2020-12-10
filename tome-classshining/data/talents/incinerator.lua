@@ -98,8 +98,8 @@ newTalent{
 		end
 		return {
 			dam = self:addTemporaryValue("resists_pen",
-																	 {[DamageType.LIGHT] = t.getDamageIncrease(self, t),
-																		[DamageType.FIRE] = t.getDamageIncrease(self, t)}),
+																	 {[DamageType.LIGHT] = t.getResistPenalty(self, t),
+																		[DamageType.FIRE] = t.getResistPenalty(self, t)}),
 			particle = particle,
 		}
 	end,

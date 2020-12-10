@@ -30,7 +30,7 @@ newDamageType{
 		local realdam = DamageType:get(DamageType.LIGHT).projector(src, x, y, DamageType.LIGHT, dam.dam, state)
 		local target = game.level.map(x, y, Map.ACTOR)
 		if target and src:reactionToward(target) < 0 then
-			target:setEffect(target.EFF_REK_SHINE_RADIANT_WEAKNESS, 1, {power=dam.power, src=src, apply_power=src:combatSpellpower(), no_ct_efffect=true})
+			target:setEffect(target.EFF_REK_SHINE_RADIANT_WEAKNESS, 1, {power=dam.power, src=src, applier=e.__project_src, apply_power=src:combatSpellpower(), no_ct_efffect=true})
 		end
 		return realdam
 	end,
@@ -43,7 +43,7 @@ newDamageType{
 		useImplicitCrit(src, state)
 		local realdam = DamageType:get(DamageType.LIGHT).projector(src, x, y, DamageType.LIGHT, dam, state)
 		local target = game.level.map(x, y, Map.ACTOR)
-		if target and target:canBe("stun") then
+		if target and src:reactionToward(target) < 0 and target:canBe("stun") then
 			target:setEffect(target.EFF_STUNNED, 3, {src=src, apply_power=src:combatSpellpower()})
 		end
 		return realdam

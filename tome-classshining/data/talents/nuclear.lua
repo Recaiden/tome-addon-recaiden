@@ -45,10 +45,11 @@ DamageType.dam_def.FIRE.projector = function(src, x, y, type, dam, state)
 	if src:knowTalent(src.T_REK_SHINE_NUCLEAR_SEARING_CORE) and target and src:reactionToward(target) < 0 then
 		penalty = src:addTemporaryValue("resists_pen", {[DamageType.FIRE]= -1 * pen_old})
 	end
-	base_FireProjector(src, x, y, type, dam, state)
+	local dam_dealt = base_FireProjector(src, x, y, type, dam, state)
 	if penalty then
 		src:removeTemporaryValue("resists_pen", penalty)
 	end
+	return dam_dealt 
 end
 
 local base_LightProjector = DamageType.dam_def.LIGHT.projector
@@ -59,10 +60,11 @@ DamageType.dam_def.LIGHT.projector = function(src, x, y, type, dam, state)
 	if src:knowTalent(src.T_REK_SHINE_NUCLEAR_SEARING_CORE) and target and src:reactionToward(target) < 0 then
 		penalty = src:addTemporaryValue("resists_pen", {[DamageType.LIGHT]= -1 * pen_old})
 	end
-	base_LightProjector(src, x, y, type, dam, state)
+	local dam_dealt = base_LightProjector(src, x, y, type, dam, state)
 	if penalty then
 		src:removeTemporaryValue("resists_pen", penalty)
 	end
+	return dam_dealt 
 end
 
 newTalent{
@@ -128,7 +130,7 @@ newTalent{
 	cooldown = 20,
 	range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6)) end,
 	getCost = function(self, t) return 3 end,
-	getDamage = function(self,t) return self:combatTalentScale(t, 10, 60) end,
+	getDamage = function(self,t) return self:combatTalentSpellDamage(t, 10, 60) end,
 	getDisease = function(self,t) return math.floor(self:combatTalentSpellDamage(t, 2, 7)) end,
 	getDuration = function(self,t) return math.floor(self:combatTalentScale(t, 3, 5)) end,
 	callbackOnCrit = function(self, t, type, dam, chance, target)
@@ -145,7 +147,7 @@ newTalent{
 			self:getTalentRange(t),
 			5, nil,
 			MapEffect.new{color_br=187, color_bg=132, color_bb=10, alpha=100, effect_shader="shader_images/radiation_effect.png"},
-				nil, self:spellFriendlyFire()
+			nil, self:spellFriendlyFire()
 			)
 	end,
 	activate = function(self, t)
@@ -158,7 +160,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		local range = self:getTalentRange(t)
-		return ([[Whenever one of your spells is a critical hit, the surging energy overflows your body, creating a radiant field in radius %d for %d turns.  This field does %0.2f light damage per turn and weakens enemies, reducing their strength and dexterity by %d.
+		return ([[Whenever one of your spells is a critical hit, the surging energy overflows your body, creating a radiant field in radius %d for %d turns.  This field does %0.2f light damage per turn and weakens enemies, reducing their strength and dexterity by %d.  The weakness from multiple different radiant fields can stack, up to 10 times.
 The field damage cannot trigger a critical hit but is increased by half your critical power.
 
 This costs #INSANE_GREEN#%d insanity#LAST# when it triggers and will only trigger if you have enough insanity.
@@ -179,7 +181,7 @@ newTalent{
 	end,
 	
 	mode = "sustained",
-	cooldown = 0,
+	cooldown = 1,
 	no_energy = true,
 	getSurge = function(self, t) return self:combatTalentScale(t, 5, 25, 1.0) end,
 	getBonusPower = function(self, t) return self:combatTalentScale(t, 5, 25) end,
@@ -205,7 +207,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Your spells surge in barely-controlled chain reactions, burning through your mortal body.
-You gain %d critical power and %d spellpower on crit, but spell criticals burn up %d%% of your life (based on your critical power) (at most once per turn).
+You gain %d critical power and %d spellpower on crit (stacks 3 times), but spell criticals burn up %d%% of your life (based on your critical power) (at most once per turn).
 
 %s]]):tformat(t.getBonusPower(self, t), t.getSurge(self, t), t.getPrice(self, t), getResistBlurb(self))
 	end,

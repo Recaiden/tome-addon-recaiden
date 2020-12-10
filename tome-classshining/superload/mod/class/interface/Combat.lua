@@ -27,4 +27,13 @@ function _M:bumpInto(target)
 	else return base_bumpInto(self, target) end
 end
 
+local base_combatDefenseBase = _M.combatDefenseBase
+function _M:combatDefenseBase(fake)
+	local def = base_combatDefenseBase(self, fake)
+	if self:isTalentActive(self.T_REK_SHINE_MANTRA_PRECESSION) then
+		def = def + self:callTalent(self.T_REK_SHINE_MANTRA_PRECESSION,"getDefense")
+	end
+	return def
+end
+
 return _M

@@ -40,10 +40,13 @@ newEffect{
 	type = "other",
 	subtype = { radiation=true },
 	status = "detrimental",
-	parameters = { power = 2 },
+	parameters = { power = 2, max_stacks=10},
 	on_merge = function(self, old_eff, new_eff)
-		old_eff.dur = new_eff.dur		
-		old_eff.power = old_eff.power + new_eff.power
+		old_eff.dur = new_eff.dur
+		if #old_eff.appliers < old_Eff.max_stacks and not old_eff.appliers[new_eff.applier] then
+			old_eff.power = old_eff.power + new_eff.power
+			old_eff.appliers[new_eff.applier] = true
+		end
 		self:removeTemporaryValue("inc_stats", old_eff.tmpid)
 		local stats = old_eff.power
 		old_eff.tmpid = self:addTemporaryValue("inc_stats",
@@ -55,6 +58,8 @@ newEffect{
 	end,
 	activate = function(self, eff)
 		local stats = eff.power
+		eff.appliers = {}
+		eff.appliers[eff.applier] = true
 		eff.tmpid = self:addTemporaryValue("inc_stats",
 																			 {
 																				 [Stats.STAT_STR] = stats,

@@ -65,7 +65,7 @@ newTalent{
 	getCount = function(self, t) return 3 end,
 	getChance = function(self, t) return 30 end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2.4, 4.8))+1 end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 300) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 180) end,
 	summon = function(self, t)
 		local stat = self:getMag()
 		local dur = t.getDuration(self, t)
@@ -207,10 +207,11 @@ newTalent{
 	type = {"demented/core-gate", 3},
 	require = mag_req_high3, points = 5,
 	mode = "passive",
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 30, 240) end,
 	-- implemented in first talent
 	info = function(self, t)
 		local range = self:getTalentRange(t)
-		return ([[Strengthen your glowing horrors with the ability to cast Piercing Light at talent level %d. This is a long-range beam with a chance to slow enemies.]]):tformat(self:getTalentLevel(t))
+		return ([[Strengthen your glowing horrors with the ability to cast Piercing Light at talent level %d. This is a long-range beam dealing %0.1f damage with a chance to slow enemies by 33%%]]):tformat(self:getTalentLevelRaw(t), t.getDamage(self, t))
 	end,
 }
 

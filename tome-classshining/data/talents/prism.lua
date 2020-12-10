@@ -47,7 +47,7 @@ makeMirrorClone = function(target, duration, alt_nodes)
 	for tid, _ in pairs(m.talents) do
 		local t = m:getTalentFromId(tid)
 		if t.type[1]:find("^demented/prism") and m:knowTalent(tid) then tids[#tids+1] = t end
-		if t.type[1]:find("^demented/core-gate") and m:knowTalent(tid) then tids[#tids+1] = t end
+		if t.type[1]:find("^demented/core%-gate") and m:knowTalent(tid) then tids[#tids+1] = t end
 		if t.type[1]:find("^celestial/seals") and m:knowTalent(tid) then tids[#tids+1] = t end
 		if (t.no_npc_use or t.unlearn_on_clone) and not t.allow_temporal_clones then tids[#tids+1] = t end
 	end
@@ -195,7 +195,7 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[Whenever you enter combat, you are joined by %d reflections of yourself,m each with half your maximum life.
+		return ([[Whenever you enter combat, you are joined by %d reflections of yourself, each with half your maximum life.
 You and your reflections deal %d%% less damage.  
 All damage taken is shared between you and your reflections.
 If killed, your reflections will reemerge after 10 turns.
@@ -251,10 +251,10 @@ newTalent{
 			tg.y = prism.y
 			local old_source = self.__project_source
 			self.__project_source = prism
-			local _ _, px, py = self:canProject(tg, x, y)
+			local _ _, px, py = prism:canProject(tg, x, y)
 			if px and py then
 				local grids = self:project(tg, x, y, DamageType.LIGHT, dam)
-				game.level.map:particleEmitter(prism.x, prism.y, math.max(math.abs(x-prism.x), math.abs(y-self.y)), "light_beam", {tx=x-prism.x, ty=y-prism.y})
+				game.level.map:particleEmitter(prism.x, prism.y, math.max(math.abs(x-prism.x), math.abs(y-prism.y)), "light_beam", {tx=x-prism.x, ty=y-prism.y})
 			end
 			self.__project_source = old_source
 		end

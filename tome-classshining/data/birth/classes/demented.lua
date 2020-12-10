@@ -27,7 +27,7 @@ newBirthDescriptor{
 	locked = function() return profile.mod.allow_build.divine_anorithil end,
 	locked_desc = _t"The balance of the heavens' powers is a daunting task. Blessed are those that venture east, into the house of the sun.",
 	desc = {
-		"Many in the east look to the sun for guidance and inspiration.  You have looked more closely than most. You have seen the true nature of Shandral, and now you know that you must cleanse the world with holy fire.",
+		"Many in the east look to the sun for guidance and inspiration. You have looked more closely than most. You have seen the true nature of Shandral, and now you know that you must cleanse the world with holy fire.",
 		"It will be #FIREBRICK#beautiful.#LAST#",
 		"Their most important stats are Magic and Cunning.",
 		"#GOLD#Stat modifiers:",
