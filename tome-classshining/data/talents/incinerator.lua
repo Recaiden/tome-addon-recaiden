@@ -10,7 +10,7 @@ newTalent{
 		return count
 	end,
 	getDuration = function(self, t) return 5 end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 12, 25) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 0, 25) end,
 	getBaseDamage = function(self, t) return 5 end,
 	callbackOnDealDamage = function(self, t, val, target, dead, death_note)
 		if dead then return end
@@ -33,7 +33,7 @@ newTalent{
 	sustain_positive = 10,
 	cooldown = 20,
 	tactical = { BUFF=2, ATTACKAREA = { LIGHT = 1 } },
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 55) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 0, 55) end,
 	callbackOnTalentPost = function(self, t, ab)
 		if ab.short_name == "SUN_FLARE" then
 			local se_duration = 4

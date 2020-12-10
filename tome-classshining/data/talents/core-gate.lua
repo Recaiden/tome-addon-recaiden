@@ -7,7 +7,7 @@ newTalent{
 	is_beam_spell = true,
 	requires_target = true,
 	target = function(self, t) return {type="beam",range=self:getTalentRange(t), talent=t, selffire=false, friendlyfire=self:spellFriendlyFire()} end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 180) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 50, 180) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
@@ -35,7 +35,7 @@ newTalent{
 	is_beam_spell = true,
 	requires_target = true,
 	target = function(self, t) return {type="beam", force_max_range=true, range=self:getTalentRange(t), talent=t, selffire=false, friendlyfire=self:spellFriendlyFire()} end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 30, 240) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 50, 240) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
@@ -65,7 +65,7 @@ newTalent{
 	getCount = function(self, t) return 3 end,
 	getChance = function(self, t) return 30 end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2.4, 4.8))+1 end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 180) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 50, 180) end,
 	summon = function(self, t)
 		local stat = self:getMag()
 		local dur = t.getDuration(self, t)
@@ -173,7 +173,7 @@ newTalent{
 	tactical = { DEFEND = 2 },
 	cooldown = 10,
 	getDuration = function(self, t) return 10 end,
-	getAbsorb = function(self, t) return self:combatTalentSpellDamage(t, 20, 220) end,
+	getAbsorb = function(self, t) return self:combatTalentSpellDamage(t, 0, 220) end,
 	on_pre_use = function(self, t, silent)
 		for uid, act in pairs(game.level.entities) do
 			if act.summoner and act.summoner == self and act.is_glowing_horror then
@@ -207,7 +207,7 @@ newTalent{
 	type = {"demented/core-gate", 3},
 	require = mag_req_high3, points = 5,
 	mode = "passive",
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 30, 240) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 50, 240) end,
 	-- implemented in first talent
 	info = function(self, t)
 		local range = self:getTalentRange(t)
@@ -224,7 +224,7 @@ newTalent{
 	range = 8,
 	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t} end,
 	radius = function (self, t) return 2 end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 300) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 0, 300) end,
 	getProcDamage = function(self, t) return self:combatTalentSpellDamage(t, 4, 30) end,
 	getDuration = function(self, t) return 5 end,
 	getSlow = function(self, t) return self:combatTalentLimit(t, 75, 20, 66) end,

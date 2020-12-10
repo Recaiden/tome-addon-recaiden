@@ -216,7 +216,7 @@ newTalent{
 	is_beam_spell = true,
 	requires_target = true,
 	target = function(self, t) return {type="beam", range=self:getTalentRange(t), talent=t, selffire=false} end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 120) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 120) end,
 	getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 25, 5, 15)) end,
 	learnOnHit = function(self, t)
 		self.talent_on_spell["REK_SHINE_PRISM_CONVERGENCE"] = {
@@ -296,7 +296,7 @@ newTalent{
 	cooldown = 15,
 	positive = -15,
 	insanity = -20,
-	getAbsorb = function(self, t) return self:combatTalentSpellDamage(t, 25, 555) end,
+	getAbsorb = function(self, t) return self:combatTalentSpellDamage(t, 20, 555) end,
 	getDuration = function(self, t) return 6 end,
 	action = function(self, t)
 		local duration = t.getDuration(self, t)

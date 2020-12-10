@@ -130,8 +130,8 @@ newTalent{
 	cooldown = 20,
 	range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6)) end,
 	getCost = function(self, t) return 3 end,
-	getDamage = function(self,t) return self:combatTalentSpellDamage(t, 10, 60) end,
-	getDisease = function(self,t) return math.floor(self:combatTalentSpellDamage(t, 2, 7)) end,
+	getDamage = function(self,t) return self:combatTalentSpellDamage(t, 20, 60) end,
+	getDisease = function(self,t) return math.floor(self:combatTalentSpellDamage(t, 20, 7)) end,
 	getDuration = function(self,t) return math.floor(self:combatTalentScale(t, 3, 5)) end,
 	callbackOnCrit = function(self, t, type, dam, chance, target)
 		if type ~= "spell" then return end

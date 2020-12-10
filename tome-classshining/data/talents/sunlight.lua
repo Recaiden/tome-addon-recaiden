@@ -14,7 +14,7 @@ newTalent{
 	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t} end,
 	radius = function (self, t) return 2 end,
 	getDelay = function(self, t) return 3 end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 300) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 300) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
@@ -97,7 +97,7 @@ newTalent{
 		if p.recharge then return ("%d/%d"):format(t.getRecharge(self, t) - p.recharge, t.getRecharge(self, t)), "buff_font_smaller" end
 		return "Ready", "buff_font_smaller"
 	end,
-	getShield = function(self, t) return self:combatTalentSpellDamage(t, 40, 200) end,
+	getShield = function(self, t) return self:combatTalentSpellDamage(t, 20, 200) end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 150) end,
 	getDuration = function(self, t) return 3 end,
 	getRecharge = function(self, t) return 7 end,
@@ -227,7 +227,7 @@ newTalent{
 	is_beam_spell = true,
 	requires_target = true,
 	target = function(self, t) return {type="widebeam", force_max_range=true, radius=1, range=self:getTalentRange(t), talent=t, selffire=false, friendlyfire=self:spellFriendlyFire()} end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 28, 370) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 20, 370) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
