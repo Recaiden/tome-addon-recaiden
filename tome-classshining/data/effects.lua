@@ -37,22 +37,24 @@ newEffect{
 	long_desc = function(self, eff)
 		return ("Decreases strength and dexterity by %d."):tformat(eff.power)
 	end,
+	charges = function(self, eff) return eff.power end,
 	type = "other",
 	subtype = { radiation=true },
 	status = "detrimental",
 	parameters = { power = 2, max_stacks=10},
 	on_merge = function(self, old_eff, new_eff)
 		old_eff.dur = new_eff.dur
-		if #old_eff.appliers < old_Eff.max_stacks and not old_eff.appliers[new_eff.applier] then
+		if old_eff.stacks < old_eff.max_stacks and not old_eff.appliers[new_eff.applier] then
 			old_eff.power = old_eff.power + new_eff.power
 			old_eff.appliers[new_eff.applier] = true
+			old_eff.stacks = old_eff.stacks + 1
 		end
 		self:removeTemporaryValue("inc_stats", old_eff.tmpid)
 		local stats = old_eff.power
 		old_eff.tmpid = self:addTemporaryValue("inc_stats",
 																			 {
-																				 [Stats.STAT_STR] = stats,
-																				 [Stats.STAT_DEX] = stats,
+																				 [Stats.STAT_STR] = -1*stats,
+																				 [Stats.STAT_DEX] = -1*stats,
 																			 })
 		return old_eff
 	end,
@@ -60,10 +62,11 @@ newEffect{
 		local stats = eff.power
 		eff.appliers = {}
 		eff.appliers[eff.applier] = true
+		eff.stacks = 1
 		eff.tmpid = self:addTemporaryValue("inc_stats",
 																			 {
-																				 [Stats.STAT_STR] = stats,
-																				 [Stats.STAT_DEX] = stats,
+																				 [Stats.STAT_STR] = -1*stats,
+																				 [Stats.STAT_DEX] = -1*stats,
 																			 })
 	end,
 	deactivate = function(self, eff)
