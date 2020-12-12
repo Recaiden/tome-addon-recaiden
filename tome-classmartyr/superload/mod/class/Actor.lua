@@ -104,7 +104,7 @@ function _M:updateObjectRequirements(o)
 	local oldreq = rawget(o, "require")
 	if not oldreq then return oldreq end
 	local newreq
-	if o.type == "weapon" or o.type == "armor" or o.type == "ammo" and self:knowTalent(self.T_REK_MTYR_VAGABOND_SLING_PRACTICE) then
+	if (o.type == "weapon" or o.type == "armor" or o.type == "ammo") and self:knowTalent(self.T_REK_MTYR_VAGABOND_SLING_PRACTICE) then
 		newreq = newreq or table.clone(oldreq, true)
 		if newreq.stat and newreq.stat.str and self:getDex() > self:getStr() then
 			newreq.stat.dex, newreq.stat.str = newreq.stat.str, nil
