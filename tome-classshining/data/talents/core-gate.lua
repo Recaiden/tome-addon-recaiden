@@ -65,7 +65,7 @@ newTalent{
 	getCount = function(self, t) return 3 end,
 	getChance = function(self, t) return 30 end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2.4, 4.8))+1 end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 50, 180) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 50, 180, self:rescaleCombatStats(self:getMag())) end,
 	summon = function(self, t)
 		local stat = self:getMag()
 		local dur = t.getDuration(self, t)
@@ -207,7 +207,7 @@ newTalent{
 	type = {"demented/core-gate", 3},
 	require = mag_req_high3, points = 5,
 	mode = "passive",
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 50, 240) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 50, 240, self:rescaleCombatStats(self:getMag())) end,
 	-- implemented in first talent
 	info = function(self, t)
 		local range = self:getTalentRange(t)
