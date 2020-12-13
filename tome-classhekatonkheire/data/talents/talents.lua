@@ -49,6 +49,10 @@ mag_req_high5 = {
 	level = function(level) return 26 + (level-1)  end,
 }
 
+str_req_slow = {
+	stat = { str=function(level) return 12 + (level-1) * 2 end },
+	level = function(level) return 0 + (level-1)*4  end,
+}
 str_req1 = {
 	stat = { str=function(level) return 12 + (level-1) * 2 end },
 	level = function(level) return 0 + (level-1)  end,
@@ -91,13 +95,18 @@ str_req_high5 = {
 }
 
 if not Talents.talents_types_def["spell/shambler"] then
-   newTalentType{ allow_random=true, is_spell=true, type="spell/shambler", name = "Shambler", description = "Walk steadily forward.  Don't worry; they will come to you.." }
+   newTalentType{ allow_random=true, is_spell=true, type="spell/shambler", name = "Shambler", description = "Walk steadily forward.  Don't worry; they will come to you." }
    load("/data-classhekatonkheire/talents/shambler.lua")
 end
 
 if not Talents.talents_types_def["technique/titanic-blows"] then
-   newTalentType{ allow_random=true, is_spell=true, type="technique/titanic-blows", name = "Titanic Blows", description = "Crush your enemies with slow heavy hits." }
+   newTalentType{ allow_random=true, type="technique/titanic-blows", name = "Titanic Blows", description = "Crush your enemies with slow heavy hits." }
    load("/data-classhekatonkheire/talents/titanic.lua")
+end
+
+if not Talents.talents_types_def["technique/helping-hands"] then
+   newTalentType{ allow_random=true, is_spell=true, type="technique/helping-hands", name = "Helpig Hands", description = "Many hands make light work." }
+   load("/data-classhekatonkheire/talents/helping-hands.lua")
 end
 
 -- if not Talents.talents_types_def["celestial/seals"] then

@@ -20,15 +20,17 @@ newBirthDescriptor{
 		-- base talents
 		["spell/shambler"]={true, 0.3},
 		["technique/titanic-blows"]={true, 0.3},
+		["technique/helping-hands"]={true, 0.3},
+		--["technique/harming-hands"]={true, 0.3},
+		
 		
 		--advanced talents
 		
 		--generics
-		["cunning/survival"]={false, 0.0},
 		["technique/combat-training"]={true, 0.0},
-		--["celestial/chants"]={true, 0.3},
-		--["celestial/light"]={true, 0.3},
-		--["demented/beyond-sanity"]={true, 0.0},
+		["technique/conditioning"]={true, 0.3},
+		["cunning/survival"]={true, 0.0},
+		--["spell/visionary"]={true, 0.0},
 	},
 	birth_example_particles = {
 		"golden_shield",
@@ -43,6 +45,7 @@ newBirthDescriptor{
 		[ActorTalents.T_REK_HEKA_TITANIC_SCATTER] = 1,
 		[ActorTalents.T_WEAPON_COMBAT] = 1,
 		[ActorTalents.T_WEAPONS_MASTERY] = 1,
+		[ActorTalents.T_ARMOUR_TRAINING] = 1,
 	},
 	
 	copy = {
