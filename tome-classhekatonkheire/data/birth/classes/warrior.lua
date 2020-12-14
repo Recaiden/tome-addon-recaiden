@@ -25,6 +25,8 @@ newBirthDescriptor{
 		
 		
 		--advanced talents
+		--["technique/splintered-lord"]={false, 0.3},
+		--["spell/eyesight"]={false, 0.3},
 		
 		--generics
 		["technique/combat-training"]={true, 0.0},

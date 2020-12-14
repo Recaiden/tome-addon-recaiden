@@ -49,14 +49,14 @@ newTalent{
 	hide = true,
 	no_energy = true,
 	tactical = { BUFF = 2 },
-	getDamage = function(self, t) return self:combatTalentLimit(t, 100, 5, 10) end,
+	getDamage = function(self, t) return self:combatTalentLimit(t, 10, 3, 6) end,
 	callbackOnActBase = function(self, t) mantraRecite(self) end,
 	callbackOnAct = function(self, t)
-		if not self.old_x then self.old_x, self.old_y = self.x, self.y return end
-		if self.old_x == self.x and self.old_y == self.y then
+		if not self.heliocentrism_x then self.heliocentrism_x, self.heliocentrism_y = self.x, self.y return end
+		if (self.heliocentrism_x == self.x) and (self.heliocentrism_y == self.y) then
 			self:setEffect(self.EFF_REK_SHINE_HELIOCENTRISM, 2, {power=t.getDamage(self, t)})
 		end
-		self.old_x, self.old_y = self.x, self.y
+		self.heliocentrism_x, self.heliocentrism_y = self.x, self.y
 	end,
 	activate = function(self, t)
 		game:playSoundNear(self, "talents/spell_generic2")
