@@ -12,7 +12,7 @@ local Combat = require("mod.class.interface.Combat")
 local _M = loadPrevious(...)
 
 local mod_max_tpl_len = { Minimalist = { small = { fantasy = 73, web = 73, basic = 73 },
-                                         normal = { fantasy = 55, web = 55, basic = 59 },
+                                         normal = { fantasy = 54, web = 54, basic = 59 },
                                          big = { fantasy = 45, web = 45, basic = 49 } },
                           Classic =    { small = { fantasy = 45, web = 45, basic = 45 },
                                          normal = { fantasy = 33, web = 33, basic = 33 },
@@ -1133,6 +1133,7 @@ function _M:getTextualDesc(compare_with, use_actor)
 		use_actor.__inscription_data_fake = self.inscription_data
 		local t = self:getTalentFromId("T_"..self.inscription_talent.."_1")
 		if t then
+			--local ok, tdesc = pcall(use_actor.getTalentFullDescription, use_actor, t, nil)
 			local ok, tdesc = pcall(use_actor.getTalentFullDescription, use_actor, t, 0, {ignore_mode=true, ignore_ressources=true, ignore_blank_range=true, ignore_travel_speed=true, ignore_level=true, tooltip_mode = true})-- ,nil,{tooltip_mode=true})
 			if ok and tdesc then
 				desc:add({"color","YELLOW"}, "When inscribed on your body:", {"color", "LAST"}, true)
@@ -1240,10 +1241,10 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
             end
          end
          if any_diff then
-            local s = ( mod_align_stat( "Weapon Damage",-1 ) .. " %3d%% (%s)  Range: 1.0x-%.1fx (%s)"):format(base_power * 100, table.concat(power_diff, " / "), base_range, table.concat(range_diff, " / "))
+            local s = ( mod_align_stat( "Weapon Damage",-1 ) .. "%3d%% (%s)  Range: 1.0x-%.1fx (%s)"):format(base_power * 100, table.concat(power_diff, " / "), base_range, table.concat(range_diff, " / "))
             desc:merge(s:toTString())
          else
-            desc:add(( mod_align_stat( "Weapon Damage",-1 ) .. " %3d%%  Range: 1.0x-%.1fx"):format(base_power * 100, base_range))
+            desc:add(( mod_align_stat( "Weapon Damage",-1 ) .. "%3d%%  Range: 1.0x-%.1fx"):format(base_power * 100, base_range))
          end
       else
          local power_diff = {}
@@ -1264,7 +1265,7 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
          else
             power_diff = ("(%s)"):format(table.concat(power_diff, " / "))
          end
-         desc:add(( mod_align_stat( "Weapon Damage",-1) .. " %.1f - %.1f"):format((combat.dam or 0) + (add_table.dam or 0), ((combat.damrange or (1.1 - (add_table.damrange or 0))) + (add_table.damrange or 0)) * ((combat.dam or 0) + (add_table.dam or 0))))
+         desc:add(( mod_align_stat( "Weapon Damage",-1) .. "%.1f - %.1f"):format((combat.dam or 0) + (add_table.dam or 0), ((combat.damrange or (1.1 - (add_table.damrange or 0))) + (add_table.damrange or 0)) * ((combat.dam or 0) + (add_table.dam or 0))))
          desc:merge(power_diff:toTString())
          local col = (combat.damtype and DamageType:get(combat.damtype) and DamageType:get(combat.damtype).text_color or "#WHITE#"):toTString()
          desc:add(" ",col[2],DamageType:get(combat.damtype or DamageType.PHYSICAL).name:capitalize(),{"color","LAST"})
