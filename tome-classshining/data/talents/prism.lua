@@ -103,7 +103,7 @@ newTalent{
 	mode = "passive",
 	unlearn_on_clone = true,
 	getCount = function(self, t) return 2 end,
-	getReduction = function(self, t) return self:combatTalentLimit(t, 40, 75, 50) end,
+	getReduction = function(self, t) return self:combatTalentLimit(t, 40, 75, 57) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "generic_damage_penalty", t.getReduction(self, t))
 		self:talentTemporaryValue(p, "reflection_damage_amp", t.getReduction(self, t))

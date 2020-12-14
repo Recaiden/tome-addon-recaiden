@@ -52,9 +52,10 @@ newTalent{
 	getDamage = function(self, t) return self:combatTalentLimit(t, 10, 3, 6) end,
 	callbackOnActBase = function(self, t) mantraRecite(self) end,
 	callbackOnAct = function(self, t)
+		if not self.in_combat then return end
 		if not self.heliocentrism_x then self.heliocentrism_x, self.heliocentrism_y = self.x, self.y return end
 		if (self.heliocentrism_x == self.x) and (self.heliocentrism_y == self.y) then
-			self:setEffect(self.EFF_REK_SHINE_HELIOCENTRISM, 2, {power=t.getDamage(self, t)})
+			self:setEffect(self.EFF_REK_SHINE_HELIOCENTRISM, 1, {power=t.getDamage(self, t)})
 		end
 		self.heliocentrism_x, self.heliocentrism_y = self.x, self.y
 	end,
@@ -71,7 +72,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[In singsong voice you affirm the sun as the center.  Every turn you do not move, your gain a bonus of +%d%% damage, stacking up to 10 times.
+		return ([[In singsong voice you affirm the sun as the center.  Every turn that you do not move while in combat, you gain a bonus of +%d%% damage, stacking up to 10 times.
 You may only have one Mantra active at once.]]):format(t.getDamage(self, t))
 	end,
 }
