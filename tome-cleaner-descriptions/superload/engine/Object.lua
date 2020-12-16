@@ -13,26 +13,28 @@ end
 
 --- Describe requirements
 function _M:getRequirementDesc(who)
-   local req = rawget(self, "require")
-   if not req then return nil end
-   local is_ctrl = core.key.modState("ctrl")
-   local str = tstring{}
-   local num = 0
-   
-   if req.flag then
-      for _, flag in ipairs(req.flag) do
-         if type(flag) == "table" then
-            local name = self.requirement_flags_names[flag[1]] or flag[1]
-            local c = (who:attr(flag[1]) and who:attr(flag[1]) >= flag[2]) and {"color", 0x00,0xff,0x00} or {"color", 0xff,0x00,0x00}
-            str:add(c, "- ", ("%s (level %d)"):format(name, flag[2]), {"color", "LAST"}, true)
-         else
-            local name = self.requirement_flags_names[flag] or flag
-            local c = who:attr(flag) and {"color", 0x00,0xff,0x00} or {"color", 0xff,0x00,0x00}
-            str:add(c, "- ", ("%s"):format(name), {"color", "LAST"}, true)
-         end
-      end
-   end
-   
+	local req = rawget(self, "require")
+	if not req then return nil end
+	local is_ctrl = core.key.modState("ctrl")
+	local str = tstring{}
+	local num = 0
+	
+	if req.flag then
+		for _, flag in ipairs(req.flag) do
+			if type(flag) == "table" then
+				local name = self.requirement_flags_names[flag[1]] or flag[1]
+				if (who:attr(flag[1]) or 0) < flag[1] then num = num + 1 end
+				local c = (who:attr(flag[1]) and who:attr(flag[1]) >= flag[2]) and {"color", 0x00,0xff,0x00} or {"color", 0xff,0x00,0x00}
+				str:add(c, "- ", ("%s (level %d)"):format(name, flag[2]), {"color", "LAST"}, true)
+			else
+				local name = self.requirement_flags_names[flag] or flag
+				if not who:attr(flag) then num = num + 1 end
+				local c = who:attr(flag) and {"color", 0x00,0xff,0x00} or {"color", 0xff,0x00,0x00}
+				str:add(c, "- ", ("%s"):format(name), {"color", "LAST"}, true)
+			end
+		end
+	end
+	
    if req.stat then
       for s, v in pairs(req.stat) do
          if who:getStat(s) < v or is_ctrl then

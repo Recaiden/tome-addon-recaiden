@@ -92,7 +92,7 @@ function _M:getTalentFullDescription(t, addlevel, config, fake_mastery)
 				end
 			end
 		end
-		if not config.ignore_ressources then
+		if not config.ignore_cooldown then
 			if self:getTalentCooldown(t) then d:add({"color",0x6f,0xff,0x83}, ("%sCooldown: "):tformat(t.fixed_cooldown and _t"Fixed " or ""), {"color",0xFF,0xFF,0xFF}, ""..self:getTalentCooldown(t), true) end
 		end
 		if not config.ignore_travel_speed then
@@ -135,7 +135,7 @@ function _M:getTalentFullDescription(t, addlevel, config, fake_mastery)
 			end
 		end
 	else
-		if not config.ignore_ressources then
+		if not config.ignore_cooldown then
 			if self:getTalentCooldown(t) then d:add({"color",0x6f,0xff,0x83}, ("%sCooldown: "):tformat(t.fixed_cooldown and _t"Fixed " or ""), {"color",0xFF,0xFF,0xFF}, ""..self:getTalentCooldown(t), true) end
 		end
 	end
