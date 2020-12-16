@@ -247,6 +247,7 @@ newEffect{
 	type = "magical",
 	subtype = { arcane=true },
 	status = "beneficial",
+	decrease = 0,
 	charges = function(self, eff) return eff.stacks end,
 	parameters = { power = 2, stacks = 1, max_stacks = 10 },
 	on_merge = function(self, old_eff, new_eff)
@@ -263,6 +264,11 @@ newEffect{
 	deactivate = function(self, eff)
 		self:removeTemporaryValue("inc_damage", eff.damid)
 	end,
+	callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
+		if moved and not force and ((ox ~= x) or (oy ~= y)) then
+			self:removeEffect(self.EFF_REK_SHINE_HELIOCENTRISM)
+		end
+	end
 }
 
 newEffect{

@@ -14,7 +14,7 @@ newTalent{
 	type = {"demented/inner-power", 1},
 	require = mag_req1, points = 5,
 	mode = "passive",
-	getAffinity = function(self, t) return self:combatTalentScale(t, 10, 35, 0.75) end,
+	getAffinity = function(self, t) return self:combatTalentScale(t, 10, 29, 0.75) end,
 	on_learn = function(self, t) self.blood_color = colors.GOLD end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(
@@ -128,7 +128,7 @@ newTalent{
 	
 	mode = "sustained",
 	cooldown = 20,
-	range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6)) end,
+	range = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
 	getCost = function(self, t) return 3 end,
 	getDamage = function(self,t) return self:combatTalentSpellDamage(t, 20, 60) end,
 	getDisease = function(self,t) return math.floor(self:combatTalentSpellDamage(t, 20, 7)) end,
@@ -180,12 +180,11 @@ newTalent{
 		self:updateTalentPassives(self:getTalentFromId(self.T_REK_SHINE_NUCLEAR_SEARING_CORE))
 	end,
 	
-	mode = "sustained",
-	cooldown = 1,
-	no_energy = true,
+	mode = "passive",
 	getSurge = function(self, t) return self:combatTalentScale(t, 5, 25, 1.0) end,
-	getBonusPower = function(self, t) return self:combatTalentScale(t, 5, 25) end,
-	getPrice = function(self, t) return 4 * (1.5 + (self.combat_critical_power or 0) / 100) end,
+	getImmune = function(self, t) return self:combatTalentLimit(t, 1, 0.22, 0.55) end,
+	getEvasion = function(self, t) return self:combatTalentLimit(t, 25, 5, 15) end,
+	getPrice = function(self, t) return self:getTalentLevelRaw(t) / 2 end,
 	callbackOnCrit = function(self, t, type, dam, chance, target)
 		if type ~= "spell" then return end
 		if self:hasProc("shining_supercritical") then return end
@@ -195,20 +194,13 @@ newTalent{
 		game:delayedLogDamage(self, self, 0, ("#GOLD#%d#LAST#"):tformat(self.max_life * price / 100), false)
 		self:takeHit(self.max_life * price / 100, self, {special_death_msg=_t"was consumed by solar fire"})
 	end,
-	activate = function(self, t)
-		local ret = {}
-		game:playSoundNear(self, "talents/heal")
-		self:talentTemporaryValue(ret, "spellsurge_on_crit", t.getSurge(self, t))
-		self:talentTemporaryValue(ret, "combat_critical_power", t.getBonusPower(self, t))
-		return ret
-	end,
-	deactivate = function(self, t, p)
-		return true
+	passives = function(elf, t, p)
+		self:talentTemporaryValue(p, "spellsurge_on_crit", t.getSurge(self, t))
+		self:talentTemporaryValue(p, "cancel_damage_chance", t.getEvasion(self, t))
 	end,
 	info = function(self, t)
-		return ([[Your spells surge in barely-controlled chain reactions, burning through your mortal body.
-You gain %d critical power and %d spellpower on crit (stacks 3 times), but spell criticals burn up %d%% of your life (based on your critical power) (at most once per turn).
+		return ([[Your spells surge in barely-controlled chain reactions, burning through your mortal body with unstoppable force.  You gain %d spellpower on crit (stacks 3 times) and have a %d%% chance to ignore any instance of damage, but spell criticals burn up %0.1f%% of your life (at most once per turn). This loss of life bypasses shields and is not split with your reflections.
 
-%s]]):tformat(t.getBonusPower(self, t), t.getSurge(self, t), t.getPrice(self, t), getResistBlurb(self))
+%s]]):tformat(t.getSurge(self, t), t.getEvasion(self, t), t.getPrice(self, t), getResistBlurb(self))
 	end,
 }

@@ -35,7 +35,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[In singsong voice you repeat the secrets of motion, which increases your Defense by %d (based on Magic) and causes you to move 2 spaces at a time if possible.
+		return ([[In singsong voice you repeat the secrets of motion, which increases your Defense by %d (based on Magic) and causes you to move 2 spaces at a time if possible. If you try to move onto a creature, you will move over them.
 You may only have one Mantra active at once.]]):format(t.getDefense(self, t))
 	end,
 }

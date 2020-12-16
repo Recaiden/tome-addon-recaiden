@@ -33,7 +33,7 @@ newBirthDescriptor{
 		"#GOLD#Stat modifiers:",
 		"#LIGHT_BLUE# * +0 Strength, +0 Dexterity, +2 Constitution",
 		"#LIGHT_BLUE# * +5 Magic, +0 Willpower, +3 Cunning",
-		"#GOLD#Life Rating:#LIGHT_BLUE# -4",
+		"#GOLD#Life Rating:#LIGHT_BLUE# -5",
 	},
 	power_source = {arcance=true},
 	stats = { con=2, mag=5, cun=3 },
@@ -94,7 +94,7 @@ newBirthDescriptor{
 												},
 	},
 	copy_add = {
-		life_rating = -4,
+		life_rating = -5,
 	},
 }
 

@@ -61,9 +61,9 @@ makeMirrorClone = function(target, duration, alt_nodes)
 	m:removeTimedEffectsOnClone()
 
 	-- shred life
-	m.max_life = math.floor(m.max_life / 2)
+	m.max_life = math.floor(m.max_life * 0.4)
 	m.life = math.min(m.life, m.max_life)
-	m.die_at = math.ceil((m.die_at or 0) / 2)
+	m.die_at = math.ceil((m.die_at or 0) * 0.4)
 	
 	-- A bit of sanity in case anyone decides they should blow up the world.
 	if m.preferred_paradox and m.preferred_paradox > 600 then m.preferred_paradox = 600 end
@@ -103,12 +103,18 @@ newTalent{
 	mode = "passive",
 	unlearn_on_clone = true,
 	getCount = function(self, t) return 2 end,
-	getReduction = function(self, t) return self:combatTalentLimit(t, 40, 75, 57) end,
+	getReduction = function(self, t) return self:combatTalentLimit(t, 40, 75, 56.3) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "generic_damage_penalty", t.getReduction(self, t))
 		self:talentTemporaryValue(p, "reflection_damage_amp", t.getReduction(self, t))
+		self:talentTemporaryValue(p, "shield_factor", -0.5)
 	end,
 	callReflections = function(self, t)
+		if not self.stored_luminous_life then
+			self.stored_luminous_life = self.max_life * 0.3
+			self.max_life = self.max_life - self.stored_luminous_life
+			self.life = math.min(self.life, self.max_life)
+		end
 		
 		-- Clone the caster
 		local function makePrismClone(self, t)
@@ -172,6 +178,11 @@ newTalent{
 					minion:disappear(self)
 				end
 			end
+			if self.stored_luminous_life then
+				self.max_life = self.max_life + self.stored_luminous_life
+				self.life = self.life + self.stored_luminous_life
+				self.stored_luminous_life = nil
+			end
 		end
 		if state == true then
 			local refs = getPrisms(self)
@@ -195,9 +206,8 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[Whenever you enter combat, you are joined by %d reflections of yourself, each with half your maximum life.
-You and your reflections deal %d%% less damage.  
-All damage taken is shared between you and your reflections.
+		return ([[Whenever you enter combat, you are joined by %d reflections of yourself, each with 40%% of your maximum life.  Your own maximum life is lowered by 30%% while they are present.  All damage taken is shared between you and your reflections.
+You and your reflections deal %d%% less damage (shown in the tooltip of each talent) and shields affecting you have their power decreased by 50%%.
 If killed, your reflections will reemerge after 10 turns.
 
 Prism, Seal, and Core Gate talents do not appear on reflections.
@@ -207,7 +217,7 @@ Prism, Seal, and Core Gate talents do not appear on reflections.
 
 newTalent{
 	name = "Convergence", short_name = "REK_SHINE_PRISM_CONVERGENCE",
-	type = {"demented/prism", 2}, require = mag_req2, points = 5,
+	type = {"demented/prism", 2}, require = mag_req2_quick, points = 5,
 	cooldown = 3,
 	positive = -5,
 	insanity = 8,
@@ -263,7 +273,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[You and your reflections each fire a beam of solar energy, dealing %0.2f light damage.
-Whenever you deal damage with a spell, you have a %d%% chance to cast this talent automatically, ignoring cost and cooldown.]]):tformat(damDesc(self, DamageType.LIGHT, t:_getDamage(self)), t:_getChance(self))
+You have a %d%% chance to cast this talent automatically on spell hit.]]):tformat(damDesc(self, DamageType.LIGHT, t:_getDamage(self)), t:_getChance(self))
 	end,
 }
 
@@ -272,7 +282,7 @@ newTalent{
 	type = {"demented/prism", 3},
 	require = mag_req3, points = 5,
 	mode = "passive",
-	getSpellpowerIncrease = function(self, t) return self:combatTalentScale(t, 5, 25, 1.0) end,
+	getSpellpowerIncrease = function(self, t) return self:combatTalentScale(t, 5, 20, 1.0) end,
 	passives = function(self, t, p)
 		local nb = 0
 		for i = 1, #self.fov.actors_dist do
@@ -296,37 +306,31 @@ newTalent{
 	cooldown = 15,
 	positive = -15,
 	insanity = -20,
+	range = 6,
+	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t, nowarning=true} end,
+	radius = function (self, t) return 1 end,
 	getAbsorb = function(self, t) return self:combatTalentSpellDamage(t, 20, 555) end,
 	getDuration = function(self, t) return 6 end,
 	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+		local _ _, x, y = self:canProject(tg, x, y)
 		local duration = t.getDuration(self, t)
-		local x, y = self.x, self.y
-		local radius = 1
-		local refs = getPrisms(self)
-		refs[#refs+1] = self
-		-- TODO better way to find shape that covers all points
-		local ax, ay = 0, 0
-		for i, prism in ipairs(refs) do
-			ax = ax + prism.x
-			ay = ay + prism.y
-		end
-		ax = math.round(ax/#refs)
-		ay = math.round(ay/#refs)
-		for i, prism in ipairs(refs) do
-			radius = math.max(radius, core.fov.distance(prism.x, prism.y, ax, ay))
-		end
+		local radius = self:getTalentRadius(t)
 		
 		local map_eff = game.level.map:addEffect(
-			self, ax, ay, duration, DamageType.REK_SHINE_MIRROR, 
-			{dam = self:getShieldAmount(self:spellCrit(t.getAbsorb(self, t))), radius = radius, self = self, talent = t}, 
-			0, 5, nil, 
-			{type="warning_ring", args = {r=220, g=220, b=220, nb=120, size=3, radius=radius}},
+			self, x, y, duration, DamageType.REK_SHINE_MIRROR, 
+			{dam = self:getShieldAmount(self:spellCrit(t.getAbsorb(self, t))), radius=radius, self=self, talent = t}, 
+			radius, 5, nil, 
+			--{type="warning_ring", args = {r=220, g=220, b=220, nb=120, size=3, radius=radius}},
+			MapEffect.new{color_br=233, color_bg=233, color_bb=233, alpha=180, effect_shader="shader_images/radiation_effect.png"},
 			function(e, update_shape_only) end)
 		map_eff.name = t.name
 		return true
 	end,
 	info = function(self, t)
-		return ([[Bend light into a stationary circular barrier that encompasses you and your clones.  Any attacks from outside the barrier going inward will be reflected, up to %d points of damage total.  The barrier lasts %d turns.
+		return ([[Bend light into a stationary circular barrier of radius 1.  Any attacks from outside the barrier going inward will be reflected, up to %d points of damage total.  The barrier lasts %d turns.
 The maximum damage reflected will increase with your spellpower.]]):tformat(t.getAbsorb(self, t), t.getDuration(self, t))
 	end,
 }
