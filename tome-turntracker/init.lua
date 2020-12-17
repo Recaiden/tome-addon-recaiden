@@ -8,7 +8,7 @@ author = { 'Recaiden' }
 description = [[Adds a UI element to display the predicted order of character turns.]]
 tags = {'ui', "speed", "turns"} -- tags MUST immediately follow description
 
-hooks = false
+hooks = true
 overload = false
 superload = true
 data = false
