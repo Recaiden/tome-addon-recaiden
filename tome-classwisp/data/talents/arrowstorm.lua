@@ -137,7 +137,7 @@ newTalent{
 	cooldown = 12,
 	psi = 12,
 	range = 0,
-	radius = function(self, t) return math.floor(self:combatTalentScale(t, 4, 8)) end,
+	radius = function(self, t) return math.floor(self:combatTalentScale(t, 5, 10)) end,
 	requires_target = true,
 	target = function(self, t)
 		return {type="cone", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, nowarning=true, talent=t}

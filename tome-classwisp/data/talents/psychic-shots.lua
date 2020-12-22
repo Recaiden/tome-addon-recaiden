@@ -9,7 +9,7 @@ newTalent{
 	range = archery_range,
 	tactical = { ATTACK = { weapon = 2 } },
 	requires_target = true,
-	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1, 1.5) end,
+	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.8, 1.4) end,
 	getShred = function(self, t) return self:combatTalentScale(t, 5, 25, 0.75) end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
 	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
@@ -35,7 +35,8 @@ newTalent{
 	name = "Crossfire", short_name = "REK_GLR_SHOT_CROSSFIRE",
 	type = {"technique/psychic-shots", 2},
 	require = dex_req2,
-	getCount = function(self, t) return 3 + math.floor(self:getTalentLevel(t)*2) end,
+	getCount = function(self, t) return 4 + math.floor(self:getTalentLevel(t)*2.5) end,
+	getStack = function(self, t) return math.floor(self:combatTalentLimitt, 5, 1, 2.7) end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.3, 0.75) end,
 	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
 	points = 5,
@@ -87,9 +88,9 @@ newTalent{
 								spaces[#spaces + 1] = {x=px, y=py}
 							end
 						end)
-					targets[#targets + 1] = target
-					targets[#targets + 1] = target
-					targets[#targets + 1] = target
+					for i = 0, t.getStack(self, t) do
+						targets[#targets + 1] = target
+					end`
 				end
 			end
 		end
@@ -129,7 +130,7 @@ newTalent{
 		return fired
 	end,
 	info = function(self, t)
-		return ([[Launch a volley of %d arrows on indirect paths.  Each arrow targets an enemy in a cone for %d%% damage and approaches from a random direction. No creature can be targeted by more than 3 arrows.]]):format(t.getCount(self, t), t.getDamage(self, t)*100)
+		return ([[Launch a volley of %d arrows on indirect paths.  Each arrow targets an enemy in a cone for %d%% damage and approaches from a random direction. No creature can be targeted by more than %d arrows.]]):format(t.getCount(self, t), t.getDamage(self, t)*100, t.getStack(self, t))
 	end,
 }
 
@@ -153,7 +154,7 @@ newTalent{
 		local speed = 10 + (ammo.travel_speed or 0) + (weapon.travel_speed or 0) + (self.combat and self.combat.travel_speed or 0)
 		return {type="beam", speed=speed, range=self:getTalentRange(t), selffire=false, nolock=true, talent=t, display=self:archeryDefaultProjectileVisual(weapon, ammo)}
 	end,
-	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1, 1.5) end,
+	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.5, 0.8) end,
 	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
 	action = function(self, t)
 		if not self:hasArcheryWeapon("bow") then game.logPlayer(self, "You must wield a bow!") return nil end
@@ -169,7 +170,7 @@ newTalent{
 		self:projectile(
 			tg, x, y,
 			function(px, py, tg, self)
-				self.rek_boomerang_damage_bonus = self.rek_boomerang_damage_bonus + 0.08
+				self.rek_boomerang_damage_bonus = self.rek_boomerang_damage_bonus + 0.10
 				local tmp_target = game.level.map(px, py, engine.Map.ACTOR)
 				if tmp_target and tmp_target ~= self then
 					local weapon, ammo = self:hasArcheryWeapon()
@@ -187,7 +188,7 @@ newTalent{
 					self:projectile(
 						tgr, self.x, self.y,
 						function(px, py, tgr, self)
-							self.rek_boomerang_damage_bonus = self.rek_boomerang_damage_bonus + 0.08
+							self.rek_boomerang_damage_bonus = self.rek_boomerang_damage_bonus + 0.10
 							local tmp_target = game.level.map(px, py, engine.Map.ACTOR)
 							if tmp_target and tmp_target ~= self then
 								local weapon, ammo = self:hasArcheryWeapon()
@@ -204,7 +205,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[You loose an arrow that pierces through all targets for %d%% damage and then turns around and comes back, potentially damaging enemies again.  The damage increases by 8%% for each space the arrow crosses.]]):format(t.getDamage(self, t)*100)
+		return ([[You loose an arrow that pierces through all targets for %d%% damage and then turns around and comes back, potentially damaging enemies again.  The damage increases by 10%% for each space the arrow crosses.]]):format(t.getDamage(self, t)*100)
 	end,
 }
 

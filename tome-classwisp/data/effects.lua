@@ -42,6 +42,24 @@ newEffect{
 }
 
 newEffect{
+	name = "REK_GLR_DELIRIOUS", image = "talents/rek_glr_idol_terrific.png",
+	desc = _t"Delirious",
+	long_desc = function(self, eff) return ("The target can't think straight, causing their actions to fail 33% of the time."):tformat() end,
+	type = "mental",
+	subtype = { concussion=true },
+	status = "detrimental",
+	parameters = {},
+	on_gain = function(self, err) return _t"#Target#'s brain isn't quite working right!", _t"+Delirious" end,
+	on_lose = function(self, err) return _t"#Target# regains their concentration.", _t"-Delirious" end,
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("talent_fail_chance", 33)
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("talent_fail_chance", eff.tmpid)
+	end,
+}
+
+newEffect{
 	name = "REK_GLR_QUENCHED_SPEED", image = "talents/rek_glr_idol_thought_drinker.png",
 	desc = "Mind-Quenched",
 	long_desc = function(self, eff) return ("Movement speed increased by %d%%."):format(eff.speed*100) end,
@@ -219,6 +237,7 @@ newEffect{
 				eff.src:logCombat(self, "#PURPLE##Source# rips out #Target#'s mind, utterly destroying it.")
 			end
 		end
+		eff.src:incPsi(20)
 	end,
 }
 
@@ -238,7 +257,7 @@ newEffect{
 }
 
 newEffect{
-	name = "REK_GLR_GRINDING", image = "talents/rek_glr_abomination_shard_shot.png",
+	name = "REK_GLR_GRINDING", image = "talents/rek_glr_arrowstorm_pellegrina.png",
 	desc = "Ground Down",
 	long_desc = function(self, eff) return ("The target in pinend down by a hail of arrows and debris, losing %d defense, %d accuracy, and %d powers."):format(eff.def, eff.atk, eff.pow) end,
 	type = "physical",

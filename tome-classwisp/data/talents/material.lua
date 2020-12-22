@@ -9,7 +9,7 @@ newTalent{
 	on_pre_use = function(self, t)
 		return not self:attr("never_move")
 	end,
-	target = function(self, t) return {type="widebeam", radius=1, nolock=true, range=self:getTalentRange(t), selffire=false, talent=t} end,
+	target = function(self, t) return {type="widebeam", radius=1, nolock=true, range=self:getTalentRange(t), selffire=false, friendlyfire=false, talent=t} end,
 	getDamage = function(self, t) return self:combatTalentMindDamage(t, 30, 300) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)

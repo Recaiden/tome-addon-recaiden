@@ -93,7 +93,7 @@ newTalent{
 	auraTarget = function(self, t)
 		return {type="ball", range=t.auraRange(self, t), radius=t.auraRadius(self, t), selffire=false, friendlyfire=false}
 	end,
-	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5.6)) end,
+	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 1, 4.8)) end,
 	getImmunityDuration = function(self, t) return 15 end,
 	getMaxOppression = function(self, t) return math.floor(self:getTalentLevel(t)) end,
 	activate = function(self, t)
@@ -204,7 +204,7 @@ newTalent{
 	auraTarget = function(self, t)
 		return {type="ball", range=t.auraRange(self, t), radius=t.auraRadius(self, t), selffire=false, friendlyfire=false}
 	end,
-	getDuration = function(self, t) return math.min(5, self:combatTalentScale(t, 1, 4)) end,
+	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 4, 8)) end,
 	getPower = function(self,t) return self:getTalentLevel(t) * 7.5 end,
 	activate = function(self, t)
 		local ret = {}
@@ -226,9 +226,9 @@ newTalent{
 			end)
 	end,
 	deactivate = function(self, t, p)
-		if self:attr("save_cleanup") then return true end
 		if p.particle then self:removeParticles(p.particle) end
-
+		if self:attr("save_cleanup") then return true end
+		
 		local cost = t.getSpikeCost(self, t)
 		if self:getPsi() <= cost and not self:attr("force_talent_ignore_ressources") then
 			game.logPlayer(self, "The aura dissipates without producing a spike.")
@@ -252,7 +252,7 @@ newTalent{
 		if core.fov.distance(self.x, self.y, x, y) == 0 then return true end
 		if core.fov.distance(self.x, self.y, x, y) > self:getTalentRange(t) then return nil end
 		if not actor then return end
-		actor:setEffect(actor.EFF_DELIRIOUS_CONCUSSION, t.getDuration(self, t), {apply_power=self:combatMindpower()})
+		actor:setEffect(actor.EFF_REK_GLR_DELIRIOUS, t.getDuration(self, t), {apply_power=self:combatMindpower()})
 		game:playSoundNear(self, "talents/arcane")
 		incPsi2(self, -cost)
 		return true
@@ -262,7 +262,7 @@ newTalent{
 
 While Active: Enemies within %d have their mental save reduced by %d. (#SLATE#No Save#LAST#)
 
-Deactivate: Focus your awesomeness to dazzle a single creature, preventing them from using talents for %d turns.
+Deactivate: Focus your awesomeness to dazzle a single creature, giving them a 1/3 chance to fail to use talents for %d turns.
 Costs #4080ff#%d psi#LAST#
 Uses Mind Speed
 
@@ -410,6 +410,7 @@ newTalent{
 			-- ignore damage
 			if caged then
 				game:playSoundNear(self, "talents/heal")
+				incPsi2(self, -5)
 				return {dam=0.05*self.max_life}
 			end
 		end
@@ -435,7 +436,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[If you would take damage over %d%% of your maximum life, that damage is reduced to 5%% of your maximum life, but your movement is slowed by 50%% for 5 turns.
+		return ([[If you would take damage over %d%% of your maximum life, that damage is reduced to 5%% of your maximum life, but your movement is slowed by 50%% for 5 turns and you lose #4080ff#5 Psi#LAST#.
 If you are already slowed, you will be stunned for 3 turns.
 
 These effects ignore immunities and saves.

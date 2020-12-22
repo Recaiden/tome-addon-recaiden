@@ -7,7 +7,8 @@ local function archery_projectile(tx, ty, tg, self, tmp)
 
 	if self:knowTalent(self.T_REK_GLR_MARKSMAN_PINPOINT) and not tg.archery.glr_pinpoint then
 		local bonus = util.bound(self:combatAttack() - target:combatDefense(), 0, 80)
-		local mult = bonus * 2.5 / 100
+		local mult = bonus * self:callTalent(self.T_REK_GLR_MARKSMAN_PINPOINT, "getAccBonus") then
+ / 100
 		mult = self:mindCrit(mult)
 		tg.archery.glr_pinpoint = true
 		if tg.archery.proc_mult then

@@ -34,7 +34,13 @@ newTalent{
 	info = function(self, t)
 		return ([[#{italic}#It is dishonorable to fight at a distance.#{normal}#
 
-All damage you deal scales with distance to the target, from 150%% while adjacent to 0%% at range 4+.  When you hit an enemy at range 4+ with an archery attack, you immediately teleport to them and trigger your Arrowstorm (once per enemy per turn)]]):format()
+All damage you deal scales with distance to the target.
+Range 1 - 133%%
+Range 2 - 100%%
+Range 3 - 66%%
+Range 4 - 33%% 
+Range 5+ - No damage
+When you hit an enemy at range 4+ with an archery attack, you immediately teleport to them and trigger your Arrowstorm (once per enemy per turn)]]):format()
 	end,
 }
 

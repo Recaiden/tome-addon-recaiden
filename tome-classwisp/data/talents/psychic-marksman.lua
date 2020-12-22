@@ -1,5 +1,5 @@
 newTalent{
-	name = "Accelerate", short_name = "REK_GLR_MARKSMAN_ACCELERATE",
+	name = "Arrow Accelerator", short_name = "REK_GLR_MARKSMAN_ACCELERATE",
 	type = {"technique/psychic-marksman", 1},
 	require = mastery_dex_req,
 	points = 5,
@@ -27,6 +27,7 @@ newTalent{
 	points = 5,
 	mode = "passive",
 	getDamage = function(self, t) return self:combatTalentMindDamage(t, 6, 60) end,
+	getAccBonus = function(self, t) return math.min(2.5, self:combatTalentScale(t, 0.5, 2.5, 1.0)) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "ranged_project", {[DamageType.PHYSICAL] = t.getDamage(self, t)})
 	end,
@@ -34,7 +35,7 @@ newTalent{
 		return ([[You use telekinetic power to impart additional force to your arrows after firing, causing them to do an additional %0.2f physical damage on-hit.
 Mindpower: increases on-hit damage
 
-Your arrow attacks benefit from an additional accuracy bonus: 2.5%% increased on-hit damage per excess accuracy.  Your on-hit damage can get mental critical hits.]]):format(t.getDamage(self, t))
+Your arrow attacks benefit from an additional accuracy bonus: 0.1f%% increased on-hit damage per excess accuracy.  Your on-hit damage can get mental critical hits.]]):format(t.getDamage(self, t), t.getAccBonus(self, t))
 	end,
 }
 

@@ -34,7 +34,8 @@ class:bindHook("DamageProjector:base", function(self, hd)
 		local eff = target:hasEffect(target.EFF_REK_GLR_COSMIC_AWARENESS)
 		if eff then
 			local damMind = dam * eff.power
-			src:project(target, target.x, target.y, DamageType.MIND, {src=src, dam=damMind})
+			DamageType:get(DamageType.MIND).projector(src, target.x, target.y, DamageType.MIND, {src=src, damMind}, hd.state)
+			--src:project(target, target.x, target.y, DamageType.MIND, {src=src, dam=damMind})
 			hd.dam = dam * (1-eff.power)
 		end
 	end
@@ -50,7 +51,7 @@ class:bindHook("DamageProjector:base", function(self, hd)
 	if not src or not target then return end
 	if src and src.knowTalent and src:knowTalent(src.T_REK_EVOLUTION_GLR_STORM) then
 		local range = math.floor(core.fov.distance(src.x, src.y, target.x, target.y))
-		local mult = math.max(0, 2.0 - range * 0.5)
+		local mult = math.max(0, 2.0 - range * 0.33)
 		hd.dam = dam * mult
 	end
 	return hd
