@@ -35,7 +35,7 @@ newTalent{
 		return ([[You use telekinetic power to impart additional force to your arrows after firing, causing them to do an additional %0.2f physical damage on-hit.
 Mindpower: increases on-hit damage
 
-Your arrow attacks benefit from an additional accuracy bonus: 0.1f%% increased on-hit damage per excess accuracy.  Your on-hit damage can get mental critical hits.]]):format(t.getDamage(self, t), t.getAccBonus(self, t))
+Your arrow attacks benefit from an additional accuracy bonus: %0.1f%% increased on-hit damage per excess accuracy.  Your on-hit damage can get mental critical hits.]]):format(t.getDamage(self, t), t.getAccBonus(self, t))
 	end,
 }
 

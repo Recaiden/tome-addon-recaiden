@@ -15,6 +15,9 @@ newTalent{
 		local tg = self:getTalentTarget(t)
 		local targets = self:projectCollect(tg, self.x, self.y, Map.ACTOR, "hostile")
 		local old_target_forced = game.target.forced
+
+		local rearmed = self:attr("disarmed")
+		if rearmed then self:attr("disarmed", -1 * rearmed) end
 		
 		self:attr("instant_shot", 1)
 		for i, target in pairs(targets) do
@@ -28,6 +31,8 @@ newTalent{
 		end
 		self:attr("instant_shot", -1)
 		game.target.forced = old_target_forced
+
+		if rearmed then self:attr("disarmed", rearmed) end
 	end,
 	callbackOnActBase = function(self, t)
 		t.doStorm(self, t)

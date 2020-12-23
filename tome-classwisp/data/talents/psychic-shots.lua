@@ -35,8 +35,8 @@ newTalent{
 	name = "Crossfire", short_name = "REK_GLR_SHOT_CROSSFIRE",
 	type = {"technique/psychic-shots", 2},
 	require = dex_req2,
-	getCount = function(self, t) return 4 + math.floor(self:getTalentLevel(t)*2.5) end,
-	getStack = function(self, t) return math.floor(self:combatTalentLimitt, 5, 1, 2.7) end,
+	getCount = function(self, t) return 3 + math.floor(self:combatTalentScale(t, 1, 12) end,
+	getStack = function(self, t) return math.floor(self:combatTalentLimit(t, 5, 1.1, 3.0)) end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.3, 0.75) end,
 	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
 	points = 5,
@@ -90,7 +90,7 @@ newTalent{
 						end)
 					for i = 0, t.getStack(self, t) do
 						targets[#targets + 1] = target
-					end`
+					end
 				end
 			end
 		end
@@ -205,7 +205,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[You loose an arrow that pierces through all targets for %d%% damage and then turns around and comes back, potentially damaging enemies again.  The damage increases by 10%% for each space the arrow crosses.]]):format(t.getDamage(self, t)*100)
+		return ([[You loose an arrow that pierces through all targets for %d%% damage and then turns around and comes back, potentially damaging enemies again.  The damage increases by +10%% for each space the arrow crosses.]]):format(t.getDamage(self, t)*100)
 	end,
 }
 
