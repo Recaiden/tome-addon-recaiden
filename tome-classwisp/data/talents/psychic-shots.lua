@@ -35,7 +35,7 @@ newTalent{
 	name = "Crossfire", short_name = "REK_GLR_SHOT_CROSSFIRE",
 	type = {"technique/psychic-shots", 2},
 	require = dex_req2,
-	getCount = function(self, t) return 3 + math.floor(self:combatTalentScale(t, 1, 12) end,
+	getCount = function(self, t) return 3 + math.floor(self:combatTalentScale(t, 1, 12)) end,
 	getStack = function(self, t) return math.floor(self:combatTalentLimit(t, 5, 1.1, 3.0)) end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.3, 0.75) end,
 	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
@@ -260,5 +260,62 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Shoot an arrow encased in a shell of tremendous kinetic energy, doing %d%% damage and knocking the target back 4 spaces.  If the target collides with anything, it takes %d%% additional physical damage and is stunned (#SLATE#Physical Power vs Physical#LAST#) for %d turns.  If it collided with a creature, that creature also takes the bonus damage (but is not stunned).]]):format(t.getDamage(self, t) * 100, t.getSlamDamage(self, t) * 100, t.getDuration(self, t))
+	end,
+}
+
+
+newTalent{
+	name = "Voyager Shot", short_name = "REK_GLR_SHOT_VOYAGE",
+	type = {"technique/psychic-shots", 1},
+	hide = true,
+	speed = "archery",
+	points = 5,
+	cooldown = 10,
+	psi = 10,
+	require = dex_req1,
+	range = archery_range,
+	tactical = { ATTACK = { weapon = 2 } },
+	requires_target = true,
+	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
+	target = function(self, t)
+		local weapon, ammo = self:hasArcheryWeapon()
+		if not weapon or not ammo then
+			return {type="beam", range=self:getTalentRange(t), selffire=false, nolock=true, talent=t}
+		end
+		local speed = 10 + (ammo.travel_speed or 0) + (weapon.travel_speed or 0) + (self.combat and self.combat.travel_speed or 0)
+		return {type="beam", speed=speed, range=self:getTalentRange(t), selffire=false, nolock=true, talent=t, display=self:archeryDefaultProjectileVisual(weapon, ammo)}
+	end,
+	on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
+	action = function(self, t)
+		if not self:hasArcheryWeapon("bow") then game.logPlayer(self, "You must wield a bow!") return nil end
+		local weapon, ammo = self:hasArcheryWeapon()
+		if not weapon or not ammo then return nil end
+		
+		local tg = self:getTalentTarget(t)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+		local _ _, x, y = self:canProject(tg, x, y)
+		
+		self:projectile(
+			tg, x, y,
+			function(px, py, tg, self)
+				local tmp_target = game.level.map(px, py, engine.Map.ACTOR)
+				if tmp_target and tmp_target ~= self then
+					local weapon, ammo = self:hasArcheryWeapon()
+					local t = self:getTalentFromId(self.T_REK_GLR_SHOT_VOYAGE)
+					local targets = {{x=px, y=py, ammo=ammo.combat}}
+					self:attr("instant_shot", 1)
+					self:archeryShoot(targets, t, {start_x=px, start_y=py}, {mult=t.getDamage(self, t)})
+					self:attr("instant_shot", -1)
+				end
+				if x == px and y == py and self and self.x and self.y then
+					if not self:teleportRandom(x, y, 0) then game.logSeen(self, "There's no way through!") return end
+				end
+			end)
+		game:playSoundNear(self, "actions/arrow")
+		return true
+	end,
+	info = function(self, t)
+		return ([[Launch an arrow that cuts right through anything, hitting multiple targets in a line for %d%% armor-piercing damage and then using a kinetic link to the arrow to teleport yourselfto where it ended its flight.]]):format(t.getDamage(self, t)*100)
 	end,
 }

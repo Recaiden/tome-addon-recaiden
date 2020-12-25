@@ -13,14 +13,14 @@ local function regenerateChat()
 
 	for tid, _ in pairs(src.talents_cd) do
 		local t = src:getTalentFromId(tid)
-		if t and not t.is_inscription and not t.generic and not t.uber and not (t.mode and t.mode == "passive") and not t.fixed_cooldown and src.talents_cd[tid] ~= 0 and tid ~= self.T_RELENTLESS_PURSUIT then
+		if t and not t.is_inscription and not t.generic and not t.uber and not (t.mode and t.mode == "passive") and not t.fixed_cooldown and src.talents_cd[tid] ~= 0 and tid ~= src.T_RELENTLESS_PURSUIT then
 			countTalents = countTalents+1
 		end
 	end
 
 	for tid, _ in pairs(src.talents_cd) do
 		local t = src:getTalentFromId(tid)
-		if t and not t.is_inscription and not t.generic and not t.uber and not (t.mode and t.mode == "passive") and not t.fixed_cooldown and src.talents_cd[tid] ~= 0 and tid ~= self.T_RELENTLESS_PURSUIT then
+		if t and not t.is_inscription and not t.generic and not t.uber and not (t.mode and t.mode == "passive") and not t.fixed_cooldown and src.talents_cd[tid] ~= 0 and tid ~= src.T_RELENTLESS_PURSUIT then
 			chat.answers[#chat.answers+1] = {
 				t.name,
 				action=function()

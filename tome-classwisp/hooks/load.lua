@@ -13,6 +13,15 @@ class:bindHook("ToME:load", function(self, data)
   DamageType:loadDefinition("/data-classwisp/damage_types.lua")
 end)
 
+class:bindHook("Entity:loadList", function(self, data)
+		  if data.file == "/data/general/objects/world-artifacts.lua" then
+		     self:loadList("/data-classwisp/world-artifacts.lua", data.no_default, data.res, data.mod, data.loaded)
+		  end
+			if data.file == "/data/general/objects/egos/bow.lua" then
+		     self:loadList("/data-classwisp/egos-bow.lua", data.no_default, data.res, data.mod, data.loaded)
+		  end
+end)
+
 class:bindHook(
 	"Combat:getDammod:subs",
 	function(self, hd) 
@@ -34,7 +43,7 @@ class:bindHook("DamageProjector:base", function(self, hd)
 		local eff = target:hasEffect(target.EFF_REK_GLR_COSMIC_AWARENESS)
 		if eff then
 			local damMind = dam * eff.power
-			DamageType:get(DamageType.MIND).projector(src, target.x, target.y, DamageType.MIND, {src=src, damMind}, hd.state)
+			DamageType:get(DamageType.MIND).projector(src, target.x, target.y, DamageType.MIND, {src=src, dam=damMind}, hd.state)
 			--src:project(target, target.x, target.y, DamageType.MIND, {src=src, dam=damMind})
 			hd.dam = dam * (1-eff.power)
 		end

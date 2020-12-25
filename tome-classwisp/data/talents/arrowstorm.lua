@@ -11,13 +11,17 @@ newTalent{
 	target = function(self, t) return {type="ball", range=0, radius=self:getTalentRange(t), selffire=false, talent=t} end,
 	getDamage = function(self, t) return math.min(0.85, self:combatTalentWeaponDamage(t, 0.05, 0.60)) end,
 	doStorm = function(self, t)
-		if not self:hasArcheryWeapon("bow") then return end
+		local rearmed = self:attr("disarmed")
+		if rearmed then self:attr("disarmed", -1 * rearmed) end
+		
+		if not self:hasArcheryWeapon("bow") then
+			if rearmed then self:attr("disarmed", rearmed) end
+			return
+		end
+		
 		local tg = self:getTalentTarget(t)
 		local targets = self:projectCollect(tg, self.x, self.y, Map.ACTOR, "hostile")
 		local old_target_forced = game.target.forced
-
-		local rearmed = self:attr("disarmed")
-		if rearmed then self:attr("disarmed", -1 * rearmed) end
 		
 		self:attr("instant_shot", 1)
 		for i, target in pairs(targets) do
@@ -31,7 +35,7 @@ newTalent{
 		end
 		self:attr("instant_shot", -1)
 		game.target.forced = old_target_forced
-
+		
 		if rearmed then self:attr("disarmed", rearmed) end
 	end,
 	callbackOnActBase = function(self, t)
