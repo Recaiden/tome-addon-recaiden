@@ -5,10 +5,10 @@ newTalent{
 	cooldown = 12,
 	hands = 10,
 	radius = 1,
-	range = function(self, t) return math.floor(self:combatTalentLimit(10, 4, 8)) end,
+	range = function(self, t) return math.floor(self:combatTalentLimit(t, 10, 4, 8)) end,
 	requires_target = true,
 	target = function(self, t)	return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
-	getAbsorb = function(self, t) return self:combatTalentSpellDamage(t, 30, 370) end,
+	getShield = function(self, t) return self:combatTalentSpellDamage(t, 30, 370) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y, target = self:getTarget(tg)
@@ -37,14 +37,14 @@ newTalent{
 				hit = true
 			end)
 		if hit then
-			self:setEffect(self.EFF_DAMAGE_SHIELD, t.getDuration(self, t), {color={0xe1/255, 0xcb/255, 0x3f/255}, power=self:spellCrit(t.getAbsorb(self, t))})
+			self:setEffect(self.EFF_DAMAGE_SHIELD, 1, {color={0xe1/255, 0xcb/255, 0x3f/255}, power=self:spellCrit(t:_getShield(self))})
 			game:playSoundNear(self, "talents/heal")
 		end
 		
 		return true
 	end,
 	info = function(self, t)
-		return ([[Withdraw into the other place and reemerge nearby, teleporting up to %d spaces.  If this brings you adjacent to an enemy you create a shield of distorted space that blocks %d damage (based on spellpower) for 1 turn.]]):tformat(self:getTalentRange(t), t:_getShield(self))
+		return ([[Withdraw into the other place and reemerge nearby, teleporting up to %d spaces.  If this brings you adjacent to an enemy, you create a shield of distorted space that blocks %d damage (based on spellpower) for 1 turn.]]):tformat(self:getTalentRange(t), t:_getShield(self))
 	end,
 }
 
@@ -59,20 +59,20 @@ newTalent{
 		return ([[You gain %d armor, plus %d per size category above medium.
 
 #{italic}#A warrior of your stature has little to fear from petty wounds.#{normal}#
-]]):tformat(t:_getArmorBase(self)*100, t:_getArmorSize(self))
+]]):tformat(t:_getArmorBase(self), t:_getArmorSize(self))
 	end,
 }
 
 newTalent{
 	name = "Sudden Insight", short_name = "REK_HEKA_OTHERNESS_SUDDEN_INSIGHT",
 	type = {"spell/otherness", 3}, require = mag_req3, points = 5,
-	cooldown = 6,
+	cooldown = 5,
 	mode = "passive",
 	getChance = function(self, t) return self:combatTalentScale(t, 10, 20) end,
-	getPower = function(self, t) return self:combatTalentScale(t, 15, 25) end,
+	getCritPower = function(self, t) return self:combatTalentScale(t, 15, 25) end,
 	callbackOnAct = function(self, t) t.checkInsight(self, t) end,
 	callbackOnMove = function(self, t, moved, force, ox, oy, x, y) if moved then t.checkInsight(self, t) end end,
-	checkInsight = function (self, t)
+	checkInsight = function(self, t)
 		self.adjacent_sudden_insight = self.adjacent_sudden_insight or {}
 		local new_enemies = {}
 		self:project(
@@ -83,13 +83,20 @@ newTalent{
 				if self:reactionToward(target) > 0 then return end
 				new_enemies[target.uid] = target
 			end)
-		if #new_enemies > 0 then
+		local hit = false
+		for uid, target in pairs(new_enemies) do
+			if not self.adjacent_sudden_insight[uid] and not target:hasProc("heka_insight") then
+				target:setProc("heka_insight", true, self:getTalentCooldown(t))
+				hit = true
+			end
+		end
+		if hit then
 			self:setEffect(self.EFF_REK_HEKA_SUDDEN_INSIGHT, 2, {src=self, chance=t:_getChance(self), power=t:_getCritPower(self)})
 		end
 		self.adjacent_sudden_insight = new_enemies
 	end,
 	info = function(self, t)
-		return ([[When an enemy becomes adjacent to you, gain +%d%% physical and spell critical chance and +%d%% critical power for 2 turns.]]):tformat(t:_getChance(self), t:_getCritPower(self))
+		return ([[When an enemy becomes adjacent to you, gain +%d%% physical and spell critical chance and +%d%% critical power for 2 turns.  This has a cooldown per enemy]]):tformat(t:_getChance(self), t:_getCritPower(self))
 	end,
 }
 
@@ -105,7 +112,6 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		local damage = t.getDamage(self, t)
 		return ([[!!!!!]]):tformat()
 	end,
 }

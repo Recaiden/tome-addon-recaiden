@@ -82,17 +82,16 @@ newEffect{
 }
 
 newEffect{
-	name = "REK_SHINE_ENRICHMENT", image = "talents/rek_shine_nuclear_fuel_enrichment.png",
-	desc = "Enrichment",
+	name = "REK_HEKA_SUDDEN_INSIGHT", image = "talents/rek_heka_otherness_sudden_insight.png",
+	desc = "Sudden Insight",
 	long_desc = function(self, eff) return ("Increased critical chance by %d and power by %d%%"):format(eff.chance, eff.power) end,
 	type = "magical",
 	subtype = { arcane=true },
 	status = "beneficial",
-	charges = function(self, eff) return eff.stacks end,
 	parameters = { power = 5, chance=10 },
 	activate = function(self, eff)
-		self:effectTemporaryValue("combat_physcrit", eff.chance)
-		self:effectTemporaryValue("combat_spellcrit", eff.chance)
+		self:effectTemporaryValue(eff, "combat_physcrit", eff.chance)
+		self:effectTemporaryValue(eff, "combat_spellcrit", eff.chance)
 		self:effectTemporaryValue(eff, "combat_critical_power", eff.power)
 	end,
 	deactivate = function(self, eff)

@@ -32,7 +32,7 @@ newBirthDescriptor{
 		["technique/combat-training"]={true, 0.0},
 		["technique/conditioning"]={true, 0.3},
 		["cunning/survival"]={true, 0.0},
-		--["spell/visionary"]={true, 0.0},
+		["spell/otherness"]={true, 0.0},
 	},
 	birth_example_particles = {
 		"golden_shield",

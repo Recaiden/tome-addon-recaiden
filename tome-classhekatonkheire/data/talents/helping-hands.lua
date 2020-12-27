@@ -6,7 +6,7 @@ newTalent{
 	cooldown = 8,
 	hands = 20,
 	getDuration = function (self, t) return 1 end,
-	getBlock = function(self, t) return self:combatTalentScale(30, 200) * (1 + self.level/50) end,
+	getBlock = function(self, t) return self:combatTalentScale(t, 30, 200) * (1 + self.level/50) end,
 	action = function(self, t)
 		self:setEffect(self.EFF_REK_HEKA_FORFEND, t.getDuration(self, t), {power=t.getgetBlock(self, t), src=self})
 		return true
@@ -43,7 +43,7 @@ newTalent{
 	name = "Lay on Hands", short_name = "REK_HEKA_HELPING_HEALING",
 	type = {"technique/helping-hands", 3}, require = str_req3, points = 5,
 	mode = "passive",
-	getHeal = function(self, t) return self:combatTalentSpelldamage(t, 0, 14) end,
+	getHeal = function(self, t) return self:combatTalentSpellDamage(t, 0, 14) end,
 	--TODO implement
 	info = function(self, t)
 		return ([[When your hands reunite with you after ending a talent that drains hands, invests hands, or has a sustained hand cost, you are healed by %d per hand.]]):tformat(t.getHeal(self, t))

@@ -94,6 +94,20 @@ str_req_high5 = {
 	level = function(level) return 26 + (level-1)  end,
 }
 
+newTalent{
+	name = "Hands Pool",
+	type = {"base/class", 1},
+	info = "Allows you to have pool of 100 hands, used for hekatonkheire abilities.",
+	mode = "passive",
+	hide = "always",
+	no_unlearn_last = true,
+	passives = function(self, t, p)
+		self:talentTemporaryValue(p, "max_hands", 100)
+		self:talentTemporaryValue(p, "hands_regen", 10)
+	end,
+
+}
+
 if not Talents.talents_types_def["spell/shambler"] then
    newTalentType{ allow_random=true, is_spell=true, type="spell/shambler", name = "Shambler", description = "Walk steadily forward.  Don't worry; they will come to you." }
    load("/data-classhekatonkheire/talents/shambler.lua")
@@ -105,8 +119,13 @@ if not Talents.talents_types_def["technique/titanic-blows"] then
 end
 
 if not Talents.talents_types_def["technique/helping-hands"] then
-   newTalentType{ allow_random=true, is_spell=true, type="technique/helping-hands", name = "Helpig Hands", description = "Many hands make light work." }
+   newTalentType{ allow_random=true, type="technique/helping-hands", name = "Helping Hands", description = "Many hands make light work." }
    load("/data-classhekatonkheire/talents/helping-hands.lua")
+end
+
+if not Talents.talents_types_def["spell/otherness"] then
+   newTalentType{ allow_random=true, is_spell=true, generic=true, type="spell/otherness", name = "Otherness", description = "Look over and see through." }
+   load("/data-classhekatonkheire/talents/otherness.lua")
 end
 
 -- if not Talents.talents_types_def["celestial/seals"] then

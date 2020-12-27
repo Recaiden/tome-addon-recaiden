@@ -19,7 +19,7 @@ newTalent{
 	name = "Towering Wrath", short_name = "REK_HEKA_SHAMBLER_TOWERING_WRATH",
 	type = {"spell/shambler", 2}, require = mag_req2, points = 5,
 	speed = "weapon",
-	--hands = 10,
+	hands = 10,
 	tactical = { BUFF = 1 },
 	cooldown = 0,
 	passives = function(self, t, p) self:talentTemporaryValue(p, "size_category", 1) end,
