@@ -12,7 +12,7 @@ local Combat = require("mod.class.interface.Combat")
 local _M = loadPrevious(...)
 
 local mod_max_tpl_len = { Minimalist = { small = { fantasy = 73, web = 73, basic = 73 },
-                                         normal = { fantasy = 54, web = 54, basic = 59 },
+                                         normal = { fantasy = 51, web = 51, basic = 59 },
                                          big = { fantasy = 45, web = 45, basic = 49 } },
                           Classic =    { small = { fantasy = 45, web = 45, basic = 45 },
                                          normal = { fantasy = 33, web = 33, basic = 33 },
@@ -568,7 +568,7 @@ function _M:getTextualDesc(compare_with, use_actor)
       end
       
       if onhit_found then
-         desc:add("#GREEN#On Melee Ret:", true)
+         desc:add("#GREEN#When Hit:", true)
          desc:merge(onhit)
          desc:add( "#WHITE#" )
       end
