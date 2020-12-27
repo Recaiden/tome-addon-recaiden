@@ -194,7 +194,7 @@ newTalent{
 		game:delayedLogDamage(self, self, 0, ("#GOLD#%d#LAST#"):tformat(self.max_life * price / 100), false)
 		self:takeHit(self.max_life * price / 100, self, {special_death_msg=_t"was consumed by solar fire"})
 	end,
-	passives = function(elf, t, p)
+	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "spellsurge_on_crit", t.getSurge(self, t))
 		self:talentTemporaryValue(p, "cancel_damage_chance", t.getEvasion(self, t))
 	end,

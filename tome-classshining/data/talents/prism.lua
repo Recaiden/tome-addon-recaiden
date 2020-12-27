@@ -77,6 +77,15 @@ makeMirrorClone = function(target, duration, alt_nodes)
 	return m
 end
 
+function hasPrismMatch(self, chirality)
+	local prisms = {}
+	for uid, act in pairs(game.level.entities) do
+		if act.summoner and act.summoner == self and act.is_luminous_reflection and act.chirality == chirality then
+			return true
+		end
+	end
+	return false
+end
 
 function getPrisms(self)
 	local prisms = {}
@@ -98,21 +107,27 @@ end
 
 newTalent{
 	name = "Split Reflections", short_name = "REK_SHINE_PRISM_REFLECTIONS",
-	type = {"demented/prism", 1},
+	type = {"demented/other", 1},
 	require = mag_req_slow, points = 5,
 	mode = "passive",
 	unlearn_on_clone = true,
 	getCount = function(self, t) return 2 end,
-	getReduction = function(self, t) return self:combatTalentLimit(t, 40, 75, 56.3) end,
+	getReduction = function(self, t) --return self:combatTalentLimit(t, 40, 75, 56.3) end,
+		return math.max(55, 75 - self.level*0.8)
+	end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "generic_damage_penalty", t.getReduction(self, t))
 		self:talentTemporaryValue(p, "reflection_damage_amp", t.getReduction(self, t))
 		self:talentTemporaryValue(p, "shield_factor", -0.5)
 	end,
-	callReflections = function(self, t)
+	callbackOnLevelup = function(self, t)
+		self:updateTalentPassives(t)
+	end,
+	callReflections = function(self, t, chirality)
+		if not chirality then chirality = "right" end
 		if not self.stored_luminous_life then
 			self.stored_luminous_life = self.max_life * 0.3
-			self.max_life = self.max_life - self.stored_luminous_life
+			self.max_life = self.max_life - self.stored_luminous_life 
 			self.life = math.min(self.life, self.max_life)
 		end
 		
@@ -139,6 +154,7 @@ newTalent{
 			local m = makePrismClone(self, t)
 			m.generic_damage_penalty = t.getReduction(self, t)
 			m.reflection_damage_amp = t.getReduction(self, t)
+			m.chirality = chirality
 			if game.party:hasMember(self) then
 				game.party:addMember(m, {
 															 control="full",
@@ -151,6 +167,8 @@ newTalent{
 			-- and the level
 			game.zone:addEntity(game.level, m, "actor", tx, ty)
 			game.level.map:particleEmitter(m.x, m.y, 1, "temporal_teleport")
+			m.insanity = self.insanity
+			m.positive = self.positive
 		end
 
 		local clones = getPrisms(self)
@@ -164,8 +182,11 @@ newTalent{
 	callbackOnSummonDeath = function(self, t, summon, src, death_note)
 		if summon.summoner ~= self then return end
 		if not summon.is_luminous_reflection then return end
-		self:setProc("shining_prism_recharging", true, 10)
-		--todo separate death timers
+		if summon.chirality == "left" then
+			self:setProc("shining_prism_recharging_left", true, 10)
+		else
+			self:setProc("shining_prism_recharging_right", true, 10)
+		end
 	end,
 	callbackOnCombat = function(self, t, state)
 		if self.resting then self:restStop(_t"combat started!") end
@@ -187,27 +208,29 @@ newTalent{
 		if state == true then
 			local refs = getPrisms(self)
 			if #refs == 0 then
-				t.callReflections(self, t)
-				t.callReflections(self, t)
+				t.callReflections(self, t, "left")
+				t.callReflections(self, t, "right")
 			elseif #refs == 1 then
-				t.callReflections(self, t)
+				if hasPrismMatch(self, "left") then
+					t.callReflections(self, t, "right")
+				else
+					t.callReflections(self, t, "left")
+				end
 			end
 		end
 	end,
 	callbackOnActBase = function(self, t)
 		if not self.in_combat then return end
-		if self:hasProc("shining_prism_recharging") then return end
-		local refs = getPrisms(self)
-		if #refs == 0 then
-			t.callReflections(self, t)
-			t.callReflections(self, t)
-		elseif #refs == 1 then
-			t.callReflections(self, t)
+		if not self:hasProc("shining_prism_recharging_left") and not hasPrismMatch(self, "left") then
+			t.callReflections(self, t, "left")
+		end
+		if not self:hasProc("shining_prism_recharging_right") and not hasPrismMatch(self, "right") then
+			t.callReflections(self, t, "right")
 		end
 	end,
 	info = function(self, t)
 		return ([[Whenever you enter combat, you are joined by %d reflections of yourself, each with 40%% of your maximum life.  Your own maximum life is lowered by 30%% while they are present.  All damage taken is shared between you and your reflections.
-You and your reflections deal %d%% less damage (shown in the tooltip of each talent) and shields affecting you have their power decreased by 50%%.
+You and your reflections deal %d%% less damage (based on level and shown in the tooltip of each talent) and shields affecting you have their power decreased by 50%%.
 If killed, your reflections will reemerge after 10 turns.
 
 Prism, Seal, and Core Gate talents do not appear on reflections.
@@ -217,7 +240,7 @@ Prism, Seal, and Core Gate talents do not appear on reflections.
 
 newTalent{
 	name = "Convergence", short_name = "REK_SHINE_PRISM_CONVERGENCE",
-	type = {"demented/prism", 2}, require = mag_req2_quick, points = 5,
+	type = {"demented/prism", 1}, require = mag_req1, points = 5,
 	cooldown = 3,
 	positive = -5,
 	insanity = 8,
@@ -237,11 +260,13 @@ newTalent{
 	end,
 	-- TODO make this not an on-learn.
 	on_learn = function(self, t)
+		self:learnTalent(self.T_REK_SHINE_PRISM_REFLECTIONS, true, nil, {no_unlearn=true})
 		self.talent_on_spell = self.talent_on_spell or {}
 		self.talent_on_spell["REK_SHINE_PRISM_CONVERGENCE"] = nil
 		t.learnOnHit(self, t)
 	end,
 	on_unlearn = function(self, t)
+		self:unlearnTalent(self.T_REK_SHINE_PRISM_REFLECTIONS)
 		self.talent_on_spell = self.talent_on_spell or {}
 		self.talent_on_spell["REK_SHINE_PRISM_CONVERGENCE"] = nil
 		if self:getTalentLevel(t) > 0 then
@@ -273,14 +298,16 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[You and your reflections each fire a beam of solar energy, dealing %0.2f light damage.
-You have a %d%% chance to cast this talent automatically on spell hit.]]):tformat(damDesc(self, DamageType.LIGHT, t:_getDamage(self)), t:_getChance(self))
+You have a %d%% chance to cast this talent automatically on spell hit.
+
+Learning this talent splits you into 3 reflections.]]):tformat(damDesc(self, DamageType.LIGHT, t:_getDamage(self)), t:_getChance(self))
 	end,
 }
 
 newTalent{
 	name = "Trinary", short_name = "REK_SHINE_PRISM_SYNCHRONY",
-	type = {"demented/prism", 3},
-	require = mag_req3, points = 5,
+	type = {"demented/prism", 2},
+	require = mag_req2, points = 5,
 	mode = "passive",
 	getSpellpowerIncrease = function(self, t) return self:combatTalentScale(t, 5, 20, 1.0) end,
 	passives = function(self, t, p)
@@ -297,6 +324,28 @@ newTalent{
 	info = function(self, t)
 		local range = self:getTalentRange(t)
 		return ([[Your and your reflections are three suns shining as one.  You gain %d spellpower for each reflection adjacent to you.]]):tformat(t.getSpellpowerIncrease(self, t))
+	end,
+}
+
+newTalent{
+	name = "Kaleidoscope", short_name = "REK_SHINE_PRISM_SCOPE",
+	image = "talents/rek_shine_prism_reflections.png",
+	type = {"demented/prism", 3},
+	require = mag_req3, points = 5,
+	cooldown = function(self, t) return math.floor(self:combatTalentLimit(t, 5, 50, 20)) end,
+	fixed_cooldown = true,
+	action = function(self, t)
+		if not self:hasProc("shining_prism_recharging_left") and not self:hasProc("shining_prism_recharging_right") then return nil end
+		self.turn_procs.multi["shining_prism_recharging_left"] = nil
+		self.turn_procs.multi["shining_prism_recharging_right"] = nil
+		return true
+	end,
+	callbackOnAct = function(self, t)
+		self:updateTalentPassives(t)
+	end,
+	info = function(self, t)
+		local range = self:getTalentRange(t)
+		return ([[A slight shift can reveal new reflections. If your reflections are dead, remove the cooldown before they can reemerge.]]):tformat()
 	end,
 }
 

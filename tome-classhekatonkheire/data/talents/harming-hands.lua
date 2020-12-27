@@ -1,25 +1,43 @@
 newTalent{
-	name = "Forfend", short_name = "REK_HEKA_HELPING_FORFEND",
-	type = {"technique/helping-hands", 1}, require = str_req_slow, points = 5,
-	tactical = { DEFEND = 2 },
+	name = "Titan's Grasp", short_name = "REK_HEKA_HARMING_TITANS_GRASP",
+	type = {"technique/harming-hands", 1}, require = str_req1, points = 5,
+	tactical = { DISABLE = 2 },
 	speed= "weapon",
 	cooldown = 8,
-	hands = 20,
-	getDuration = function (self, t) return 1 end,
+	hands = function(self, t)
+		if self:hasEffect(self.EFF_REK_HEKA_CHOKE_READY) then return 30 end
+		return 20
+	end,
+	range = 10,
+	requires_target = true,
+	getDuration = function (self, t) return 6 end,
+	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nolock=true, talent = t} end,
 	getBlock = function(self, t) return self:combatTalentScale(t, 30, 200) * (1 + self.level/50) end,
 	action = function(self, t)
-		self:setEffect(self.EFF_REK_HEKA_FORFEND, t.getDuration(self, t), {power=t.getgetBlock(self, t), src=self})
+		local tg = self:getTalentTarget(t)
+		local x, y, target = self:getTarget(tg)
+		if not target or not self:canProject(tg, x, y) then return nil end
+		local choke = self:hasEffect(self.EFF_REK_HEKA_CHOKE_READY)
+		target:setEffect(target.EFF_REK_HEKA_GRASPED, t:_getDuration(self), {power=t:_getDamage(self), health=t:_getHealth(self), silence=choke and 1 or 0, src=self})
+		if choke then
+			game:onTickEnd(function() 
+											 self:removeEffect(self.EFF_REK_HEKA_CHOKE_READY)
+										 end
+		end
+		
+		self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self), {cost=t.hands(self, t), src=self})
 		return true
 	end,
 	info = function(self, t)
-		return ([[Throw out handfuls of hands, palms open, to block incoming threats, reducing all non-Mind damage by %d. If you block all of an attack's damage, the attacker will be vulnerable to a deadly counterstrike (the next attack will deal double damage) for one turn.
-The blocking value will increase with your level.]]):tformat(t.getBlock(self, t))
+		return ([[Send out your other hands to grab a creature, dealing %d physical damage per turn and pinning them in place for %d turns.  %d%% of the damage the grasped creature would deal is instead redirected to the hands, and after taking %d damage the hands let go.
+
+This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), t.getDuration(self, t), 10, t:_getHealth(self))
 	end,
 }
 
 newTalent{
-	name = "Magpie Hook", short_name = "REK_HEKA_HELPING_MAGPIE",
-	type = {"technique/helping-hands", 2}, require = str_req2, points = 5,
+	name = "Magpie Hook", short_name = "REK_HEKA_HARMING_MAGPIE",
+	type = {"technique/harming-hands", 2}, require = str_req2, points = 5,
 	speed = "weapon",
 	mode = "sustained",
 	--hands = 10,
@@ -40,8 +58,8 @@ newTalent{
 }
 
 newTalent{
-	name = "Lay on Hands", short_name = "REK_HEKA_HELPING_HEALING",
-	type = {"technique/helping-hands", 3}, require = str_req3, points = 5,
+	name = "Lay on Hands", short_name = "REK_HEKA_HARMING_HEALING",
+	type = {"technique/harming-hands", 3}, require = str_req3, points = 5,
 	mode = "passive",
 	getHeal = function(self, t) return self:combatTalentSpellDamage(t, 0, 14) end,
 	--TODO implement
@@ -51,8 +69,8 @@ newTalent{
 }
 
 newTalent{
-	name = "???", short_name = "REK_HEKA_HELPING_XXXXXXXXXXXX",
-	type = {"technique/helping-hands", 4},	require = str_req4, points = 5,
+	name = "???", short_name = "REK_HEKA_HARMING_XXXXXXXXXXXX",
+	type = {"technique/harming-hands", 4},	require = str_req4, points = 5,
 	cooldown = function(self, t) return 15 end,
 	range = 1,
 	tactical = { ATTACK = { weapon = 1 }, DISABLE = 3 },

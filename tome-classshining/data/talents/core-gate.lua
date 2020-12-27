@@ -163,6 +163,7 @@ newTalent{
 	type = {"demented/core-gate", 2}, require = mag_req_high2, points = 5,
 	positive = function(self, t)
 		local count = 0
+		if not game or not game.level then return 0 end
 		for uid, act in pairs(game.level.entities) do
 			if act.summoner and act.summoner == self and act.is_glowing_horror then
 				count = count + 1
@@ -175,6 +176,7 @@ newTalent{
 	getDuration = function(self, t) return 10 end,
 	getAbsorb = function(self, t) return self:combatTalentSpellDamage(t, 0, 220) end,
 	on_pre_use = function(self, t, silent)
+		if not game or not game.level then return 0 end
 		for uid, act in pairs(game.level.entities) do
 			if act.summoner and act.summoner == self and act.is_glowing_horror then
 				return true
@@ -185,6 +187,7 @@ newTalent{
 	end,
 	action = function(self, t)
 		local count = 0
+		if not game or not game.level then return nil end
 		for uid, act in pairs(game.level.entities) do
 			if act.summoner and act.summoner == self and act.is_glowing_horror then
 				count = count + 1
