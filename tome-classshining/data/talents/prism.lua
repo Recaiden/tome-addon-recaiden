@@ -24,14 +24,14 @@ makeMirrorClone = function(target, duration, alt_nodes)
 	end
 
 	-- force some values in the clone
-	local clone_copy = {name=("%s's temporal clone"):tformat(target:getName()),
-		desc=_t[[A creature from another timeline.]],
+	local clone_copy = {name=("%s's reflection"):tformat(target:getName()),
+		desc=_t[[A creature formed from light.]],
 		faction=target.faction, exp_worth=0,
 		life=util.bound(target.life, target.die_at, target.max_life),
 		summoner=target, summoner_gain_exp=true, summon_time=duration,
 		max_level=target.level,
 		ai_target={actor=table.NIL_MERGE}, ai="summoned",
-		ai_real="tactical", ai_tactic={escape=0}, -- Clones never flee because they're awesome
+		ai_real="tactical", ai_tactic={escape=0},
 		shader = "shadow_simulacrum",
 	}
 	
@@ -65,7 +65,6 @@ makeMirrorClone = function(target, duration, alt_nodes)
 	m.life = math.min(m.life, m.max_life)
 	m.die_at = math.ceil((m.die_at or 0) * 0.4)
 	
-	-- A bit of sanity in case anyone decides they should blow up the world.
 	if m.preferred_paradox and m.preferred_paradox > 600 then m.preferred_paradox = 600 end
 
 	-- Prevent respawning
@@ -306,8 +305,9 @@ Learning this talent splits you into 3 reflections.]]):tformat(damDesc(self, Dam
 
 newTalent{
 	name = "Trinary", short_name = "REK_SHINE_PRISM_SYNCHRONY",
-	type = {"demented/prism", 2},
-	require = mag_req2, points = 5,
+	type = {"demented/prism", 2},	require = mag_req2, points = 5,
+	on_learn = function(self, t) self:learnTalent(self.T_REK_SHINE_PRISM_REFLECTIONS, true, nil, {no_unlearn=true}) end,
+	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_SHINE_PRISM_REFLECTIONS) end,
 	mode = "passive",
 	getSpellpowerIncrease = function(self, t) return self:combatTalentScale(t, 5, 20, 1.0) end,
 	passives = function(self, t, p)
@@ -332,8 +332,17 @@ newTalent{
 	image = "talents/rek_shine_prism_reflections.png",
 	type = {"demented/prism", 3},
 	require = mag_req3, points = 5,
+	on_learn = function(self, t) self:learnTalent(self.T_REK_SHINE_PRISM_REFLECTIONS, true, nil, {no_unlearn=true}) end,
+	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_SHINE_PRISM_REFLECTIONS) end,
 	cooldown = function(self, t) return math.floor(self:combatTalentLimit(t, 5, 50, 20)) end,
 	fixed_cooldown = true,
+	on_pre_use = function(self, t, silent)
+		if not self:hasProc("shining_prism_recharging_left") and not self:hasProc("shining_prism_recharging_right") then
+			if not silent then game.logPlayer(self, "Your reflections are ready.") end
+			return false
+		end
+		return true
+	end,
 	action = function(self, t)
 		if not self:hasProc("shining_prism_recharging_left") and not self:hasProc("shining_prism_recharging_right") then return nil end
 		self.turn_procs.multi["shining_prism_recharging_left"] = nil
@@ -352,6 +361,8 @@ newTalent{
 newTalent{
 	name = "Mirror Barrier", short_name = "REK_SHINE_PRISM_MIRROR_SHIELD",
 	type = {"demented/prism", 4},	require = mag_req4,	points = 5,
+	on_learn = function(self, t) self:learnTalent(self.T_REK_SHINE_PRISM_REFLECTIONS, true, nil, {no_unlearn=true}) end,
+	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_SHINE_PRISM_REFLECTIONS) end,
 	cooldown = 15,
 	positive = -15,
 	insanity = -20,

@@ -24,13 +24,28 @@ newTalent{
 		
 		local tgI = t.targetInner(self, t)
 		local gridsCenter = self:project(tgI, self.x, self.y, function() end)
-		game.level.map:addEffect(self, self.x, self.y, t.getDuration(self, t), DamageType.REK_SHINE_SEAL, {dam=dam, knock=false, disarm=true, damFire=damFire, silence=vox}, 0, 5, gridsCenter, MapEffect.new{color_br=200, color_bg=140, color_bb=20, effect_shader="shader_images/water_effect1.png"}, nil, true)
+		game.level.map:addEffect(self, self.x, self.y, t.getDuration(self, t), DamageType.REK_SHINE_SEAL, {dam=dam, knock=false, disarm=true, damFire=damFire, silence=vox}, 0, 5, gridsCenter, MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, img="solar_citadel_inner", radius=self:getTalentRadius(t), base_rot=0, oversize=1.5}}, color_br=200, color_bg=200, color_bb=200, effect_shader="shader_images/blank_effect.png"}, nil, true)
 
+
+		--MapEffect.new{color_br=200, color_bg=140, color_bb=20, effect_shader="shader_images/water_effect1.png"}, nil, true)
+
+
+		--MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, img="sun_circle", radius=self:getTalentRadius(t)}}, color_br=255, color_bg=255, color_bb=255, effect_shader="shader_images/sunlight_effect.png"},
+			
+		
 		--MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, oversize=0, img="sun_sigil_dark", radius=1}}, color_br=255, color_bg=187, color_bb=187, alpha=10, effect_shader="shader_images/sunlight_effect.png"}
 		
 		local tg = self:getTalentTarget(t)
 		local gridsRim = self:project(tg, self.x, self.y, function() end)
-		game.level.map:addEffect(self, self.x, self.y, t.getDuration(self, t), DamageType.REK_SHINE_SEAL, {dam=dam, knock=true, disarm=false, damFire=damFire, silence=vox}, 0, 5, gridsRim, MapEffect.new{color_br=30, color_bg=60, color_bb=200, effect_shader="shader_images/water_effect1.png"}, nil, true)
+		game.level.map:addEffect(self, self.x, self.y, t.getDuration(self, t), DamageType.REK_SHINE_SEAL, {dam=dam, knock=true, disarm=false, damFire=damFire, silence=vox}, 0, 5, gridsRim, MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, img="solar_citadel_outer", radius=self:getTalentRadius(t), base_rot=0, oversize=1.5}}, color_br=200, color_bg=200, color_bb=200, effect_shader="shader_images/blank_effect.png"}, nil, true)
+
+		if self:knowTalent(self.T_REK_SHINE_SEALS_ARMAMENTS) then
+			game.level.map:addEffect(self, self.x, self.y, t.getDuration(self, t), DamageType.COSMETIC, 0, 0, 5, {}, MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, img="solar_citadel_empyreal", radius=self:getTalentRadius(t), base_rot=0, oversize=1.5}}, color_br=200, color_bg=200, color_bb=200, effect_shader="shader_images/blank_effect.png"}, nil, true)
+		end
+		
+		if self:knowTalent(self.T_REK_SHINE_SEALS_INSURMOUNTABLE) then
+			game.level.map:addEffect(self, self.x, self.y, t.getDuration(self, t), DamageType.COSMETIC, 0, 0, 5, {}, MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, img="solar_citadel_light", radius=self:getTalentRadius(t), base_rot=0, oversize=1.5}}, color_br=200, color_bg=200, color_bb=200, effect_shader="shader_images/blank_effect.png"}, nil, true)
+		end
 		
 		game:playSoundNear(self, "talents/arcane")
 		return true
