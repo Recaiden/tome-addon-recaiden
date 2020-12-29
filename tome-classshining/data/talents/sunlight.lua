@@ -28,7 +28,7 @@ newTalent{
 			self, x, y, duration, DamageType.COSMETIC, 
 			{dam = t.getDamage(self, t), radius = radius, self = self, talent = t}, 
 			0, 5, nil, 
-			{type="warning_ring", args = {radius = radius}},
+			{type="solar_flare_burst", args = {radius = radius, all_static=true}},
 			function(e, update_shape_only)
 				if not update_shape_only and e.duration == 1 then
 					local DamageType = require("engine.DamageType") --block_path means that it will always hit the tile we've targeted here
@@ -37,7 +37,7 @@ newTalent{
 					local grids = e.src:project(aoe, e.x, e.y, DamageType.LITE_LIGHT, e.dam.dam)
 					e.src.__project_source = nil
 					
-					game.level.map:particleEmitter(e.x, e.y, e.dam.radius, "sunburst", {radius=e.dam.radius * 0.92, grids=grids, tx=e.x, ty=e.y, max_alpha=80})
+					game.level.map:particleEmitter(e.x, e.y, e.dam.radius, "solar_flare_burst", {radius=e.dam.radius * 0.92, grids=grids, max_alpha=80})
 
 					-- scorched earth
 					if e.src:isTalentActive(e.src.T_REK_SHINE_INCINERATOR_WORLD_CUTTER) then
@@ -111,6 +111,7 @@ newTalent{
 		if p.recharge <= (t.getRecharge(self, t) - t.getDuration(self, t)) then p.barrier = nil end
 		if p.recharge <= 0 then p.recharge = nil end
 	end,
+	callbackPriorities={callbackOnHit = -10},
 	callbackOnHit = function(self, t, cb, src, dt)
 		local p = self:isTalentActive(t.id)
 		if src == self or src == self.summoner or (src and src.summoner == self) then return end
@@ -152,7 +153,7 @@ newTalent{
 			end
 			
 			local _ _, x, y = self:canProject(tg, x, y)
-		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(src.x-self.x), math.abs(src.y-self.y)), "light_beam", {tx=src.x-self.x, ty=src.y-self.y})
+		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(src.x-self.x), math.abs(src.y-self.y)), "corona_beam", {tx=src.x-self.x, ty=src.y-self.y})
 		end
 		return true
 	end,
@@ -236,7 +237,7 @@ newTalent{
 		local dam = self:spellCrit(t.getDamage(self, t))
 		local grids = self:project(tg, x, y, DamageType.REK_SHINE_LIGHT_STUN, dam)
 		local _ _, x, y = self:canProject(tg, x, y)
-		game.level.map:particleEmitter(self.x, self.y, tg.radius, "flamebeam_wide", {tx=x-self.x, ty=y-self.y})
+		game.level.map:particleEmitter(self.x, self.y, tg.radius, "solar_beam_wide", {tx=x-self.x, ty=y-self.y})
 
 		-- scorched earth
 		if self:isTalentActive(self.T_REK_SHINE_INCINERATOR_WORLD_CUTTER) then

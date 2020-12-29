@@ -46,6 +46,7 @@ makeMirrorClone = function(target, duration, alt_nodes)
 	local tids = {}
 	for tid, _ in pairs(m.talents) do
 		local t = m:getTalentFromId(tid)
+		if tid == m.T_BATHE_IN_LIGHT then tids[#tids+1] = t end
 		if t.type[1]:find("^demented/prism") and m:knowTalent(tid) then tids[#tids+1] = t end
 		if t.type[1]:find("^demented/core%-gate") and m:knowTalent(tid) then tids[#tids+1] = t end
 		if t.type[1]:find("^celestial/seals") and m:knowTalent(tid) then tids[#tids+1] = t end
@@ -117,7 +118,7 @@ newTalent{
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "generic_damage_penalty", t.getReduction(self, t))
 		self:talentTemporaryValue(p, "reflection_damage_amp", t.getReduction(self, t))
-		self:talentTemporaryValue(p, "shield_factor", -0.5)
+		self:talentTemporaryValue(p, "shield_factor", -0.50)
 	end,
 	callbackOnLevelup = function(self, t)
 		self:updateTalentPassives(t)
@@ -153,6 +154,7 @@ newTalent{
 			local m = makePrismClone(self, t)
 			m.generic_damage_penalty = t.getReduction(self, t)
 			m.reflection_damage_amp = t.getReduction(self, t)
+			m.shield_factor = (m.shield_factor or 1.0) - 0.50
 			m.chirality = chirality
 			if game.party:hasMember(self) then
 				game.party:addMember(m, {
@@ -232,7 +234,7 @@ newTalent{
 You and your reflections deal %d%% less damage (based on level and shown in the tooltip of each talent) and shields affecting you have their power decreased by 50%%.
 If killed, your reflections will reemerge after 10 turns.
 
-Prism, Seal, and Core Gate talents do not appear on reflections.
+Reflections cannot learn: Prism talents, Seal talents, Core Gate talents, or Bathe in Light.
 ]]):tformat(t.getCount(self, t), t.getReduction(self, t))
 	end,
 }
@@ -288,7 +290,7 @@ newTalent{
 			local _ _, px, py = prism:canProject(tg, x, y)
 			if px and py then
 				local grids = self:project(tg, x, y, DamageType.LIGHT, dam)
-				game.level.map:particleEmitter(prism.x, prism.y, math.max(math.abs(x-prism.x), math.abs(y-prism.y)), "light_beam", {tx=x-prism.x, ty=y-prism.y})
+				game.level.map:particleEmitter(prism.x, prism.y, math.max(math.abs(x-prism.x), math.abs(y-prism.y)), "solar_beam", {tx=x-prism.x, ty=y-prism.y})
 			end
 			self.__project_source = old_source
 		end
@@ -413,7 +415,7 @@ class:bindHook("DamageProjector:final", function(self, hd)
 		game:delayedLogDamage(src, target, 0, ("#GOLD#(%d to mirror barrier)#LAST#"):format(reflected), false)
 		hd.dam = dam - reflected
 		state.no_reflect = true
-		reflected = reflected * 100 / (target:attr("reflection_damage_amp") or 100)
+		reflected = reflectAmp(target, reflected)
 		DamageType.defaultProjector(target, src.x, src.y, type, reflected, state)
 		state.no_reflect = nil
 	end

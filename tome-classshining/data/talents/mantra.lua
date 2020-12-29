@@ -192,7 +192,7 @@ newTalent{
 	name = "Mantra Adept", short_name = "REK_SHINE_MANTRA_ADEPT",
 	type = {"celestial/shining-mantras", 2}, require = mag_req2, points = 5,
 	mode = "passive",
-	getDamageOnMeleeHit = function(self, t) return self:combatTalentSpellDamage(t, 20, 50) * 100 / (self:attr("reflection_damage_amp") or 100) end,
+	getDamageOnMeleeHit = function(self, t) return reflectAmp(self, self:combatTalentSpellDamage(t, 20, 50)) end,
 	-- insanity effect implemented in superload mod/class/Actor.lua:insanityEffect
 	-- fireshield implemented in each mantra talent
 	info = function(self, t)
@@ -252,8 +252,8 @@ newTalent{
 	mode = "passive",
 	range = 10,
 	getMaxStacks = function(self, t) return 10 end,
-	getHeal = function(self,t) return self:combatTalentSpellDamage(t, 20, 440) end,
-	getDamage = function(self,t) return self:combatTalentSpellDamage(t, 20, 330) end,
+	getHeal = function(self,t) return self:combatTalentSpellDamage(t, 20, 330) end,
+	getDamage = function(self,t) return self:combatTalentSpellDamage(t, 20, 400) end,
 	info = function(self, t)
 		return ([[Conclude your mantras with a word of purifying flame.  While in combat, your Mantras generate stacks of Repetition each round, up to %d stacks.  When you deactivate a mantra, you are healed for up to %0.1f life and up to %d enemies in sight suffer up to %0.1f fire damage, based on your stacks of Repetition.
 The healing is increased based on your increased fire damage.

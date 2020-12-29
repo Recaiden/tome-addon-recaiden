@@ -53,6 +53,10 @@ mag_req_high5 = {
 	level = function(level) return 26 + (level-1)  end,
 }
 
+reflectAmp = function(self, dam)
+	return dam * 100 / (100 - (self:attr("reflection_damage_amp") or 0))
+end
+
 if not Talents.talents_types_def["demented/sunlight"] then
    newTalentType{ allow_random=true, no_silence=true, is_spell=true, type="demented/sunlight", name = "Sunlight", description = "Summon the true power of the Sun to burn your foes." }
    load("/data-classshining/talents/sunlight.lua")

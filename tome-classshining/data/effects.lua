@@ -151,6 +151,7 @@ newEffect{
 		end
 		return {dam=dam}
 	end,
+	callbackPriorities={callbackOnHit = -5},
 	callbackOnHit = function(self, eff, cb, src)
 		if cb.value <= 0 then return cb.value end
 
@@ -296,7 +297,7 @@ newEffect{
 	type = "magical",
 	subtype = { fire=true },
 	status = "beneficial",
-	charges = function(self, eff) return eff.power end,
+	charges = function(self, eff) return math.round(eff.power) end,
 	parameters = { power=5, stacks = 1, max_stacks = 5 },
 	on_merge = function(self, old_eff, new_eff)
 		return old_eff -- cannot be reapplied early

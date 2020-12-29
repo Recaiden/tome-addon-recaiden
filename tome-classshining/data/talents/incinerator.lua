@@ -10,8 +10,8 @@ newTalent{
 		return count
 	end,
 	getDuration = function(self, t) return 5 end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 0, 25) end,
-	getBaseDamage = function(self, t) return 5 end,
+	getDamage = function(self, t) return reflectAmp(self, self:combatTalentSpellDamage(t, 0, 25)) end,
+	getBaseDamage = function(self, t) return reflectAmp(self, 5) end,
 	callbackOnDealDamage = function(self, t, val, target, dead, death_note)
 		if dead then return end
 		if not death_note or (death_note.damtype ~= DamageType.LIGHT) then return end
