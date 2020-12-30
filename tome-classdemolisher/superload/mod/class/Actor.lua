@@ -45,4 +45,12 @@ function _M:levelup()
 	return base_levelup(self)
 end
 
+local base_preUseTalent = _M.preUseTalent
+function _M:preUseTalent(ab, silent, fake, ignore_ressources)
+	if self.__runeplate_in_progress then
+		self.__inscription_data_fake = nil
+	end
+	return base_preUseTalent(self, ab, silent, fake, ignore_ressources)
+end
+
 return _M

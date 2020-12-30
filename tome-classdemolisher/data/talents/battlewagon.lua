@@ -202,10 +202,13 @@ newTalent{
 		if not self.runeplate_inscription then return false end
 		local o = self.runeplate_inscription
 		self.__inscription_data_fake = o.inscription_data
+		self.__runeplate_in_progress = true
 		local tal = self:getTalentFromId("T_"..o.inscription_talent.."_1")
 		self:callTalent(tal.id, "action")
 		self.__inscription_data_fake = nil
+		self.__runeplate_in_progress = nil
 		self:startTalentCooldown(t)
+		return true
 	end,
 	no_energy = function(self, t)
 		if self.runeplate_inscription then 

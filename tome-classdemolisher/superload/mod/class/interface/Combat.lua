@@ -23,4 +23,12 @@ function _M:bumpInto(target)
 	else return base_bumpInto(self, target) end
 end
 
+local base_combatSteampower = _M.combatSteampower
+function _M:combatSteampower(mod, add)
+	if self:knowTalent(self.T_REK_DEML_EXPLOSIVE_REMOTE_CHARGE) then
+		add = (add or 0) + self.level * 0.5
+	end
+	return base_combatSteampower(self, mod, add)
+end
+
 return _M

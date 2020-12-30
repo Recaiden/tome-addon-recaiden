@@ -65,7 +65,7 @@ newTalent{
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
-		local dam = self:spellCrit(t.getDamage(self, t))
+		local dam = self:steamCrit(t.getDamage(self, t))
 		self:project(tg, x, y, DamageType.REK_DEML_COILSHOCK, dam)
 		local _ _, x, y = self:canProject(tg, x, y)
 		if core.shader.active() then game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "lightning_beam", {tx=x-self.x, ty=y-self.y}, {type="lightning"})

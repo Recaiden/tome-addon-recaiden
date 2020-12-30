@@ -223,7 +223,9 @@ newTalent{
 When triggered, the device creates a blast in radius 1, hitting all foes for %0.2f fire damage.  Targets take 40%% reduced damage from each remote charge after the first that hits them in a turn.
 Steampower: increases damage
 
-Undetonated charges disarm after 10 turns.]]):format(damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
+Undetonated charges disarm after 10 turns.
+
+Your skill with explosives gives you +0.5 Steampower per character level.]]):format(damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
 	end,
 }
 
