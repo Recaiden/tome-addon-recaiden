@@ -94,10 +94,18 @@ function _M:displayTurntracker(scale, bx, by)
 				local ticksRemaining = (eRemaining / 100) / act.global_speed
 				entities[#entities+1] = {a=act, t=ticksRemaining}
 
+				local first = true
 				while ticksRemaining < cutoff do
-					eRemaining = eRemaining + game.energy_to_act
-					ticksRemaining = (eRemaining / 100) / act.global_speed
-					entities[#entities+1] = {a=act, t=ticksRemaining}
+					if first and act == game.player and self.turntracker_selected_tid then
+						eRemaining = eRemaining + player:getTalentSpeed(player:getTalentFromId(self.turntracker_selected_tid)) * game.energy_to_act
+						ticksRemaining = (eRemaining / 100) / act.global_speed
+						entities[#entities+1] = {a=act, t=ticksRemaining}
+						first = false
+					else
+						eRemaining = eRemaining + game.energy_to_act
+						ticksRemaining = (eRemaining / 100) / act.global_speed
+						entities[#entities+1] = {a=act, t=ticksRemaining}
+					end
 				end
 			end
 		end
@@ -138,6 +146,9 @@ function _M:displayTurntracker(scale, bx, by)
 
 			local draw_fct = function(x, y, t)
 				core.display.drawQuad(x, y, 40, 40, 0, 0, 0, 255)
+				-- if marked then 
+				-- 	core.display.drawQuad(x+1, y+1, 38, 38, 215, 190, 105, 178)
+				-- end
 				
 				local scale, bx, by = self.places.turntracker.scale, self.places.turntracker.x, self.places.turntracker.y
 				core.display.glScissor(true, bx+x*scale, by+y*scale, 40*scale, 40*scale)
@@ -146,6 +157,7 @@ function _M:displayTurntracker(scale, bx, by)
 				
 				local p = (game.player == a) and portrait or portrait_unsel -- highlight player
 				p[1]:toScreenFull(x, y, p[6], p[7], p[2], p[3])
+				
 				-- Display ticks till turn over the portrait
 				local gtxt = self.turntracker[a].txt_turntracker_ticks
 				local txt = ("%0.1f"):format(t/10)
@@ -163,6 +175,7 @@ function _M:displayTurntracker(scale, bx, by)
 				end
 				gtxt._tex:toScreenFull(x-gtxt.fw+36, y-2, gtxt.w, gtxt.h, gtxt._tex_w, gtxt._tex_h)
 				if shader then shader:use(false) end
+				
 				-- Display letter mark over the portrait
 				local stxt = self.turntracker[a].txt_turntracker_marker
 				if not stxt then
@@ -181,6 +194,7 @@ function _M:displayTurntracker(scale, bx, by)
 				end
 				stxt._tex:toScreenFull(x-stxt.fw+18, y+16, stxt.w, stxt.h, stxt._tex_w, stxt._tex_h)
 				if shader then shader:use(false) end
+
 				-- Display high-speed marker
 				if a:getSpeed("movement") < 1 or a:getSpeed("weapon") < 1 or a:getSpeed("spell") < 1 or a:getSpeed("mind") < 1 then
 					local txt = "+"
@@ -197,21 +211,20 @@ function _M:displayTurntracker(scale, bx, by)
 					wtxt._tex:toScreenFull(x-wtxt.fw+36, y+16, wtxt.w, wtxt.h, wtxt._tex_w, wtxt._tex_h)
 					if shader then shader:use(false) end
 				end
+				
 			end
 			
 			self.turntracker[a] = {
 				a, "turntracker"..a.uid, draw_fct, desc_fct
 			}
 		end
-		--not game.mouse:getZone("turntracker"..a.uid) and
-		if not game.mouse:getZone("turntracker"..a.uid) and not game.mouse:updateZone("turntracker"..a.uid, bx+x*scale, by+y*scale, hs, hs, self.turntracker[a][4], scale) then
-			game.mouse:unregisterZone("turntracker"..a.uid)
-			game.mouse:registerZone(bx+x*scale, by+y*scale, hs, hs, self.turntracker[a][4], nil, "turntracker"..a.uid, true, scale)
-			
+		if not game.mouse:getZone("turntracker"..i) and not game.mouse:updateZone("turntracker"..i, bx+x*scale, by+y*scale, hs, hs, self.turntracker[a][4], scale) then
+			game.mouse:unregisterZone("turntracker"..i)
+			game.mouse:registerZone(bx+x*scale, by+y*scale, hs, hs, self.turntracker[a][4], nil, "turntracker"..i, true, scale)
 		end
-		if not tooltip_drawn[a.uid] then
-			game.mouse:updateZone("turntracker"..a.uid, bx+x*scale, by+y*scale, hs, hs, self.turntracker[a][4], scale)
-			tooltip_drawn[a.uid] = true
+		if not tooltip_drawn["turntracker"..i] then
+			game.mouse:updateZone("turntracker"..i, bx+x*scale, by+y*scale, hs, hs, self.turntracker[a][4], scale)
+			tooltip_drawn["turntracker"..i] = true
 		end
 		--call function
 		self.turntracker[a][3](x, y, entities[i].t)
@@ -229,3 +242,94 @@ function _M:displayTurntracker(scale, bx, by)
 	-- end
 	self:computePadding("turntracker", bx, by, bx + x * scale, by + y * scale)
 end
+
+local hk1 = {imageLoader("hotkeys/hotkey_1.png"):glTexture()}
+local hk2 = {imageLoader("hotkeys/hotkey_2.png"):glTexture()}
+local hk3 = {imageLoader("hotkeys/hotkey_3.png"):glTexture()}
+local hk4 = {imageLoader("hotkeys/hotkey_4.png"):glTexture()}
+local hk5 = {imageLoader("hotkeys/hotkey_5.png"):glTexture()}
+local hk6 = {imageLoader("hotkeys/hotkey_6.png"):glTexture()}
+local hk7 = {imageLoader("hotkeys/hotkey_7.png"):glTexture()}
+local hk8 = {imageLoader("hotkeys/hotkey_8.png"):glTexture()}
+local hk9 = {imageLoader("hotkeys/hotkey_9.png"):glTexture()}
+
+-- copy of displayHotkeys that uses our new tid parameter from the engine
+function _M:displayHotkeys(scale, bx, by)
+	local hkeys = self.hotkeys_display
+	local ox, oy = hkeys.display_x, hkeys.display_y
+
+	hk5[1]:toScreenFull(0, 0, self.places.hotkeys.w, self.places.hotkeys.h, hk5[2], hk5[3])
+
+	hk8[1]:toScreenFull(0, -hk8[7], self.places.hotkeys.w, hk8[7], hk8[2], hk8[3])
+	hk2[1]:toScreenFull(0, self.places.hotkeys.h, self.places.hotkeys.w, hk2[7], hk2[2], hk2[3])
+	hk4[1]:toScreenFull(-hk4[6], 0, hk4[6], self.places.hotkeys.h, hk4[2], hk4[3])
+	hk6[1]:toScreenFull(self.places.hotkeys.w, 0, hk6[6], self.places.hotkeys.h, hk6[2], hk6[3])
+
+	hk7[1]:toScreenFull(-hk7[6], -hk7[6], hk7[6], hk7[7], hk7[2], hk7[3])
+	hk9[1]:toScreenFull(self.places.hotkeys.w, -hk9[6], hk9[6], hk9[7], hk9[2], hk9[3])
+	hk1[1]:toScreenFull(-hk7[6], self.places.hotkeys.h, hk1[6], hk1[7], hk1[2], hk1[3])
+	hk3[1]:toScreenFull(self.places.hotkeys.w, self.places.hotkeys.h, hk3[6], hk3[7], hk3[2], hk3[3])
+
+	hkeys.orient = self.sizes.hotkeys and self.sizes.hotkeys.orient or "down"
+	hkeys.display_x, hkeys.display_y = 0, 0
+	hkeys:toScreen()
+	hkeys.display_x, hkeys.display_y = ox, oy
+
+	if not self.locked then
+		move_handle[1]:toScreenFull(util.getval(self.mhandle_pos.hotkeys.x, self), util.getval(self.mhandle_pos.hotkeys.y, self), move_handle[6], move_handle[7], move_handle[2], move_handle[3])
+	end
+
+	if not game.mouse:updateZone("hotkeys", bx, by, self.places.hotkeys.w, self.places.hotkeys.h, nil, scale) then
+		game.mouse:unregisterZone("hotkeys")
+
+		local desc_fct = function(button, mx, my, xrel, yrel, bx, by, event)
+			if event == "out" then
+				self.turntracker_selected_tid = nil
+				print("minimalist:talenthover: cleared")
+				self.mhandle.hotkeys = nil
+				self.hotkeys_display.cur_sel = nil
+				return
+			else self.mhandle.hotkeys = true end
+
+			-- Move handle
+			local mhx, mhy = util.getval(self.mhandle_pos.hotkeys.x, self), util.getval(self.mhandle_pos.hotkeys.y, self)
+			if not self.locked and bx >= mhx and bx <= mhx + move_handle[6] and by >= mhy and by <= mhy + move_handle[7] then
+				self:uiMoveResize("hotkeys", button, mx, my, xrel, yrel, bx, by, event, "resize", function(mode)
+					hkeys:resize(self.places.hotkeys.x, self.places.hotkeys.y, self.places.hotkeys.w, self.places.hotkeys.h)
+				end)
+				return
+			end
+
+			-- if event == "button" and button == "left" and ((game.zone and game.zone.wilderness and not game.player.allow_talents_worldmap) or (game.key ~= game.normal_key)) then return end
+			self.hotkeys_display:onMouse(button, mx, my, event == "button",
+				function(text, tid)
+					text = text:toTString()
+					self.turntracker_selected_tid = tid
+					print("minimalist:talenthover:", tid)
+					text:add(true, "---", true, {"font","italic"}, {"color","GOLD"}, _t"Left click to use", true, _t"Right click to configure", true, _t"Press 'm' to setup", {"color","LAST"}, {"font","normal"})
+					game:tooltipDisplayAtMap(game.w, game.h, text)
+				end,
+				function(i, hk)
+					if button == "right" and hk and hk[1] == "talent" then
+						local d = require("mod.dialogs.UseTalents").new(game.player)
+						d:use({talent=hk[2], name=game.player:getTalentFromId(hk[2]).name}, "right")
+						return true
+					elseif button == "right" and hk and hk[1] == "inventory" then
+						Dialog:yesnoPopup(("Unbind %s"):tformat(hk[2]), _t"Remove this object from your hotkeys?", function(ret) if ret then
+							for i = 1, 12 * game.player.nb_hotkey_pages do
+								if game.player.hotkey[i] and game.player.hotkey[i][1] == "inventory" and game.player.hotkey[i][2] == hk[2] then game.player.hotkey[i] = nil end
+							end
+						end end)
+						return true
+					end
+				end
+			)
+		end
+		game.mouse:registerZone(bx, by, self.places.hotkeys.w, self.places.hotkeys.h, desc_fct, nil, "hotkeys", true, scale)
+	end
+
+	-- Compute how much space to reserve on the side
+	self:computePadding("hotkeys", bx, by, bx + hkeys.w * scale, by + hkeys.h * scale)
+end
+
+return _M

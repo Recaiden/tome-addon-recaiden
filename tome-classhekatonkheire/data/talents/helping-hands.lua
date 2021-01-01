@@ -12,7 +12,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Throw out handfuls of hands, palms open, to block incoming threats, reducing all non-Mind damage by %d. If you block all of an attack's damage, the attacker will be vulnerable to a deadly counterstrike (the next attack will deal double damage) for one turn.
+		return ([[Throw out handfuls of hands, palms open, to block incoming threats, reducing all non-Mind damage by %d for 1 turn. If you block all of an attack's damage, the attacker will be vulnerable to a deadly counterstrike (the next attack will deal double damage) for one turn.
 The blocking value will increase with your level.]]):tformat(t.getBlock(self, t))
 	end,
 }

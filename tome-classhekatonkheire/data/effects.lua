@@ -178,3 +178,62 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+newEffect{
+	name = "REK_HEKA_FORFEND", image = "talents/rek_heka_helping_forfend.png",
+	desc = _t"Forfend",
+	long_desc = function(self, eff)
+		return ("Blocking up to %d total damage."):
+			tformat(self.heka_block or 0)
+	end,
+	type = "physical",
+	subtype = {tactic=true},
+	status = "beneficial",
+	parameters = {block = 0},
+	activate = function(self, eff)
+		self.heka_block = eff.block
+		if core.shader.active() then
+			self:effectParticles(eff, {type="shader_shield", args={toback=false, size_factor=2, img="open_palm_block_tentacles2"}, shader={type="tentacles", backgroundLayersCount=-4, appearTime=0.3, time_factor=500, noup=0.0}})
+		end
+	end,
+	deactivate = function(self, eff)
+		self.heka_block = nil
+	end,
+	callbackOnTakeDamage = function(self, eff, src, x, y, type, value, tmp)
+		if not (self:attr("heka_block") ) or value <= 0 then return end
+		print("[FORFEND CALLBACK] dam start", value)
+
+		local dam = value
+		game:delayedLogDamage(src, self, 0, ("#STEEL_BLUE#(%d blocked)#LAST#"):tformat(math.min(dam, self.heka_block)), false)
+		if dam < self.heka_block then
+			self.heka_block = self.heka_block - dam
+			dam = 0
+			
+			-- counterstrike
+			if not eff.did_counterstrike and src.life then
+			full = true
+			if not self.__counterstrike_recurse then
+				self.__counterstrike_recurse = true
+				if not self:knowTalent(self.T_ETERNAL_GUARD) then eff.did_counterstrike = true end
+				src:setEffect(src.EFF_COUNTERSTRIKE, 2, {power=eff.block, no_ct_effect=true, src=self, crit_inc=crit_inc, nb=nb})
+				self.__counterstrike_recurse = nil
+			end
+		end
+		eff.did_block = true
+		self:fireTalentCheck("callbackOnBlock", eff, dam, type, src, blocked)
+		else
+			dam = dam - self.heka_block
+			self.heka_block = 0
+		end
+
+		-- If we are at the end of the capacity
+		if self.heka_block <= 0 then
+			game.logPlayer(self, "#ORCHID#Your hands cannot block any more attacks!#LAST#")
+			self:removeEffect(self.EFF_REK_HEKA_FORFEND)
+		end
+
+		print("[FORFEND CALLBACK] dam end", dam)
+
+		return {dam = dam}
+	end,
+}
