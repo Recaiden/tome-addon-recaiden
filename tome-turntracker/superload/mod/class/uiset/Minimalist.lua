@@ -52,6 +52,19 @@ function _M:resetPlaces()
 	self.places.turntracker = {x=pf_bg[6], y=0, scale=1, a=1}
 end
 
+local lf16 = core.display.newFont("/data/font/DroidSans.ttf", 16, true)
+lf16:setStyle("bold")
+local lf12 = core.display.newFont("/data/font/DroidSans.ttf", 12, true)
+lf12:setStyle("bold")
+local lf10 = core.display.newFont("/data/font/DroidSans.ttf", 10, true)
+lf10:setStyle("bold")
+local TileSizeParams = {
+	[64] = function() return lf16, 50, -20 end,
+	[48] = function() return lf12, 38, -15 end,
+	[32] = function() return lf12, 25, -15 end,
+	[16] = function() return lf10, 10, -10 end
+}
+
 local super_display = _M.display
 function _M:display(nb_keyframes)
   super_display(self, nb_keyframes)
@@ -66,6 +79,17 @@ function _M:display(nb_keyframes)
   self:displayTurntracker(spwc.scale, spwc.x, spwc.y)
   d.glScale()
   d.glTranslate(-spwc.x, -spwc.y, 0)
+
+	if not game or not game.zone or not game.player then return end
+	if game.zone.wilderness then return end
+	if not self.turntracker_highlight then return end
+
+	local x, y = game.level.map:getTileToScreen(self.turntracker_highlight[1].x, self.turntracker_highlight[1].y)
+	local fnParams = TileSizeParams[game.level.map.tile_w or 32] or TileSizeParams[32]
+	local lf, deltax, deltay = fnParams()
+	local sfun = function (lf, i) return {core.display.drawStringBlendedNewSurface(lf, self.turntracker_highlight[2], 81, 221, 255):glTexture()} end
+	local s = sfun(lf, 1)
+	s[1]:toScreenFull(x + deltax, y + deltay, s[6], s[7], s[2], s[3])
 end
 
 function _M:displayTurntracker(scale, bx, by)
@@ -131,8 +155,15 @@ function _M:displayTurntracker(scale, bx, by)
 			if a.summon_time then text = text..("\nTurns remaining: %s"):tformat(a.summon_time) end
 			local is_first = (i == 1)
 			local desc_fct = function(button, mx, my, xrel, yrel, bx, by, event)
+				if event == "out" then
+					self.turntracker_highlight = nil
+				else
+					self.turntracker_highlight = {a, a.turntracker_marker}
+				end
 				if is_first then
-					if event == "out" then self.mhandle.turntracker = nil return
+					if event == "out" then
+						self.mhandle.turntracker = nil
+						return
 					else self.mhandle.turntracker = true end
 					-- Move handle
 					if not self.locked and bx >= self.mhandle_pos.turntracker.x and bx <= self.mhandle_pos.turntracker.x + move_handle[6] and by >= self.mhandle_pos.turntracker.y and by <= self.mhandle_pos.turntracker.y + move_handle[7] then
