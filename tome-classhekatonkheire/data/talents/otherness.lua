@@ -49,7 +49,7 @@ newTalent{
 }
 
 newTalent{
-	name = "Storied Behemoth", short_name = "REK_HEKA_STORIED_BEHEMOTH",
+	name = "Storied Behemoth", short_name = "REK_HEKA_OTHERNESS_STORIED_BEHEMOTH",
 	type = {"spell/otherness", 2}, require = mag_req2, points = 5,
 	mode = "passive",
 	getArmorBase = function(self, t) return self:combatTalentScale(t, 4, 10) end,

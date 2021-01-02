@@ -44,7 +44,16 @@ newTalent{
 	type = {"technique/helping-hands", 3}, require = str_req3, points = 5,
 	mode = "passive",
 	getHeal = function(self, t) return self:combatTalentSpellDamage(t, 0, 14) end,
-	--TODO implement
+	doHeal = function(self, t, hands)
+		-- called by individual effects and talents
+		self:attr("allow_on_heal", 1)
+		self:heal(self:spellCrit(t.getHeal(self, t)*hands), self)
+		self:attr("allow_on_heal", -1)
+		if core.shader.active(4) then
+			self:addParticles(Particles.new("shader_shield_temp", 1, {toback=true ,size_factor=1.0, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=2.0}))
+			self:addParticles(Particles.new("shader_shield_temp", 1, {toback=false,size_factor=1.0, y=-0.3, img="healgreen", life=25}, {type="healing", time_factor=2000, beamsCount=20, noup=1.0}))
+		end
+	end,
 	info = function(self, t)
 		return ([[When your hands reunite with you after ending a talent that drains hands, invests hands, or has a sustained hand cost, you are healed by %d per hand.]]):tformat(t.getHeal(self, t))
 	end,

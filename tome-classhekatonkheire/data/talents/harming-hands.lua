@@ -11,6 +11,8 @@ newTalent{
 	range = 10,
 	requires_target = true,
 	getDuration = function (self, t) return 6 end,
+	getDamage = function (self, t) return self:combatTalentPhysicalDamage(t, 20, 100) end,
+	getHealth = function (self, t) return self:combatTalentPhysicalDamage(t, 20, 300) end,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nolock=true, talent = t} end,
 	getBlock = function(self, t) return self:combatTalentScale(t, 30, 200) * (1 + self.level/50) end,
 	action = function(self, t)
@@ -22,10 +24,11 @@ newTalent{
 		if choke then
 			game:onTickEnd(function() 
 											 self:removeEffect(self.EFF_REK_HEKA_CHOKE_READY)
-										 end
+										 end)
 		end
-		
-		self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self), {cost=t.hands(self, t), src=self})
+		game:onTickEnd(function() 
+										 self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self), {cost=util.getval(t.hands, self, t), src=self})
+									 end)
 		return true
 	end,
 	info = function(self, t)
@@ -36,53 +39,91 @@ This talent invests hands; your maximum hands will be reduced by its cost until 
 }
 
 newTalent{
-	name = "Magpie Hook", short_name = "REK_HEKA_HARMING_MAGPIE",
+	name = "Inexorable Pull", short_name = "REK_HEKA_HARMING_INEXORABLE_PULL",
 	type = {"technique/harming-hands", 2}, require = str_req2, points = 5,
 	speed = "weapon",
-	mode = "sustained",
-	--hands = 10,
-	tactical = { ATTACK = { weapon = 2}, DISABLE = 1 },
-	cooldown = 10,
+	hands = 10,
+	tactical = { CLOSEIN = 1 },
+	cooldown = 5,
+	range = 10,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
-	getDamage = function(self, t) return self:combatTalentScale(t, 1.0, 1.8) end,
-	getDuration = function(self, t) return 2 end,
-	getCD = function(self, t) return 10 end,
-	-- TODO
-	-- target:setEffect(target.EFF_DISARMED, t.getDuration(self, t), {apply_power=self:combatPhysicalpower(), src=self})
-	-- if target:hasEffect(target.EFF_DISARMED) then
-	-- self:setEffect(self.EFF_REK_HEKA_MAGPIE_WEAPONS, t.getDuration(self, t), {weapon=weapon, src=self})
-	-- end
-	info = function(self, t)
-		return ([[When an enemy hits you in melee, your hand swoop in to steal their weapon, disarming (#SLATE#Physical vs Physical#LAST#) them for %d turns.  Your next attack armed attack will also attack using the stolen weapon for %d%% damage.  A given enemy can only have their weapon stolen every %d turns.]]):tformat(t.getDuration(self, t), t.getDamage(self, t)*100, t.getCD(self, t))
-	end,
-}
-
-newTalent{
-	name = "Lay on Hands", short_name = "REK_HEKA_HARMING_HEALING",
-	type = {"technique/harming-hands", 3}, require = str_req3, points = 5,
-	mode = "passive",
-	getHeal = function(self, t) return self:combatTalentSpellDamage(t, 0, 14) end,
-	--TODO implement
-	info = function(self, t)
-		return ([[When your hands reunite with you after ending a talent that drains hands, invests hands, or has a sustained hand cost, you are healed by %d per hand.]]):tformat(t.getHeal(self, t))
-	end,
-}
-
-newTalent{
-	name = "???", short_name = "REK_HEKA_HARMING_XXXXXXXXXXXX",
-	type = {"technique/harming-hands", 4},	require = str_req4, points = 5,
-	cooldown = function(self, t) return 15 end,
-	range = 1,
-	tactical = { ATTACK = { weapon = 1 }, DISABLE = 3 },
-	--no_npc_use = true,
-	is_melee = true,
-	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
-	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.2, 1.2) end,
-	getDamageImmersion = function(self, t) return self:combatTalentWeaponDamage(t, 0.1, 0.6) end,
-	getRes = function(self, t) return 80 - math.floor(self:combatTalentLimit(t, 40, 5, 20)) end,
-	getNumb = function(self, t) return 40 + math.floor(self:combatTalentLimit(t, 40, 5, 20)) end,
-	getDuration = function(self, t) return 5 end,
+	getDuration = function(self, t) return math.floor(self:combatTalentLimit(t, 8, 2, 6)) end,
 	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y, target = self:getTarget(tg)
+		if not target or not self:canProject(tg, x, y) then return nil end
+		if not target:attr("never_move") then return nil end
+		if target:canBe("knockback") then
+			src:pull(self.x, self.y, 2)			
+		else
+			game.logSeen(src, "#ORCHID#%s resists the hands' pull!", target:getName():capitalize())
+		end
+		target:setEffect(target.EFF_REK_HEKA_PULLED, t:_getDuration(self), {src=self})		
+		game:onTickEnd(function() 
+										 self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self), {cost=util.getval(t.hands, self, t), src=self})
+									 end)
+		return true
+	end,
+
+	info = function(self, t)
+		return ([[Draw your hands in to reunite with your body.
+Target a pinned creature and pull it 2 spaces towards you immediately, and 1 space per turn for %d turns (#SLATE#checks knockback resistance#LAST#).]]):tformat(t.getDuration(self, t))
+	end,
+}
+
+newTalent{
+	name = "Vortex Slam", short_name = "REK_HEKA_HARMING_VORTEX_SLAM",
+	type = {"technique/harming-hands", 3}, require = str_req3, points = 5,
+	hands = 25,
+	tactical = { ATTACKAREA = { PHYSICAL = 1 } },
+	cooldown = 12,
+	range = 6,
+	radius = 2,
+	target = function(self, t)
+		return {type="ball", range=self:getTalentRange(t), friendlyfire=false, radius=self:getTalentRadius(t), talent=t}
+	end,
+	getDamage = function(self, t) return 1 end,
+	getSlow = function(self, t) return 1 end,
+	getSlowDuration = function(self, t) return 1 end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y, target = self:getTarget(tg)
+		if not x or not y then return nil end
+		local _ _, x, y = self:canProject(tg, x, y)
+		game.level.map:particleEmitter(x, y, 2, "circle", {appear_size=0, base_rot=0, a=250, appear=6, limit_life=4, speed=0, img="hurricane_throw", radius=-0.3})
+		self:project(tg, self.x, self.y, DamageType.GRAVITY, {dam=self:physicalCrit(t:_getDamage(self)), slow=t:_getSlow(self), dur=t:_getSlowDuration(self)}, {type="bones"})
+		return true
+	end,
+	info = function(self, t)
+		return ([[Grab an enemy and twist them through impossible rotations to slam into the ground at high speed, sending out a shockwave that does %0.1f physical damage in radius %d and slows enemies by %d%% for %d turns.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), self:getTalentRadius(t), t:_getSlow(self)*100, t:_getSlowDuration(self))
+	end,
+}
+
+newTalent{
+	name = "Hundred Fist Frenzy", short_name = "REK_HEKA_HARMING_FRENZY",
+	type = {"technique/harming-hands", 4}, require = str_req4, points = 5,
+	cooldown = function(self, t) return 15 end,
+	range = 3,
+	tactical = { ATTACKAREA = { weapon = 1 } },
+	mode = "sustained",
+	drain_hands = 20,
+	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.2, 1.2) end,
+	target = function(self, t) return {type="ball", range=0, friendlyfire=false, radius=self:getTalentRange(t), talent=t} end,
+	doPunch = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y, target = self:getTarget(tg)
+		if not x or not y then return nil end
+		local _ _, x, y = self:canProject(tg, x, y)
+		
+		self:project(tg, x, y, function(px, py, tg, self)
+				local target = game.level.map(px, py, Map.ACTOR)
+				if target and self:reactionToward(target) < 0 then
+					self:attackTarget(target, nil, t.getDamage(self, t), true)
+				end
+			end)
+	end,
+	activate = function(self, t)
+		t.doPunch(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y, target = self:getTarget(tg)
 		if not target or not self:canProject(tg, x, y) then return nil end
@@ -93,8 +134,14 @@ newTalent{
 		end
 		return true
 	end,
+	deactivate = function(self, t, p)
+		if self:knowTalent(self.T_REK_HEKA_HELPING_HEALING) then
+			self:callTalent(self.T_REK_HEKA_HELPING_HEALING, "doHeal", 20)
+		end
+		return true
+	end,
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
-		return ([[Hit an enemy for %d%% damage and knock them partway into the Other Place (#SLATE#Physical vs Spell#LAST#) for %d turns. Each turn while there, they suffer an unarmed attack for %d%% damage, all other damage they take is reduced by %d%%, and all damage they deal is reduced by %d%%.]]):tformat(t.getDamage(self, t)*100, t.getDuration(self, t), t.getDamageImmersion(self, t)*100, t.getRes(self, t), t.getNumb(self, t))
+		return ([[Reach into the world with all your hands, and pummel enemies within %d spaces for %d%% unarmed damage every turn.]]):tformat(self:getTalentRange(t), t.getDamage(self, t)*100)
 	end,
 }

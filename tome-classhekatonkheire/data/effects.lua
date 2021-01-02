@@ -109,6 +109,7 @@ newEffect{
 	decrease = 0,
 	charges = function(self, eff) return eff.cost end,
 	parameters = { cost = 0 },
+	--TODO this needs to keep separate instances
 	on_merge = function(self, old_eff, new_eff)
 		old_eff.dur = new_eff.dur
 		self:removeTemporaryValue("max_hands", old_eff.costid)

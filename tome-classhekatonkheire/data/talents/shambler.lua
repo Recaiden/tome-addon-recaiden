@@ -8,7 +8,7 @@ newTalent{
 	getHandRegen = function(self, t) return 5 end,
 	-- superloaded in /mod/class/interface/Combat.lua
 	info = function(self, t)
-		return ([[You approach at a constant, unimpeded pace.  Your movement speed is always exactly 100%%, and you gain %d%% resistance to knockbacks and %d%% resistance to hostile teleports.
+		return ([[You approach at a constant, unimpeded pace.  Your movement speed is always exactly 100%%, and you gain %d%% resistance to knockbacks and %d%% resistance to hostile teleports.  If your global speed is less than 100%%, your movement speed is increased to compensate.
 When an enemy becomes adjacent to you, you immediately recover %d hands.
 
 #{italic}#You are never late nor early.  Rather, things begin when you arrive.#{normal}#]]):tformat(t.getResistKnockback(self, t)*100, t.getResistTeleport(self, t)*100, t.getHandRegen(self, t))

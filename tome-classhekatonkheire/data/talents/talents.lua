@@ -123,6 +123,11 @@ if not Talents.talents_types_def["technique/helping-hands"] then
    load("/data-classhekatonkheire/talents/helping-hands.lua")
 end
 
+if not Talents.talents_types_def["technique/harming-hands"] then
+   newTalentType{ allow_random=true, type="technique/harming-hands", name = "Harming Hands", description = "Grab, choke, and smash." }
+   load("/data-classhekatonkheire/talents/harming-hands.lua")
+end
+
 if not Talents.talents_types_def["spell/otherness"] then
    newTalentType{ allow_random=true, is_spell=true, generic=true, type="spell/otherness", name = "Otherness", description = "Look over and see through." }
    load("/data-classhekatonkheire/talents/otherness.lua")

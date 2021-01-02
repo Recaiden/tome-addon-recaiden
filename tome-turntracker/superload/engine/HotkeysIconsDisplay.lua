@@ -2,6 +2,9 @@ local _M = loadPrevious(...)
 
 require "engine.class"
 
+local page_to_hotkey = {"", "SECOND_", "THIRD_", "FOURTH_", "FIFTH_", "SIX_", "SEVEN_"}
+
+
 function _M:onMouse(button, mx, my, click, on_over, on_click)
 	local orient = self.orient or "down"
 	mx, my = mx - self.display_x, my - self.display_y
