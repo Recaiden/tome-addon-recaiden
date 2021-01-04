@@ -28,6 +28,10 @@ local typeList = {
 								["T_REK_WTEK_DAGGER_ROLLING_STAB"]=1,
 								["T_REK_WTEK_DAGGER_THROAT_SLITTER"]=1,
 								["T_REK_WTEK_DAGGER_BLADE_RUSH"]=1},
+	["longsword"] = {["T_REK_WTEK_SWORD_LUNGE"]=1,
+									 ["T_REK_WTEK_SWORD_POMMEL_STRIKE"]=1,
+									 ["T_REK_WTEK_SWORD_BREEZEBLADE"]=1,
+									 ["T_REK_WTEK_SWORD_OVERWHELM"]=1},
 }
 
 class:bindHook(
