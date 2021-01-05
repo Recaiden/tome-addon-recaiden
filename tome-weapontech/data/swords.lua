@@ -88,7 +88,7 @@ newTalent{
 
 		local id_pen = self:addTemporaryValue("combat_apr", t.getAPR(self, t))
 		local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
-		if hit and not target.dead then target:setEffect(target.EFF_STUNNED, 1, {src=self}) end
+		if hit and not target.dead and target:canBe("stun") then target:setEffect(target.EFF_STUNNED, 1, {src=self, apply_power=self:combatAttack(), no_ct_effect=true}) end
 		self:removeTemporaryValue("combat_apr", id_pen)
 		
 		return true
@@ -147,7 +147,7 @@ newTalent{
 		self:attackTarget(target, nil, t.getDamage(self, t), true)
 		if target then
 			local hit = self:attackTarget(target, nil, t.getDamage(self, t), true, true)
-			if hit and not target.dead then target:setEffect(target.EFF_CONFUSED, 1, {power=33, src=self}) end
+			if hit and not target.dead and target:canBe("confusion") then target:setEffect(target.EFF_CONFUSED, 1, {power=33, src=self, apply_power=self:combatAttack(), no_ct_effect=true}) end
 		end
 		return true
 	end,

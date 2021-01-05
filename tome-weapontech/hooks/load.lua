@@ -32,6 +32,14 @@ local typeList = {
 									 ["T_REK_WTEK_SWORD_POMMEL_STRIKE"]=1,
 									 ["T_REK_WTEK_SWORD_BREEZEBLADE"]=1,
 									 ["T_REK_WTEK_SWORD_OVERWHELM"]=1},
+	["waraxe"] = {["T_REK_WTEK_AXE_ARTERIAL_CUT"]=1,
+								["T_REK_WTEK_AXE_SHIELDSHATTER"]=1,
+								["T_REK_WTEK_AXE_BREEZEBLADE"]=1,
+								["T_REK_WTEK_AXE_RENDING"]=1},
+	["mace"] = {["T_REK_WTEK_MACE_DAZING_BLOW"]=1,
+							["T_REK_WTEK_MACE_EARTHSHAKER"]=1,
+							["T_REK_WTEK_MACE_BREEZEHAMMER"]=1,
+							["T_REK_WTEK_MACE_BONEGRINDER"]=1},
 }
 
 class:bindHook(
