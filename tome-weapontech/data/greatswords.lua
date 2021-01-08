@@ -1,21 +1,15 @@
-swordMHPreUse = function(self, t, silent)
-	if not self:hasWeaponType("sword") then
-		if not silent then game.logPlayer(self, "You require a mainhand sword to perform this technique!") end
+greatswordPreUse = function(self, t, silent)
+	if not self:hasTwoHandedWeapon() or not self:hasWeaponType("sword") then
+		if not silent then
+			game.logPlayer(self, "You require a two handed sword to use this talent.")
+		end
 		return false
 	end
-	return true
-end
-
-swordOHPreUse = function(self, t, silent)
-	if not self:hasOffWeaponType("sword") then
-		if not silent then game.logPlayer(self, "You require an offhand sword to perform this technique!") end
-		return false
-	end
-	return true
+			return true
 end
 
 newTalent{
-	name = "Lunge", short_name = "REK_WTEK_SWORD_LUNGE",
+	name = "Lunge", short_name = "REK_WTEK_GREATSWORD_LUNGE",
 	type = {"technique/weapon-techniques", 1}, require = str_req1, points = 1,
 	speed = "weapon",
 	cooldown = 3,
@@ -23,14 +17,7 @@ newTalent{
 	is_melee = true,
 	range = 2,
 	target = function(self, t)	return {type="hit", range=self:getTalentRange(t), talent=t}	end,
-	on_pre_use = function(self, t, silent)
-		local valid = swordMHPreUse(self, t, silent)
-		if self:attr("never_move") then
-			if not silent then game.logPlayer(self, "You cannot move!") end
-			return false
-		end
-		return valid
-	end,
+	on_pre_use = greatswordMHPreUse,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.05, 1.05) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
@@ -69,7 +56,7 @@ newTalent{
 }
 
 newTalent{
-	name = "Pommel Strike", short_name = "REK_WTEK_SWORD_POMMEL STRIKE",
+	name = "Pommel Strike", short_name = "REK_WTEK_GREATSWORD_POMMEL STRIKE",
 	type = {"technique/weapon-techniques", 2}, require = str_req2, points = 1,
 	speed = "weapon",
 	cooldown = 3,
@@ -77,7 +64,7 @@ newTalent{
 	is_melee = true,
 	range = 1,
 	target = function(self, t)	return {type="hit", range=self:getTalentRange(t), talent=t}	end,
-	on_pre_use = swordMHPreUse,
+	on_pre_use = greatswordMHPreUse,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.9, 0.9) end,
 	getAPR = function(self, t) return 5+math.floor(self.level / 10) end,
 	action = function(self, t)
@@ -93,12 +80,12 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Batter your enemy with the hilt of your sword, dealing %d%% damage with %d extra armor penetration and stunning them for 1 turn.]]):format(t.getDamage(self, t)*100, t.getAPR(self, t))
+		return ([[Batter your enemy with the hilt of your greatsword, dealing %d%% damage with %d extra armor penetration and stunning them for 1 turn.]]):format(t.getDamage(self, t)*100, t.getAPR(self, t))
 	end,
 }
 
 newTalent{
-	name = "Breezeblade", short_name = "REK_WTEK_SWORD_BREEZEBLADE",
+	name = "Breezeblade", short_name = "REK_WTEK_GREATSWORD_BREEZEBLADE",
 	type = {"technique/weapon-techniques", 3}, require = str_req3, points = 1,
 	speed = "weapon",
 	cooldown = 3,
@@ -109,7 +96,7 @@ newTalent{
 	target = function(self, t)
 		return {type="ball", range=self:getTalentRange(t), selffire=false, radius=self:getTalentRadius(t)}
 	end,
-	on_pre_use = swordOHPreUse,
+	on_pre_use = greatswordOHPreUse,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.8, 0.8) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
@@ -129,7 +116,7 @@ newTalent{
 }
 
 newTalent{
-	name = "Overwhelm", short_name = "REK_WTEK_SWORD_OVERWHELM",
+	name = "Overwhelm", short_name = "REK_WTEK_GREATSWORD_OVERWHELM",
 	type = {"technique/weapon-techniques", 4}, require = str_req4, points = 1,
 	speed = "weapon",
 	cooldown = 3,
@@ -137,7 +124,7 @@ newTalent{
 	is_melee = true,
 	range = 1,
 	target = function(self, t)	return {type="hit", range=self:getTalentRange(t), talent=t}	end,
-	on_pre_use = swordOHPreUse,
+	on_pre_use = greatswordOHPreUse,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)

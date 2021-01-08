@@ -1,8 +1,4 @@
 axeMHPreUse = function(self, t, silent)
-	if self:attr("never_move") then
-		if not silent then game.logPlayer(self, "You cannot move!") end
-		return false
-	end
 	if not self:hasWeaponType("axe") then
 		if not silent then game.logPlayer(self, "You require a mainhand axe to perform this technique!") end
 		return false
@@ -11,10 +7,6 @@ axeMHPreUse = function(self, t, silent)
 end
 
 axeOHPreUse = function(self, t, silent)
-	if self:attr("never_move") then
-		if not silent then game.logPlayer(self, "You cannot move!") end
-		return false
-	end
 	if not self:hasOffWeaponType("axe") then
 		if not silent then game.logPlayer(self, "You require an offhand axe to perform this technique!") end
 		return false

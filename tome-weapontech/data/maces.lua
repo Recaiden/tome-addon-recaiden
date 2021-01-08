@@ -1,8 +1,4 @@
 maceMHPreUse = function(self, t, silent)
-	if self:attr("never_move") then
-		if not silent then game.logPlayer(self, "You cannot move!") end
-		return false
-	end
 	if not self:hasWeaponType("mace") then
 		if not silent then game.logPlayer(self, "You require a mainhand mace to perform this technique!") end
 		return false
@@ -11,10 +7,6 @@ maceMHPreUse = function(self, t, silent)
 end
 
 maceOHPreUse = function(self, t, silent)
-	if self:attr("never_move") then
-		if not silent then game.logPlayer(self, "You cannot move!") end
-		return false
-	end
 	if not self:hasOffWeaponType("mace") then
 		if not silent then game.logPlayer(self, "You require an offhand mace to perform this technique!") end
 		return false

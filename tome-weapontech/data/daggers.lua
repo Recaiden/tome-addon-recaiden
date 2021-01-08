@@ -1,8 +1,4 @@
 daggerMHPreUse = function(self, t, silent)
-	if self:attr("never_move") then
-		if not silent then game.logPlayer(self, "You cannot move!") end
-		return false
-	end
 	if not self:hasWeaponType("knife") then
 		if not silent then game.logPlayer(self, "You require a mainhand dagger to perform this technique!") end
 		return false
@@ -11,10 +7,6 @@ daggerMHPreUse = function(self, t, silent)
 end
 
 daggerOHPreUse = function(self, t, silent)
-	if self:attr("never_move") then
-		if not silent then game.logPlayer(self, "You cannot move!") end
-		return false
-	end
 	if not self:hasOffWeaponType("knife") then
 		if not silent then game.logPlayer(self, "You require an offhand dagger to perform this technique!") end
 		return false
@@ -70,7 +62,14 @@ newTalent{
 	is_melee = true,
 	range = 1,
 	target = function(self, t)	return {type="hit", range=self:getTalentRange(t), talent=t}	end,
-	on_pre_use = daggerMHPreUse,
+	on_pre_use = function(self, t, silent)
+		local valid = daggerMHPreUse(self, t, silent)
+		if self:attr("never_move") then
+			if not silent then game.logPlayer(self, "You cannot move!") end
+			return false
+		end
+		return valid
+	end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
