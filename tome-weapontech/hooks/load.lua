@@ -40,6 +40,17 @@ local typeList = {
 							["T_REK_WTEK_MACE_EARTHSHAKER"]=1,
 							["T_REK_WTEK_MACE_BREEZEHAMMER"]=1,
 							["T_REK_WTEK_MACE_BONEGRINDER"]=1},
+	["greatsword"] = {["T_REK_WTEK_GREATSWORD_THRUST"]=1,
+										["T_REK_WTEK_GREATSWORD_MORDHAU"]=1,
+										["T_REK_WTEK_GREATSWORD_GUSTBLADE"]=1,
+										["T_REK_WTEK_GREATSWORD_LANCE"]=1},
+	--maul
+	--battleaxe
+	--shield
+	--whip
+	--trident
+	--psiblade?
+	--staff???
 }
 
 class:bindHook(

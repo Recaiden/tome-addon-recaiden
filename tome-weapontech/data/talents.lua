@@ -41,7 +41,10 @@ dex_req4 = {
 if not Talents.talents_types_def["technique/weapon-techniques"] then
    newTalentType{ allow_random=false, type="technique/weapon-techniques", name = "Weapon Techniques", description = "Basic attacks for each type of weapon." }
    load("/data-weapontech/daggers.lua")
+
 	 load("/data-weapontech/swords.lua")
 	 load("/data-weapontech/axes.lua")
 	 load("/data-weapontech/maces.lua")
+
+	 load("/data-weapontech/greatswords.lua")
 end
