@@ -124,7 +124,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		local range = self:getTalentRange(t)
-		return ([[Coat your weapon in #{italic}#displacement#{normal}# and attack an enemy from the inside, dealing %d%% damage that ignores armor.]]):tformat(t.getDamage(self, t)*100)
+		return ([[Coat your weapon in #{italic}#displacement#{normal}# and attack an enemy from the inside, dealing %d%% damage that ignores up to 1000 points of armor.]]):tformat(t.getDamage(self, t)*100)
 	end,
 }
 

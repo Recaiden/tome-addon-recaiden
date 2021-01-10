@@ -1,11 +1,11 @@
 battleaxePreUse = function(self, t, silent)
-	if not self:hasTwoHandedWeapon() or not self:hasWeaponType("sword") then
+	if not self:hasTwoHandedWeapon() or not self:hasWeaponType("axe") then
 		if not silent then
 			game.logPlayer(self, "You require a two handed axe to use this talent.")
 		end
 		return false
 	end
-			return true
+	return true
 end
 
 newTalent{
@@ -23,8 +23,8 @@ newTalent{
 		local tg = self:getTalentTarget(t)
 		local x, y, target = self:getTarget(tg)
 		if not target or not self:canProject(tg, x, y) then return nil end
-		for i = 1,2 do
-			self:attackTargetWith(target, weapon.combat, nil, t.getDamage(Self, t))
+		for i = 1, 2 do
+			self:attackTarget(target, nil, t.getDamage(self, t), true)
 		end
 		return true
 	end,
@@ -103,7 +103,6 @@ newTalent{
 	type = {"technique/weapon-techniques", 4}, require = str_req4, points = 1,
 	speed = "weapon",
 	cooldown = 3,
-	on_pre_use = ,
 	tactical = { ATTACKAREA = { weapon = 1 }, CLOSEIN = 1.5 },
 	range = 2,
 	radius = 1,
@@ -118,8 +117,6 @@ newTalent{
 		return battleaxePreUse(self, t, silent)
 	end,
 	action = function(self, t)
-		local mh, oh = self:hasDualWeapon()
-		if not (mh and oh) then return end
 		local tg = self:getTalentTarget(t)
 		local x, y, target = self:getTarget(tg)
 		if not (x and y) then return nil end
@@ -156,7 +153,7 @@ newTalent{
 				if not target or seen_targets[target] or self.dead then return end
 				local dam = 0
 				seen_targets[target] = true
-				self:attackTargetWith(target,  nil, t.getDamage(self, t), true)
+				self:attackTarget(target, nil, t.getDamage(self, t), true)
 			end)
 		end
 		

@@ -34,8 +34,8 @@ newTalent{
 		local dam = self:combatDamage(sw)
 		local damrange = self:combatDamageRange(sw)
 		dam = rng.range(dam, dam * damrange)
-		dam = dam * t.getBleedDamage(self, t)
-		return self:combatTalentWeaponDamage(t, 0.8, 0.8)
+		dam = dam * self:combatTalentWeaponDamage(t, 0.8, 0.8)
+		return dam
 	end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)

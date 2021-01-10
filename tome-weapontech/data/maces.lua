@@ -23,7 +23,7 @@ newTalent{
 	is_melee = true,
 	range = 1,
 	target = function(self, t)	return {type="hit", range=self:getTalentRange(t), talent=t}	end,
-	on_pre_use = swordMHPreUse,
+	on_pre_use = maceMHPreUse,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.9, 0.9) end,
 	getAPR = function(self, t) return 5+math.floor(self.level / 10) end,
 	action = function(self, t)
@@ -50,13 +50,15 @@ newTalent{
 	is_melee = true,
 	range = 2,
 	target = function(self, t)
-		return {type="line", range=self:getTalentRange(t), selffire=false}
+		return {type="beam", range=self:getTalentRange(t), selffire=false}
 	end,
 	on_pre_use = maceMHPreUse,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.0, 1.0) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
-		self:project(tg, self.x, self.y, function(px, py, tg, self)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+		self:project(tg, x, y, function(px, py, tg, self)
 			local target = game.level.map(px, py, Map.ACTOR)
 			if target and target ~= self then
 				self:attackTarget(target, nil, t.getDamage(self, t), true)

@@ -48,7 +48,12 @@ local typeList = {
 										["T_REK_WTEK_BATTLEAXE_WILD_SWING"]=1,
 										["T_REK_WTEK_BATTLEAXE_GUSTBLADE"]=1,
 										["T_REK_WTEK_BATTLEAXE_WHIRLWIND"]=1},
-	--maul
+	["greatmaul"] = {["T_REK_WTEK_GREATMAUL_CRUSH"]=1,
+										["T_REK_WTEK_GREATMAUL_EARTHSHAKER"]=1,
+										["T_REK_WTEK_GREATMAUL_GUSTBLADE"]=1,
+										["T_REK_WTEK_GREATMAUL_GUARD"]=1},
+	["shield"] = {["T_REK_WTEK_SHIELD_BASH"]=1,
+								["T_REK_WTEK_SHIELD_TOSS"]=1},
 	--shield
 	--whip
 	--trident
