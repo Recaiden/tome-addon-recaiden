@@ -16,7 +16,7 @@ end
 
 newTalent{
 	name = "Arterial Cut", short_name = "REK_WTEK_AXE_ARTERIAL_CUT",
-	type = {"technique/weapon-techniques", 1}, require = str_req1, points = 1,
+	type = {"technique/weapon-techniques", 1}, require = str_req1, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACK = { weapon = 1, PHYSICAL = 1 } },
@@ -64,7 +64,7 @@ newTalent{
 
 newTalent{
 	name = "Shieldshatter", short_name = "REK_WTEK_AXE_SHIELDSHATTER",
-	type = {"technique/weapon-techniques", 2}, require = str_req2, points = 1,
+	type = {"technique/weapon-techniques", 2}, require = str_req2, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACK = { weapon = 1 }, DISABLE = 1 },
@@ -92,7 +92,7 @@ newTalent{
 
 newTalent{
 	name = "Breezeblade", short_name = "REK_WTEK_AXE_BREEZEBLADE",
-	type = {"technique/weapon-techniques", 3}, require = str_req3, points = 1,
+	type = {"technique/weapon-techniques", 3}, require = str_req3, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACKAREA = { weapon = 1 } },
@@ -123,7 +123,7 @@ newTalent{
 
 newTalent{
 	name = "Rending Blade", short_name = "REK_WTEK_AXE_RENDING",
-	type = {"technique/weapon-techniques", 4}, require = str_req4, points = 1,
+	type = {"technique/weapon-techniques", 4}, require = str_req4, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACK = { weapon = 2 } },

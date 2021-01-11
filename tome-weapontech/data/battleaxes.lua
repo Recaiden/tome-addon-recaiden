@@ -10,7 +10,7 @@ end
 
 newTalent{
 	name = "Hewing Blades", short_name = "REK_WTEK_BATTLEAXE_HEWING_BLADES",
-	type = {"technique/weapon-techniques", 1}, require = str_req1, points = 1,
+	type = {"technique/weapon-techniques", 1}, require = str_req1, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACK = { weapon = 2 } },
@@ -35,7 +35,7 @@ newTalent{
 
 newTalent{
 	name = "Wild Swing", short_name = "REK_WTEK_BATTLEAXE_WILD_SWING",
-	type = {"technique/weapon-techniques", 2}, require = str_req2, points = 1,
+	type = {"technique/weapon-techniques", 2}, require = str_req2, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACK = { weapon = 1 }, DISABLE = 1 },
@@ -68,7 +68,7 @@ newTalent{
 
 newTalent{
 	name = "Gustblade", short_name = "REK_WTEK_BATTLEAXE_GUSTBLADE",
-	type = {"technique/weapon-techniques", 3}, require = str_req3, points = 1,
+	type = {"technique/weapon-techniques", 3}, require = str_req3, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACKAREA = { weapon = 1 } },
@@ -100,7 +100,7 @@ newTalent{
 
 newTalent{
 	name = "Whirlwind Axe", short_name = "REK_WTEK_BATTLEAXE_WHIRLWIND",
-	type = {"technique/weapon-techniques", 4}, require = str_req4, points = 1,
+	type = {"technique/weapon-techniques", 4}, require = str_req4, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACKAREA = { weapon = 1 }, CLOSEIN = 1.5 },

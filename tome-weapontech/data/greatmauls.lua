@@ -10,7 +10,7 @@ end
 
 newTalent{
 	name = "Crushing Blow", short_name = "REK_WTEK_GREATMAUL_CRUSH",
-	type = {"technique/weapon-techniques", 1}, require = str_req1, points = 1,
+	type = {"technique/weapon-techniques", 1}, require = str_req1, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACK = { weapon = 2 } },
@@ -39,7 +39,7 @@ newTalent{
 
 newTalent{
 	name = "Earthbreaker", short_name = "REK_WTEK_GREATMAUL_EARTHSHAKER",
-	type = {"technique/weapon-techniques", 2}, require = str_req2, points = 1,
+	type = {"technique/weapon-techniques", 2}, require = str_req2, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACKAREA = { weapon = 1 }, DISABLE = 1 },
@@ -72,7 +72,7 @@ newTalent{
 
 newTalent{
 	name = "Gusthammer", short_name = "REK_WTEK_GREATMAUL_GUSTBLADE",
-	type = {"technique/weapon-techniques", 3}, require = str_req3, points = 1,
+	type = {"technique/weapon-techniques", 3}, require = str_req3, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACKAREA = { weapon = 1 } },
@@ -104,7 +104,7 @@ newTalent{
 
 newTalent{
 	name = "Guarded Slam", short_name = "REK_WTEK_GREATMAUL_GUARD",
-	type = {"technique/weapon-techniques", 4}, require = str_req4, points = 1,
+	type = {"technique/weapon-techniques", 4}, require = str_req4, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	on_pre_use = greatmaulPreUse,

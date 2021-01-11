@@ -4,7 +4,7 @@ end
 
 newTalent{
 	name = "Shield Bash", short_name = "REK_WTEK_SHIELD_BASH",
-	type = {"technique/weapon-techniques", 3}, require = str_req3, points = 1,
+	type = {"technique/weapon-techniques", 3}, require = str_req3, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACK = { weapon = 1 } },
@@ -31,7 +31,7 @@ newTalent{
 
 newTalent{
 	name = "Shield Toss", short_name = "REK_WTEK_SHIELD_TOSS",
-	type = {"technique/weapon-techniques", 4}, require = str_req4, points = 1,
+	type = {"technique/weapon-techniques", 4}, require = str_req4, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACK = { weapon = 1 }, },

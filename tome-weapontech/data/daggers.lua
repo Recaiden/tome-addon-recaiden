@@ -16,7 +16,7 @@ end
 
 newTalent{
 	name = "Thousand Cuts", short_name = "REK_WTEK_DAGGER_THOUSAND_CUTS",
-	type = {"technique/weapon-techniques", 1}, require = dex_req1, points = 1,
+	type = {"technique/weapon-techniques", 1}, require = dex_req1, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 1,
 	tactical = { ATTACK = { weapon = 2 } },
@@ -55,7 +55,7 @@ This can only be used on a target that you have hit four or more times recently,
 
 newTalent{
 	name = "Rolling Stab", short_name = "REK_WTEK_DAGGER_ROLLING_STAB",
-	type = {"technique/weapon-techniques", 2}, require = dex_req2, points = 1,
+	type = {"technique/weapon-techniques", 2}, require = dex_req2, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 3,
 	tactical = { ATTACK = { weapon = 2 } },
@@ -97,7 +97,7 @@ newTalent{
 
 newTalent{
 	name = "Throat Slitter", short_name = "REK_WTEK_DAGGER_THROAT_SLITTER",
-	type = {"technique/weapon-techniques", 3}, require = dex_req3, points = 1,
+	type = {"technique/weapon-techniques", 3}, require = dex_req3, points = 1, innate = true,
 	speed = "weapon",
 	cooldown = 5,
 	tactical = { ATTACK = { weapon = 2 } },
@@ -127,7 +127,7 @@ newTalent{
 
 newTalent{
 	name = "Blade Rush", short_name = "REK_WTEK_DAGGER_BLADE_RUSH",
-	type = {"technique/weapon-techniques", 4}, require = dex_req4, points = 1,
+	type = {"technique/weapon-techniques", 4}, require = dex_req4, points = 1, innate = true,
 	speed = function(self, t) return self:getSpeed("weapon") * 0.5 end,
 	display_speed = function(self, t)
 		return ("Double Weapon (#LIGHT_GREEN#%d%%#LAST# of a turn)"):tformat(self:getSpeed("weapon") * 50)
