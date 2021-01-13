@@ -53,4 +53,5 @@ if not Talents.talents_types_def["technique/weapon-techniques"] then
 	 load("/data-weapontech/shields.lua")
 
 	 load("/data-weapontech/tridents.lua")
+	 load("/data-weapontech/whips.lua")
 end

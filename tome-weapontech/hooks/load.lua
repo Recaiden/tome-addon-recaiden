@@ -54,11 +54,14 @@ local typeList = {
 										["T_REK_WTEK_GREATMAUL_GUARD"]=1},
 	["shield"] = {["T_REK_WTEK_SHIELD_BASH"]=1,
 								["T_REK_WTEK_SHIELD_TOSS"]=1},
-	--whip
 	["trident"] = {["T_REK_WTEK_TRIDENT_PIERCE"]=1,
-									 ["T_REK_WTEK_TRIDENT_IMPALER"]=1,
-									 ["T_REK_WTEK_TRIDENT_GUSTBLADE"]=1,
-									 ["T_REK_WTEK_TRIDENT_VAULT"]=1},
+								 ["T_REK_WTEK_TRIDENT_IMPALER"]=1,
+								 ["T_REK_WTEK_TRIDENT_GUSTBLADE"]=1,
+								 ["T_REK_WTEK_TRIDENT_VAULT"]=1},
+	["whip"] = {["T_REK_WTEK_WHIP_WHIPCRACK"]=1,
+							["T_REK_WTEK_WHIP_WREST"]=1,
+							["T_REK_WTEK_WHIP_ENCOIL"]=1,
+							["T_REK_WTEK_WHIP_LASH"]=1},
 	--psiblade?
 	--staff???
 }
