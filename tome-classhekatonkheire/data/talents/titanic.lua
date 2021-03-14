@@ -51,7 +51,8 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Smash your weapon into the earth, sending foes flying. Anyone at the center of the impact is hit for %d%% damage and pinned (#SLATE#Physical vs Physical#LAST#) for %d turns.  Other enemies within radius %d are hit for %d%% and knocked back %d spaces.  If you had Towering Wrath active, enemies knocked back are also pinned for 1 turn.]]):tformat(t.getDamageHit(self, t)*100, t.getDuration(self, t), self:getTalentRadius(t), t.getDamageSplash(self, t)*100, t.getKnockback(self, t))
+		return ([[Smash your weapon into the earth, sending foes flying. Anyone at the center of the impact is hit for %d%% damage and pinned (#SLATE#Physical vs Physical#LAST#) for %d turns.  Other enemies within radius %d are hit for %d%% and knocked back %d spaces.  
+If you had Towering Wrath active, enemies knocked back are also pinned for 1 turn.]]):tformat(t.getDamageHit(self, t)*100, t.getDuration(self, t), self:getTalentRadius(t), t.getDamageSplash(self, t)*100, t.getKnockback(self, t))
 	end,
 }
 
@@ -99,7 +100,8 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[If you have Towering Wrath, you shatter any temporary damage shield protecting the target. Then, smash your weapon down on them, dealing %d%% damage. Afterwards they are wounded, lowering their resistances by %d%% for 5 turns (#SLATE#No save#LAST#).]]):tformat(t.getDamage(self, t)*100, t.getResistPenalty(self, t))
+		return ([[If you have Towering Wrath active, you shatter any temporary damage shield protecting the target.
+Then, smash your weapon down on the target, dealing %d%% damage. Afterwards they are wounded, lowering their resistances by %d%% for 5 turns (#SLATE#No save#LAST#).]]):tformat(t.getDamage(self, t)*100, t.getResistPenalty(self, t))
 	end,
 }
 

@@ -73,7 +73,10 @@ newTalent{
 			self:move(x, y, true)
 			game.level.map:particleEmitter(x, y, 1, "teleport_in")
 			local multiplier = self:combatTalentWeaponDamage(t, 0.9, 1.9)
-			self:attackTarget(target, nil, multiplier, true)
+			local hit = self:attackTarget(target, nil, multiplier, true)
+			if hit then
+				self:heal(self.max_life / 10)
+			end
 			return true
 			end
 		end
@@ -250,7 +253,6 @@ newTalent{
 	getMaxEyes = function(self, t)
 		return math.min(3, math.max(1, math.floor(self:getTalentLevel(t) * 0.55)))
 	end,
-	getRedirectThreshold = function(self, t) return self:combatTalentLimit(t, 15, 66, 25) end,
 	getPhaseDoorLevel = function(self, t) return self:getTalentLevelRaw(t) end,
 	getLashLevel = function(self, t) return self:getTalentLevelRaw(t) end,
 	getBlindsideLevel = function(self, t) return self:getTalentLevelRaw(t) end,
@@ -350,15 +352,49 @@ newTalent{
 	end,
 	info = function(self, t)
 		local maxEyes = t.getMaxEyes(self, t)
-		local threshold = t.getRedirectThreshold(self, t)
-		return ([[You give up your proper head, reducing your sight radius by 9, but gain %d Wandering Eyes, letting you see anything they can see.  Each eye absorbs 1/3 of the damage you take as long as it is above %d%% health.  Your eyes are weak combatants that attack with magical blasts.
-You cannot hurt your own eyes.]]):tformat(maxEyes, threshold)
+		return ([[Reorganize your head, allowing your eyes to fly free.
+Your sight radius is reduced by 9, but you can see anything your disembodied eyes can see and cannot be blinded.  Each Wandering Eye is a weak combatant that can attack with its teeth or using magical blasts at short range. You can have %d wandering eyes at once and they will regrow after 10 turns if killed.
+You cannot hurt your own eyes.]]):tformat(maxEyes)
 	end,
+}
+
+
+newTalent{
+	name = "Ocular Phylactery", short_name="REK_HEKA_HEADLESS_SHIELD",
+	type = {"spell/headless-horror", 2}, require = mag_req2, points = 5,
+	mode = "passive",
+	getRedirectThreshold = function(self, t) return self:combatTalentLimit(t, 15, 66, 25) end,
+	getReinforcement = function(self, t) return self.level*0.8 end,
+	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
+		local split = dam / 3
+		local remaining = dam
+		local sent = 0
+		local factor = (100-t.getReinforcement(self, t))/100
+		for _, e in pairs(game.level.entities) do
+			if e.summoner and e.summoner == self and e.is_wandering_eye then
+				if e.life > e.max_life * t.getRedirectThreshold(self, t) then
+					remaining = math.max(0, remaining - split)
+					sent = sent + split
+					state.no_reflect = true
+					DamageType.defaultProjector(self, a.x, a.y, type, split*factor, state)
+					state.no_reflect = nil
+				end
+			end
+		end
+		if sent > 0 then
+			game:delayedLogDamage(src, self, 0, ("%s(%d to eyes)#LAST#"):tformat(DamageType:get(type).text_color or "#aaaaaa#", sent), false)
+		end
+		return {dam=remaining}
+   end,
+		info = function(self, t)
+		local threshold = t.getRedirectThreshold(self, t)
+		return ([[Your body is just an anchor; it is able to endure any hardship as long as your attention holds.  Each wandering eye absorbs 1/3 of the damage you take as long as the eye's life is above %d%% of its maximum.  This absorbed damage is further reduced by %0.1f%%, based on level.]]):tformat(threshold, t.getReinforcement(self, t))
+		end,
 }
 
 newTalent{
 	name = "Blink", short_name="REK_HEKA_HEADLESS_BLINK",
-	type = {"spell/headless-horror", 2}, require = mag_req2, points = 5,
+	type = {"spell/headless-horror", 3}, require = mag_req3, points = 5,
 	cooldown = 6,
 	range = 6,
 	requires_target = true,
@@ -386,40 +422,9 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[Focus your eyes on a single target. Ech eye splits open into a fanged maw and rushes in to bite the target and heal themselves for %d%% of their maximum life.
+		return ([[Focus your eyes on a single target. Each eye splits open into a fanged maw and rushes in to bite the target and heal themselves for %d%% of their maximum life.
 Talent level: increases damage]]):tformat(100, 10)
 	end
-}
-
-newTalent{
-	name = "???", short_name="REK_HEKA_HEADLESS_3",
-	type = {"spell/headless-horror", 3}, require = mag_req3, points = 5,
-	mode = "passive",
-	on_learn = function(self, t)
-		if game and game.level and game.level.entities then
-			for _, e in pairs(game.level.entities) do
-				if e.summoner and e.summoner == self and e.is_wandering_eye then
-					e:feed(t)
-				end
-			end
-		end
-		
-		return { }
-	end,
-	on_unlearn = function(self, t, p)
-		if game and game.level and game.level.entities then
-			for _, e in pairs(game.level.entities) do
-				if e.summoner and e.summoner == self and e.is_wandering_eye then
-					e:feed(t)
-				end
-			end
-		end
-		
-		return true
-	end,
-	info = function(self, t)
-		return ([[???]]):tformat()
-	end,
 }
 
 newTalent{
