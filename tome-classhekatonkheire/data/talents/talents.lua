@@ -102,7 +102,7 @@ newTalent{
 	hide = "always",
 	no_unlearn_last = true,
 	passives = function(self, t, p)
-		self:talentTemporaryValue(p, "max_hands", 100)
+		--self:talentTemporaryValue(p, "max_hands", 100)
 		self:talentTemporaryValue(p, "hands_regen", 10)
 	end,
 

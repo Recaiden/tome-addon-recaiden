@@ -3,7 +3,7 @@ newTalent{
 	type = {"spell/other", 1}, require = mag_req1, points = 5,
 	cooldown = 3,
 	tactical = { ATTACK = {ARCANE = 2} },
-	range = 5,
+	range = 6,
 	requires_target = true,
 	target = function(self, t) return {type="beam", range=self:getTalentRange(t), talent=t} end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 130) end,
@@ -26,8 +26,9 @@ Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.ARCANE, damage
 
 
 newTalent{
-	name = "Phase Door", short_name = "REK_HEKA_EYE_PHASE_DOOR",
+	name = "Phase Swim", short_name = "REK_HEKA_EYE_PHASE_DOOR",
 	type = {"spell/other", 1}, points = 5,
+	no_message = true,
 	range = 7,
 	tactical = { ESCAPE = 2 },
 	is_teleport = true,
@@ -103,23 +104,24 @@ local function createEye(self, level, tCallEyes, tEyeWarriors, tEyeMages, durati
    local npc = require("mod.class.NPC").new{
       type = "horror", subtype = "eldritch",
       name = "eye",
-      desc = [[]],
-      display = 'e', color=colors.BLACK,
+      desc = [[A disembodied eye the size of a fist, floating through the air.]],
+      display = 'h', color=colors.SLATE,
       
       never_anger = true,
       summoner = self,
       summoner_gain_exp=true,
       summon_time = duration,
       faction = self.faction,
-      size_category = 2,
+      size_category = 1,
       rank = 2,
       autolevel = "none",
       level_range = {level, level},
       exp_worth = 0,
       avoid_traps = 1,
+			levitation = 1,
       is_wandering_eye = true,
       
-      max_life = resolvers.rngavg(7,7), life_rating = 5,
+      max_life = resolvers.rngavg(7,7), life_rating = 7,
       stats = { -- affected by stat limits
          str=math.floor(self:combatScale(level, 5, 0, 55, 50, 0.75)),
          dex=math.floor(self:combatScale(level, 10, 0, 85, 50, 0.75)),
@@ -144,7 +146,6 @@ local function createEye(self, level, tCallEyes, tEyeWarriors, tEyeMages, durati
          [self.T_REK_HEKA_EYE_EYE_LASH]=tCallEyes.getLashLevel(self, tCallEyes),
                        },
 
-      undead = 1,
       no_breath = 1,
       stone_immune = 1,
       confusion_immune = 1,
@@ -155,14 +156,14 @@ local function createEye(self, level, tCallEyes, tEyeWarriors, tEyeMages, durati
       stun_immune = 1,
       blind_immune = 1,
       see_invisible = 80,
-      resists = { [DamageType.LIGHT] = -100, [DamageType.DARKNESS] = 100 },
+      resists = { [DamageType.ARCANE] = 50 },
       resists_pen = { all=25 },
 
       avoid_master_damage = 0,
 
-      ai = "shadow",
+      ai = "heka_eye",
       ai_state = {
-         summoner_range = 10,
+         summoner_range = 5,
          actor_range = 8,
          location_range = 4,
          target_time = 0,
@@ -171,12 +172,8 @@ local function createEye(self, level, tCallEyes, tEyeWarriors, tEyeMages, durati
 
          blindside_chance = 15,
          phasedoor_chance = 5,
-         close_attack_spell_chance = 0,
-         far_attack_spell_chance = 0,
-         can_reform = false,
-         dominate_chance = 0,
-
-         feed_level = 0
+         close_attack_spell_chance = 33,
+         far_attack_spell_chance = 33,
       },
       ai_target = {
          actor=target,
@@ -185,7 +182,10 @@ local function createEye(self, level, tCallEyes, tEyeWarriors, tEyeMages, durati
       },
 
       healSelf = function(self)
-         self:useTalent(self.T_FLN_EYE_HEAL)
+				self:useTalent(self.T_REK_HEKA_EYE_BLINDSIDE)
+      end,
+			blindsideTalent = function(self)
+				return self:useTalent(self.T_REK_HEKA_EYE_BLINDSIDE)
       end,
       closeAttackSpell = function(self)
 				return self:useTalent(self.T_REK_HEKA_EYE_EYE_LASH)
@@ -193,14 +193,7 @@ local function createEye(self, level, tCallEyes, tEyeWarriors, tEyeMages, durati
       farAttackSpell = function(self)
 				return self:useTalent(self.T_REK_HEKA_EYE_EYE_LASH)
       end,
-      dominate = function(self)
-				return self:useTalent(self.T_FLN_EYE_ABSORPTION_STRIKE)
-      end,
-      feed = function(self)
-				self.ai_state.close_attack_spell_chance = 17
-				self.ai_state.far_attack_spell_chance = 17
-				self.ai_state.can_reform = false
-				
+      feed = function(self)				
 				if self.ai_state.feed_temp1 then self:removeTemporaryValue("combat_atk", self.ai_state.feed_temp1) end
 				self.ai_state.feed_temp1 = nil
 				if self.ai_state.feed_temp2 then self:removeTemporaryValue("inc_damage", self.ai_state.feed_temp2) end
@@ -209,9 +202,6 @@ local function createEye(self, level, tCallEyes, tEyeWarriors, tEyeMages, durati
 				--    local tEyeWarriors = self.summoner:getTalentFromId(self.summoner.T_FLN_EYE_WARRIORS)
 				--    self.ai_state.feed_temp1 = self:addTemporaryValue("combat_atk", tEyeWarriors.getCombatAtk(self.summoner, tEyeWarriors))
 				--    self.ai_state.feed_temp2 = self:addTemporaryValue("inc_damage", {all=tEyeWarriors.getIncDamage(self.summoner, tEyeWarriors)})
-				--    self.ai_state.dominate_chance = tEyeWarriors.getAbsorbChance(self.summoner, tEyeWarriors)
-				-- else
-				--    self.ai_state.dominate_chance = 0
 				-- end
       end,
       onTakeHit = function(self, value, src)
@@ -365,18 +355,20 @@ newTalent{
 	mode = "passive",
 	getRedirectThreshold = function(self, t) return self:combatTalentLimit(t, 15, 66, 25) end,
 	getReinforcement = function(self, t) return self.level*0.8 end,
-	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
+	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, state, no_martyr)
 		local split = dam / 3
 		local remaining = dam
 		local sent = 0
 		local factor = (100-t.getReinforcement(self, t))/100
 		for _, e in pairs(game.level.entities) do
 			if e.summoner and e.summoner == self and e.is_wandering_eye then
-				if e.life > e.max_life * t.getRedirectThreshold(self, t) then
+				if e.life > (e.max_life * t.getRedirectThreshold(self, t) / 100) then
 					remaining = math.max(0, remaining - split)
 					sent = sent + split
 					state.no_reflect = true
-					DamageType.defaultProjector(self, a.x, a.y, type, split*factor, state)
+					e.avoid_master_damage = 1
+					DamageType.defaultProjector(src, e.x, e.y, type, split*factor, state)
+					e.avoid_master_damage = 0
 					state.no_reflect = nil
 				end
 			end
@@ -401,8 +393,14 @@ newTalent{
 	tactical = { ATTACK = 2, HEAL = 1 },
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nowarning=true} end,
 	on_pre_use = function(self, t, silent)
-		if not self:isTalentActive(self.T_REK_HEKA_HEADLESS_EYES) then return false end
-		if self:callTalent(self.T_REK_HEKA_HEADLESS_EYES, "nbEyesUp") == 0 then return false end
+		if not self:isTalentActive(self.T_REK_HEKA_HEADLESS_EYES) then
+			if not silent then game.logPlayer(self, "You have no eyes to blink!") end
+			return false
+		end
+		if self:callTalent(self.T_REK_HEKA_HEADLESS_EYES, "nbEyesUp") == 0 then
+			if not silent then game.logPlayer(self, "You have no eyes to blink!") end
+			return false
+		end
 		return true
 	end,
 	action = function(self, t)
@@ -420,6 +418,7 @@ newTalent{
 				e.ai_target.blindside_chance = 100
 			end
 		end
+		return true
 	end,
 	info = function(self, t)
 		return ([[Focus your eyes on a single target. Each eye splits open into a fanged maw and rushes in to bite the target and heal themselves for %d%% of their maximum life.

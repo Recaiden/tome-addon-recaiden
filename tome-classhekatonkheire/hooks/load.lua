@@ -3,6 +3,7 @@ local ActorTemporaryEffects = require "engine.interface.ActorTemporaryEffects"
 local ActorResource = require "engine.interface.ActorResource"
 local Birther = require "engine.Birther"
 local DamageType = require "engine.DamageType"
+local ActorAI = require "mod.class.interface.ActorAI"
 local Talents = require "engine.interface.ActorTalents"
 local Zone = require "engine.Zone"
 local Map = require "engine.Map"
@@ -49,6 +50,7 @@ class:bindHook("ToME:load", function(self, data)
                   ActorTemporaryEffects:loadDefinition('/data-classhekatonkheire/effects.lua')
                   Birther:loadDefinition("/data-classhekatonkheire/birth/classes/warrior.lua")
                   DamageType:loadDefinition("/data-classhekatonkheire/damage_types.lua")
+									ActorAI:loadDefinition("/data-classhekatonkheire/ai")
                             end)
 
 -- class:bindHook("Entity:loadList", function(self, data)
