@@ -95,7 +95,7 @@ newTalent{
    info = function(self, t)
       return ([[Detonate all of your explosive charges within range 10.
 
-If an explosive charge has two other explosive charges adjacent to it, the combined force will knock down walls.]]):format()
+If an explosive charge has two other explosive charges adjacent to it, the combined force will knock down walls.]]):tformat()
    end,
 }
 
@@ -225,7 +225,7 @@ Steampower: increases damage
 
 Undetonated charges disarm after 10 turns.
 
-Your skill with explosives gives you +0.5 Steampower per character level.]]):format(damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
+Your skill with explosives gives you +0.5 Steampower per character level.]]):tformat(damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
 	end,
 }
 
@@ -334,7 +334,7 @@ newTalent{
 		return ([[Lay Blast Mines in a radius of %d that inflict %0.2f physical (bleed) and %0.2f fire damage and knock enemies 1 space in a random direction (#SLATE#Steampower vs. Physical#LAST#).
 		The mines are hidden traps (%d detection and %d disarm power based on your Cunning) and last for %d turns.
 Steampower: improves damage.]]):
-		format(self:getTalentRadius(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)*1.5/2), damDesc(self, DamageType.FIRE, t.getDamage(self, t)/2), t.getTrapPower(self, t)*0.8, t.getTrapPower(self, t), t.getDuration(self, t))
+		tformat(self:getTalentRadius(t), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)*1.5/2), damDesc(self, DamageType.FIRE, t.getDamage(self, t)/2), t.getTrapPower(self, t)*0.8, t.getTrapPower(self, t), t.getDuration(self, t))
 	end,
 }
 
@@ -396,7 +396,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Blow yourself up.]]):format()
+		return ([[Blow yourself up.]]):tformat()
 	end,
 }
 
@@ -450,7 +450,7 @@ newTalent{
 			sight = 15,
 			infravision = 15,
 			name = "Mecharachnid Mine", color=colors.ORANGE,
-			desc = "A swift mechanical spider carrying an unstable explosive",
+			desc = _t"A swift mechanical spider carrying an unstable explosive",
 			image = "npc/mechanical_arachnid_mecharachnid_bomber.png",
 			level_range = {self.level, self.level}, exp_worth = 0,
 			rank = 2,
@@ -497,7 +497,7 @@ newTalent{
 	info = function(self, t)
 		return ([[Deploy a miniature mecharachnid to carry an explosive into position.  It has %d%% movement speed and %d%% resistance to damage (based on level).
 When it reaches an enemy or dies, the mecharachnid will explode, dealing %d fire damage to all targets in radius %d, friend or foe.
-]]):format(t.getMovementSpeed(self, t)*100, self.level*1.5, damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t))
+]]):tformat(t.getMovementSpeed(self, t)*100, self.level*1.5, damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t))
 	end,
 }
 
@@ -573,6 +573,6 @@ newTalent{
 	info = function(self, t)
 		return ([[When one of your steam abilities goes critical, you throw an extra explosive charge towards a random target in range %d.
 This can only happen every %d game turns.  Extra criticals reduce the cooldown by one turn.
-		]]):format(self:getTalentRange(t), t.getBombCD(self, t))
+		]]):tformat(self:getTalentRange(t), t.getBombCD(self, t))
 	end,
 }

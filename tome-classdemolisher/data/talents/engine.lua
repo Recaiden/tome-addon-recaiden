@@ -26,7 +26,7 @@ newTalent{
 	info = function(self, t)
 		return ([[Fire up rocket engines to scorch the ground you pass over.  Each movement will leave a trail of flames doing %d fire damage for 4 turns.  This will only take effect if you have steam remaining.
 
-Passively improve your vehicle's engine output.  While riding, you gain %d%% movement speed.]]):format(damDesc(self, DamageType.FIRE, t.getDamage(self, t)), t.getMovement(self, t)*100)
+Passively improve your vehicle's engine output.  While riding, you gain %d%% movement speed.]]):tformat(damDesc(self, DamageType.FIRE, t.getDamage(self, t)), t.getMovement(self, t)*100)
 	end,
 }
 
@@ -64,7 +64,7 @@ newTalent{
 	info = function(self, t)
 		return ([[Attach additional jet nozzles to your vehicle that amplify its movements.  Each round for 2 rounds after moving, you move 1 space in the same direction for free.
 
-Passively improve your vehicle's evasive movements. While riding, you have %d extra defense.]]):format(t.getDefense(self, t))
+Passively improve your vehicle's evasive movements. While riding, you have %d extra defense.]]):tformat(t.getDefense(self, t))
 	end,
 }
 
@@ -148,7 +148,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Launch your ride towards a target. If the target is reached you crash into them for %0.2f physical damage and release a massive burst of fire in radius %d, knocking away all other enemies and dealing %0.2f fire damage.
-You must launch from at least 2 tiles away.]]):format(damDesc(self, DamageType.PHYSICAL, t.getCrashDamage(self, t)), t.fireRadius(self,t), damDesc(self, DamageType.PHYSICAL, t.getWaveDamage(self, t)))
+You must launch from at least 2 tiles away.]]):tformat(damDesc(self, DamageType.PHYSICAL, t.getCrashDamage(self, t)), t.fireRadius(self,t), damDesc(self, DamageType.PHYSICAL, t.getWaveDamage(self, t)))
 	end,
 }
 
@@ -190,6 +190,6 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Push your vehicle's engines to the maximum, increasing your movement speed by %d%%. When you would move into an enemy, instead you ram past them, dealing %0.2f physical damage and trying to move to the opposite side of them.
-This ends when you take an action other than moving or ramming, or if you run out of steam.]]):format(t.getMovement(self, t)*100, damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)))
+This ends when you take an action other than moving or ramming, or if you run out of steam.]]):tformat(t.getMovement(self, t)*100, damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)))
 	end,
 }

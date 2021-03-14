@@ -90,7 +90,7 @@ newTalent{
 			local _ _, x, y = self:canProject(tg, a.x, a.y)
 			game:playSoundNear(self, {"talents/single_steamgun", vol=0.8})
 			local proj = t.autoshoot(self, tg.range, x, y)
-			proj.name = "gunner drone"
+			proj.name = _t"gunner drone"
 			if not ammo.infinite then
 				if ammo.combat.shots_left <= 0 then return nil end
 				ammo.combat.shots_left = ammo.combat.shots_left - 1
@@ -126,7 +126,7 @@ newTalent{
 If your ammo is depleted, it instead reloads (with %d extra ammunition reloaded).
 The shots will pass harmlessly through allies.
 
-The drone deactivates if you run out of steam.]]):format(self:getTalentRange(t), t.getDamage(self,t)*100, t.getPower(self,t), t.getPercentInc(self, t)*100, t.getReload(self, t))
+The drone deactivates if you run out of steam.]]):tformat(self:getTalentRange(t), t.getDamage(self,t)*100, t.getPower(self,t), t.getPercentInc(self, t)*100, t.getReload(self, t))
 	end,
 }
 
@@ -167,7 +167,7 @@ newTalent{
 		local duration = t.getDuration(self, t)
 		return ([[A furious electrical storm rages around the user doing %0.2f lightning damage in a radius of 3 each turn for %d turns with a 25%% chance to blind.
 The storm cannot critically hit.
-Steampower: increases damage]]):format(damDesc(self, DamageType.LIGHTNING, damage), duration)
+Steampower: increases damage]]):tformat(damDesc(self, DamageType.LIGHTNING, damage), duration)
 	end,
 }
 
@@ -206,7 +206,7 @@ newTalent{
 			type = "construct", subtype = "drone",
 			display = "*", color=colors.GREEN,
 			name = "hurricane drone", faction = self.faction, image = "npc/hurricane_drone.png",
-			desc = [[A strange hovering device of whirling blades. Your hair stands on end when you approach.]],
+			desc = _t[[A strange hovering device of whirling blades. Your hair stands on end when you approach.]],
 			autolevel = "none",
 			ai = "summoned", ai_real = "dumb_talented", ai_state = { talent_in=1, },
 			level_range = {1, 1}, exp_worth = 0,
@@ -249,7 +249,7 @@ newTalent{
 The drone has %d life (increased by steam critical), %d armor, and %d%% resistance to all damage. It lasts 10 turns.
 It inherits your increased damage and penetration.
 Steampower: improves	damage, life, resists, and armor]]):
-		format(damDesc(self, DamageType.LIGHTNING, t.getDam(self, t)), t.getHP(self, t), t.getArmor(self, t), t.getResist(self, t))
+		tformat(damDesc(self, DamageType.LIGHTNING, t.getDam(self, t)), t.getHP(self, t), t.getArmor(self, t), t.getResist(self, t))
 	end,
 }
 
@@ -305,7 +305,7 @@ newTalent{
 		dam = dam - block
 		p.value = p.value - block
 
-		game:delayedLogDamage(src or self, self, 0, ("%s(%d guarded)#LAST#"):format(DamageType:get(type).text_color or "#aaaaaa#", block), false)
+		game:delayedLogDamage(src or self, self, 0, ("%s(%d guarded)#LAST#"):tformat(DamageType:get(type).text_color or "#aaaaaa#", block), false)
 		
 		return {dam=dam}
 	end,
@@ -314,7 +314,7 @@ newTalent{
 Steampower: increases damage deflected
 Dexterity: increases maximum deflection per round
 
-The drone deactivates if you run out of steam.]]):format(t.getShrug(self, t), t.getShrug(self, t)*2, t.getMaxShrug(self, t))
+The drone deactivates if you run out of steam.]]):tformat(t.getShrug(self, t), t.getShrug(self, t)*2, t.getMaxShrug(self, t))
 	end,
 }
 
@@ -354,7 +354,7 @@ newTalent{
 			type = "construct", subtype = "drone",
 			display = "*", color=colors.GREEN,
 			name = "shroud drone", faction = self.faction, image = "npc/smoke_drone.png",
-			desc = [[A strange hovering device of hissing smoke, nearly impossible to see.]],
+			desc = _t[[A strange hovering device of hissing smoke, nearly impossible to see.]],
 			autolevel = "none",
 			ai = "summoned", ai_real = "dumb_talented", ai_state = { talent_in=1, },
 			level_range = {1, 1}, exp_worth = 0,
@@ -414,7 +414,7 @@ newTalent{
 The drone has %d life (increased by steam critical), %d armor, and %d%% resistance to all damage. It lasts 10 turns.
 It inherits your increased damage and penetration.
 Steampower: improves	damage, life, resists, and armor]]):
-		format(t.getSightLoss(self, t), t.getHP(self, t), t.getArmor(self, t), t.getResist(self, t))
+		tformat(t.getSightLoss(self, t), t.getHP(self, t), t.getArmor(self, t), t.getResist(self, t))
 	end,
 }
 
@@ -485,6 +485,6 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Activate a tiny machine to apply appropriate medical care to you, removing up to %d physical, mental or magical detrimental effects.  Then, for the next %d turns, your saves are increased by %d.]]):format(t.getNb(self, t), t.getDuration(self, t), t.getSaves(self, t))
+		return ([[Activate a tiny machine to apply appropriate medical care to you, removing up to %d physical, mental or magical detrimental effects.  Then, for the next %d turns, your saves are increased by %d.]]):tformat(t.getNb(self, t), t.getDuration(self, t), t.getSaves(self, t))
 	end,
 }

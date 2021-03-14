@@ -56,7 +56,7 @@ newTalent{
 	getArmorSize = function(self, t) return self:combatTalentScale(t, 3, 6) end,
 	--implemented in superload Combat.lua
 	info = function(self, t)
-		return ([[You gain %d armor, plus %d per size category above medium.
+		return ([[You gain %d armor, plus %d per size category above medium you are.
 
 #{italic}#A warrior of your stature has little to fear from petty wounds.#{normal}#
 ]]):tformat(t:_getArmorBase(self), t:_getArmorSize(self))
@@ -96,7 +96,7 @@ newTalent{
 		self.adjacent_sudden_insight = new_enemies
 	end,
 	info = function(self, t)
-		return ([[When an enemy becomes adjacent to you, gain +%d%% physical and spell critical chance and +%d%% critical power for 2 turns.  This has a cooldown per enemy]]):tformat(t:_getChance(self), t:_getCritPower(self))
+		return ([[When an enemy becomes adjacent to you, gain +%d%% physical and spell critical chance and +%d%% critical power for 2 turns.  This has a cooldown per enemy.]]):tformat(t:_getChance(self), t:_getCritPower(self))
 	end,
 }
 

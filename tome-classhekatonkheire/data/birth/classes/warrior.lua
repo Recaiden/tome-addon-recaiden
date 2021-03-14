@@ -19,6 +19,7 @@ newBirthDescriptor{
 	talents_types = {
 		-- base talents
 		["spell/shambler"]={true, 0.3},
+		["spell/headless-horror"]={true, 0.3},
 		["technique/titanic-blows"]={true, 0.3},
 		["technique/helping-hands"]={true, 0.3},
 		["technique/harming-hands"]={true, 0.3},

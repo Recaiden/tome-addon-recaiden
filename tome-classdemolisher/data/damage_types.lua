@@ -24,7 +24,7 @@ local initState = DamageType.initState
 
 -- Fire that doesn't stack well
 newDamageType{
-   name = "fire", type = "REK_DEML_FIRE_DIMINISHING",
+   name = _t"fire", type = "REK_DEML_FIRE_DIMINISHING",
    projector = function(src, x, y, type, dam, state)
       state = initState(state)
       useImplicitCrit(src, state)
@@ -38,7 +38,7 @@ newDamageType{
 }
 
 newDamageType{
-	name = "blinding storm", type = "REK_DEML_STORM", text_color = "#F3C311#",
+	name = _t"blinding storm", type = "REK_DEML_STORM", text_color = "#F3C311#",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
 		useImplicitCrit(src, state)
@@ -57,7 +57,7 @@ newDamageType{
 }
 
 newDamageType{
-	name = "dazing fire", type = "REK_DEML_FIRE_DAZE", text_color = "#FF3311#",
+	name = _t"dazing fire", type = "REK_DEML_FIRE_DAZE", text_color = "#FF3311#",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
 		useImplicitCrit(src, state)
@@ -71,7 +71,7 @@ newDamageType{
 }
 
 newDamageType{
-	name = "stunning fire", type = "REK_DEML_FIRE_STUN", text_color = "#FF3311#",
+	name = _t"stunning fire", type = "REK_DEML_FIRE_STUN", text_color = "#FF3311#",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
 		useImplicitCrit(src, state)
@@ -86,7 +86,7 @@ newDamageType{
 
 -- lightning that gives you max lightning pen
 newDamageType{
-	name = "gauss lightning", type = "REK_DEML_COILSHOCK",
+	name = _t"gauss lightning", type = "REK_DEML_COILSHOCK",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
 		useImplicitCrit(src, state)
@@ -123,7 +123,7 @@ newDamageType{
 
 -- shadow smoke but applies with summoner's steampower
 newDamageType{
-	name = "shadow smoke", type = "STEAM_SHADOW_SMOKE",
+	name = _t"shadow smoke", type = "STEAM_SHADOW_SMOKE",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
 		useImplicitCrit(src, state)

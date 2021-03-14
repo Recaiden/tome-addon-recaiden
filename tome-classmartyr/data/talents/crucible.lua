@@ -76,7 +76,7 @@ newTalent{
    mode = "passive",
    getEfficiency = function(self, t) return math.max(10, self:combatTalentScale(t, 30, 18)) end,
    info = function(self, t)
-      local ret = ([[Feedback gains beyond your maximum allowed amount may reduce the cooldowns of your feedback talents, using %d feedback per turn of cooldown.
+      local ret = ([[Feedback gains beyond your maximum allowed amount will reduce the cooldowns of your feedback talents, using %d excess feedback per turn of cooldown.  You cannot gain more overflow at once than your maximum feedback.
 Talents are recharged in this order:
  - Share Pain
  - Memento Mori

@@ -100,7 +100,7 @@ newTalent{
 }
 
 newTalent{
-	name = "Hundred Fist Frenzy", short_name = "REK_HEKA_HARMING_FRENZY",
+	name = "Hundred Hand Hurricane", short_name = "REK_HEKA_HARMING_FRENZY",
 	type = {"technique/harming-hands", 4}, require = str_req4, points = 5,
 	cooldown = function(self, t) return 15 end,
 	range = 3,
@@ -122,17 +122,20 @@ newTalent{
 				end
 			end)
 	end,
-	activate = function(self, t)
+	callbackOnActEnd = function(self, t)
 		t.doPunch(self, t)
-		local tg = self:getTalentTarget(t)
-		local x, y, target = self:getTarget(tg)
-		if not target or not self:canProject(tg, x, y) then return nil end
+	end,
+	activate = function(self, t)
+		--t.doPunch(self, t)
+		-- local tg = self:getTalentTarget(t)
+		-- local x, y, target = self:getTarget(tg)
+		-- if not target or not self:canProject(tg, x, y) then return nil end
 
-		local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
-		if hit and not target.dead then
-			target:setEffect(target.EFF_REK_HEKA_IMMERSED, t.getDuration(self, t), {apply_power=self:combatPhysicalpower(), dam=t.getDamageImmersion(self, t), resist=t.getRes(self, t), numb=t.getNumb(self, t), src=self})
-		end
-		return true
+		-- local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
+		-- if hit and not target.dead then
+		-- 	target:setEffect(target.EFF_REK_HEKA_IMMERSED, t.getDuration(self, t), {apply_power=self:combatPhysicalpower(), dam=t.getDamageImmersion(self, t), resist=t.getRes(self, t), numb=t.getNumb(self, t), src=self})
+		-- end
+		return {}
 	end,
 	deactivate = function(self, t, p)
 		if self:knowTalent(self.T_REK_HEKA_HELPING_HEALING) then

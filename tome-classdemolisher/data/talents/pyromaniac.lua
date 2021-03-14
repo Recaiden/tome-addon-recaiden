@@ -21,7 +21,7 @@ newTalent{
 	end,
 
 	info = function(self, t)
-		return ([[Upgrade your bombs with a flammable gel.  While this talent is sustained, your Explosive Charges,  Mecharachnid Mine, and Pyre Bomb inflict a burn on their targets, dealing %0.2f fire damage over 4 turns, but costing an additional 5 steam.]]):format(damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
+		return ([[Upgrade your bombs with a flammable gel.  While this talent is sustained, your Explosive Charges,  Mecharachnid Mine, and Pyre Bomb inflict a burn on their targets, dealing %0.2f fire damage over 4 turns, but costing an additional 5 steam.]]):tformat(damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
 	end,
 }
 
@@ -61,7 +61,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Lob a colossal bomb that detonates on impact, dealing %d fire damage in radius %d and stunning (#SLATE#Steampower vs Physical#LAST#) all targets for %d turns.
-Steampower: increases damage]]):format(damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t), t.getDuration(self, t))
+Steampower: increases damage]]):tformat(damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t), t.getDuration(self, t))
 	end,
 }
 
@@ -77,7 +77,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[The sound of detonators, bombs, and flames is music to your ears.
-Whenever you detonate at least 3 explosive charges at once, you gain a burst of energy, increasing your speed by %d%% for 3 turns.]]):format(t.getSpeed(self, t)*100)
+Whenever you detonate at least 3 explosive charges at once, you gain a burst of energy, increasing your speed by %d%% for 3 turns.]]):tformat(t.getSpeed(self, t)*100)
 	end,
 }
 
@@ -130,6 +130,6 @@ newTalent{
 		return true
 	end,
 	info = function(self, t) 
-		return ([[Devote part of your steam system to the production of super-heated explosives, increasing all your fire damage by %0.1f%% and your fire resistance penetration by %d%%.  Whenever you deal non-fire damage to a burning enemy, you will consume the burn, dealing all of the remaining damage (plus %0.2f) immediately.]]):format(t.getFireDamageIncrease(self,t), t.getPenetration(self, t), t.getBonusDamage(self, t)) 
+		return ([[Devote part of your steam system to the production of super-heated explosives, increasing all your fire damage by %0.1f%% and your fire resistance penetration by %d%%.  Whenever you deal non-fire damage to a burning enemy, you will consume the burn, dealing all of the remaining damage (plus %0.2f) immediately.]]):tformat(t.getFireDamageIncrease(self,t), t.getPenetration(self, t), t.getBonusDamage(self, t)) 
 	end,
 }

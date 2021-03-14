@@ -7,16 +7,16 @@ local Talents = require "engine.interface.ActorTalents"
 local Zone = require "engine.Zone"
 local Map = require "engine.Map"
 
-ActorResource:defineResource ("Hull", "hull", "T_HULL_POOL", "hull_regen", "Hull represents how intact your vehicle is. If functions like Life while in a vehicle, absorbing damage and recovering through healing. If it is reduced to zero your vehicle is destroyed.", 0, nil, {
+ActorResource:defineResource (_t"Hull", "hull", "T_HULL_POOL", "hull_regen", _t"Hull represents how intact your vehicle is. If functions like Life while in a vehicle, absorbing damage and recovering through healing. If it is reduced to zero your vehicle is destroyed.", 0, nil, {
 	color = "#a35633#", 
 	wait_on_rest = true,
 	
 	status_text = function(act)
 		if act.hasEffect and act:hasEffect(act.EFF_REK_DEML_RIDE) then
 			local regen_t = act.life_regen * (act.healing_factor or 1)
-			return ("%d/%d  +%0.2f"):format(act:getHull(), act:getMaxHull(), regen_t)
+			return ("%d/%d  +%0.2f"):tformat(act:getHull(), act:getMaxHull(), regen_t)
 		else
-			return ("%d"):format(act:getMaxHull())
+			return ("%d"):tformat(act:getMaxHull())
 		end
 	end,
 	
@@ -71,7 +71,7 @@ class:bindHook("DamageProjector:final", function(self, hd)
 end)
 
 class:bindHook("Object:descWielder", function(self, hd)
-								 hd.compare_fields(hd.w, hd.compare_with, hd.field, "max_hull", "%+.2f", "Maximum hull: ")
+								 hd.compare_fields(hd.w, hd.compare_with, hd.field, "max_hull", "%+.2f", _t"Maximum hull: ")
 	return hd
 end) 
 

@@ -128,6 +128,11 @@ if not Talents.talents_types_def["technique/harming-hands"] then
    load("/data-classhekatonkheire/talents/harming-hands.lua")
 end
 
+if not Talents.talents_types_def["spell/headless-horror"] then
+   newTalentType{ allow_random=true, is_spell=true, type="spell/headless-horror", name = "Headless Horror", description = "More eyes, bigger eyes, better eyes." }
+   load("/data-classhekatonkheire/talents/headless-horror.lua")
+end
+
 if not Talents.talents_types_def["spell/otherness"] then
    newTalentType{ allow_random=true, is_spell=true, generic=true, type="spell/otherness", name = "Otherness", description = "Look over and see through." }
    load("/data-classhekatonkheire/talents/otherness.lua")

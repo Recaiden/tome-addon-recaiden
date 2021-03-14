@@ -43,7 +43,7 @@ newTalent{
 	info = function(self, t)
 		local range = self:getTalentRange(t)
 		return ([[Launch a harpoon at an enemy, doing %d damage and pulling them close to you.
-Steampower: increases damage.]]):format(damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)))
+Steampower: increases damage.]]):tformat(damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)))
 	end,
 }
 
@@ -77,7 +77,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Launch a magnetic projectile at incredible speeds, doing %0.2f lightning damage (that ignores resistances) in a line.
-Steampower: increases damage.]]):format(damDesc(self, DamageType.LIGHTNING, t.getDamage(self, t)))
+Steampower: increases damage.]]):tformat(damDesc(self, DamageType.LIGHTNING, t.getDamage(self, t)))
 	end,
 }
 
@@ -115,6 +115,6 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Fires a barrage of explosive missiles from your battlewagon at a radius %d area, dealing %0.2f fire damage and dazing those within for 2 turns (#SLATE#Steampower vs Physical#LAST#).
-]]):format(self:getTalentRadius(t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
+]]):tformat(self:getTalentRadius(t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
 	end,
 }

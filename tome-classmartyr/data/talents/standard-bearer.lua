@@ -372,14 +372,14 @@ newTalent{
 	 local flag = rng.tableRemove(list)
          if flag.is_tentacle_flag and not flag.dead and flag.x then
             if core.fov.distance(self.x, self.y, flag.x, flag.y) <= 3 then
-               self:setEffect(self.EFF_REK_FLAG_SYMBIOSIS, 5, {resist=t.getResist(self, t)})
-               flag:setEffect(flag.EFF_REK_FLAG_SYMBIOSIS, 5, {resist=t.getResist(self, t)})
+               self:setEffect(self.EFF_REK_FLAG_SYMBIOSIS, 3, {resist=t.getResist(self, t)})
+               flag:setEffect(flag.EFF_REK_FLAG_SYMBIOSIS, 3, {resist=t.getResist(self, t)})
             end
          end
       end
    end,
    info = function(self, t)
-      return ([[Whenever you start a turn within range 3 of one of your flags, each of you gains %d%% all resistance for 5 turns.
+      return ([[Whenever you start a turn within range 3 of one of your flags, each of you gains %d%% all resistance for 3 turns.
 
 Levels in this talent grant your flags an area attack doing %d%% of their normal damage.]]):format(t.getResist(self, t), t.getDamage(self,t)*100)
    end,

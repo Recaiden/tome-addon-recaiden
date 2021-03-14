@@ -57,34 +57,34 @@ steam_req_high5 = {
 }
 
 if not Talents.talents_types_def["steamtech/explosives"] then
-	newTalentType{ allow_random=true, is_steam=true, type="steamtech/explosives", name = "Explosives", description = "Tick, tick, tick, tick, tick, tick, BOOM!" }
+	newTalentType{ allow_random=true, is_steam=true, type="steamtech/explosives", name = _t"Explosives", description = _t"Tick, tick, tick, tick, tick, tick, BOOM!" }
 	load("/data-classdemolisher/talents/explosives.lua")
 end
 
 if not Talents.talents_types_def["steamtech/drones"] then
-	newTalentType{ allow_random=true, is_steam=true, type="steamtech/drones", name = "Drones", description = "Aiming, dodging...boring.  Let the machines do it for you." }
+	newTalentType{ allow_random=true, is_steam=true, type="steamtech/drones", name = _t"Drones", description = _t"Aiming, dodging...boring.  Let the machines do it for you." }
 	load("/data-classdemolisher/talents/drones.lua")
 end
 
 if not Talents.talents_types_def["steamtech/pilot"] then
-	newTalentType{ allow_random=true, is_steam=true, type="steamtech/pilot", name = "Piloting", description = "Fight from behind the wheel." }
+	newTalentType{ allow_random=true, is_steam=true, type="steamtech/pilot", name = _t"Piloting", description = _t"Fight from behind the wheel." }
 	load("/data-classdemolisher/talents/pilot.lua")
 end
 
 if not Talents.talents_types_def["steamtech/engine"] then
-	newTalentType{ allow_random=true, is_steam=true, type="steamtech/engine", name = "Engine", description = "There's no point in any machine that does not go fast." }
+	newTalentType{ allow_random=true, is_steam=true, type="steamtech/engine", name = _t"Engine", description = _t"There's no point in any machine that does not go fast." }
 	load("/data-classdemolisher/talents/engine.lua")
 end
 
 if not Talents.talents_types_def["steamtech/battlewagon"] then
-   newTalentType{ allow_random=true, is_steam=true, type="steamtech/battlewagon", name = "Battlewagon", min_lev = 10, description = "Blast and trample enemies with your war machine." }
+   newTalentType{ allow_random=true, is_steam=true, type="steamtech/battlewagon", name = _t"Battlewagon", min_lev = 10, description = _t"Blast and trample enemies with your war machine." }
    load("/data-classdemolisher/talents/battlewagon.lua")
-	 newTalentType{ allow_random=false, is_steam=true, type="steamtech/battlewagon-guns", hide=true, name = "Main Guns", min_lev = 10, description = "Armament used by demolisher wagons" }
+	 newTalentType{ allow_random=false, is_steam=true, type="steamtech/battlewagon-guns", hide=true, name = _t"Main Guns", min_lev = 10, description = _t"Armament used by demolisher wagons" }
 	 load("/data-classdemolisher/talents/main_guns.lua")
 end
 
 if not Talents.talents_types_def["steamtech/pyromaniac"] then
-   newTalentType{ allow_random=true, is_steam=true, type="steamtech/pyromaniac", name = "Pyromaniac", min_lev = 10, description = "Water, air, and earth are all the same. But fire is a true wonder." }
+   newTalentType{ allow_random=true, is_steam=true, type="steamtech/pyromaniac", name = _t"Pyromaniac", min_lev = 10, description = _t"Water, air, and earth are all the same. But fire is a true wonder." }
    load("/data-classdemolisher/talents/pyromaniac.lua")
 end
 

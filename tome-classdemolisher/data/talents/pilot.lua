@@ -69,7 +69,7 @@ newTalent{
 
 Controlling your ride requires fine control that isn't possible while wearing massive armor.
 
-(Cancel the effect if you need to get off your ride early)]]):format(t.getPinImmune(self, t)*100, t.getHullBoost(self, t))
+(Cancel the effect if you need to get off your ride early)]]):tformat(t.getPinImmune(self, t)*100, t.getHullBoost(self, t))
 	end,
 }
 
@@ -104,7 +104,7 @@ newTalent{
 		return ([[Make some battlefield repairs to your ride, healing it for %d hull.
 The hull restored increases with Steampower and can be a critical hit.
 In combat, excess healing to your hull becomes a temporary barrier.
-Your familiarity with repairs lets you reinforce the vehicle's structure.  While riding, you have %d extra armor.]]):format(t.getHeal(self, t), t.getArmor(self, t))
+Your familiarity with repairs lets you reinforce the vehicle's structure.  While riding, you have %d extra armor.]]):tformat(t.getHeal(self, t), t.getArmor(self, t))
 	end,
 }
 
@@ -125,7 +125,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t) 
-		return ([[Use a rush of steam to overclock your motors and mechanisms.  For %d turns, your steam speed is increased by %d%%, your guardian drone can block %d%% more damage, and your gunner drone has a %d%% chance to fire twice.]]):format(t.getDuration(self, t), t.getPower(self,t)*100, t.getPower(self,t)*100, t.getPower(self,t)*100) 
+		return ([[Use a rush of steam to overclock your motors and mechanisms.  For %d turns, your steam speed is increased by %d%%, your guardian drone can block %d%% more damage, and your gunner drone has a %d%% chance to fire twice.]]):tformat(t.getDuration(self, t), t.getPower(self,t)*100, t.getPower(self,t)*100, t.getPower(self,t)*100) 
 	end,
 }
 
@@ -268,6 +268,6 @@ newTalent{
 		return ([[Set a short fuse leading to your ride's fuel tank and jump out.  If you target an adjacent creature, you jump back up to %d grids from your target, leaving your ride behind.  If you target an empty space, your ride moves to the target location while you stay behind. 
 Either way, your ride then explodes, dealing %d fire damage in radius %d and putting Steel Rider on a 10 turn cooldown.
 
-#{italic}#When the worst comes to worst, your ride can serve as a final weapon.#{normal}#]]):format(self:getTalentRange(t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t))
+#{italic}#When the worst comes to worst, your ride can serve as a final weapon.#{normal}#]]):tformat(self:getTalentRange(t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t))
 	end,
 }

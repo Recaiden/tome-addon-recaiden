@@ -14,16 +14,37 @@ end
 
 local base_incFeedback = _M.incFeedback
 function _M:incFeedback(v, set)
-   if not set and self:knowTalent(self.T_REK_MTYR_CRUCIBLE_OVERFLOW) then
-      local t = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_OVERFLOW)
-      local consumed = 0
-      local overcharge = math.floor((v + self:getFeedback() - self:getMaxFeedback()))
-      if overcharge > 0 then
-         local cost = self:callTalent(self.T_REK_MTYR_CRUCIBLE_OVERFLOW, "getEfficiency")
-         local t1 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_SHARE_PAIN)
-         local t2 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_MEMENTO)
-         local t3 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_RESONATION)
-         local talents = {
+	if not set and self:knowTalent(self.T_REK_MTYR_CRUCIBLE_OVERFLOW) then
+		local t = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_OVERFLOW)
+		local consumed = 0
+		
+		-- if they got a free overcharge recently, penalize them
+		local static = self:hasProc("martyr_overflow")
+		if static == nil then static = 0 else static = static.val end
+		local overcharge = math.floor((v + self:getFeedback() - self:getMaxFeedback()))
+		-- Cap the overflow at 100% of the bar
+		overcharge = math.min(overcharge, self:getMaxFeedback())
+		self:setProc("martyr_overflow", 0)
+		local remaining = static - overcharge
+		overcharge = overcharge - static
+		if remaining > 0 then
+			self:setProc("martyr_overflow", remaining)
+		else
+			self:setProc("martyr_overflow", 0)
+		end
+		
+		local cost = self:callTalent(self.T_REK_MTYR_CRUCIBLE_OVERFLOW, "getEfficiency")
+		
+		if overcharge > 0 then
+			local static = nil
+			if overcharge < cost then
+				static = cost - overcharge
+				self:setProc("martyr_overflow", static)
+			end
+			local t1 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_SHARE_PAIN)
+			local t2 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_MEMENTO)
+			local t3 = self:getTalentFromId(self.T_REK_MTYR_CRUCIBLE_RESONATION)
+			local talents = {
             self.T_REK_MTYR_CRUCIBLE_SHARE_PAIN,
             self.T_REK_MTYR_CRUCIBLE_MEMENTO,
             self.T_REK_MTYR_CRUCIBLE_RESONATION,
@@ -33,23 +54,25 @@ function _M:incFeedback(v, set)
             self.T_K_CHARGED_SHOT,
             self.T_K_DOMINATION_SHOT,
             self.T_K_RESONANCE_LINK
-         }
-         local idxT = 1
-         while overcharge do
-            if self:isTalentCoolingDown(self:getTalentFromId(talents[idxT])) then
-               self:alterTalentCoolingdown(talents[idxT], -1)
-               consumed = consumed + math.min(overcharge, cost)
-               overcharge = math.max(0, overcharge - cost)
-            elseif idxT > #talents then
-               break
-            else
-               idxT = idxT + 1
-            end
-         end
-         v = v - consumed
-      end
-   end
-   return base_incFeedback(self, v, set)
+			}
+			local idxT = 1
+			while overcharge > 0 do
+				game.logSeen(self, "#ORANGE#DEBUG: overcharging: %d on %d!#LAST#", overcharge, idxT)
+
+				if self:isTalentCoolingDown(self:getTalentFromId(talents[idxT])) then
+					self:alterTalentCoolingdown(talents[idxT], -1)
+					consumed = consumed + math.min(overcharge, cost)
+					overcharge = math.max(0, overcharge - cost)
+				elseif idxT > #talents then
+					break
+				else
+					idxT = idxT + 1
+				end
+			end
+			v = v - consumed
+		end
+	end
+	return base_incFeedback(self, v, set)
 end
 
 -- prevent horror-transformed enemies using any talents except the approved horror ones

@@ -8,8 +8,8 @@ local Level = require "engine.Level"
 
 newEffect{
 	name = "REK_DEML_SAVE_BOOST", image = "talents/rek_deml_drone_medic.png",
-	desc = "Perfect Health",
-	long_desc = function(self, eff) return ("The target's saves are boosted by %d."):format(eff.power) end,
+	desc = _t"Perfect Health",
+	long_desc = function(self, eff) return ("The target's saves are boosted by %d."):tformat(eff.power) end,
 	type = "physical",
 	subtype = { steam=true },
 	status = "beneficial",
@@ -23,8 +23,8 @@ newEffect{
 
 newEffect{
 	name = "REK_DEML_REVVED_UP", image = "talents/rek_deml_pilot_rev_up.png",
-	desc = "Revved Up",
-	long_desc = function(self, eff) return ("The target's steam speed is increased by %d%%."):format(eff.power*100) end,
+	desc = _t"Revved Up",
+	long_desc = function(self, eff) return ("The target's steam speed is increased by %d%%."):tformat(eff.power*100) end,
 	type = "physical",
 	subtype = { steam=true },
 	status = "beneficial",
@@ -36,8 +36,8 @@ newEffect{
 
 newEffect{
 	name = "REK_DEML_RIDE", image = "talents/rek_deml_pilot_automotor.png",
-	desc = "Steel Rider",
-	long_desc = function(self, eff) return ("The target is riding in a mechanical contraption."):format(eff.power) end,
+	desc = _t"Steel Rider",
+	long_desc = function(self, eff) return ("The target is riding in a mechanical contraption."):tformat(eff.power) end,
 	type = "other",
 	subtype = { steam=true, vehicle=true },
 	status = "beneficial",
@@ -79,7 +79,7 @@ newEffect{
 			self.hull = self.hull - cb.value
 			cb.value = 0
 		end
-		game:delayedLogDamage(src, self, 0, ("#SLATE#(%d to hull)#LAST#"):format(hullLost), false)
+		game:delayedLogDamage(src, self, 0, ("#SLATE#(%d to hull)#LAST#"):tformat(hullLost), false)
 		return cb.value
 	end,
 	-- on_merge = function(self, old_eff, new_eff)
@@ -125,9 +125,9 @@ newEffect{
 
 newEffect{
 	name = "REK_DEML_TEMP_HULL", image = "talents/rek_deml_pilot_patch.png",
-	desc = "Reinforced Hull",
+	desc = _t"Reinforced Hull",
 	long_desc = function(self, eff)
-		return ("Blocking up to %d total damage."):format(eff.block or 0)
+		return ("Blocking up to %d total damage."):tformat(eff.block or 0)
 	end,
 	charges = function(self, eff) return math.floor(eff.block) end,
 	type = "physical",
@@ -152,7 +152,7 @@ newEffect{
 		if value <= 0 then return end
 
 		local dam = value
-		game:delayedLogDamage(src, self, 0, ("#STEEL_BLUE#(%d to reinforced hull)#LAST#"):format(math.min(dam, eff.block)), false)
+		game:delayedLogDamage(src, self, 0, ("#STEEL_BLUE#(%d to reinforced hull)#LAST#"):tformat(math.min(dam, eff.block)), false)
 		if dam < eff.block then
 			eff.block = eff.block - dam
 			dam = 0
@@ -172,8 +172,8 @@ newEffect{
 
 newEffect{
 	name = "REK_DEML_DRIFTING", image = "talents/rek_deml_engine_drift_nozzles.png",
-	desc = "Drifting",
-	long_desc = function(self, eff) return ("The target is coasting forward."):format() end,
+	desc = _t"Drifting",
+	long_desc = function(self, eff) return ("The target is coasting forward."):tformat() end,
 	type = "other",
 	subtype = { steam=true },
 	status = "beneficial",

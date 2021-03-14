@@ -66,7 +66,7 @@ newTalent{
 The sheer mass of your ride gives Ramming Speed and Full Throttle %d%% more impact damage.
 While riding, you have %d%% resistance to knockback and gain 1 size category. 
 
-#{italic}#Your battlewagon is both an unstoppable force and an immovable object.#{normal}#]]):format(t.getHullBoost(self, t), t.getKnockImmune(self, t)*100, t.getRamBoost(self, t)*100)
+#{italic}#Your battlewagon is both an unstoppable force and an immovable object.#{normal}#]]):tformat(t.getHullBoost(self, t), t.getKnockImmune(self, t)*100, t.getRamBoost(self, t)*100)
 	end,
 }
 
@@ -111,7 +111,7 @@ newTalent{
   Level 2: Gauss Cannon - Deal %0.2f unresistable lightning damage to all targets in a range 10 line.
   Level 3: Harpoon Launcher - Deal %0.2f physical bleed damage to a single target and pull (#SLATE#checks knockback immunity#LAST#) it adjacent to you.
 The main guns share a %d turn cooldown.
-Steampower: increasess damage]]):format(damDesc(self, DamageType.FIRE, t.getMissileDamage(self, t)), t.getMissileRadius(self, t), damDesc(self, DamageType.LIGHTNING, t.getGaussDamage(self, t)), damDesc(self, DamageType.PHYSICAL, t.getHarpoonDamage(self, t)), self:getTalentCooldown(t))
+Steampower: increasess damage]]):tformat(damDesc(self, DamageType.FIRE, t.getMissileDamage(self, t)), t.getMissileRadius(self, t), damDesc(self, DamageType.LIGHTNING, t.getGaussDamage(self, t)), damDesc(self, DamageType.PHYSICAL, t.getHarpoonDamage(self, t)), self:getTalentCooldown(t))
 	end,
 }
 
@@ -125,24 +125,24 @@ newTalent{
 	callbackOnKill = function(self, t, src, death_note)
 		if self:reactionToward(src) >= 0 then return end
 		game:onTickEnd(function()
+										 local cd = self:callTalent(self.T_REK_DEML_BATTLEWAGON_MAYHEM_ENGINE, "getCDReduce")
 										 if self:isTalentCoolingDown(self.T_REK_DEML_ENGINE_RAMMING_SPEED) then
-											 self:alterTalentCoolingdown(self.T_REK_DEML_ENGINE_RAMMING_SPEED, -1000)
+											 self:alterTalentCoolingdown(self.T_REK_DEML_ENGINE_RAMMING_SPEED, -cd)
 										 end
 										 if self:isTalentCoolingDown(self.T_REK_DEML_MG_MISSILE) then
-											 self:alterTalentCoolingdown(self.T_REK_DEML_MG_MISSILE, -1000)
+											 self:alterTalentCoolingdown(self.T_REK_DEML_MG_MISSILE, -cd)
 										 end
 										 if self:isTalentCoolingDown(self.T_REK_DEML_MG_GAUSS) then
-											 self:alterTalentCoolingdown(self.T_REK_DEML_MG_GAUSS, -1000)
+											 self:alterTalentCoolingdown(self.T_REK_DEML_MG_GAUSS, -cd)
 										 end
 										 if self:isTalentCoolingDown(self.T_REK_DEML_MG_HARPOON) then	 
-											 self:alterTalentCoolingdown(self.T_REK_DEML_MG_HARPOON, -1000)
+											 self:alterTalentCoolingdown(self.T_REK_DEML_MG_HARPOON, -cd)
 										 end
 									 end)
 	end,
 	info = function(self, t)
 		return ([[Push your battlewagon harder as the battle intensifies.
-Whenever you kill an enemy, the cooldowns of Ramming Speed and your Main Guns are reset.
-When you detonate an explosive charge or mecharachnid mine, the cooldowns are reduced by %d.]]):format(t.getCDReduce(self, t))
+Whenever you kill an enemy, or when you detonate an explosive charge or mecharachnid mine, the cooldowns of  Ramming Speed and your Main Guns are reduced by %d.]]):tformat(t.getCDReduce(self, t))
 	end,
 }
 
@@ -226,7 +226,7 @@ newTalent{
 		if not self.runeplate_inscription then 
 			return ([[The chassis of your battlewagon serves as a place to inscribe an additional inscription (though since it is not alive, it can only be a rune, not an infusion or injector).
 			
-			Use your 'Choose Runeplate' talent to choose a rune to apply. Once choosen, you can use the rune by activating this talent.	The inscription will inherit the power and any stat scaling the inscription may have had, but the cooldown is based solely on this talent.]]):format(cd) 
+			Use your 'Choose Runeplate' talent to choose a rune to apply. Once choosen, you can use the rune by activating this talent.	The inscription will inherit the power and any stat scaling the inscription may have had, but the cooldown is based solely on this talent.]]):tformat(cd) 
 		else
 			local o = self.runeplate_inscription
 			self.__inscription_data_fake = o.inscription_data
@@ -238,7 +238,7 @@ newTalent{
 			return ([[Use mana-charged steam to invoke your runeplate. You may permanently replace the rune with another by using 'Choose Runeplate' again. Note that this talent will be put on cooldown.
 			
 			#GOLD#Runeplate Effect:#LAST#
-			%s]]):format(tal_desc)
+			%s]]):tformat(tal_desc)
 		end
 	end,
 }
