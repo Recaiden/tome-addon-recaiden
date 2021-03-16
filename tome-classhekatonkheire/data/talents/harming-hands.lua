@@ -92,7 +92,7 @@ newTalent{
 		return {type="ball", range=self:getTalentRange(t), friendlyfire=false, radius=self:getTalentRadius(t), talent=t}
 	end,
 	getDamage = function(self, t) return self:combatTalentStatDamage(t, "str", 20, 200) end,
-	getSlow = function(self, t) return self:combatTalentLimit(t, 66, 30, 50) end,
+	getSlow = function(self, t) return self:combatTalentLimit(t, 0.66, 0.30, 0.50) end,
 	getSlowDuration = function(self, t) return 5 end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
