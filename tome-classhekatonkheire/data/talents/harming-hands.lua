@@ -8,6 +8,7 @@ newTalent{
 		if self:hasEffect(self.EFF_REK_HEKA_CHOKE_READY) then return 30 end
 		return 20
 	end,
+	invest_hands = true,
 	range = 10,
 	requires_target = true,
 	getDuration = function (self, t) return 6 end,
@@ -27,7 +28,8 @@ newTalent{
 										 end)
 		end
 		game:onTickEnd(function() 
-										 self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self), {cost=util.getval(t.hands, self, t), src=self})
+										 self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self),
+																		{investitures={{power=util.getval(t.hands, self, t)}}, src=self})
 									 end)
 		return true
 	end,
@@ -43,6 +45,7 @@ newTalent{
 	type = {"technique/harming-hands", 2}, require = str_req2, points = 5,
 	speed = "weapon",
 	hands = 10,
+	invest_hands = true,
 	tactical = { CLOSEIN = 1 },
 	cooldown = 5,
 	range = 10,
@@ -52,22 +55,28 @@ newTalent{
 		local tg = self:getTalentTarget(t)
 		local x, y, target = self:getTarget(tg)
 		if not target or not self:canProject(tg, x, y) then return nil end
-		if not target:attr("never_move") then return nil end
-		if target:canBe("knockback") then
-			src:pull(self.x, self.y, 2)			
-		else
-			game.logSeen(src, "#ORCHID#%s resists the hands' pull!", target:getName():capitalize())
+		if not target:attr("never_move") then
+			game.logPlayer(target, "Target isn't pinned.")
+			return nil
 		end
-		target:setEffect(target.EFF_REK_HEKA_PULLED, t:_getDuration(self), {src=self})		
+		-- Manually test knockback immunity because we're ignoring the pin
+		if rng.percent(100 - (target:attr("knockback_immune") or 0)) then
+			target:pull(self.x, self.y, 2)
+			target:setEffect(target.EFF_REK_HEKA_PULLED, t:_getDuration(self), {src=self})
+		else
+			game.logSeen(target, "#ORCHID#%s resists the hands' pull!", target:getName():capitalize())
+		end
+		
 		game:onTickEnd(function() 
-										 self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self), {cost=util.getval(t.hands, self, t), src=self})
+										 self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self),
+																		{investitures={{power=util.getval(t.hands, self, t)}}, src=self})
 									 end)
 		return true
 	end,
 
 	info = function(self, t)
 		return ([[Draw your hands in to reunite with your body.
-Target a pinned creature and pull it 2 spaces towards you immediately, and 1 space per turn for %d turns (#SLATE#checks knockback resistance#LAST#).]]):tformat(t.getDuration(self, t))
+Target a pinned creature and pull it 2 spaces towards you immediately, and 1 space per turn for %d turns (#SLATE#checks knockback resistance#LAST#).  The effect will end if they become un-pinned.]]):tformat(t.getDuration(self, t))
 	end,
 }
 
@@ -82,9 +91,9 @@ newTalent{
 	target = function(self, t)
 		return {type="ball", range=self:getTalentRange(t), friendlyfire=false, radius=self:getTalentRadius(t), talent=t}
 	end,
-	getDamage = function(self, t) return 1 end,
-	getSlow = function(self, t) return 1 end,
-	getSlowDuration = function(self, t) return 1 end,
+	getDamage = function(self, t) return self:combatTalentStatDamage(t, "str", 20, 200) end,
+	getSlow = function(self, t) return self:combatTalentLimit(t, 66, 30, 50) end,
+	getSlowDuration = function(self, t) return 5 end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y, target = self:getTarget(tg)
@@ -127,14 +136,6 @@ newTalent{
 	end,
 	activate = function(self, t)
 		--t.doPunch(self, t)
-		-- local tg = self:getTalentTarget(t)
-		-- local x, y, target = self:getTarget(tg)
-		-- if not target or not self:canProject(tg, x, y) then return nil end
-
-		-- local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
-		-- if hit and not target.dead then
-		-- 	target:setEffect(target.EFF_REK_HEKA_IMMERSED, t.getDuration(self, t), {apply_power=self:combatPhysicalpower(), dam=t.getDamageImmersion(self, t), resist=t.getRes(self, t), numb=t.getNumb(self, t), src=self})
-		-- end
 		return {}
 	end,
 	deactivate = function(self, t, p)

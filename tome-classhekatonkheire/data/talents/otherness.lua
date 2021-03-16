@@ -5,7 +5,7 @@ newTalent{
 	cooldown = 12,
 	hands = 10,
 	radius = 1,
-	range = function(self, t) return math.floor(self:combatTalentLimit(t, 10, 4, 8)) end,
+	range = function(self, t) return math.max(2, math.floor(self:combatTalentLimit(t, 8, 2, 7))) end,
 	requires_target = true,
 	target = function(self, t)	return {type="hit", nolock=true, range=self:getTalentRange(t)} end,
 	getShield = function(self, t) return self:combatTalentSpellDamage(t, 30, 370) end,
@@ -37,14 +37,14 @@ newTalent{
 				hit = true
 			end)
 		if hit then
-			self:setEffect(self.EFF_DAMAGE_SHIELD, 1, {color={0xe1/255, 0xcb/255, 0x3f/255}, power=self:spellCrit(t:_getShield(self))})
+			self:setEffect(self.EFF_DAMAGE_SHIELD, 2, {color={0xe1/255, 0xcb/255, 0x3f/255}, power=self:spellCrit(t:_getShield(self))})
 			game:playSoundNear(self, "talents/heal")
 		end
 		
 		return true
 	end,
 	info = function(self, t)
-		return ([[Withdraw into the other place and reemerge nearby, teleporting up to %d spaces.  If this brings you adjacent to an enemy, you create a shield of distorted space that blocks %d damage (based on spellpower) for 1 turn.]]):tformat(self:getTalentRange(t), t:_getShield(self))
+		return ([[Withdraw into the other place and reemerge nearby, teleporting up to %d spaces.  If this brings you adjacent to an enemy, you create a shield of distorted space that blocks %d damage (based on spellpower) for 2 turns.]]):tformat(self:getTalentRange(t), t:_getShield(self))
 	end,
 }
 

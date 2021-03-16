@@ -134,7 +134,7 @@ if not Talents.talents_types_def["spell/headless-horror"] then
 end
 
 if not Talents.talents_types_def["spell/otherness"] then
-   newTalentType{ allow_random=true, is_spell=true, generic=true, type="spell/otherness", name = "Otherness", description = "Look over and see through." }
+   newTalentType{ allow_random=true, is_spell=true, generic=true, type="spell/otherness", name = "Otherside", description = "Look over and see through." }
    load("/data-classhekatonkheire/talents/otherness.lua")
 end
 

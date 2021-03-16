@@ -26,7 +26,8 @@ local base_playerFOV = _M.playerFOV
 function _M:playerFOV()
 	base_playerFOV(self)
 
-	if self:knowTalent(self.T_REK_HEKA_HEADLESS_EYES) then
+
+	if self:knowTalent(self.T_REK_HEKA_HEADLESS_EYES) and game and game.zone and not game.zone.wilderness then
 		local t = self:getTalentFromId(self.T_REK_HEKA_HEADLESS_EYES)
 		local range = self:getTalentRange(t)
 		local sqsense = range * range

@@ -3,14 +3,15 @@ local Astar = require "engine.Astar"
 -- Eye Action Priority
 -- Teleport back within range of summoner
 -- Get bored after 10 turns fighting the same enemy
--- Chance to bite an enemy, 10% @ 75% life, guaranteed at 30% life or les
 -- Confront an enemy if you have one
 -- Move towards a location if you have one
 -- 65% Chance to pick a new enemy within range 8 and confront them
 -- Pick a new location withing range 4 and move towards it.
 
 -- Confronting-an-enemy
--- 15% chance to bite
+-- Chance to bite an enemy to heal self, 10% @ 75% life, guaranteed at 30% life or les
+-- 15% chance to bite even if not hurt
+-- variable chance to Stagger
 -- If within range 6, chance to use Lash
 -- If outside range 3, another chance to use Lash
 -- (20% chance to get bored)
@@ -59,25 +60,50 @@ end
 local function eyeMoveToActorTarget(self)
 	local range = core.fov.distance(self.x, self.y, self.ai_target.actor.x, self.ai_target.actor.y)
 
+	-- chance to heal
+	if self.life < self.max_life * 0.75 then
+		local chance = (((self.max_life - self.life) / self.max_life * 100) - 20)*2
+		if rng.percent(chance) then
+					
+			-- access talent directly to get its target
+			local t = self:getTalentFromId(self.T_REK_HEKA_EYE_BLINDSIDE)
+			if self:getTalentRange(t) and self:preUseTalent(t, true, true) then
+				if self:useTalent(self.T_REK_HEKA_EYE_BLINDSIDE) then
+					self.ai_state.target_time = self.ai_state.target_timeout
+					return true
+				end
+			end
+		
+			return true
+		end
+	end
+
+
+	
 	-- use the target blindside chance if it was assigned; otherwise, use the normal chance
 	local blindsideChance = self.ai_target.blindside_chance or self.ai_state.blindside_chance
 	self.ai_target.blindside_chance = nil
 	if rng.percent(blindsideChance) then
-		--game.logPlayer(self.summoner, "#PINK#%s is about to blindside.", self.name:capitalize())
-		-- try a blindside attack
-		
-		self:blindsideTalent()
-		self.ai_state.target_time = self.ai_state.target_timeout
+
+		-- access talent directly to get its target
+		local t = self:getTalentFromId(self.T_REK_HEKA_EYE_BLINDSIDE)
+		if self:getTalentRange(t) and self:preUseTalent(t, true, true) then
+			if self:useTalent(self.T_REK_HEKA_EYE_BLINDSIDE) then
+				self.ai_state.target_time = self.ai_state.target_timeout
+				return true
+			end
+		end
 		
 		--game.logPlayer(self.summoner, "#PINK#%s -> blindside", self.name:capitalize())
 		return true
 	end
 
-	if range <= 6 and self.ai_state.close_attack_spell_chance and rng.percent(self.ai_state.close_attack_spell_chance) then
+	if range <= 1 and self.ai_state.close_attack_spell_chance and rng.percent(self.ai_state.close_attack_spell_chance) then
 		-- chance for close spell
 		if self:closeAttackSpell() then return true end
+	elseif range <= 6 and self.ai_state.far_attack_spell_chance and rng.percent(self.ai_state.far_attack_spell_chance) then
+		if self:farAttackSpell() then return true end
 	elseif range <= 6 and range >= 4 and self.ai_state.far_attack_spell_chance and rng.percent(self.ai_state.far_attack_spell_chance) then
-		-- chance for a far spell
 		if self:farAttackSpell() then return true end
 	end
 
@@ -204,7 +230,7 @@ newAI("heka_eye", function(self)
 		clearTarget(self)
 
 		-- phase door into range
-		self:useTalent(self.T_EYE_PHASE_DOOR)
+		self:useTalent(self.T_REK_HEKA_EYE_PHASE_DOOR)
 		--game.logPlayer(self.summoner, "#PINK#%s -> phase door", self.name:capitalize())
 		return true
 	end
@@ -214,15 +240,6 @@ newAI("heka_eye", function(self)
 		--game.logPlayer(self.summoner, "#PINK#%s is out of time for target.", self.name:capitalize())
 
 		clearTarget(self)
-	end
-
-	-- chance to heal
-	if self.life < self.max_life * 0.75 then
-		local chance = (((self.max_life - self.life) / self.max_life * 100) - 20)*2
-		if rng.percent(chance) then
-			self:healSelf()
-			return true
-		end
 	end
 
 	-- move to live target?

@@ -41,10 +41,13 @@ newTalent{
 		
 		--apply knockback
 		for i = 1, #actors do
-			if core.fov.distance(self.x, self.y, actors[i].actor.x, actors[i].actor.y) > 1 then
-				if actors[i].actor:canBe("knockback") then
-					actors[i].actor:knockback(self.x, self.y,  t.getKnockback(self, t))
-					if wrath then actors[i]:setEffect(actors[i].EFF_PINNED, 1, {src=self}) end
+			local act = actors[i].actor
+			if core.fov.distance(self.x, self.y, act.x, act.y) > 1 then
+				if not act.dead and act:canBe("knockback") then
+					act:knockback(self.x, self.y,  t.getKnockback(self, t))
+					if wrath then
+						act:setEffect(act.EFF_PINNED, 1, {src=self})
+					end
 				end
 			end
 		end

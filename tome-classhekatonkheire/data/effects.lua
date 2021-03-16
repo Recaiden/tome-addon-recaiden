@@ -51,6 +51,26 @@ newEffect{
 }
 
 newEffect{
+	name = "REK_HEKA_MAGPIE_WEAPONS", image = "talents/rek_heka_helping_magpie.png",
+	desc = _t"Magpie Weapon",
+	long_desc = function(self, eff) return ("This creature is ready to attack with a stolen weapon for %d%% damage."):tformat(eff.mult) end,
+	charges = function(self, eff) return eff.stacks end,
+	type = "physical",
+	subtype = { might=true },
+	status = "beneficial",
+	parameters = { weapon=nil, mult=0.5 },
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+	end,
+	callbackOnMeleeAttack = function(self, eff, target, hitted, crit, weapon, damtype, mult, dam)
+		if weapon == self.combat then return end --not with unarmed
+		self.removeEffect(self.EFF_REK_HEKA_MAGPIE_WEAPONS)
+		self:attackTargetWith(target, eff.weapon, nil, eff.mult)
+	end,
+}
+
+newEffect{
 	name = "REK_HEKA_IMMERSED", image = "talents/rek_heka_titanic_immersion.png",
 	desc = _t"Immersed",
 	long_desc = function(self, eff) return ("Projected into the warped realm of a hekatonkheire, reducing damge taken by %d%%, reducing damage dealt by %d%%, and being continually beaten for %d%% damage."):tformat(eff.resist, eff.numb, eff.dam) end,
@@ -102,25 +122,101 @@ newEffect{
 newEffect{
 	name = "REK_HEKA_INVESTED", image = "talents/rek_heka_otherness_sudden_insight.png",
 	desc = "Invested Hands",
-	long_desc = function(self, eff) return ("%d of your hands are busy elsewhere"):format(eff.cost) end,
+	long_desc = function(self, eff)
+		local total = 0
+		for i, instance in pairs(eff.investitures) do
+			total = total + instance.power
+		end
+		return ("%d of your hands are busy elsewhere"):format(total)
+	end,
 	type = "other",
 	subtype = { hands=true },
 	status = "neutral",
 	decrease = 0,
-	charges = function(self, eff) return eff.cost end,
-	parameters = { cost = 0 },
-	--TODO this needs to keep separate instances
+	charges = function(self, eff)
+		local total = 0
+		for i, instance in pairs(eff.investitures) do
+			total = total + instance.power
+		end
+		return math.round(total)
+	end,
+	--parameters = { cost = 0 },
 	on_merge = function(self, old_eff, new_eff)
-		old_eff.dur = new_eff.dur
-		self:removeTemporaryValue("max_hands", old_eff.costid)
-		old_eff.cost = math.min(self.max_hands, old_eff.cost + new_eff.cost)
-		old_eff.costid = self:addTemporaryValue("max_hands", -old_eff.cost)
+		-- mark old damage instances to expire
+		for i, instance in pairs(old_eff.investitures) do
+			old_eff.investitures[i].dur_m = instance.dur_m + new_eff.dur - old_eff.dur
+		end
+		-- add new instance
+		new_eff.investitures[1].dur_m = new_eff.dur
+		old_eff.investitures[#old_eff.investitures+1] = new_eff.investitures[1]
+
+		if old_eff.costid then self:removeTemporaryValue("max_hands", old_eff.costid) end
+		local total = 0
+		for i, instance in pairs(old_eff.investitures) do
+			total = total + instance.power
+		end
+		old_eff.costid = self:addTemporaryValue("max_hands", -total)
 		return old_eff
 	end,
+
+	
 	activate = function(self, eff)
-		eff.costid = self:addTemporaryValue("max_hands", -eff.cost)
+		eff.investitures[1].dur_m = eff.dur
+		--eff.costid = self:addTemporaryValue("max_hands", -eff.cost)
 	end,
 	deactivate = function(self, eff)
+	end,
+
+	on_timeout = function(self, eff)
+		local total = 0
+		for i, instance in pairs(eff.investitures) do
+			-- applications that have lived out their allotted time are cleared.
+			eff.investitures[i].dur_m = instance.dur_m - 1
+			if instance.dur_m <= 0 then
+				if self:knowTalent(self.T_REK_HEKA_HELPING_HEALING) then
+					self:callTalent(self.T_REK_HEKA_HELPING_HEALING, "doHeal", instance.power)
+				end
+				eff.investitures[i].power = 0
+			end
+
+			-- Collect
+			if eff.investitures[i].power > 0 then
+				total = total + eff.investitures[i].power
+			end
+		end
+
+		-- Update
+		if eff.costid then self:removeTemporaryValue("max_hands", eff.costid) end
+		local total = 0
+		for i, instance in pairs(eff.investitures) do
+			total = total + instance.power
+		end
+		eff.costid = self:addTemporaryValue("max_hands", -total)
+
+		if total <= 0 then
+			self:removeEffect(self.EFF_REK_HEKA_INVESTED)
+		end
+	end,
+}
+
+newEffect{
+	name = "REK_HEKA_PULLED", image = "talents/rek_heka_harming_inexorable_pull.png",
+	desc = "Inexorable Pull",
+	long_desc = function(self, eff) return ("Pinned by disembodied hands, sliding towards the hekatonkheire"):format() end,
+	type = "other",
+	subtype = { grapple=true },
+	status = "detrimental",
+	parameters = { power = 1 },
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+	end,
+	on_timeout = function(self, eff)
+		if not self:attr("never_move") then self:removeEffect(self.EFF_REK_HEKA_PULLED) end
+		-- Manually test knockback immunity because we're ignoring the pin
+		if rng.percent(100 - (self:attr("knockback_immune") or 0)) then
+			self:pull(eff.src.x, eff.src.y, 1)
+		end
 	end,
 }
 
