@@ -165,6 +165,7 @@ local function createEye(self, level, tCallEyes, tPhylactery, tBlink, tStagger, 
       exp_worth = 0,
       avoid_traps = 1,
 			levitation = 1,
+			minion_be_nice = 1,
       is_wandering_eye = true,
       
       max_life = resolvers.rngavg(20,20), life_rating = 7, life_regen = 1+self:getTalentLevel(tPhylactery),

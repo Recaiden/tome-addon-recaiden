@@ -63,7 +63,7 @@ newTalent{
 	callbackOnMeleeHit = function(self, eff, target, dam)
 		if target:hasProc("heka_magpie") then return end
 		if target:isUnarmed() then return end
-		if target:canBe("disarm") and self:checkHit(self:combatPhyspower(), target:combatPhysicalResist(), 0, 95, 5) then
+		if target:canBe("disarm") and self:checkHit(self:combatPhysicalpower(), target:combatPhysicalResist(), 0, 95, 5) then
 			-- get weapon's combat table
 			if target:getInven(self.INVEN_MAINHAND) then
 				for i, o in ipairs(self:getInven(self.INVEN_MAINHAND)) do
@@ -75,6 +75,15 @@ newTalent{
 			target:setEffect(self.EFF_DISARMED, 3, {src=self})
 			target:setProc("heka_magpie", true, t.getCD(self, t))
 		end
+	end,
+	activate = function(self, t)
+		return {}
+	end,
+	deactivate = function(self, t, p)
+		if self:hasEffect(self.EFF_REK_HEKA_MAGPIE_WEAPONS) then
+			self:removeEffect(self.EFF_REK_HEKA_MAGPIE_WEAPONS)
+		end
+		return true
 	end,
 	info = function(self, t)
 		return ([[When an enemy hits you in melee, your hands swoop in to steal their weapon, disarming (#SLATE#Physical vs Physical#LAST#) them for %d turns.  Your next armed attack in that time will also attack using the stolen weapon for %d%% damage.  A given enemy can only have their weapon stolen every %d turns, and you can only hold one stolen weapon at a time.]]):tformat(t.getDuration(self, t), t.getDamage(self, t)*100, t.getCD(self, t))
