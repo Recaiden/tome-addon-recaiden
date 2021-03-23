@@ -240,6 +240,7 @@ newEffect{
 	end,
 	on_timeout = function(self, eff)
 		DamageType:get(DamageType.PHYSICAL).projector(eff.src, self.x, self.y, DamageType.PHYSICAL, eff.power)
+		if not self:checkHit(eff.savepower, self:combatPhysResist(), 0, 95, 5) then eff.dur = math.max(0, eff.dur - 1) end
 	end,
 }
 class:bindHook("DamageProjector:final", function(self, hd)
@@ -250,8 +251,8 @@ class:bindHook("DamageProjector:final", function(self, hd)
 		local eff = src:hasEffect(src.EFF_REK_HEKA_GRASPED)
 		if eff then
 			local absorbed = dam * 0.1
-			game:delayedLogDamage(src, hd.target, 0, ("#c68642#(%d to grapsing hands)#LAST#"):format(absorbed), false)
-			eff.health = eff.health - absorbed
+			game:delayedLogDamage(src, hd.target, 0, ("#c68642#(%d to grasping hands)#LAST#"):format(absorbed), false)
+			--eff.health = eff.health - absorbed
 			hd.dam = dam - absorbed
 		end
 	end

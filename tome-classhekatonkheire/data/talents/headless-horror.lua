@@ -279,7 +279,7 @@ newTalent{
 	require = mag_req1,
 	points = 5,
 	cooldown = 10,
-	range = 7,
+	range = function(self, t) return self.sight - 3 end,
 	unlearn_on_clone = true,
 	tactical = { BUFF = 5 },
 	getLevel = function(self, t) return self.level end,
@@ -291,7 +291,7 @@ newTalent{
 	getBlindsideLevel = function(self, t) return self:getTalentLevelRaw(t) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "blind_immune", 1.0)
-		self:talentTemporaryValue(p, "sight", -9)
+		--self:talentTemporaryValue(p, "sight", -9)
 	end,
 	
 	activate = function(self, t)

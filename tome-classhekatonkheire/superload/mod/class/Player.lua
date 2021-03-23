@@ -1,9 +1,9 @@
 local _M = loadPrevious(...)
 
 
-function _M:extraEye(radius, x, y, checker)
-	x = x or self.x
-	y = y or self.y
+function _M:extraEye(radius, eyeActor, checker)
+	x = eyeActor and eyeActor.x or self.x
+	y = eyeActor and eyeActor.y or self.y
 	radius = math.floor(radius)
 
 	local ox, oy
@@ -12,7 +12,7 @@ function _M:extraEye(radius, x, y, checker)
 	self:computeFOV(
 		radius, "block_sense",
 		function(x, y)
-			if not checker or checker(x, y) then
+			if not eyeActor or eyeActor:hasLOS(x, y) then
 				game.level.map:applyLite(x, y)
 				game.level.map.remembers(x, y, true)
 			end
@@ -24,17 +24,19 @@ end
 
 local base_playerFOV = _M.playerFOV
 function _M:playerFOV()
-	base_playerFOV(self)
-
-
 	if self:knowTalent(self.T_REK_HEKA_HEADLESS_EYES) and game and game.zone and not game.zone.wilderness then
+		local sightRangeOld = self.sight
+		self.sight = 1
+		base_playerFOV(self)
+		self.sight = sightRangeOld
+		
 		local t = self:getTalentFromId(self.T_REK_HEKA_HEADLESS_EYES)
 		local range = self:getTalentRange(t)
 		local sqsense = range * range
 		
 		for actor, _ in pairs(game.party.members) do
 			if actor.is_wandering_eye and not actor.dead and actor.x then
-				self:extraEye(range, actor.x, actor.y)
+				self:extraEye(range, actor)
 				local arr = actor.fov.actors_dist
 				local tbl = actor.fov.actors
 				local act
@@ -49,6 +51,8 @@ function _M:playerFOV()
 				end
 			end
 		end
+	else
+		base_playerFOV(self)
 	end
 end
 

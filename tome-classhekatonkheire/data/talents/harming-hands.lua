@@ -21,7 +21,7 @@ newTalent{
 		local x, y, target = self:getTarget(tg)
 		if not target or not self:canProject(tg, x, y) then return nil end
 		local choke = self:hasEffect(self.EFF_REK_HEKA_CHOKE_READY)
-		target:setEffect(target.EFF_REK_HEKA_GRASPED, t:_getDuration(self), {power=t:_getDamage(self), health=t:_getHealth(self), silence=choke and 1 or 0, src=self})
+		target:setEffect(target.EFF_REK_HEKA_GRASPED, t:_getDuration(self), {power=t:_getDamage(self), health=t:_getHealth(self), silence=choke and 1 or 0, savepower=self:combatPhysicalpower(), src=self})
 		if choke then
 			game:onTickEnd(function() 
 											 self:removeEffect(self.EFF_REK_HEKA_CHOKE_READY)
@@ -34,7 +34,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Send out your other hands to grab a creature, dealing %d physical damage per turn and pinning them in place for %d turns.  %d%% of the damage the grasped creature would deal is instead redirected to the hands, and after taking %d damage the hands let go.
+		return ([[Send out your other hands to grab a creature, dealing %d physical damage per turn and pinning them in place for %d turns.  While grasped the creature deals %d%% less damage to others, and each turn can make a physical save to reduce the grasp's duration.
 
 This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), t.getDuration(self, t), 10, t:_getHealth(self))
 	end,
