@@ -46,7 +46,11 @@ class:bindHook(
 
 		-- power up
 		hd.mult = hd.mult * (1 + wrath.power * wrath.stacks)
-		self:removeEffect(self.EFF_REK_HEKA_TOWERING_WRATH)
+		game:onTickEnd(function()
+										 if self:hasEffect(self.EFF_REK_HEKA_TOWERING_WRATH) then
+											 self:removeEffect(self.EFF_REK_HEKA_TOWERING_WRATH)
+										 end
+									 end)
 		return hd
 	end)
 

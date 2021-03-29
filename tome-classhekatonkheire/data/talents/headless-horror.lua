@@ -387,8 +387,9 @@ newTalent{
 	info = function(self, t)
 		local maxEyes = t.getMaxEyes(self, t)
 		return ([[Reorganize your head, allowing your eyes to fly free.
-Your sight radius is reduced by 9, but you can see anything your disembodied eyes can see and cannot be blinded.  Each Wandering Eye is a weak combatant that can attack with magical blasts or a life-draining bite attack. You can have %d wandering eyes at once and they will regrow after 10 turns if killed.
-You cannot hurt your own eyes.]]):tformat(maxEyes)
+Each Wandering Eye is a weak combatant that can attack with magical blasts or a life-draining bite attack. You can have %d wandering eyes at once and they will regrow after 10 turns if killed.
+Your sight radius becomes 1, but you cannot be blinded and can see through each eye out to a range of 7.  Any other increases and decreases to your sight radius apply to your eyes.  
+You cannot hurt or be hurt by your own eyes.]]):tformat(maxEyes)
 	end,
 }
 
@@ -407,11 +408,12 @@ newTalent{
 		for _, e in pairs(game.level.entities) do
 			if e.summoner and e.summoner == self and e.is_wandering_eye then
 				if e.life > (e.max_life * t.getRedirectThreshold(self, t) / 100) then
-					remaining = math.max(0, remaining - split)
-					sent = sent + split
+					local blocked = math.min(e.life/factor, split)
+					remaining = math.max(0, remaining - blocked)
+					sent = sent + blocked
 					state.no_reflect = true
 					e.avoid_master_damage = 1
-					DamageType.defaultProjector(src, e.x, e.y, type, split*factor, state)
+					DamageType.defaultProjector(src, e.x, e.y, type, blocked*factor, state)
 					e.avoid_master_damage = 0
 					state.no_reflect = nil
 				end
@@ -483,9 +485,10 @@ newTalent{
 	mode = "passive",
 	getStaggerLevel = function(self, t) return self:getTalentLevelRaw(t) end,
 	getSP = function(self, t) return self.level + self:combatTalentScale(t, 10, 50) end,
+	getSelfSP = function(self, t) return math.floor((self.level + self:combatTalentScale(t, 10, 50))/8) end,
 	getKnockChance = function(self, t) return self:combatTalentScale(t, 25, 66) end,
 	info = function(self, t)
-		return ([[Your eyes open upon realms of distortion and impossibility, increasing their spellpower by %d and giving them a %d%% chance to cast Staggering Gaze on enemies in melee range.  This talent stuns for 3 turns and pushes the target towards you, their summoner.
-The spellpower bonus increases with level.]]):tformat(t.getSP(self, t), t.getKnockChance(self, t))
+		return ([[Your eyes open upon realms of distortion and impossibility, increasing their spellpower by %d, your spellpower by %d per eye, and giving them a %d%% chance to cast Staggering Gaze on enemies in melee range.  This talent stuns for 3 turns and pushes the target towards you, their summoner.
+The spellpower bonuses increase with level.]]):tformat(t.getSP(self, t), t.getSelfSP(self, t), t.getKnockChance(self, t))
 	end,
 }

@@ -22,4 +22,17 @@ function _M:combatArmor()
 	return armor
 end
 
+local base_combatSpellpowerRaw = _M.combatSpellpowerRaw
+function _M:combatSpellpowerRaw(add)
+	if self:knowTalent(self.T_REK_HEKA_HEADLESS_ADAPT) then
+		for _, e in pairs(game.level.entities) do
+			if e.summoner and e.summoner == self and e.is_wandering_eye then
+				add = add + self:callTalent(self.T_REK_HEKA_HEADLESS_ADAPT,"getSelfSP")
+			end
+		end
+	end
+	
+	return base_combatSpellpowerRaw(self, add)
+end
+
 return _M
