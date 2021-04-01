@@ -299,7 +299,6 @@ newEffect{
 	end,
 	callbackOnTakeDamage = function(self, eff, src, x, y, type, value, tmp)
 		if not (self:attr("heka_block") ) or value <= 0 then return end
-		print("[FORFEND CALLBACK] dam start", value)
 
 		local dam = value
 		game:delayedLogDamage(src, self, 0, ("#STEEL_BLUE#(%d blocked)#LAST#"):tformat(math.min(dam, self.heka_block)), false)
@@ -330,8 +329,57 @@ newEffect{
 			self:removeEffect(self.EFF_REK_HEKA_FORFEND)
 		end
 
-		print("[FORFEND CALLBACK] dam end", dam)
-
 		return {dam = dam}
 	end,
 }
+
+newEffect{
+	name = "REK_HEKA_ICHOR", image = "talents/rek_heka_splinter_teeth.png",
+	desc = _t"Flow",
+	long_desc = function(self, eff) return ("This creature has become a swarm of disembodied extremities."):tformat() end,
+	charges = function(self, eff) return eff.stacks end,
+	type = "magical",
+	subtype = { might=true },
+	status = "beneficial",
+	parameters = { power=0.5, stacks=1, max_stacks=3 },
+	on_merge = function(self, old_eff, new_eff, e)
+		self:removeTemporaryValue("combat_dam", old_eff.powid)
+		if old_eff.regenid then self:removeTemporaryValue("life_regen", old_eff.regenid) end
+		if old_eff.defid then self:removeTemporaryValue("combat_def", old_eff.defid) end
+		if old_eff.accid then self:removeTemporaryValue("combat_atk", old_eff.accid) end
+		if new_eff.stacks > old_eff.stacks then
+			old_eff.stacks = new_eff.stacks
+			old_eff.dur = new_eff.dur
+		end
+		old_eff.powid = self:addTemporaryValue("combat_dam", 10*old_eff.stacks)
+		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ORGANS) then
+			old_eff.regenid = self:addTemporaryValue("life_regen", 2.5*old_eff.stacks)
+		end
+		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ARMS) then
+			old_eff.defid = self:addTemporaryValue("combat_def", 10*old_eff.stacks)
+		end
+		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ATTACK) then
+			old_eff.accid = self:addTemporaryValue("combat_atk", 10*old_eff.stacks)
+		end
+		return old_eff
+	end,
+	activate = function(self, eff)
+		eff.powid = self:addTemporaryValue("combat_dam", 10*eff.stacks)
+		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ORGANS) then
+			eff.regenid = self:addTemporaryValue("life_regen", 2.5*eff.stacks)
+		end
+		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ARMS) then
+			eff.defid = self:addTemporaryValue("combat_def", 10*eff.stacks)
+		end
+		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ATTACK) then
+			eff.accid = self:addTemporaryValue("combat_atk", 10*eff.stacks)
+		end
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("combat_dam", eff.powid)
+		if eff.regenid then self:removeTemporaryValue("life_regen", eff.regenid) end
+		if eff.defid then self:removeTemporaryValue("combat_def", eff.defid) end
+		if eff.accid then self:removeTemporaryValue("combat_atk", eff.accid) end
+	end,
+}
+
