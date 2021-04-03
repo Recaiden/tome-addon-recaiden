@@ -18,6 +18,7 @@ newTalent{
 	callbackOnMeleeAttack = function(self, t, target, hitted, crit, weapon, damtype, mult, dam)
 		if not hitted then return end
 		local tg = {type="ball", range = 10, radius=0, selffire = false, friendlyfire = false}
+		mult = mult ^ 1.5
 		local damtype = DamageType.PHYSICAL
 		local damage = t.getDamage(self, t) * mult
 		local ichor = mult
@@ -26,20 +27,18 @@ newTalent{
 			ichor = ichor * t.getPanicMult(self, t)
 		end
 		if crit then
-			damage = damage * (1.5 (self.combat_critical_power or 0) / 100)
-			ichor = ichor * (1.5 (self.combat_critical_power or 0) / 100)
+			damage = damage * (1.5 + (self.combat_critical_power or 0) / 100)
+			ichor = ichor * (1.5 + (self.combat_critical_power or 0) / 100)
 		end
-		self:setEffect(self.EFF_REK_HEKA_ICHOR, 5, {stacks=ichor, src=self})
+		self:setEffect(self.EFF_REK_HEKA_ICHOR, 5, {stacks=math.floor(ichor), src=self})
 		self:project(tg, target.x, target.y, damtype, damage)
 	end,
 	info = function(self, t)
-		return ([[Your strikes briefly crack the boundaries between places, letting you slip in the tiny parts of yourself for just a moment: your teeth.
+		return ([[Your teeth swarm and bite of their own accord, but following your lead. Weapon attacks deal additional physical damage and grant you Flow. The damage starts at %0.1f (based on spellpower), and increases with your missing life and the multiplier of the attack.
 
-Weapon attacks dealing an additional %0.1f physical damage, increased by %d%% if you are missing any life at all, and giving you Flow based on the damage.
 Spellpower: increases damage.
-Critical hits: increase damage.
 
-Flow increases your physical power by 5 per stack.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), t:_getPanicMult(self)*100)
+Flow increases your physical power by 5 per stack.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)))
 	end,
 }
 
@@ -72,6 +71,9 @@ newTalent{
 	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t, nowarning=true} end,
 	getDuration = function(self, t) return 12 end,
 	getAttacks = function(self, t) return math.floor(self:combatTalentScale(t, 2, 6)) end,
+	getDamage = function(self, t)
+		return math.max(1, self:combatScale(self:getTalentLevel(t), 1, 5, 1.5, 10))
+	end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
@@ -79,28 +81,21 @@ newTalent{
 		local _ _, x, y = self:canProject(tg, x, y)
 		local duration = t.getDuration(self, t)
 		local radius = self:getTalentRadius(t)
-		
-		local map_eff = game.level.map:addEffect(
-			self, x, y, duration, DamageType.REK_SHINE_MIRROR, 
-			{dam = self:getShieldAmount(self:spellCrit(t.getAbsorb(self, t))), radius=radius, self=self, talent = t}, 
-			radius, 5, nil, 
-			--{type="warning_ring", args = {r=220, g=220, b=220, nb=120, size=3, radius=radius}},
-			MapEffect.new{color_br=233, color_bg=233, color_bb=233, alpha=180, effect_shader="shader_images/radiation_effect.png"},
-			function(e, update_shape_only) end)
-		map_eff.name = t.name
+
+		self:setEffect(self.EFF_REK_HEKA_ARM_PORTAL, duration, {x=x, y=y, interval=math.ceil(duration / t.getAttacks(self, t)), mult=t.getDamage(self, t), src=self})
 		return true
 	end,
 	info = function(self, t)
-		local dur = t.getDur(self, t)
-		local timer = math.floor(dur / t.getAttacks(self, t))
+		local dur = t.getDuration(self, t)
+		local timer = math.ceil(dur / t.getAttacks(self, t))
 		return ([[Your body parts no longer need to stay together; send a few arms out to attack distant enemies.
 Every %d turns for the next %d turns, all enemies in the targeted area will be attacked for %d%% damage.
-Flow also increases your Defense by 5 per stack.]]):tformat(timer, dur, t.getDamage(self, t))
+Flow also increases your Defense by 5 per stack.]]):tformat(timer, dur, t.getDamage(self, t)*100)
 	end,
 }
 
 newTalent{
-	name = "Corporeal Disassembly", short_name = "REK_HEKA_SPLINTER_ATTACK",
+	name = "Disjoin", short_name = "REK_HEKA_SPLINTER_ATTACK",
 	type = {"technique/splintered-lord", 4}, require = str_req_high4, points = 5,
 	speed = "weapon",
 	hands = 25,
@@ -134,8 +129,8 @@ newTalent{
 		return ([[Separate an enemy into many parts, just like you!
 Of course, for them it is rather more dangerous.
 
-Spend all of your Flow to make an attackthat does %d%% damage and cripples (#SLATE#Accuracy vs Physical#LAST#) the target for %d turns.  The cripple is more intense for each stack of Flow.
-Flow also increases your Accuracy by 5 per stack.]]):tformat(t.getDamage(self, t)*100, t.getDuration(self, t)*100)
+Spend all of your Flow to make an attack that does %d%% damage and cripples (#SLATE#Accuracy vs Physical#LAST#) the target for %d turns.  The cripple is more intense for each stack of Flow.
+Flow also increases your Accuracy by 5 per stack.]]):tformat(t.getDamage(self, t)*100, t.getDuration(self, t))
 	end,
 }
 

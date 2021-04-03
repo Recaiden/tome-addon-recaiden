@@ -138,7 +138,7 @@ if not Talents.talents_types_def["spell/otherness"] then
    load("/data-classhekatonkheire/talents/otherness.lua")
 end
 
--- if not Talents.talents_types_def["celestial/seals"] then
---    newTalentType{ allow_random=true, is_spell=true, type="celestial/seals", name = "Seals", min_lev = 10, description = "Bind the power of the sun into magical seals beneath your feet." }
---    load("/data-classshining/talents/seals.lua")
--- end
+if not Talents.talents_types_def["technique/splintered-lord"] then
+   newTalentType{ allow_random=true, is_spell=true, type="technique/splintered-lord", name = "Splintered Lord", min_lev = 10, description = "Separate yourself into ever more pieces and fully attend to the battle." }
+   load("/data-classhekatonkheire/talents/splintered-lord.lua")
+end

@@ -51,6 +51,60 @@ newEffect{
 }
 
 newEffect{
+	name = "REK_HEKA_ARM_PORTAL", image = "talents/rek_heka_splinter_arms.png",
+	desc = _t"Divided Arms",
+	long_desc = function(self, eff) return ("Making attacks remotely."):tformat(eff.resist, eff.numb, eff.dam) end,
+	type = "other",
+	subtype = { warp=true },
+	status = "beneficial",
+	parameters = { interval=5 },
+	activate = function(self, eff)
+		eff.timer = eff.interval
+		eff.particles = Particles.new("meleestorm_constant", 1, {})
+		eff.particles.x = eff.x
+		eff.particles.y = eff.y
+		game.level.map:addParticleEmitter(eff.particles)
+	end,
+	deactivate = function(self, eff)
+		if eff.particles then
+			game.level.map:removeParticleEmitter(eff.particles)
+		end
+	end,
+	on_timeout = function(self, eff)
+		eff.timer = eff.timer - 1
+		if not eff.x or not eff.y then return end
+		if eff.timer <= 0 then
+			-- do attacks
+			local ox, oy = self.x, self.y
+			local power, stacks, dur = nil, nil, nil
+			local oeff = self:hasEffect(self.EFF_REK_HEKA_TOWERING_WRATH)
+			
+			if oeff then
+				power, stacks, dur  = oeff.power, oeff.stacks, oeff.dur
+				self:removeEffect(self.EFF_REK_HEKA_TOWERING_WRATH)
+			end
+			
+			local tg = {type="ball", range=0, selffire=false, radius=1}
+			self.x, self.y = eff.x, eff.y
+			self:project(
+				tg, eff.x, eff.y,
+				function(px, py, tg, self)
+					local target = game.level.map(px, py, Map.ACTOR)
+					if target and target ~= self then
+						self:attackTarget(target, nil, eff.mult or 1.0, true)
+					end
+				end)
+			self.x, self.y = ox, oy
+			if power then
+				self:setEffect(self.EFF_REK_HEKA_TOWERING_WRATH, dur, {power=power, stacks=stacks, max_stacks=3, src=self})
+			end
+			
+			eff.timer = eff.interval
+		end
+	end,
+}
+
+newEffect{
 	name = "REK_HEKA_MAGPIE_WEAPONS", image = "talents/rek_heka_helping_magpie.png",
 	desc = _t"Magpie Weapon",
 	long_desc = function(self, eff) return ("This creature is ready to attack with a stolen weapon for %d%% damage."):tformat(eff.mult) end,
