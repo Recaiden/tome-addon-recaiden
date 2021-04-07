@@ -77,8 +77,6 @@ local function eyeMoveToActorTarget(self)
 			return true
 		end
 	end
-
-
 	
 	-- use the target blindside chance if it was assigned; otherwise, use the normal chance
 	local blindsideChance = self.ai_target.blindside_chance or self.ai_state.blindside_chance
@@ -221,6 +219,30 @@ newAI("heka_eye", function(self)
 	-- make sure no one has turned us against our summoner
 	if self.isMySummoner and self:isMySummoner(self.ai_target.actor) then
 		clearTarget(self)
+	end
+
+	-- emergency heal
+	if self.life < self.max_life * 0.3 then
+		if eyeChooseActorTarget(self) then
+		--game.logPlayer(self.summoner, "#PINK#%s choose an actor.", self.name:capitalize())
+			
+			-- start moving to the target
+			if eyeMoveToActorTarget(self) then
+				return true
+			end
+		end
+	end
+	
+	-- stare down
+	if self.stare_down then
+		self.stare_down_time = self.stare_down_time - 1
+		if self.stare_down_time <= 0 then
+			self.stare_down = nil
+		else
+			if self:useTalent(self.T_REK_HEKA_EYE_STAREDOWN, nil, nil, true, self.stare_down_target, true) then
+				return true
+			end
+		end
 	end
 
 	-- out of summoner range?

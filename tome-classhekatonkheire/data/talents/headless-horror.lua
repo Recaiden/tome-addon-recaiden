@@ -33,6 +33,47 @@ Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.ARCANE, damage
 
 
 newTalent{
+	name = "Stare Down", short_name = "REK_HEKA_EYE_STAREDOWN",
+	type = {"spell/other", 1}, require = mag_req1, points = 5,
+	cooldown = 3,
+	tactical = { ATTACK = {MIND = 1} },
+	range = 10,
+	requires_target = true,
+	target = function(self, t) return {type="cone", range=self:getTalentRange(t), talent=t} end,
+	getDamage = function(self, t)
+		if self.summoner then
+			return self.summoner:callTalent(self.summoner.T_REK_HEKA_EYESIGHT_STARE, "getDamage")
+		else return 1 end
+	end,
+	getSlow = function(self, t)
+		if self.summoner then
+			return self.summoner:callTalent(self.summoner.T_REK_HEKA_EYESIGHT_STARE, "getSlow")
+		else return 0.1 end
+	end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+
+		if self.replace_display then
+			self.replace_display = nil
+      self:removeAllMOs()
+      game.level.map:updateMap(self.x, self.y)
+		end
+		
+		self:project(tg, x, y, DamageType.REK_HEKA_STARE, self:spellCrit(t.getDamage(self, t)))
+		local _ _, x, y = self:canProject(tg, x, y)
+		game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_fire", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
+		return true
+	end,
+	info = function(self, t)
+		local damage = t.getDamage(self, t)
+		return ([[Focus your attention into an unsettling cone, dealing %0.2f mind damage and slowing enemies by %d%%.
+Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.MIND, damage), t.getSlow(self, t)*100)
+	end,
+}
+
+newTalent{
 	name = "Phase Swim", short_name = "REK_HEKA_EYE_PHASE_DOOR",
 	type = {"spell/other", 1}, points = 5,
 	no_message = true,
@@ -186,10 +227,11 @@ local function createEye(self, level, tCallEyes, tPhylactery, tBlink, tStagger, 
       },
       summoner_hate_per_kill = self.hate_per_kill,
       resolvers.talents{
-         [self.T_REK_HEKA_EYE_PHASE_DOOR]=tCallEyes.getPhaseDoorLevel(self, tCallEyes),
-         [self.T_REK_HEKA_EYE_BLINDSIDE]=tCallEyes.getBlindsideLevel(self, tCallEyes),
-         [self.T_REK_HEKA_EYE_EYE_LASH]=tCallEyes.getLashLevel(self, tCallEyes),
-				 [self.T_REK_HEKA_EYE_KNOCKBACK]=tStagger and tStagger.getStaggerLevel(self, tStagger) or 0,
+				[self.T_REK_HEKA_EYE_STAREDOWN]=1,
+				[self.T_REK_HEKA_EYE_PHASE_DOOR]=tCallEyes.getPhaseDoorLevel(self, tCallEyes),
+				[self.T_REK_HEKA_EYE_BLINDSIDE]=tCallEyes.getBlindsideLevel(self, tCallEyes),
+				[self.T_REK_HEKA_EYE_EYE_LASH]=tCallEyes.getLashLevel(self, tCallEyes),
+				[self.T_REK_HEKA_EYE_KNOCKBACK]=tStagger and tStagger.getStaggerLevel(self, tStagger) or 0,
                        },
 			
       no_breath = 1,

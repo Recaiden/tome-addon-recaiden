@@ -28,3 +28,19 @@ newDamageType{
 	death_message = {_t"hugged"},
 }
 
+-- mind damage with 1 turn slow
+newDamageType{
+	name = _t"stare", type = "REK_HEKA_STARE",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local dur = 1
+		local slow = 0.1
+		if _G.type(dam) == "table" then dam, slow = dam.dam, dam.slow end
+		DamageType:get(DamageType.MIND).projector(src, x, y, DamageType.MIND, dam, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			target:setEffect(target.EFF_SLOW, dur, {power=slow, no_ct_effect=true})
+		end
+	end,
+}
