@@ -23,9 +23,8 @@ newBirthDescriptor{
 		["technique/titanic-blows"]={true, 0.3},
 		["technique/helping-hands"]={true, 0.3},
 		["technique/harming-hands"]={true, 0.3},
-		--["spell/mountainshaper"]={false, 0.3},
+		["spell/mountainshaper"]={false, 0.3},
 
-		
 		--advanced talents
 		["technique/splintered-lord"]={false, 0.3},
 		["spell/eyesight"]={false, 0.3},

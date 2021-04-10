@@ -477,4 +477,19 @@ newEffect{
 	end,
 }
 
+newEffect{
+	name = "REK_HEKA_DRUMMING", image = "talents/rek_heka_mountain_earthdrum.png",
+	desc = _t"Earthdrum",
+	long_desc = function(self, eff) return ("The target is moving and shifting the ground around them"):tformat() end,
+	type = "magical",
+	subtype = { warp=true },
+	status = "beneficial",
+	parameters = {turns = 0},
+	deactivate = function(self, eff)
+		local cd_base = self:getTalentCooldown(self.T_REK_HEKA_MOUNTAIN_EARTHDRUM) or 8
+		local nb = self:callTalent(self.T_REK_HEKA_MOUNTAIN_EARTHDRUM, "getNb") or eff.turns
+		local cd = math.ceil(cd_base * eff.turns / nb)
+		self:startTalentCooldown(self.T_REK_HEKA_MOUNTAIN_EARTHDRUM, cd)
+	end,
+}
 
