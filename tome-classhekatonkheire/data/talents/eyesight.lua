@@ -11,7 +11,7 @@ end
 
 newTalent{
 	name = "Evil Eye", short_name = "REK_HEKA_EYESIGHT_STARE",
-	type = {"technique/eyesight", 1}, require = mag_req_high1, points = 5,
+	type = {"spell/eyesight", 1}, require = mag_req_high1, points = 5,
 	cooldown = 5,
 	tactical = { ATTACKAREA = {MIND = 2}, DISABLE = 2 },
 	range = 10,
@@ -20,13 +20,13 @@ newTalent{
 	on_pre_use = function(self, t, silent)
 		if countEyes(self) < 1 then
 			if not silent then
-				game.logPlayer(self, "You must have temporal hounds to use this talent.")
+				game.logPlayer(self, "You must have an eye to use this talent.")
 			end
 			return false
 		end
 		return true
 	end,
-	getSlow = function(self, t) return 10 end,
+	getSlow = function(self, t) return self:combatTalentScale(t, 0.1, 0.2) end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 0, 30) end,
 	getDurationBrainlock = function(self, t) return 3 end,
 	getDurationStare = function(self, t) return 15 end,
@@ -41,6 +41,7 @@ newTalent{
 			_, _, _, tx, ty = self:canProject(tg_eye, tx, ty)
 			if tx then
 				target = game.level.map(tx, ty, Map.ACTOR)
+				if not target then return nil end
 				if not target.is_wandering_eye then return nil end
 				if not target.summoner or target.summoner ~= self then return nil end
 			end
@@ -65,15 +66,15 @@ newTalent{
 			tg.start_x, tg.start_y = a.x, a.y
 			local dam = a:spellCrit(t.getDamage(self, t))
 
-			e.ai_state.stare_down = true
-			e.ai_state.stare_down_target = {x=x, y=y}
-			e.ai_state.stare_down_time = t.getDurationStare(self, t)
+			a.ai_state.stare_down = true
+			a.ai_state.stare_down_target = {x=x, y=y}
+			a.ai_state.stare_down_time = t.getDurationStare(self, t)
 			
 			a:project(tg, x, y, function(px, py)
 				local target = game.level.map(px, py, Map.ACTOR)
-				if target and target ~= a.summoner then
+				if target and target ~= a.summoner and a.summoner ~= target.summoner then
 					DamageType:get(DamageType.MIND).projector(a, px, py, DamageType.MIND, dam)
-					target:crossTierEffect(target.EFF_BRAINLOCKED, src:combatSpellpower())
+					target:crossTierEffect(target.EFF_BRAINLOCKED, self:combatSpellpower())
 				end
 			end)
 			
@@ -86,99 +87,60 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Direct one of your eyes to stare down a targeted area. Enemies in a cone extending from the eye are instantly brainlocked using your spellpower, and each turn take %0.1f mind damage and are slowed by %d%%.  The stare will last up to %d turns, ending early if there are no targets in the area, or if the eye needs to heal.
-]]):tformat(damDesc(self, DamageType.MIND, damage), t.getSlow(self, t), t.getDurationStare(self, t))
+]]):tformat(damDesc(self, DamageType.MIND, t.getDamage(self, t)), t.getSlow(self, t), t.getDurationStare(self, t))
 	end,
 }
 
 newTalent{
-	name = "Diffuse Anatomy", short_name = "REK_HEKA_EYESIGHT_ORGANS",
-	type = {"technique/eyesight", 2},	require = mag_req_high2, points = 5,
+	name = "Oversight", short_name = "REK_HEKA_EYESIGHT_OVERWATCH",
+	type = {"spell/eyesight", 2},	require = mag_req_high2, points = 5,
 	mode = "passive",
-	critResist = function(self, t) return self:combatTalentScale(t, 15, 50, 0.75) end,
-	immunities = function(self, t) return self:combatTalentLimit(t, 1, 0.20, 0.55) end,
+	getOverwatch = function(self, t) return self:combatTalentScale(t, 1, 5) end,
+	--used in an effect applied in the eye's stare down talent via the STARE damage type
+	info = function(self, t)
+		return ([[Rest easy knowing that someone is watching your back, even if that someone is you.  When you are in the area of an Evil Eye, your health regeneration is increased by %d and your saves by %d.]]):tformat(t.getOverwatch(self, t), t.getOverwatch(self, t)*8)
+	end,
+}
+
+newTalent{
+	name = "Inescapable Gaze", short_name = "REK_HEKA_EYESIGHT_INESCAPABLE",
+	type = {"spell/eyesight", 3}, require = mag_req_high3, points = 5,
+	mode = "passive",
+	getMultiplier = function(self, t) return math.max(1, self:combatTalentLimit(t, 5, 1.5, 2.25)) end,
+	-- handled in the STARE damage type
+	info = function(self, t)
+		return ([[If an enemy is affected by multiple Evil Eyes in one turn, the damage will be increased by %d%% and the slow by %d%%.]]):tformat(t.getMultiplier(self, t)*200-100, t.getMultiplier(self, t)*100)
+	end,
+}
+
+
+newTalent{
+	name = "Panopticon", short_name = "REK_HEKA_EYESIGHT_PANOPTICON",
+	type = {"spell/eyesight", 4}, require = mag_req_high4, points = 5,
+	hands = 40,
+	tactical = { DISABLE = 5 },
+	cooldown = 50,
+	no_npc_use=true,
+	range = 5,
+	getSightBonus = function(self, t) return math.floor(self:combatTalentLimit(t, 4, 1, 3)) end,
 	passives = function(self, t, p)
-		self:talentTemporaryValue(p, "ignore_direct_crits", t.critResist(self, t))
+		self:talentTemporaryValue(p, "sight", t.getSightBonus(self, t))
 	end,
-	info = function(self, t)
-		return ([[Now that your vital organs have no need to be connected in normal space, you can hide them away from harm.
-
-You take %d%% less damage from direct critical hits.
-Flow also increases your life regeneration by 2.5 per stack.]]):tformat(t.critResist(self, t), 100*t.immunities(self, t))
-	end,
-}
-
-newTalent{
-	name = "Divided Arms", short_name = "REK_HEKA_EYESIGHT_ARMS",
-	type = {"technique/eyesight", 3}, require = mag_req_high3, points = 5,
-	speed = "weapon",
-	hands = 30,
-	tactical = { ATTACK = { weapon = 1 }, },
-	cooldown = 25,
-	range = 6,
-	radius = function (self, t) return 1 end,
-	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t, nowarning=true} end,
-	getDuration = function(self, t) return 12 end,
-	getAttacks = function(self, t) return math.floor(self:combatTalentScale(t, 2, 6)) end,
-	getDamage = function(self, t)
-		return math.max(1, self:combatScale(self:getTalentLevel(t), 1, 5, 1.5, 10))
-	end,
+	getDuration = function(self, t) return self:combatTalentScale(t, 2, 4.5)	end,
+	requires_target = true,
 	action = function(self, t)
-		local tg = self:getTalentTarget(t)
-		local x, y = self:getTarget(tg)
-		if not x or not y then return nil end
-		local _ _, x, y = self:canProject(tg, x, y)
-		local duration = t.getDuration(self, t)
-		local radius = self:getTalentRadius(t)
-
-		self:setEffect(self.EFF_REK_HEKA_ARM_PORTAL, duration, {x=x, y=y, interval=math.ceil(duration / t.getAttacks(self, t)), mult=t.getDamage(self, t), src=self})
-		return true
-	end,
-	info = function(self, t)
-		local dur = t.getDuration(self, t)
-		local timer = math.ceil(dur / t.getAttacks(self, t))
-		return ([[Your body parts no longer need to stay together; send a few arms out to attack distant enemies.
-Every %d turns for the next %d turns, all enemies in the targeted area will be attacked for %d%% damage.
-Flow also increases your Defense by 5 per stack.]]):tformat(timer, dur, t.getDamage(self, t)*100)
-	end,
-}
-
-newTalent{
-	name = "Disjoin", short_name = "REK_HEKA_EYESIGHT_ATTACK",
-	type = {"technique/eyesight", 4}, require = mag_req_high4, points = 5,
-	speed = "weapon",
-	hands = 25,
-	tactical = { ATTACK = { weapon = 2}, DISABLE = 1 },
-	cooldown = 10,
-	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
-	getDamage = function(self, t) return self:combatTalentScale(t, 1.0, 1.0) end,
-	getDuration = function(self, t) return self:combatTalentScale(t, 3, 6) end,
-	action = function(self, t)
-		local tg = self:getTalentTarget(t)
+		local tg = {type="hit", range=self:getTalentRange(t)}
 		local x, y, target = self:getTarget(tg)
-		if not target or not self:canProject(tg, x, y) then return nil end
-		local flow = 1
-		local eff = self:hasEffect(self.EFF_REK_HEKA_ICHOR)
-		if eff then flow = eff.stacks end
-		
-		local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
-		if hit then
-			target:setEffect(target.EFF_CRIPPLE, t.getDuration(self, t), {speed=0.1*flow, apply_power=self:combatAttack()})
-		end
-
-		game:onTickEnd(function()
-										 if self:hasEffect(self.EFF_REK_HEKA_ICHOR) then
-											 self:removeEffect(self.EFF_REK_HEKA_ICHOR)
-										 end
-									 end)
-
+		if not x or not y or not target then return nil end
+		if core.fov.distance(target.x, target.y, x, y) > 5 then return nil end
+		if not target:hasProc("heka_panopticon_ready") then return nil end
+		target:setEffect(target.EFF_REK_HEKA_PANOPTICON, t.getDuration(self, t), {})
+		game.level.map:particleEmitter(self.x, self.y, 1, "circle", {oversize=1.7, a=170, limit_life=12, shader=true, appear=12, speed=0, base_rot=180, img="oculatus", radius=0})
 		return true
 	end,
 	info = function(self, t)
-		return ([[Separate an enemy into many parts, just like you!
-Of course, for them it is rather more dangerous.
+		return ([[Paralyze a target wth the weight of your gaze.  A target who has been seen by at least two Evil Eyes is rendered unable to act for %d turns (#SLATE#No save or immunity#LAST#).
 
-Spend all of your Flow to make an attack that does %d%% damage and cripples (#SLATE#Accuracy vs Physical#LAST#) the target for %d turns.  The cripple is more intense for each stack of Flow.
-Flow also increases your Accuracy by 5 per stack.]]):tformat(t.getDamage(self, t)*100, t.getDuration(self, t))
+Passively increases the sight range of your eyes by %d.]]):tformat(t.getDuration(self, t), t.getSightBonus(self, t))
 	end,
 }
-

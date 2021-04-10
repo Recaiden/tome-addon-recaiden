@@ -388,6 +388,28 @@ newEffect{
 }
 
 newEffect{
+	name = "REK_HEKA_OVERWATCH", image = "talents/rek_heka_eyesight_overwatch.png",
+	desc = _t"Oversight",
+	long_desc = function(self, eff) return ("This creature feels safer with its eyes around."):tformat() end,
+	type = "mental",
+	subtype = { warp=true },
+	status = "beneficial",
+	parameters = { power=0.5 },
+	activate = function(self, eff)
+		eff.regenid = self:addTemporaryValue("life_regen", eff.power)
+		eff.pid = self:addTemporaryValue("combat_physresist", 8*eff.power)
+		eff.mid = self:addTemporaryValue("combat_mentalresist", 8*eff.power)
+		eff.sid = self:addTemporaryValue("combat_spellresist", 8*eff.power)
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("combat_spellresist", eff.sid)
+		self:removeTemporaryValue("combat_mentalresist", eff.mid)
+		self:removeTemporaryValue("combat_physresist", eff.pid)
+		self:removeTemporaryValue("life_regen", eff.regenid)
+	end,
+}
+
+newEffect{
 	name = "REK_HEKA_ICHOR", image = "talents/rek_heka_splinter_teeth.png",
 	desc = _t"Flow",
 	long_desc = function(self, eff) return ("This creature has become a swarm of disembodied extremities."):tformat() end,
@@ -436,4 +458,23 @@ newEffect{
 		if eff.accid then self:removeTemporaryValue("combat_atk", eff.accid) end
 	end,
 }
+
+newEffect{
+	name = "REK_HEKA_PANOPTICON", image = "talents/rek_heka_eyesight_panopticon.png",
+	desc = _t"Panopticon",
+	long_desc = function(self, eff) return (_t"The target sees no way out, rendering it inactive.") end,
+	type = "other",
+	subtype = { paralysis=true },
+	status = "detrimental",
+	parameters = { power=1 },
+	on_lose = function(self, err) return _t"#Target# regains the will to fight.", _t"-Unable to act" end,
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "dont_act", 1)
+		eff.particle = self:addParticles(Particles.new("circle", 1, {oversize=1, a=220, shader=true, appear=12, img="oculatus", speed=0, base_rot=180, radius=0}))
+	end,
+	deactivate = function(self, eff)
+		self:removeParticles(eff.particle)
+	end,
+}
+
 

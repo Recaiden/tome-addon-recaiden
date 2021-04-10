@@ -36,11 +36,34 @@ newDamageType{
 		useImplicitCrit(src, state)
 		local dur = 1
 		local slow = 0.1
-		if _G.type(dam) == "table" then dam, slow = dam.dam, dam.slow end
-		DamageType:get(DamageType.MIND).projector(src, x, y, DamageType.MIND, dam, state)
+		local overwatch = 0
+		local multiplier = 1
+		if _G.type(dam) == "table" then dam, slow, overwatch, multiplier = dam.dam, dam.slow, dam.overwatch, dam.multiplier end
 		local target = game.level.map(x, y, Map.ACTOR)
 		if target then
-			target:setEffect(target.EFF_SLOW, dur, {power=slow, no_ct_effect=true})
+			if src:reactionToward(target) <= 0 then
+				local mult = 1
+				local multdam = 1
+				
+				if target.turn_procs and target.turn_procs.rek_heka_stared_at then
+					for eyeid, v in pairs(target.turn_procs.rek_heka_stared_at) do
+						if eyeid ~= src.uid then
+							mult = multiplier
+							multdam = multiplier * 2 - 1
+							target:setProc("heka_panopticon_ready", 2)
+							break
+						end
+					end
+				end
+				target.turn_procs = target.turn_procs or {}
+				target.turn_procs.rek_heka_stared_at = target.turn_procs.rek_heka_stared_at or {}
+				target.turn_procs.rek_heka_stared_at[src.uid] = true
+				
+				target:setEffect(target.EFF_SLOW, dur, {power=slow*mult, no_ct_effect=true})	
+				DamageType:get(DamageType.MIND).projector(src, x, y, DamageType.MIND, dam*multdam, state)
+			elseif overwatch > 0  then
+				target:setEffect(target.EFF_REK_HEKA_OVERWATCH, 2, {power=overwatch, src=src})
+			end
 		end
 	end,
 }

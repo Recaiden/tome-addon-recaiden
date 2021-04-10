@@ -109,7 +109,7 @@ newTalent{
 }
 
 if not Talents.talents_types_def["spell/shambler"] then
-   newTalentType{ allow_random=true, is_spell=true, type="spell/shambler", name = "Shambler", description = "Walk steadily forward.  Don't worry; they will come to you." }
+   newTalentType{ allow_random=true, is_spell=true, type="spell/shambler", name = "Shambler", description = "Walk steadily forward.  Don't worry; they will come to you.  These are spells, but can be used while silenced." }
    load("/data-classhekatonkheire/talents/shambler.lua")
 end
 
@@ -129,16 +129,21 @@ if not Talents.talents_types_def["technique/harming-hands"] then
 end
 
 if not Talents.talents_types_def["spell/headless-horror"] then
-   newTalentType{ allow_random=true, is_spell=true, type="spell/headless-horror", name = "Headless Horror", description = "More eyes, bigger eyes, better eyes." }
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/headless-horror", name = "Headless Horror", description = "More eyes, bigger eyes, better eyes." }
    load("/data-classhekatonkheire/talents/headless-horror.lua")
 end
 
 if not Talents.talents_types_def["spell/otherness"] then
-   newTalentType{ allow_random=true, is_spell=true, generic=true, type="spell/otherness", name = "Otherside", description = "Look over and see through." }
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, generic=true, type="spell/otherness", name = "Otherside", description = "Look over and see through." }
    load("/data-classhekatonkheire/talents/otherness.lua")
 end
 
 if not Talents.talents_types_def["technique/splintered-lord"] then
    newTalentType{ allow_random=true, is_spell=true, type="technique/splintered-lord", name = "Splintered Lord", min_lev = 10, description = "Separate yourself into ever more pieces and fully attend to the battle." }
    load("/data-classhekatonkheire/talents/splintered-lord.lua")
+end
+
+if not Talents.talents_types_def["spell/eyesight"] then
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/eyesight", name = "Eyesight", min_lev = 10, description = "If you look hard enough, that alone is enough to kill." }
+   load("/data-classhekatonkheire/talents/eyesight.lua")
 end

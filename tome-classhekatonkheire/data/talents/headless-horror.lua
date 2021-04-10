@@ -37,9 +37,10 @@ newTalent{
 	type = {"spell/other", 1}, require = mag_req1, points = 5,
 	cooldown = 3,
 	tactical = { ATTACK = {MIND = 1} },
-	range = 10,
+	range = 0,
+	radius = 6,
 	requires_target = true,
-	target = function(self, t) return {type="cone", range=self:getTalentRange(t), talent=t} end,
+	target = function(self, t) return {type="cone", range=0, radius=self:getTalentRadius(t), talent=t} end,
 	getDamage = function(self, t)
 		if self.summoner then
 			return self.summoner:callTalent(self.summoner.T_REK_HEKA_EYESIGHT_STARE, "getDamage")
@@ -49,6 +50,16 @@ newTalent{
 		if self.summoner then
 			return self.summoner:callTalent(self.summoner.T_REK_HEKA_EYESIGHT_STARE, "getSlow")
 		else return 0.1 end
+	end,
+	getOverwatch = function(self, t)
+		if self.summoner and self.summoner:knowTalent(self.summoner.T_REK_HEKA_EYESIGHT_OVERWATCH) then
+			return self.summoner:callTalent(self.summoner.T_REK_HEKA_EYESIGHT_OVERWATCH, "getOverwatch")
+		else return 0 end
+	end,
+	getMultiplier = function(self, t)
+		if self.summoner and self.summoner:knowTalent(self.summoner.T_REK_HEKA_EYESIGHT_INESCAPABLE) then
+			return self.summoner:callTalent(self.summoner.T_REK_HEKA_EYESIGHT_INESCAPABLE, "getMultiplier")
+		else return 1 end
 	end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
@@ -60,10 +71,15 @@ newTalent{
       self:removeAllMOs()
       game.level.map:updateMap(self.x, self.y)
 		end
-		
-		self:project(tg, x, y, DamageType.REK_HEKA_STARE, self:spellCrit(t.getDamage(self, t)))
-		local _ _, x, y = self:canProject(tg, x, y)
-		game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_fire", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
+
+		local count = table.count(self:projectCollect(tg, x, y, Map.ACTOR))
+		if count == 0 then
+			self.ai_state.stare_down = nil
+			return nil
+		end
+		self:project(tg, x, y, DamageType.REK_HEKA_STARE, {dam=self:spellCrit(t.getDamage(self, t)), slow=t.getSlow(self, t), overwatch=t.getOverwatch(self, t), multiplier=t.getMultiplier(self, t)})
+		--local _ _, x, y = self:canProject(tg, x, y)
+		game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_time", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
 		return true
 	end,
 	info = function(self, t)

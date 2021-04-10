@@ -211,7 +211,7 @@ newAI("heka_eye", function(self)
 
 	-- out of summon time? summoner gone?
 	if self.summon_time <= 0 or self.summoner.dead then
-		game.logPlayer(self.summoner, "#PINK#%s vanishes.", self.name:capitalize())
+		--game.logPlayer(self.summoner, "#PINK#%s vanishes.", self.name:capitalize())
 		self:die()
 	end
 	self.summon_time = self.summon_time - 1
@@ -223,9 +223,14 @@ newAI("heka_eye", function(self)
 
 	-- emergency heal
 	if self.life < self.max_life * 0.3 then
-		if eyeChooseActorTarget(self) then
-		--game.logPlayer(self.summoner, "#PINK#%s choose an actor.", self.name:capitalize())
-			
+		--game.logPlayer(self.summoner, "#PINK#%s needs emergency healing.", self.name:capitalize())
+		if self.ai_target.actor and not self.ai_target.actor.dead then
+			--game.logPlayer(self.summoner, "#PINK#%s has existing target.", self.name:capitalize())
+			if eyeMoveToActorTarget(self) then
+				return true
+			end
+		elseif eyeChooseActorTarget(self) then
+			--game.logPlayer(self.summoner, "#PINK#%s chose new target.", self.name:capitalize())
 			-- start moving to the target
 			if eyeMoveToActorTarget(self) then
 				return true
@@ -234,12 +239,16 @@ newAI("heka_eye", function(self)
 	end
 	
 	-- stare down
-	if self.stare_down then
-		self.stare_down_time = self.stare_down_time - 1
-		if self.stare_down_time <= 0 then
-			self.stare_down = nil
+	if self.ai_state.stare_down then
+		--game.logPlayer(self.summoner, "#PINK#%s using stare down.", self.name:capitalize())
+		self.ai_state.stare_down_time = self.ai_state.stare_down_time - 1
+		if self.ai_state.stare_down_time <= 0 then
+			--game.logPlayer(self.summoner, "#PINK#%s stare has timed out.", self.name:capitalize())
+			self.ai_state.stare_down = nil
 		else
-			if self:useTalent(self.T_REK_HEKA_EYE_STAREDOWN, nil, nil, true, self.stare_down_target, true) then
+			--game.logPlayer(self.summoner, "#PINK#%s still has time on stare.", self.name:capitalize())
+			if self:useTalent(self.T_REK_HEKA_EYE_STAREDOWN, nil, nil, true, self.ai_state.stare_down_target, true) then
+				--game.logPlayer(self.summoner, "#PINK#%s stare down cast successfully.", self.name:capitalize())
 				return true
 			end
 		end
