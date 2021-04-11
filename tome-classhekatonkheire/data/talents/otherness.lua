@@ -117,15 +117,48 @@ newTalent{
 newTalent{
 	name = "Metafold", short_name = "REK_HEKA_OTHERNESS_METAFOLD",
 	type = {"spell/otherness", 4},	require = mag_req_high4, points = 5,
-	cooldown = function(self, t) return 15 end,
-	range = 1,
-	tactical = { ATTACK = { weapon = 1 }, DISABLE = 3 },
-	--no_npc_use = true,
-	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
+	cooldown = 50,
+	fixed_cooldown = true,
+	tactical = {
+		BUFF = function(self, t, aitarget)
+			local maxcount, maxlevel = t.getTalentCount(self, t), t.getMaxLevel(self, t)
+			local count, tt = 0, nil
+			for tid, _ in pairs(self.talents_cd) do
+				tt = self:getTalentFromId(tid)
+				if (tt.hands or tt.sustain_hands or tt.drain_hands) and not tt.fixed_cooldown and tt.type[2] <= maxlevel then
+					count = count + 1
+				end
+				if count >= maxcount then break end
+			end
+			return count ^.5
+		end
+	},
+	getTalentCount = function(self, t) return math.floor(self:combatTalentScale(t, 2, 7, "log")) end,
+	getMaxLevel = function(self, t) return util.bound(math.floor(self:getTalentLevel(t)), 1, 4) end,
+	getDur = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
 	action = function(self, t)
+		local tids = {}
+		for tid, _ in pairs(self.talents_cd) do
+			local tt = self:getTalentFromId(tid)
+			if not tt.fixed_cooldown then
+				if tt.type[2] <= t.getMaxLevel(self, t) and (tt.hands or tt.sustain_hands or tt.drain_hands) then
+					tids[#tids+1] = tid
+				end
+			end
+		end
+		for i = 1, t.getTalentCount(self, t) do
+			if #tids == 0 then break end
+			local tid = rng.tableRemove(tids)
+			self.talents_cd[tid] = nil
+		end
+		self:setEffect(self.EFF_METAFLOW, t:_getDur(self), {power=1})
+		self.changed = true
+		game:playSoundNear(self, "talents/spell_generic")
 		return true
 	end,
 	info = function(self, t)
-		return ([[!!!!!]]):tformat()
+		return ([[Pull yourself closer to the world, allowing you to reset the cooldown of up to %d of your talents of tier %d or less.  Only talents that cost Hands are affected.
+In addition, for %d turns you grow by 2 size categories and your attacks never miss (but can still be evaded, blocked, etc).
+(The 1st talent in a tree is Tier 1, the second Tier 2, etc.)]]):tformat(t:_getDur(self), t.getTalentCount(self, t), t.getMaxLevel(self, t))
 	end,
 }

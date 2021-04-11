@@ -35,4 +35,10 @@ function _M:combatSpellpowerRaw(add)
 	return base_combatSpellpowerRaw(self, add)
 end
 
+local base_attackTargetWith = _M.attackTargetWith
+function _M:attackTargetWith(target, weapon, damtype, mult, force_dam)
+	if self:hasEffect(self.EFF_REK_HEKA_METAFOLD) then
+		self.turn_procs.auto_melee_hit = true
+	end
+	return base_attackTargetWith(self, target, weapon, damtype, mult, force_dam)
 return _M

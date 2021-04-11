@@ -51,6 +51,22 @@ newEffect{
 }
 
 newEffect{
+	name = "REK_HEKA_METAFOLD", image = "talents/rek_heka_shambler_towering_wrath.png",
+	desc = _t"Metafold",
+	long_desc = function(self, eff) return ("This creature is revealed as a massive extradimensional horror"):tformat() end,
+	type = "magical",
+	subtype = { might=true, warp=true },
+	status = "beneficial",
+	parameters = { power=2 },
+	activate = function(self, eff)
+		eff.sizeid = self:addTemporaryValue("size_category", eff.power)
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("size_category", eff.sizeid)
+	end,
+}
+
+newEffect{
 	name = "REK_HEKA_ARM_PORTAL", image = "talents/rek_heka_splinter_arms.png",
 	desc = _t"Divided Arms",
 	long_desc = function(self, eff) return ("Making attacks remotely."):tformat(eff.resist, eff.numb, eff.dam) end,
