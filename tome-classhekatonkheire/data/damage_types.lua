@@ -28,6 +28,18 @@ newDamageType{
 	death_message = {_t"hugged"},
 }
 
+newDamageType{
+	name = _t"pit", type = "REK_HEKA_PIT", text_color = "#BLACK#",
+	projector = function(src, x, y, type, dam) end,
+	death_message = {_t"dropped"},
+}
+
+newDamageType{
+	name = _t"pillar", type = "REK_HEKA_PILLAR", text_color = "#BLACK#",
+	projector = function(src, x, y, type, dam) end,
+	death_message = {_t"stoned"},
+}
+
 -- mind damage with 1 turn slow
 newDamageType{
 	name = _t"stare", type = "REK_HEKA_STARE",
