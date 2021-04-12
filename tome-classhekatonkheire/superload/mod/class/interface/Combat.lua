@@ -41,4 +41,5 @@ function _M:attackTargetWith(target, weapon, damtype, mult, force_dam)
 		self.turn_procs.auto_melee_hit = true
 	end
 	return base_attackTargetWith(self, target, weapon, damtype, mult, force_dam)
+end
 return _M

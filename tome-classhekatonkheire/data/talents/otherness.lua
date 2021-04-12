@@ -57,10 +57,10 @@ newTalent{
 	getArmorSize = function(self, t) return self:combatTalentScale(t, 3, 6) end,
 	--implemented in superload Combat.lua
 	callbackOnKill = function(self, t, src, death_note)
-		if src.size >= self.size then return end
+		if src.size_category >= self.size_category then return end
 		local dur = 3
 		self:project(
-			tg, self.x, self.y,
+			{type="ball", radius=self:getTalentRange(t), friendlyfire=false, x=self.x, y=self.y}, self.x, self.y,
 			function(tx, ty)
 				local act = game.level.map(tx, ty, engine.Map.ACTOR)
 				if act and act:reactionToward(self) < 0 and act:canBe("stun") then
@@ -70,7 +70,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[You gain %d armor, plus %d per size category above medium you are.
-In addition, whenever you kill a creature smaller than yourself, enemies within range %d are dazed (#SLATEPhysical vs physical#LAST#) for 5 turns.
+In addition, whenever you kill a creature smaller than yourself, enemies within range %d are dazed (#SLATE#Physical vs physical#LAST#) for 5 turns.
 
 #{italic}#A warrior of your stature has little to fear from petty wounds.#{normal}#
 ]]):tformat(t:_getArmorBase(self), t:_getArmorSize(self), self:getTalentRange(t))

@@ -2,7 +2,7 @@ newTalent{
 	name = "Scattering Wave", short_name = "REK_HEKA_TITANIC_SCATTER",
 	type = {"technique/titanic-blows", 1}, require = str_req1, points = 5,
 	tactical = { ATTACK = { weapon = 2 }, ATTACKAREA = { weapon = 1 } },
-	hands = 10,
+	hands = 20,
 	cooldown = 8,
 	radius = 2,
 	range = 1,
@@ -123,7 +123,7 @@ newTalent{
 		local x, y, target = self:getTarget(tg)
 		if not target or not self:canProject(tg, x, y) then return nil end
 		local aprid = self:addTemporaryValue("combat_apr", 1000)
-		local hit = self:attackTarget(target, nil, t.getDamage(self, t), true, true)
+		local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
 		self:removeTemporaryValue("combat_apr", aprid)
 		return true
 	end,

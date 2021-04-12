@@ -19,7 +19,7 @@ newTalent{
 	name = "Towering Wrath", short_name = "REK_HEKA_SHAMBLER_TOWERING_WRATH",
 	type = {"spell/shambler", 2}, require = mag_req2, points = 5,
 	speed = "weapon",
-	hands = 10,
+	hands = 15,
 	tactical = { BUFF = 1 },
 	cooldown = 0,
 	passives = function(self, t, p) self:talentTemporaryValue(p, "size_category", 1) end,
@@ -58,6 +58,7 @@ newTalent{
 	name = "Contempt", short_name = "REK_HEKA_SHAMBLER_CONTEMPT",
 	type = {"spell/shambler", 3},
 	require = mag_req3, points = 5,
+	hands = 10,
 	cooldown = 6,
 	tactical = { ATTACK = 1, DISABLE = { knockback = 2 } },
 	is_melee = true,
@@ -68,6 +69,7 @@ newTalent{
 	callbackOnAct = function(self, t) t.autopunch(self, t) end,
 	callbackOnMove = function(self, t, moved, force, ox, oy, x, y) if moved then t.autopunch(self, t) end end,
 	autopunch = function (self, t)
+		if game.zone.wilderness then return false end
 		self.adjacent_enemies = self.adjacent_enemies or {}
 		local new_enemies = {}
 		self:project(
@@ -120,7 +122,7 @@ newTalent{
 	type = {"spell/shambler", 4},	require = mag_req4, points = 5,
 	mode = "passive",
 	getDamageChange = function(self, t)
-		return -self:combatTalentLimit(t, 50, 15, 33)
+		return -self:combatTalentLimit(t, 50, 12, 25)
 	end,
 	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, tmp, no_martyr)
 		if src and src.x and src.y then
@@ -135,7 +137,7 @@ newTalent{
 	--TODO If you've moved in the last turn?
 	info = function(self, t)
 		return ([[
-You take less damage from distant sources: %d%% less at range 3 up to %d%% less at range 10 or above.
+You take less damage from distant sources: %d%% at range 3 up to %d%% at range 10 or above.
 
 #{italic}#Slings and arrows are nothing to you.  Only those brave enough to face you in hand-to-hand combat have a chance of victory!#{normal}#]]):tformat(t.getDamageChange(self, t), t.getDamageChange(self, t)*2)
 	end,

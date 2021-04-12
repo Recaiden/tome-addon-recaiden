@@ -100,11 +100,11 @@ newTalent{
 		if not x or not y then return nil end
 		local _ _, x, y = self:canProject(tg, x, y)
 		game.level.map:particleEmitter(x, y, 2, "circle", {appear_size=0, base_rot=0, a=250, appear=6, limit_life=4, speed=0, img="hurricane_throw", radius=-0.3})
-		self:project(tg, self.x, self.y, DamageType.GRAVITY, {dam=self:physicalCrit(t:_getDamage(self)), slow=t:_getSlow(self), dur=t:_getSlowDuration(self)}, {type="bones"})
+		self:project(tg, x, y, DamageType.GRAVITY, {dam=self:physicalCrit(t:_getDamage(self)), slow=t:_getSlow(self), dur=t:_getSlowDuration(self)}, {type="bones"})
 		return true
 	end,
 	info = function(self, t)
-		return ([[Grab an enemy and twist them through impossible rotations to slam into the ground at high speed, sending out a shockwave that does %0.1f physical damage in radius %d and slows enemies by %d%% for %d turns.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), self:getTalentRadius(t), t:_getSlow(self)*100, t:_getSlowDuration(self))
+		return ([[Twist through impossible rotations to slam the ground at high speed, sending out a shockwave that does %0.1f physical damage in radius %d and slows enemies by %d%% for %d turns.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), self:getTalentRadius(t), t:_getSlow(self)*100, t:_getSlowDuration(self))
 	end,
 }
 
@@ -119,15 +119,17 @@ newTalent{
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.2, 1.2) end,
 	target = function(self, t) return {type="ball", range=0, friendlyfire=false, radius=self:getTalentRange(t), talent=t} end,
 	doPunch = function(self, t)
-		local tg = self:getTalentTarget(t)
-		local x, y, target = self:getTarget(tg)
-		if not x or not y then return nil end
-		local _ _, x, y = self:canProject(tg, x, y)
+		if self:getHands() < t.drain_hands then
+			self:forceUseTalent(t.id, {ignore_energy=true})
+			return
+		end
 		
-		self:project(tg, x, y, function(px, py, tg, self)
+		local tg = self:getTalentTarget(t)
+		
+		self:project(tg, self.x, self.y, function(px, py, tg, self)
 				local target = game.level.map(px, py, Map.ACTOR)
 				if target and self:reactionToward(target) < 0 then
-					self:attackTarget(target, nil, t.getDamage(self, t), true)
+					self:attackTarget(target, nil, t.getDamage(self, t), true, true)
 				end
 			end)
 	end,
@@ -146,6 +148,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
-		return ([[Reach into the world with all your hands, and pummel enemies within %d spaces for %d%% unarmed damage every turn.]]):tformat(self:getTalentRange(t), t.getDamage(self, t)*100)
+		return ([[Reach into the world with all your hands, and pummel enemies within %d spaces for %d%% unarmed damage every turn.
+This talent will deactivate if you run out of hands.]]):tformat(self:getTalentRange(t), t.getDamage(self, t)*100)
 	end,
 }

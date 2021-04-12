@@ -123,8 +123,7 @@ newEffect{
 newEffect{
 	name = "REK_HEKA_MAGPIE_WEAPONS", image = "talents/rek_heka_helping_magpie.png",
 	desc = _t"Magpie Weapon",
-	long_desc = function(self, eff) return ("This creature is ready to attack with a stolen weapon for %d%% damage."):tformat(eff.mult) end,
-	charges = function(self, eff) return eff.stacks end,
+	long_desc = function(self, eff) return ("This creature is ready to attack with a stolen weapon for %d%% damage."):tformat(eff.mult*100) end,
 	type = "physical",
 	subtype = { might=true },
 	status = "beneficial",
@@ -135,7 +134,10 @@ newEffect{
 	end,
 	callbackOnMeleeAttack = function(self, eff, target, hitted, crit, weapon, damtype, mult, dam)
 		if weapon == self.combat then return end --not with unarmed
-		self.removeEffect(self.EFF_REK_HEKA_MAGPIE_WEAPONS)
+		if eff.expired then return end
+		eff.expired = true
+		eff.dur = 0
+		--self.removeEffect(self.EFF_REK_HEKA_MAGPIE_WEAPONS)
 		self:attackTargetWith(target, eff.weapon, nil, eff.mult)
 	end,
 }
@@ -228,13 +230,11 @@ newEffect{
 		old_eff.costid = self:addTemporaryValue("max_hands", -total)
 		return old_eff
 	end,
-
-	
 	activate = function(self, eff)
 		eff.investitures[1].dur_m = eff.dur
-		--eff.costid = self:addTemporaryValue("max_hands", -eff.cost)
 	end,
 	deactivate = function(self, eff)
+		if eff.costid then self:removeTemporaryValue("max_hands", eff.costid) end
 	end,
 
 	on_timeout = function(self, eff)
@@ -310,7 +310,7 @@ newEffect{
 	end,
 	on_timeout = function(self, eff)
 		DamageType:get(DamageType.PHYSICAL).projector(eff.src, self.x, self.y, DamageType.PHYSICAL, eff.power)
-		if not self:checkHit(eff.savepower, self:combatPhysResist(), 0, 95, 5) then eff.dur = math.max(0, eff.dur - 1) end
+		if not self:checkHit(eff.savepower, self:combatPhysicalResist(), 0, 95, 5) then eff.dur = math.max(0, eff.dur - 1) end
 	end,
 }
 class:bindHook("DamageProjector:final", function(self, hd)
@@ -443,28 +443,30 @@ newEffect{
 			old_eff.stacks = new_eff.stacks
 			old_eff.dur = new_eff.dur
 		end
-		old_eff.powid = self:addTemporaryValue("combat_dam", 10*old_eff.stacks)
+		local pow = old_eff.stacks^0.5
+		old_eff.powid = self:addTemporaryValue("combat_dam", 5*pow)
 		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ORGANS) then
-			old_eff.regenid = self:addTemporaryValue("life_regen", 2.5*old_eff.stacks)
+			old_eff.regenid = self:addTemporaryValue("life_regen", 2.5*pow)
 		end
 		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ARMS) then
-			old_eff.defid = self:addTemporaryValue("combat_def", 10*old_eff.stacks)
+			old_eff.defid = self:addTemporaryValue("combat_def", 5*pow)
 		end
 		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ATTACK) then
-			old_eff.accid = self:addTemporaryValue("combat_atk", 10*old_eff.stacks)
+			old_eff.accid = self:addTemporaryValue("combat_atk", 5*pow)
 		end
 		return old_eff
 	end,
 	activate = function(self, eff)
-		eff.powid = self:addTemporaryValue("combat_dam", 10*eff.stacks)
+		local pow = eff.stacks^0.5
+		eff.powid = self:addTemporaryValue("combat_dam", 5*pow)
 		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ORGANS) then
-			eff.regenid = self:addTemporaryValue("life_regen", 2.5*eff.stacks)
+			eff.regenid = self:addTemporaryValue("life_regen", 2.5*pow)
 		end
 		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ARMS) then
-			eff.defid = self:addTemporaryValue("combat_def", 10*eff.stacks)
+			eff.defid = self:addTemporaryValue("combat_def", 5*pow)
 		end
 		if self:knowTalent(self.T_REK_HEKA_SPLINTER_ATTACK) then
-			eff.accid = self:addTemporaryValue("combat_atk", 10*eff.stacks)
+			eff.accid = self:addTemporaryValue("combat_atk", 5*pow)
 		end
 	end,
 	deactivate = function(self, eff)

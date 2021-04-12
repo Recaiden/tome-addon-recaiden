@@ -53,21 +53,21 @@ newTalent{
 	type = {"technique/helping-hands", 3}, require = str_req3, points = 5,
 	speed = "weapon",
 	mode = "sustained",
-	--hands = 10,
+	sustain_hands = 10,
 	tactical = { ATTACK = { weapon = 2}, DISABLE = 1 },
 	cooldown = 10,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
-	getDamage = function(self, t) return self:combatTalentScale(t, 1.0, 1.8) end,
+	getDamage = function(self, t) return self:combatTalentScale(t, 0.80, 1.5) end,
 	getDuration = function(self, t) return 2 end,
 	getCD = function(self, t) return 10 end,
-	callbackOnMeleeHit = function(self, eff, target, dam)
+	callbackOnMeleeHit = function(self, t, target, dam)
 		if target:hasProc("heka_magpie") then return end
 		if target:isUnarmed() then return end
 		if target:canBe("disarm") and self:checkHit(self:combatPhysicalpower(), target:combatPhysicalResist(), 0, 95, 5) then
 			-- get weapon's combat table
 			if target:getInven(self.INVEN_MAINHAND) then
-				for i, o in ipairs(self:getInven(self.INVEN_MAINHAND)) do
-					local combat = self:getObjectCombat(o, "mainhand")
+				for i, o in ipairs(target:getInven(self.INVEN_MAINHAND)) do
+					local combat = target:getObjectCombat(o, "mainhand")
 					self:setEffect(self.EFF_REK_HEKA_MAGPIE_WEAPONS, t.getDuration(self, t), {weapon=combat, mult=t.getDamage(self, t), src=self})
 					break
 				end
@@ -94,7 +94,7 @@ newTalent{
 	name = "Lay on Hands", short_name = "REK_HEKA_HELPING_HEALING",
 	type = {"technique/helping-hands", 4}, require = str_req4, points = 5,
 	mode = "passive",
-	getHeal = function(self, t) return self:combatTalentSpellDamage(t, 0, 14) end,
+	getHeal = function(self, t) return self:combatTalentSpellDamage(t, 10, 14) end,
 	doHeal = function(self, t, hands)
 		-- called by individual effects and talents
 		self:attr("allow_on_heal", 1)
@@ -106,7 +106,7 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[When your hands reunite with you after ending a talent that drains hands, invests hands, or has a sustained hand cost, you are healed by %d per hand.
+		return ([[When your hands reunite with you after ending a talent that drains hands, invests hands, or has a sustained hand cost, you are healed by %0.1f per hand.
 Spellpower: increases healing]]):tformat(t.getHeal(self, t))
 	end,
 }
