@@ -104,7 +104,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[If you have Towering Wrath active, you shatter any temporary damage shield protecting the target.
-Then, smash your weapon down on the target, dealing %d%% damage. Afterwards they are wounded, lowering their resistances by %d%% for 5 turns (#SLATE#No save#LAST#).]]):tformat(t.getDamage(self, t)*100, t.getResistPenalty(self, t))
+Then, smash your weapon down, dealing %d%% damage and wounding them, lowering their resistances by %d%% for 5 turns (#SLATE#No save#LAST#).]]):tformat(t.getDamage(self, t)*100, t.getResistPenalty(self, t))
 	end,
 }
 

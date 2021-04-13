@@ -36,7 +36,7 @@ newTalent{
 	info = function(self, t)
 		return ([[Your teeth swarm and bite of their own accord, but following your lead. Weapon attacks deal additional physical damage and grant you Flow. The damage starts at %0.1f (based on spellpower), and increases with your missing life and the multiplier of the attack.
 
-The frist stack of Flow increases your physical power by 5, each additional stack gives less.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)))
+The first stack of Flow increases your physical power by 5, each additional stack gives less.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)))
 	end,
 }
 
@@ -68,9 +68,9 @@ newTalent{
 	radius = function (self, t) return 1 end,
 	target = function(self, t) return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t, nowarning=true} end,
 	getDuration = function(self, t) return 12 end,
-	getAttacks = function(self, t) return math.floor(self:combatTalentScale(t, 2, 6)) end,
+	getAttacks = function(self, t) return math.floor(math.min(4, self:combatTalentScale(t, 2, 6))) end,
 	getDamage = function(self, t)
-		return math.max(1, self:combatScale(self:getTalentLevel(t), 1, 5, 1.5, 10))
+		return math.max(1, self:combatScale(self:getTalentLevel(t), 1, 3, 1.5, 8))
 	end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)

@@ -97,15 +97,13 @@ str_req_high5 = {
 newTalent{
 	name = "Hands Pool",
 	type = {"base/class", 1},
-	info = "Allows you to have pool of 100 hands, used for hekatonkheire abilities.",
+	info = "Allows you to have a pool of 100 hands, used for hekatonkheire abilities.",
 	mode = "passive",
 	hide = "always",
 	no_unlearn_last = true,
 	passives = function(self, t, p)
-		--self:talentTemporaryValue(p, "max_hands", 100)
 		self:talentTemporaryValue(p, "hands_regen", 10)
 	end,
-
 }
 
 if not Talents.talents_types_def["spell/shambler"] then

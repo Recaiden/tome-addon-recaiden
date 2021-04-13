@@ -228,6 +228,8 @@ newEffect{
 			total = total + instance.power
 		end
 		old_eff.costid = self:addTemporaryValue("max_hands", -total)
+		self:incHands(0)
+		--if self:getHands() > self:getMaxHands() then self.hands = self:getMaxHands() end
 		return old_eff
 	end,
 	activate = function(self, eff)
@@ -262,6 +264,7 @@ newEffect{
 			total = total + instance.power
 		end
 		eff.costid = self:addTemporaryValue("max_hands", -total)
+		self:incHands(0)
 
 		if total <= 0 then
 			self:removeEffect(self.EFF_REK_HEKA_INVESTED)

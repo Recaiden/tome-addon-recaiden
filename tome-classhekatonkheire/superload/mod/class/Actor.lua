@@ -38,4 +38,11 @@ function _M:hasLOS(x, y, what, range, source_x, source_y)
 	return ret
 end
 
+local base_recomputeGlobalSpeed = _M.recomputeGlobalSpeed
+function _M:recomputeGlobalSpeed()
+	local ret = base_recomputeGlobalSpeed(self)
+	self.hands_regen = 10 * self.global_speed
+	return ret
+end
+
 return _M

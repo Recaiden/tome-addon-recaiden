@@ -8,7 +8,7 @@ local Talents = require "engine.interface.ActorTalents"
 local Zone = require "engine.Zone"
 local Map = require "engine.Map"
 
-ActorResource:defineResource ("Hands", "hands", "T_HANDS_POOL", "hands_regen", "Hands represents your ability to reach into the world from the other place.  It recovers at a fixed fast rate.", 0, 100, {
+ActorResource:defineResource ("Hands", "hands", "T_HANDS_POOL", "hands_regen", "Hands represents your ability to reach into the world from the other place.  It recovers at a fixed fast rate, based on your global speed.", 0, 100, {
 	color = "#c68642#", 
 	wait_on_rest = true,
 	--status_text = function(act)

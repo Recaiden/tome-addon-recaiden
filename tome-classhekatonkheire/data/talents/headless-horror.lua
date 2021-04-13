@@ -5,7 +5,7 @@ newTalent{
 	tactical = { ATTACK = {ARCANE = 2} },
 	range = 6,
 	requires_target = true,
-	target = function(self, t) return {type="beam", range=self:getTalentRange(t), talent=t} end,
+	target = function(self, t) return {type="beam", range=self:getTalentRange(t), friendlyfire=false, talent=t} end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 130) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
@@ -30,7 +30,6 @@ newTalent{
 Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.ARCANE, damage))
 	end,
 }
-
 
 newTalent{
 	name = "Stare Down", short_name = "REK_HEKA_EYE_STAREDOWN",

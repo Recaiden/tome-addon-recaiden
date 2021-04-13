@@ -2,7 +2,7 @@ newTalent{
 	name = "Titan's Grasp", short_name = "REK_HEKA_HARMING_TITANS_GRASP",
 	type = {"technique/harming-hands", 1}, require = str_req1, points = 5,
 	tactical = { DISABLE = 2 },
-	speed= "weapon",
+	speed = "weapon",
 	cooldown = 8,
 	hands = function(self, t)
 		if self:hasEffect(self.EFF_REK_HEKA_CHOKE_READY) then return 30 end
@@ -114,8 +114,10 @@ newTalent{
 	cooldown = function(self, t) return 15 end,
 	range = 3,
 	tactical = { ATTACKAREA = { weapon = 1 } },
+	speed = "weapon",
 	mode = "sustained",
 	drain_hands = 20,
+	no_energy = function(self, t) return self:isTalentActive(t.id) end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.2, 1.2) end,
 	target = function(self, t) return {type="ball", range=0, friendlyfire=false, radius=self:getTalentRange(t), talent=t} end,
 	doPunch = function(self, t)
@@ -149,6 +151,7 @@ newTalent{
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
 		return ([[Reach into the world with all your hands, and pummel enemies within %d spaces for %d%% unarmed damage every turn.
-This talent will deactivate if you run out of hands.]]):tformat(self:getTalentRange(t), t.getDamage(self, t)*100)
+This talent will deactivate if you run out of hands.
+Deactivating this talent is instant.]]):tformat(self:getTalentRange(t), t.getDamage(self, t)*100)
 	end,
 }
