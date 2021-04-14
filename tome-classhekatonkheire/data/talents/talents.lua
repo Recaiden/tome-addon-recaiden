@@ -147,6 +147,6 @@ if not Talents.talents_types_def["spell/eyesight"] then
 end
 
 if not Talents.talents_types_def["spell/mountainshaper"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/mountainshaper", name = "Mountainshaper", min_lev = 10, description = "With his every step, the earth trembles.  With his every word, the land awakes." }
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/mountainshaper", name = "Mountainshaper", description = "With his every step, the earth trembles.  With his every word, the land awakes." }
    load("/data-classhekatonkheire/talents/mountainshaper.lua")
 end
