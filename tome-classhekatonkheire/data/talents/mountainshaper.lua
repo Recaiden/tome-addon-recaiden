@@ -14,7 +14,7 @@ newTalent{
 	type = {"spell/mountainshaper", 1}, require = str_req1, points = 5,
 	cooldown = 8,
 	speed = "movement",
-	getNb = function(self, t) return math.floor(self:combatTalentLimit(t, 8, 1.5, 4)) end,
+	getNb = function(self, t) return 2+math.floor(self:combatTalentLimit(t, 7, 1.5, 4)) end,
 	range = 1,
 	tactical = { ESCAPE=1, CLOSEIN=1 },
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), simple_dir_request=true} end, --hitball?
@@ -41,8 +41,8 @@ newTalent{
 				if not target then return end
 				enemies[#enemies+1] = target
 			end)
-		table.sort(enemies, function(a, b) return core.fov.distance(self.x, a.x, self.y, a.y) > core.fov.distance(self.x, b.x, self.y, b.y) end)
-		local actor = enemies[1]
+		--table.sort(enemies, function(a, b) return core.fov.distance(self.x, a.x, self.y, a.y) > core.fov.distance(self.x, b.x, self.y, b.y) end)
+		local actor = rng.table(enemies)
 		if not actor then return true, {ignore_cd=self:hasEffect(self.EFF_REK_HEKA_DRUMMING)} end
 
 
@@ -112,7 +112,7 @@ newTalent{
 
 								if self.pit_duration > 0 and self.summoner and not self.summoner.dead then
 									local grids = self.summoner:project(
-										{type="ball", range=0, radius=1, start_x=self.x, start_y=self.y, friendlyfire=false}, self.x, self.y,
+										{type="ball", range=0, radius=2, start_x=self.x, start_y=self.y, friendlyfire=false}, self.x, self.y,
 										function(px, py)
 											local target = game.level.map(px, py, engine.Map.ACTOR)
 											if not target then return end
@@ -123,7 +123,7 @@ newTalent{
 											end
 										end)
 									
-									game.level.map:addEffect(self, self.x, self.y, self.pit_duration, engine.DamageType.REK_HEKA_PIT, {dam=1}, 1, 5, nil, MapEffect.new{zdepth=5, overlay_particle={zdepth=5, only_one=true, type="circle", args={appear=8, img="pitfall", radius=1, base_rot=0, oversize=1.5, a=187}}, alpha=0, effect_shader="shader_images/blank_effect.png"}, nil, true)									
+									game.level.map:addEffect(self, self.x, self.y, self.pit_duration, engine.DamageType.REK_HEKA_PIT, {dam=1}, 1, 5, nil, MapEffect.new{zdepth=5, overlay_particle={zdepth=5, only_one=true, type="circle", args={appear=8, img="pitfall", radius=2, base_rot=0, oversize=1.5, a=187}}, alpha=0, effect_shader="shader_images/blank_effect.png"}, nil, true)									
 								end
 							end
 						end,
@@ -148,7 +148,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		local nb = t.getNb(self, t)
-		return ([[Move to an adjacent space, and a pillar of stone will rise up adjacent to the most distant visible foe, knocking off-balance enemies within radius 1.
+		return ([[Move to an adjacent space, and a pillar of stone will rise up behind to a visible foe, knocking off-balance enemies within radius 1.
 
 Pillars of stone block movement for %d turns.
 
@@ -193,7 +193,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[When a pillar expires, it collapses the ground in radius 1 into a pit, pinning enemies in the area for %d turns.  You do %d%% increased damage to targets in the area of a pit.
+		return ([[When a pillar expires, it collapses the ground in radius 2 into a pit, pinning enemies in the area for %d turns.  You do %d%% increased damage to targets in the area of a pit.
 
 You can activate this talent to collapse a pillar immediately.]]):tformat(t.getDuration(self, t), t.getAmp(self, t)*100-100)
 	end,
@@ -233,7 +233,7 @@ newTalent{
 		return count > 0
 	end,
 	getDuration = function(self, t) return 5 end,
-	getDamage = function(self, t) return self:combatTalentScale(t, 10, 220) end,
+	getDamage = function(self, t) return self:combatTalentPhysicalDamage(t, 10, 320) end,
 	action = function(self, t)
 		local dam = self:spellCrit(t.getDamage(self, t))
 		

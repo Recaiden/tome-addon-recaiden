@@ -12,8 +12,8 @@ newTalent{
 	range = 10,
 	requires_target = true,
 	getDuration = function (self, t) return 6 end,
-	getDamage = function (self, t) return self:combatTalentPhysicalDamage(t, 20, 100) end,
-	getHealth = function (self, t) return self:combatTalentPhysicalDamage(t, 20, 300) end,
+	getDamage = function (self, t) return 5 + self:combatTalentPhysicalDamage(t, 10, 57) end,
+	getHealth = function (self, t) return self:combatTalentPhysicalDamage(t, 10, 300) end,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nolock=true, talent = t} end,
 	getBlock = function(self, t) return self:combatTalentScale(t, 30, 200) * (1 + self.level/50) end,
 	action = function(self, t)
@@ -89,7 +89,7 @@ newTalent{
 	range = 6,
 	radius = 2,
 	target = function(self, t)
-		return {type="ball", range=self:getTalentRange(t), friendlyfire=false, radius=self:getTalentRadius(t), talent=t}
+		return {type="ball", range=self:getTalentRange(t), friendlyfire=false, nolock=true, radius=self:getTalentRadius(t), talent=t}
 	end,
 	getDamage = function(self, t) return self:combatTalentStatDamage(t, "str", 20, 200) end,
 	getSlow = function(self, t) return self:combatTalentLimit(t, 0.66, 0.30, 0.50) end,

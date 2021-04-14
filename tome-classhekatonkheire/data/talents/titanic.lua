@@ -156,11 +156,17 @@ newTalent{
 		local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
 		if hit and not target.dead then
 			target:setEffect(target.EFF_REK_HEKA_IMMERSED, t.getDuration(self, t), {apply_power=self:combatPhysicalpower(), dam=t.getDamageImmersion(self, t), resist=t.getRes(self, t), numb=t.getNumb(self, t), src=self})
+			game:onTickEnd(function() 
+											 self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self),
+																			{investitures={{power=util.getval(t.hands, self, t)}}, src=self})
+										 end)
 		end
 		return true
 	end,
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
-		return ([[Hit an enemy for %d%% damage and knock them partway into the Other Place (#SLATE#Physical vs Spell#LAST#) for %d turns. Each turn while there, they suffer an unarmed attack for %d%% damage, all other damage they take is reduced by %d%%, and all damage they deal is reduced by %d%%.]]):tformat(t.getDamage(self, t)*100, t.getDuration(self, t), t.getDamageImmersion(self, t)*100, t.getRes(self, t), t.getNumb(self, t))
+		return ([[Hit an enemy for %d%% damage and knock them partway into the Other Place (#SLATE#Physical vs Spell#LAST#) for %d turns. Each turn while there, they suffer an unarmed attack for %d%% damage, all other damage they take is reduced by %d%%, and all damage they deal is reduced by %d%%.
+
+This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(t.getDamage(self, t)*100, t.getDuration(self, t), t.getDamageImmersion(self, t)*100, t.getRes(self, t), t.getNumb(self, t))
 	end,
 }
