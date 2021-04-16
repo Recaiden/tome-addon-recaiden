@@ -185,9 +185,9 @@ newEffect{
 		self:effectTemporaryValue(eff, "combat_physcrit", eff.chance)
 		self:effectTemporaryValue(eff, "combat_spellcrit", eff.chance)
 		self:effectTemporaryValue(eff, "combat_critical_power", eff.power)
+		eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=1, oversize=0.5, a=150, appear=8, y=-0.68, speed=0, img="sudden_insight_eye", radius=0}))
 	end,
-	deactivate = function(self, eff)
-	end,
+	deactivate = function(self, eff) self:removeParticles(eff.particle) end,
 }
 
 

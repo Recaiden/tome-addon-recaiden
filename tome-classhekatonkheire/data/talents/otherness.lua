@@ -19,12 +19,12 @@ newTalent{
 		end
 		local _ _, x, y = self:canProject(tg, x, y)
 
-		game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
+		game.level.map:particleEmitter(self.x, self.y, 1, "otherside_teleport_gate_in", nil, nil, 15)
 		if not self:teleportRandom(x, y, 0) then
 			game.logSeen(self, "%s's teleport fizzles!", self:getName():capitalize())
 		else
 			game.logSeen(self, "%s emerges from nowhere!", self:getName():capitalize())
-			game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
+			game.level.map:particleEmitter(self.x, self.y, 1, "otherside_teleport_gate_out", nil, nil, 5)
 		end
 
 		local hit = false

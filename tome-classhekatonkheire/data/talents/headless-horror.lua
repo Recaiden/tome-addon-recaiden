@@ -20,7 +20,7 @@ newTalent{
 		
 		self:project(tg, x, y, DamageType.ARCANE, self:spellCrit(t.getDamage(self, t)))
 		local _ _, x, y = self:canProject(tg, x, y)
-		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "shadow_beam", {tx=x-self.x, ty=y-self.y})
+		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "arcane_drill_beam", {tx=x-self.x, ty=y-self.y})
 		game:playSoundNear(self, "talents/flame")
 		return true
 	end,
@@ -77,7 +77,6 @@ newTalent{
 			return nil
 		end
 		self:project(tg, x, y, DamageType.REK_HEKA_STARE, {dam=self:spellCrit(t.getDamage(self, t)), slow=t.getSlow(self, t), overwatch=t.getOverwatch(self, t), multiplier=t.getMultiplier(self, t)})
-		--local _ _, x, y = self:canProject(tg, x, y)
 		game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_time", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
 		return true
 	end,
@@ -110,8 +109,9 @@ newTalent{
 		end
 		
 		game.level.map:particleEmitter(self.x, self.y, 1, "teleport_out")
+		local ox, oy = self.x, self.y
 		self:teleportRandom(x, y, range)
-		game.level.map:particleEmitter(x, y, 1, "teleport_in")
+		game.level.map:particleEmitter(self.x, self.y, 1, "arcane_teleport_stream", { dx = ox - self.x, dy = oy - self.y, dir_c=0, color_r=160, color_g=50, color_b=200})
 
 		return true
 	end,
@@ -136,7 +136,8 @@ newTalent{
 		self.replace_display = mod.class.Actor.new{image=self.image_alt}
 		self:removeAllMOs()
 		game.level.map:updateMap(self.x, self.y)
-		
+
+		local ox, oy = self.x, self.y
 		local start = rng.range(0, 8)
 		for i = start, start + 8 do
 			local x = target.x + (i % 3) - 1
@@ -146,7 +147,8 @@ newTalent{
 				and not game.level.map.attrs(x, y, "no_teleport") then
 			game.level.map:particleEmitter(self.x, self.y, 1, "teleport_out")
 			self:move(x, y, true)
-			game.level.map:particleEmitter(x, y, 1, "teleport_in")
+			game.level.map:particleEmitter(self.x, self.y, 1, "arcane_teleport_stream", { dx = ox - self.x, dy = oy - self.y, dir_c=0, color_r=160, color_g=50, color_b=200})
+
 			local multiplier = self:combatTalentWeaponDamage(t, 0.9, 1.9)
 			local hit = self:attackTarget(target, nil, multiplier, true)
 			if hit then
@@ -190,7 +192,9 @@ newTalent{
 				target:setEffect(target.EFF_STUNNED, 3, {src=self})
 			end
 		end
-	
+
+		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "eye_knockback", {tx=x-self.x, ty=y-self.y})
+
 		return true
 	end,
 	info = function(self, t)

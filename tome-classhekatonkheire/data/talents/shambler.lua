@@ -87,6 +87,7 @@ newTalent{
 				if target.rank <= 1 then mult = mult * 3 elseif target.rank <= 1 then mult = mult * 2 end
 				target:setProc("heka_contempt", true, 5)
 				self:attackTarget(target, nil, mult, true, true)
+				game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(target.x-self.x), math.abs(target.y-self.y)), "red_arc", {tx=target.x-self.x, ty=target.y-self.y})
 			end
 		end
 		self.adjacent_enemies = new_enemies
