@@ -15,8 +15,12 @@ newTalent{
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y, targetMain = self:getTarget(tg)
+		if not x or not y then return nil end
 		if not self:canProject(tg, x, y) then return nil end
 		local wrath = self:hasEffect(self.EFF_REK_HEKA_TOWERING_WRATH)
+
+		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "spiky_shockwave", {tx=x-self.x, ty=y-self.y}, nil, 5)
+		
 		if targetMain then
 			local hit = self:attackTarget(targetMain, nil, t.getDamageHit(self,t), true)
 			if hit and targetMain:canBe("pin") then

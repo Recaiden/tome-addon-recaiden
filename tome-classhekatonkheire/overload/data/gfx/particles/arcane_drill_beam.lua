@@ -7,7 +7,6 @@ local breakdir = math.rad(rng.range(-8, 8))
 ray.dir = math.atan2(ty, tx)
 ray.size = math.sqrt(tx*tx+ty*ty)
 
--- Populate the beam based on the forks
 return {
 	generator = function()
 		local life = 14
@@ -28,7 +27,7 @@ return {
 				
 				x = h * math.cos(ah) + 2 * math.cos(ra) + slide * math.cos(as), xv = 0, xa = 0,
 				y = h * math.sin(ah) + 2 * math.sin(ra) + slide * math.sin(as), yv = 0, ya = 0,
-				--dir = rng.percent(50) and ray.dir + math.rad(90) or ray.dir - math.rad(90), dirv = 0, dira = 0,
+
 				dir = ray.dir, dirv=0, dira=0,
 				vel = rng.percent(80) and 0 or 0.2*ray.size/life, velv = 0, vela = 0,
 				
