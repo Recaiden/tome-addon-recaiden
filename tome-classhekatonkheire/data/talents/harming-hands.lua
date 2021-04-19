@@ -139,8 +139,12 @@ newTalent{
 		t.doPunch(self, t)
 	end,
 	activate = function(self, t)
-		--t.doPunch(self, t)
-		return {}
+		local ret = {}
+		if core.shader.active() then
+			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1, img="hundred_hand_hurricane_shield"}, shader={type="rotatingshield", noup=2.0, cylinderRotationSpeed=3.2, appearTime=0.2}})
+			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1, img="hundred_hand_hurricane_shield"}, shader={type="rotatingshield", noup=1.0, cylinderRotationSpeed=3.2, appearTime=0.2}})
+		end
+		return ret
 	end,
 	deactivate = function(self, t, p)
 		if self:knowTalent(self.T_REK_HEKA_HELPING_HEALING) then
