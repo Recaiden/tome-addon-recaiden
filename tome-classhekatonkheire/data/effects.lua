@@ -60,8 +60,10 @@ newEffect{
 	parameters = { power=2 },
 	activate = function(self, eff)
 		eff.sizeid = self:addTemporaryValue("size_category", eff.power)
+		self:addShaderAura("rek_heka_metafolded", "awesomeaura", {time_factor=16000, alpha=0.9}, "particles_images/metafolded.png")
 	end,
 	deactivate = function(self, eff)
+		self:removeShaderAura("rek_heka_metafolded")
 		self:removeTemporaryValue("size_category", eff.sizeid)
 	end,
 }

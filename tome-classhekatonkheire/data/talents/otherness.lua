@@ -135,7 +135,7 @@ newTalent{
 	},
 	getTalentCount = function(self, t) return math.floor(self:combatTalentScale(t, 2, 7, "log")) end,
 	getMaxLevel = function(self, t) return util.bound(math.floor(self:getTalentLevel(t)), 1, 4) end,
-	getDur = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
+	getDur = function(self, t) return math.max(2, math.floor(self:combatTalentScale(t, 2, 5))) end,
 	action = function(self, t)
 		local tids = {}
 		for tid, _ in pairs(self.talents_cd) do
@@ -151,7 +151,7 @@ newTalent{
 			local tid = rng.tableRemove(tids)
 			self.talents_cd[tid] = nil
 		end
-		self:setEffect(self.EFF_METAFLOW, t:_getDur(self), {power=1})
+		self:setEffect(self.EFF_REK_HEKA_METAFOLD, t:_getDur(self), {power=1})
 		self.changed = true
 		game:playSoundNear(self, "talents/spell_generic")
 		return true
@@ -159,6 +159,6 @@ newTalent{
 	info = function(self, t)
 		return ([[Pull yourself closer to the world, allowing you to reset the cooldown of up to %d of your talents of tier %d or less.  Only talents that cost Hands are affected.
 In addition, for %d turns you grow by 2 size categories and your attacks never miss (but can still be evaded, blocked, etc).
-(The 1st talent in a tree is Tier 1, the second Tier 2, etc.)]]):tformat(t:_getDur(self), t.getTalentCount(self, t), t.getMaxLevel(self, t))
+(The 1st talent in a tree is Tier 1, the second Tier 2, etc.)]]):tformat(t.getTalentCount(self, t), t.getMaxLevel(self, t), t:_getDur(self))
 	end,
 }
