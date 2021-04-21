@@ -313,13 +313,7 @@ local function createEye(self, level, tCallEyes, tPhylactery, tBlink, tStagger, 
 					value = value * self.avoid_master_damage
 				end
 				
-				 --TODO
-				 -- possible defense here
-         -- if self:knowTalent(self.T_FLN_EYE_FADE) and not self:isTalentCoolingDown(self.T_FLN_EYE_FADE) and not (self.avoid_master_damage == 0) then
-         --    self:forceUseTalent(self.T_FLN_EYE_FADE, {ignore_energy=true})
-         -- end
-
-         return mod.class.Actor.onTakeHit(self, value, src)
+				return mod.class.Actor.onTakeHit(self, value, src)
       end,
       on_act = function(self)
          -- clean up
@@ -474,7 +468,9 @@ newTalent{
 					sent = sent + blocked
 					state.no_reflect = true
 					e.avoid_master_damage = 1
-					DamageType.defaultProjector(src, e.x, e.y, type, blocked*factor, state)
+					-- takeHit since it already went through the player and to skip log
+					--DamageType.defaultProjector(src, e.x, e.y, type, blocked*factor, state)
+					e:takeHit(blocked*factor, src)
 					e.avoid_master_damage = 0
 					state.no_reflect = nil
 				end
