@@ -27,7 +27,7 @@ newTalent{
 	points = 5,
 	mode = "passive",
 	getDamage = function(self, t) return self:combatTalentMindDamage(t, 6, 60) end,
-	getAccBonus = function(self, t) return math.min(2.5, self:combatTalentScale(t, 0.5, 2.5, 1.0)) end,
+	getAccBonus = function(self, t) return math.min(2.0, self:combatTalentScale(t, 0.5, 2.0, 1.0)) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "ranged_project", {[DamageType.PHYSICAL] = t.getDamage(self, t)})
 	end,

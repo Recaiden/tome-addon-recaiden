@@ -316,6 +316,6 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Launch an arrow that cuts right through anything, hitting multiple targets in a line for %d%% armor-piercing damage and then using a kinetic link to the arrow to teleport yourselfto where it ended its flight.]]):format(t.getDamage(self, t)*100)
+		return ([[Launch an arrow with a telekinetic tether, hitting multiple targets in a line for %d%% armor-piercing damage and then teleporting yourself to where the arrow ended its flight.]]):format(t.getDamage(self, t)*100)
 	end,
 }
