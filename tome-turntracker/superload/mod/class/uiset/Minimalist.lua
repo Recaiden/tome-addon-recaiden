@@ -122,12 +122,12 @@ function _M:displayTurntracker(scale, bx, by)
 				while ticksRemaining < cutoff do
 					if first and act == game.player and self.turntracker_selected_tid then
 						eRemaining = eRemaining + player:getTalentSpeed(player:getTalentFromId(self.turntracker_selected_tid)) * game.energy_to_act
-						ticksRemaining = (eRemaining / 100) / act.global_speed
+						ticksRemaining = math.max(0, (eRemaining / 100) / act.global_speed)
 						entities[#entities+1] = {a=act, t=ticksRemaining}
 						first = false
 					else
 						eRemaining = eRemaining + game.energy_to_act
-						ticksRemaining = (eRemaining / 100) / act.global_speed
+						ticksRemaining = math.max(0, (eRemaining / 100) / act.global_speed)
 						entities[#entities+1] = {a=act, t=ticksRemaining}
 					end
 				end
