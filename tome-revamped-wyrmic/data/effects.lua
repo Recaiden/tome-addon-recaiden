@@ -575,7 +575,9 @@ newEffect{
    status = "detrimental",
    parameters = {power = 0},
    activate = function(self, eff)
+		 eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=1, oversize=1.0, a=200, appear=8, speed=0, img="rek_wyrmic_exploit_mark", radius=0}))
    end,
    deactivate = function(self, eff)
+		 self:removeParticles(eff.particle)
    end,
 }

@@ -1,8 +1,8 @@
 long_name = "Class: Revamped Wyrmic"
 short_name = "revamped-wyrmic"
 for_module = "tome"
-version = {1,6,0}
-addon_version = {0, 7, 2}
+version = {1,7,0}
+addon_version = {0, 8, 0}
 weight = 27671 --after Cults and Embers
 author = { 'recaiden' }
 description = [[A variation on wyrmics]]

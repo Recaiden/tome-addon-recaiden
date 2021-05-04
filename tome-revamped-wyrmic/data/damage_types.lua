@@ -183,39 +183,41 @@ newDamageType{
 
 -- Cold damage + freeze chance + 20% slow
 newDamageType{
-   name = "slowing ice", type = "REK_WYRMIC_COLD", text_color = "#1133F3#",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      if _G.type(dam) == "number" then
-	 dam = {dam=dam, chance=25, dur=3}
-      end
-      local target = game.level.map(x, y, Map.ACTOR)
-
-      --Static Damage
-      if target then
-	 rekWyrmicElectrocute(src, target)
-      end
-      
-      local realdam = 0
-      realdam = DamageType:get(DamageType.COLD).projector(src, x, y, DamageType.COLD, dam.dam, state)
-      if target then
-	 if dam.drain and not src:attr("dead") then
-	    src:heal(realdam * dam.drain, target)
-	 end
-	 if rng.percent(dam.chance) then
-	    target:setEffect(target.EFF_SLOW, 3, {power=0.2, no_ct_effect=true})
+	name = "slowing ice", type = "REK_WYRMIC_COLD", text_color = "#1133F3#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		if _G.type(dam) == "number" then
+			dam = {dam=dam, chance=25, dur=2}
+		else
+			dam.dur = math.max(dam.dur-1, 1)
+		end
+		local target = game.level.map(x, y, Map.ACTOR)
+		
+		--Static Damage
+		if target then
+			rekWyrmicElectrocute(src, target)
+		end
+		
+		local realdam = 0
+		realdam = DamageType:get(DamageType.COLD).projector(src, x, y, DamageType.COLD, dam.dam, state)
+		if target then
+			if dam.drain and not src:attr("dead") then
+				src:heal(realdam * dam.drain, target)
+			end
+			if rng.percent(dam.chance) then
+				target:setEffect(target.EFF_SLOW, 3, {power=0.2, no_ct_effect=true})
 	    if target:canBe("stun") then
-	       target:setEffect(target.EFF_FROZEN, dam.dur, {hp=105 + dam.dam * 1.5, apply_power=src:combatMindpower(1, nil, 0), min_dur=1})
-	       game.flyers:add(sx, sy, 30, (rng.range(0,2)-1) * 0.5, -3, "Frozen!", {0,255,155})
+				target:setEffect(target.EFF_FROZEN, dam.dur, {hp=105 + dam.dam * 1.5, apply_power=src:combatMindpower(1, nil, 0), min_dur=1})
+				game.flyers:add(sx, sy, 30, (rng.range(0,2)-1) * 0.5, -3, "Frozen!", {0,255,155})
 	    else
-	       game.flyers:add(sx, sy, 30, (rng.range(0,2)-1) * 0.5, -3, "Resist!", {0,255,155})
-	       game.logSeen(target, "%s resists!", target.name:capitalize())
+				game.flyers:add(sx, sy, 30, (rng.range(0,2)-1) * 0.5, -3, "Resist!", {0,255,155})
+				game.logSeen(target, "%s resists!", target.name:capitalize())
 	    end
-	 end
-      end
-      return realdam
-   end,
+			end
+		end
+		return realdam
+	end,
 }
 
 -- Lightning damage + daze chance
@@ -268,20 +270,20 @@ newDamageType{
    end,
 }
 
--- Physical only
+-- Fire only
 newDamageType{
-   name = "physical", type = "REK_WYRMIC_NULL",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      if _G.type(dam) == "number" then
-	 dam = {dam=dam, chance=25, dur=3}
-      end
-
-      local realdam = DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
-      local target = game.level.map(x, y, Map.ACTOR)
-      return realdam
-   end,
+	name = "fire", type = "REK_WYRMIC_NULL", text_color = "#WHITE#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		if _G.type(dam) == "number" then
+			dam = {dam=dam, chance=25, dur=3}
+		end
+		
+		local realdam = DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.FIRE, dam.dam, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		return realdam
+	end,
 }
 
 -- Physical + Blind and can accept numbers as well as tables

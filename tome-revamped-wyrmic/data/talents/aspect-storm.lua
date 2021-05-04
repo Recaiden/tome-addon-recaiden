@@ -136,90 +136,91 @@ newTalent{
 }
 
 newTalent{
-   name = "Tornado", short_name = "REK_WYRMIC_ELEC_TORNADO",
-   type = {"wild-gift/wyrm-storm", 4},
-   require = gifts_req_high3,
-   points = 5,
-   equilibrium = 14,
-   cooldown = 15,
-   proj_speed = 1, -- This is purely indicative
-   tactical = { ATTACK = { LIGHTNING = 2 }, DISABLE = { stun = 2 } },
-   range = function(self, t) return math.min(10, math.floor(self:combatTalentScale(t, 6, 9))) end,
-   requires_target = true,
-   getRadius = function(self, t) return math.floor(self:combatTalentScale(t, 2, 4, 0.5, 0, 0, true)) end,
-   getMoveDamage = function(self, t) return self:combatTalentMindDamage(t, 10, 30) end,
-   getDamage = function(self, t) return self:combatTalentMindDamage(t, 10, 150) end,
-   getStunDuration = function(self, t) return self:combatTalentScale(t, 3, 6, 0.5, 0, 0, true) end,
-   action = function(self, t)
-      local tg = {type="hit", range=self:getTalentRange(t), selffire=false, talent=t}
-      local x, y = self:getTarget(tg)
-      if not x or not y then return nil end
-      local _ _, x, y = self:canProject(tg, x, y)
-      local target = game.level.map(x, y, Map.ACTOR)
-      if not target then return nil end
-      
-      local movedam = self:mindCrit(t.getMoveDamage(self, t))
-      local dam = self:mindCrit(t.getDamage(self, t))
-      local rad = t.getRadius(self, t)
-      local dur = t.getStunDuration(self, t)
-      
-      local proj = require("mod.class.Projectile"):makeHoming(
-	 self,
-	 {particle="bolt_lightning", trail="lightningtrail"},
-	 {speed=1, name="Tornado", dam=dam, movedam=movedam, rad=rad, dur=dur},
-	 target,
-	 self:getTalentRange(t),
-	 function(self, src)
-	    local DT = require("engine.DamageType")
-	    local Map = require("engine.Map")
-	    local kb_func = function(px, py)
-	       local target = game.level.map(px, py, Map.ACTOR)
-	       
-	       if not target or target == self then return end
-	       if target:canBe("knockback") then
-		  target:knockback(src.x, src.y, 2)
-		  game.logSeen(target, "%s is knocked back!", target.name:capitalize())
-	       else
-		  game.logSeen(target, "%s resists the tornado!", target.name:capitalize())
-	       end
-	    end
-	    src:project({type="ball", radius=2, selffire=false, x=self.x, y=self.y, friendlyfire=false}, self.x, self.y, DT.REK_WYRMIC_ELEC, self.def.movedam)
-	    src:project({type="ball", radius=2, selffire=false, x=self.x, y=self.y, friendlyfire=false}, self.x, self.y, kb_func)
-	 end,
-	 function(self, src, target)
-	    local DT = require("engine.DamageType")
-	    src:project({type="ball", radius=self.def.rad, selffire=false, x=self.x, y=self.y}, self.x, self.y, DT.REK_WYRMIC_ELEC, self.def.dam)
-	    src:project({type="ball", radius=self.def.rad, selffire=false, x=self.x, y=self.y}, self.x, self.y, DT.MINDKNOCKBACK, self.def.dam)
-	    
-	    -- Lightning ball gets a special treatment to make it look neat
-	    local sradius = (1 + 0.5) * (engine.Map.tile_w + engine.Map.tile_h) / 2
-	    local nb_forks = 16
-	    local angle_diff = 360 / nb_forks
-	    for i = 0, nb_forks - 1 do
-	       local a = math.rad(rng.range(0+i*angle_diff,angle_diff+i*angle_diff))
-	       local tx = self.x + math.floor(math.cos(a) * 1)
-	       local ty = self.y + math.floor(math.sin(a) * 1)
-	       game.level.map:particleEmitter(self.x, self.y, 1, "lightning", {radius=1, tx=tx-self.x, ty=ty-self.y, nb_particles=25, life=8})
-	    end
-	    game:playSoundNear(self, "talents/lightning")
-	 end
-							     )
-      proj.energy.value = 1500 -- Give it a boost so it moves before our next turn
-      proj.homing.count = 20  -- 20 turns max
-      game.zone:addEntity(game.level, proj, "projectile", self.x, self.y)
-      game:playSoundNear(self, "talents/lightning")
-      return true
-   end,
-   info = function(self, t)
-      local rad = t.getRadius(self, t)
-      return ([[Summons a tornado that moves slowly toward its target, following it if it changes position.
+	name = "Tornado", short_name = "REK_WYRMIC_ELEC_TORNADO",
+	type = {"wild-gift/wyrm-storm", 4},
+	require = gifts_req_high3,
+	points = 5,
+	equilibrium = 14,
+	cooldown = 15,
+	proj_speed = 1, -- This is purely indicative
+	tactical = { ATTACK = { LIGHTNING = 2 }, DISABLE = { stun = 2 } },
+	range = function(self, t) return math.min(10, math.floor(self:combatTalentScale(t, 6, 9))) end,
+	requires_target = true,
+	getRadius = function(self, t) return math.floor(self:combatTalentScale(t, 2, 4, 0.5, 0, 0, true)) end,
+	getMoveDamage = function(self, t) return self:combatTalentMindDamage(t, 10, 30) end,
+	getDamage = function(self, t) return self:combatTalentMindDamage(t, 10, 150) end,
+	getStunDuration = function(self, t) return self:combatTalentScale(t, 3, 6, 0.5, 0, 0, true) end,
+	action = function(self, t)
+		local tg = {type="hit", range=self:getTalentRange(t), selffire=false, talent=t}
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+		local _ _, x, y = self:canProject(tg, x, y)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if not target then return nil end
+		
+		local movedam = self:mindCrit(t.getMoveDamage(self, t))
+		local dam = self:mindCrit(t.getDamage(self, t))
+		local rad = t.getRadius(self, t)
+		local dur = t.getStunDuration(self, t)
+		
+		local proj = require("mod.class.Projectile"):makeHoming(
+			self,
+			{particle="bolt_lightning", trail="lightningtrail"},
+			{speed=1, name="Tornado", dam=dam, movedam=movedam, rad=rad, dur=dur},
+			target,
+			self:getTalentRange(t),
+			function(self, src)
+				local DT = require("engine.DamageType")
+				local Map = require("engine.Map")
+				local kb_func = function(px, py)
+					local target = game.level.map(px, py, Map.ACTOR)
+					
+					if not target or target == self then return end
+					if target:canBe("knockback") then
+						target:knockback(src.x, src.y, 2)
+						game.logSeen(target, "%s is knocked back!", target.name:capitalize())
+					else
+						game.logSeen(target, "%s resists the tornado!", target.name:capitalize())
+					end
+				end
+				src:project({type="ball", radius=2, selffire=false, x=self.x, y=self.y, friendlyfire=false}, self.x, self.y, DT.REK_WYRMIC_ELEC, self.def.movedam)
+				src:project({type="ball", radius=2, selffire=false, x=self.x, y=self.y, friendlyfire=false}, self.x, self.y, kb_func)
+			end,
+			function(self, src, target)
+				local DT = require("engine.DamageType")
+				src:project({type="ball", radius=self.def.rad, selffire=false, x=self.x, y=self.y}, self.x, self.y, DT.REK_WYRMIC_ELEC, self.def.dam)
+				src:project({type="ball", radius=self.def.rad, selffire=false, x=self.x, y=self.y}, self.x, self.y, DT.MINDKNOCKBACK, self.def.dam)
+				
+				-- Lightning ball gets a special treatment to make it look neat
+				local sradius = (1 + 0.5) * (engine.Map.tile_w + engine.Map.tile_h) / 2
+				local nb_forks = 16
+				local angle_diff = 360 / nb_forks
+				for i = 0, nb_forks - 1 do
+					local a = math.rad(rng.range(0+i*angle_diff,angle_diff+i*angle_diff))
+					local tx = self.x + math.floor(math.cos(a) * 1)
+					local ty = self.y + math.floor(math.sin(a) * 1)
+					game.level.map:particleEmitter(self.x, self.y, 1, "lightning", {radius=1, tx=tx-self.x, ty=ty-self.y, nb_particles=25, life=8})
+				end
+				game:playSoundNear(self, "talents/lightning")
+			end
+																													 )
+		proj.energy.value = 1500 -- Give it a boost so it moves before our next turn
+		proj.homing.count = 20  -- 20 turns max
+		game.zone:addEntity(game.level, proj, "projectile", self.x, self.y)
+		game:playSoundNear(self, "talents/lightning")
+		return true
+	end,
+	info = function(self, t)
+		local rad = t.getRadius(self, t)
+		return ([[Summons a tornado that moves slowly toward its target, following it if it changes position.
 Each time it moves every foe within radius 2 takes %0.1f storm damage and is knocked back 2 spaces.
-		When it reaches its target, it explodes in a radius of %d for %0.1f storm damage. All affected creatures will be knocked back. The blast will ignore the talent user.
-		The tornado will last for %d turns, or until it reaches its target.
-		Damage will increase with your Mindpower, and the stun chance is based on your Mindpower vs target Physical Save.]]):format(
-	    damDesc(self, DamageType.LIGHTNING, t.getMoveDamage(self, t)),
-	 rad,
-	 damDesc(self, DamageType.LIGHTNING, t.getDamage(self, t)),
-	 self:getTalentRange(t))
-   end,
+When it reaches its target, it explodes in a radius of %d for %0.1f storm damage. All affected creatures will be knocked back. The blast will ignore the talent user.
+The tornado will last for %d turns, or until it reaches its target.
+Mindpower: improves damage
+]]):format(
+	damDesc(self, DamageType.LIGHTNING, t.getMoveDamage(self, t)),
+	rad,
+	damDesc(self, DamageType.LIGHTNING, t.getDamage(self, t)),
+	self:getTalentRange(t))
+end,
 }

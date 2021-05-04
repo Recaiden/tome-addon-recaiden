@@ -38,8 +38,8 @@ newTalent{
    -- Get resists for use in Prismatic Blood
    getResists = getAspectResists,
    -- For elemental Spray
-   getCorrodeDur = function(self, t) return math.floor(self:combatTalentScale(t, 2.3, 3.8)) end,
-   getAtk = function(self, t) return self:combatTalentMindDamage(t, 7, 25) end,
+   getCorrodeDur = function(self, t) return math.floor(self:combatTalentScale(t, 3.3, 5.8)) end,
+   getAtk = function(self, t) return self:combatMindpower()+self:combatTalentMindDamage(t, 0, 1) end,
    passives = function(self, t, p)
       local resist = t.getResists(self, t)
       self:talentTemporaryValue(p, "resists", {[DamageType.ACID] = resist})
@@ -47,7 +47,7 @@ newTalent{
    info = function(self, t)
       local resist = t.getResists(self, t)
       local corrosion = t.getAtk(self, t)
-      return ([[You can take on the power of Acid Wyrms, giving you %d%% acid resistance. Whenever you use Elemental Spray it will corrode affected enemies, reducing their accuracy and power by %d (#SLATE#Mindpower vs. Physical#LAST#).
+      return ([[You can take on the power of Acid Wyrms, giving you %d%% acid resistance. Whenever you use Elemental Spray it will corrode affected enemies, reducing their accuracy and power by %d (#SLATE#Mindpower vs. Physical#LAST#), based on your mindpower.
 
 Acid damage can inflict Disarm (#SLATE#Mindpower vs. Physical#LAST#).
 ]]):format(resist, corrosion)

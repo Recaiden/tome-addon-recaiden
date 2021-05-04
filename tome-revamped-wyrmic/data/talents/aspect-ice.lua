@@ -73,7 +73,7 @@ newTalent{
       return ([[You can take on the power of Ice Wyrms, giving you %d%% cold resistance. 
 While sustained, this talent protects you with a layer of cold, increasing your resistance to damge by %d%% and causing you to deal %0.1f cold damage as retaliation to any enemies that physically strike you.
 
-Ice is Cold damage that can inflict Slow (20%% global, no save) and Freeze (#SLATE#Mindpower vs. Physical#LAST#).
+Ice is Cold damage that can inflict Slow (20%% global, no save) and Freeze (#SLATE#Mindpower vs. Physical#LAST#), but the Freeze doesn't last as long as other effects.
 
 Each point in Ice Wyrm talents lets you pierce through ice blocks, reducing the damage they absorb by %d%%.]]):format(resist, t.getAllRes(self, t), damDesc(self, DamageType.COLD, retal), icepen)
    end,
@@ -95,7 +95,6 @@ newTalent{
 	 },
    },
    points = 5,
-   random_ego = "defensive",
    equilibrium = 10,
    cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 30, 15)) end,
    range = 10,

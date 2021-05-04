@@ -185,7 +185,6 @@ newTalent{
    type = {"wild-gift/wyrm-sand", 4},
    require = gifts_req_high3,
    points = 5,
-   random_ego = "attack",
    message = "@Source@ shakes the ground!",
    equilibrium = 10,
    cooldown = 20,

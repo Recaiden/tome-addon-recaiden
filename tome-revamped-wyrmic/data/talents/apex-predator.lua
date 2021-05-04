@@ -108,7 +108,6 @@ newTalent{
    type = {"wild-gift/apex-predator", 3},
    require = gifts_req3,
    points = 5,
-   random_ego = "attack",
    message = "@Source@ roars!",
    equilibrium = 8,
    cooldown = 20,
@@ -194,7 +193,6 @@ newTalent{
 --    name = "Terrorize", short_name = "REK_WYRMIC_PREDATOR_TRACK",
 --    type = {"wild-gift/apex-predator", 4},
 --    require = gifts_req_4,
---    random_ego = "utility",
 --    mode = "passive",
 --    points = 5,
    
