@@ -305,27 +305,27 @@ newEffect{
 }
 
 newEffect{
-   name = "REK_WYRMIC_VULNERABILITY_POISON", image = "talents/vulnerability_poison.png",
-   desc = "Poison Vulnerability",
-   long_desc = function(self, eff)
-      return ("The target is afflicted with a destabilizing poison. Nature resistance is reduced by 10%% and poison resistance is reduced by %d%%."):format(eff.power)
-   end,
-   type = "physical",
-   subtype = { poison=true },
-   status = "detrimental",
-   parameters = {power=10, unresistable=true},
-   on_gain = function(self, err) return "#Target# is vulnerable to poison!", "+Poison Vulnerability" end,
-   on_lose = function(self, err) return "#Target# is no longer vulnerable to poison.", "-Poison Vulnerability" end,
-   on_timeout = function(self, eff)
-   end,
-   activate = function(self, eff)
-      self:effectTemporaryValue(eff, "resists", {nature=-10})
-      if self:attr("poison_immune") then
-	 self:effectTemporaryValue(eff, "poison_immune", -eff.power / 100)
-      end
-   end,
-   deactivate = function(self, eff)
-   end,
+	name = "REK_WYRMIC_VULNERABILITY_POISON", image = "talents/vulnerability_poison.png",
+	desc = "Poison Vulnerability",
+	long_desc = function(self, eff)
+		return ("The target is afflicted with a destabilizing poison. Nature resistance is reduced by 10%% and poison resistance is reduced by %d%%."):format(eff.power)
+	end,
+	type = "other",
+	subtype = { poison=true },
+	status = "detrimental",
+	parameters = {power=10, unresistable=true},
+	on_gain = function(self, err) return "#Target# is vulnerable to poison!", "+Poison Vulnerability" end,
+	on_lose = function(self, err) return "#Target# is no longer vulnerable to poison.", "-Poison Vulnerability" end,
+	on_timeout = function(self, eff)
+	end,
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "resists", {[DamageType.NATURE]=-10})
+		if self:attr("poison_immune") then
+			self:effectTemporaryValue(eff, "poison_immune", -eff.power / 100)
+		end
+	end,
+	deactivate = function(self, eff)
+	end,
 }
 
 newEffect{

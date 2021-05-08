@@ -171,97 +171,93 @@ Mental Critical: affects duration
 
 -- Breath
 newTalent{
-   name = "Dragon's Breath", short_name = "REK_WYRMIC_ELEMENT_BREATH",
-   type = {"wild-gift/draconic-energy", 4},
-   require = gifts_req4,
-   points = 5,
-   range = 0,
-   equilibrium = 15,
-   tactical = { ATTACK = { PHYSICAL = 1, COLD = 1, FIRE = 1, LIGHTNING = 1, ACID = 1, NATURE = 1 } },
-   message = "@Source@ breathes energy!",
-   cooldown = function(self, t) return 13 - math.min(7, math.floor(self:getTalentLevel(t))) end,
-   radius = function(self, t) return math.floor(self:combatTalentScale(t, 5, 9)) end,
-   direct_hit = true,
-   requires_target = true,
-   target = function(self, t)
-      return {type="cone", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, talent=t}
-   end,
-   getDamage = function(self, t)
-      return self:combatTalentStatDamage(t, "str", 50, 320) + self:combatTalentMindDamage(t, 50, 320)
-      --return math.max(self:combatTalentStatDamage(t, "str", 100, 620),
-	--	      self:combatTalentStatDamage(t, "wil", 100, 620) )
-   end,
-   action = function(self, t)
-      local damtype = DamageType.REK_WYRMIC_NULL
-      local vistype = DamageType.PHYSICAL
-      local source = self.rek_wyrmic_dragon_damage
-      if source then
-	 damtype = source.status
-	 vistype = source.damtype
-      end
-
-      -- Damage
-      local tg = self:getTalentTarget(t)
-      local x, y = self:getTarget(tg)
-      if not x or not y then return nil end
-      local crit = self:mindCrit( 1.0 )
-      -- if crit - 1.0 > 0 and self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_GUILE) then
-      -- 	 local cd = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_GUILE, "CDreduce")
-      -- 	 self:setEffect(self.EFF_REK_WYRMIC_BREATH_RECOVERY, cd, {})
-      -- end
-      local dam = crit * t.getDamage(self, t)
-      self:project(tg, x, y, damtype,
-		   {dam=dam,
-		    dur=3,
-		    chance=100,
-		    fail=40
-		   }
-                  )
-      if self:knowTalent(self.T_REK_WYRMIC_ELEMENT_EXPLOIT) then
-         self:project(tg, x, y, DamageType.REK_SILENT_ELEMENT_EXPLOIT, {dam=0}, nil)
-      end
-
-      --Visuals
-      -- exceptions till I can properly add it to the particle generator
-      local part_breath = "breath_"..DamageType:get(vistype).name
-      local part_wings = ""
-      if vistype == DamageType.PHYSICAL then
-	 part_breath = "breath_earth"
-	 part_wings = "sandwings"
-      elseif vistype == DamageType.NATURE then
-	 part_breath = "breath_slime"
-	 part_wings = "poisonwings"
-      elseif vistype == DamageType.DARKNESS then
-	 part_breath = "breath_dark"
-	 part_wings = "darkwings"
-      elseif vistype == DamageType.BLIGHT then
-	 part_breath = "maggot_breath"
-	 part_wings = "sickwings"
-      elseif vistype == DamageType.COLD then
-	 part_wings = "icewings"
-      elseif vistype == DamageType.LIGHTNING then
-	 part_wings = "lightningwings"
-      elseif vistype == DamageType.ACID then
-	 part_wings = "acidwings"
-      end
-      
-      if core.shader.active() and vistype == DamageType.LIGHTNING then
-	 game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_lightning", {radius=tg.radius, tx=x-self.x, ty=y-self.y}, {type="lightning"})
-      else
-	 game.level.map:particleEmitter(self.x, self.y, tg.radius, part_breath, {radius=tg.radius, tx=x-self.x, ty=y-self.y})
-      end
-      
-      if core.shader.active(4) then
-	 local bx, by = self:attachementSpot("back", true)
-	 self:addParticles(Particles.new("shader_wings", 1, {img=part_wings, x=bx, y=by, life=18, fade=-0.006, deploy_speed=14}))
-      end
-
-      --Sound
-      game:playSoundNear(self, "talents/breath")
-      
-      return true
-   end,
-   
+	name = "Dragon's Breath", short_name = "REK_WYRMIC_ELEMENT_BREATH",
+	type = {"wild-gift/draconic-energy", 4},
+	require = gifts_req4,
+	points = 5,
+	range = 0,
+	equilibrium = 15,
+	tactical = { ATTACK = { PHYSICAL = 1, COLD = 1, FIRE = 1, LIGHTNING = 1, ACID = 1, NATURE = 1 } },
+	message = "@Source@ breathes energy!",
+	cooldown = function(self, t) return 13 - math.min(7, math.floor(self:getTalentLevel(t))) end,
+	radius = function(self, t) return math.floor(self:combatTalentScale(t, 5, 9)) end,
+	direct_hit = true,
+	requires_target = true,
+	target = function(self, t)
+		return {type="cone", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, talent=t}
+	end,
+	getDamage = function(self, t)
+		return self:combatTalentStatDamage(t, "str", 50, 320) + self:combatTalentMindDamage(t, 50, 320)
+		--return math.max(self:combatTalentStatDamage(t, "str", 100, 620),
+		--	      self:combatTalentStatDamage(t, "wil", 100, 620) )
+	end,
+	action = function(self, t)
+		local damtype = DamageType.REK_WYRMIC_NULL
+		local vistype = DamageType.PHYSICAL
+		local source = self.rek_wyrmic_dragon_damage
+		if source then
+			damtype = source.status
+			vistype = source.damtype
+		end
+		
+		-- Damage
+		local tg = self:getTalentTarget(t)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+		local crit = self:mindCrit( 1.0 )
+		local dam = crit * t.getDamage(self, t)
+		self:project(tg, x, y, damtype,
+								 {dam=dam,
+									dur=3,
+									chance=100,
+									fail=40
+								 }
+		)
+		if self:knowTalent(self.T_REK_WYRMIC_ELEMENT_EXPLOIT) then
+			self:project(tg, x, y, DamageType.REK_SILENT_ELEMENT_EXPLOIT, {dam=0}, nil)
+		end
+		
+		--Visuals
+		-- exceptions till I can properly add it to the particle generator
+		local part_breath = "breath_"..DamageType:get(vistype).name
+		local part_wings = ""
+		if vistype == DamageType.PHYSICAL then
+			part_breath = "breath_earth"
+			part_wings = "sandwings"
+		elseif vistype == DamageType.NATURE then
+			part_breath = "breath_slime"
+			part_wings = "poisonwings"
+		elseif vistype == DamageType.DARKNESS then
+			part_breath = "breath_dark"
+			part_wings = "darkwings"
+		elseif vistype == DamageType.BLIGHT then
+			part_breath = "maggot_breath"
+			part_wings = "sickwings"
+		elseif vistype == DamageType.COLD then
+			part_wings = "icewings"
+		elseif vistype == DamageType.LIGHTNING then
+			part_wings = "lightningwings"
+		elseif vistype == DamageType.ACID then
+			part_wings = "acidwings"
+		end
+		
+		if core.shader.active() and vistype == DamageType.LIGHTNING then
+			game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_lightning", {radius=tg.radius, tx=x-self.x, ty=y-self.y}, {type="lightning"})
+		else
+			game.level.map:particleEmitter(self.x, self.y, tg.radius, part_breath, {radius=tg.radius, tx=x-self.x, ty=y-self.y})
+		end
+		
+		if core.shader.active(4) then
+			local bx, by = self:attachementSpot("back", true)
+			self:addParticles(Particles.new("shader_wings", 1, {img=part_wings, x=bx, y=by, life=18, fade=-0.006, deploy_speed=14}))
+		end
+		
+		--Sound
+		game:playSoundNear(self, "talents/breath")
+		
+		return true
+	end,
+	
    info = function(self, t)
       local radius = self:getTalentRadius(t)
       local damage = t.getDamage(self, t)

@@ -198,54 +198,58 @@ Using this talent resets the cooldown of Flickering Embers.]]):format(radius, da
 }
 
 newTalent{
-   name = "Scorched Speed", short_name = "REK_WYRMIC_FIRE_INFERNO",
-   type = {"wild-gift/wyrm-fire", 4},
-   require = gifts_req_high3,
-   points = 5,
-   mode = "sustained",
-   sustain_equilibrium = 12,
-   cooldown = 20,
-   tactical = { BUFF = 1},
-   getLifePercent = function(self, t) return self:combatTalentLimit(t, .1, .25, .125) end,
-   getTurn = function(self, t) return util.bound(50 + self:combatTalentMindDamage(t, 5, 500) / 10, 50, 160) end,
-   callbackOnAct = function(self, t)
-      local p = self:isTalentActive(t.id)
-      if not p then return end
-      if not p.last_life then p.last_life = self.life end
-      local min = self.max_life * t.getLifePercent(self, t)
-      if self.life <= p.last_life - min then
-	 game.logSeen(self, "#ORANGE#%s is energized by all the damage taken!", self.name:capitalize())
-	 self.energy.value = self.energy.value + (t.getTurn(self, t) * game.energy_to_act / 100)
-	 
-	 local ember_cd = self.talents_cd["T_REK_WYRMIC_FIRE"]
-	 if ember_cd then self.talents_cd["T_REK_WYRMIC_FIRE"] = 0 end
-	 
+	name = "Scorched Speed", short_name = "REK_WYRMIC_FIRE_INFERNO",
+	type = {"wild-gift/wyrm-fire", 4},
+	require = gifts_req_high3,
+	points = 5,
+	mode = "sustained",
+	sustain_equilibrium = 12,
+	cooldown = 20,
+	tactical = { BUFF = 1},
+	getLifePercent = function(self, t) return self:combatTalentLimit(t, .1, .25, .125) end,
+	getTurn = function(self, t) return util.bound(50 + self:combatTalentMindDamage(t, 5, 500) / 10, 50, 160) end,
+	callbackOnAct = function(self, t)
+		local p = self:isTalentActive(t.id)
+		if not p then return end
+		if not p.last_life then p.last_life = self.life end
+		local min = self.max_life * t.getLifePercent(self, t)
+		if self.life <= p.last_life - min then
+			if core.shader.active(4) then
+				local bx, by = self:attachementSpot("back", true)
+				self:addParticles(Particles.new("shader_wings", 1, {x=bx, y=by, life=18, fade=-0.006, deploy_speed=14}))
       end
-      p.last_life = self.life
-   end,
-   activate = function(self, t)
-      game:playSoundNear(self, "talents/fire")
-      local ret = {name = self.name:capitalize().."'s "..t.name}
-      ret.last_life = self.life
-
-      if core.shader.active(4) then
-	 ret.particle1 = self:addParticles(Particles.new("shader_ring_rotating", 1, {rotation=0, radius=1.1, img="fireice_nova"}, {type="circular_flames", ellipsoidalFactor={1,2}, time_factor=22000, noup=2.0, verticalIntensityAdjust=-3.0}))
-	 ret.particle1.toback = true
-	 ret.particle2 = self:addParticles(Particles.new("shader_ring_rotating", 1, {rotation=0, radius=1.1, img="fireice_nova"}, {type="circular_flames", ellipsoidalFactor={1,2}, time_factor=22000, noup=1.0, verticalIntensityAdjust=-3.0}))
-      end
-      
-      return ret
-   end,
-   deactivate = function(self, t, p)
-      if p.particle1 then self:removeParticles(p.particle1) end
-      if p.particle2 then self:removeParticles(p.particle2) end
-      return true
-   end,
-   info = function(self, t)
-      local threshold = t.getLifePercent(self, t) * 100
-      local turn = t.getTurn(self, t)
-      return ([[The Fire Wyrm is driven into a frenzy by violence and danger.
+			game.logSeen(self, "#ORANGE#%s is energized by all the damage taken!", self.name:capitalize())
+			self.energy.value = self.energy.value + (t.getTurn(self, t) * game.energy_to_act / 100)
+			
+			local ember_cd = self.talents_cd["T_REK_WYRMIC_FIRE"]
+			if ember_cd then self.talents_cd["T_REK_WYRMIC_FIRE"] = 0 end
+			
+		end
+		p.last_life = self.life
+	end,
+	activate = function(self, t)
+		game:playSoundNear(self, "talents/fire")
+		local ret = {name = self.name:capitalize().."'s "..t.name}
+		ret.last_life = self.life
+		
+		if core.shader.active(4) then
+			ret.particle1 = self:addParticles(Particles.new("shader_ring_rotating", 1, {rotation=0, radius=1.1, img="fireice_nova"}, {type="circular_flames", ellipsoidalFactor={1,2}, time_factor=22000, noup=2.0, verticalIntensityAdjust=-3.0}))
+			ret.particle1.toback = true
+			ret.particle2 = self:addParticles(Particles.new("shader_ring_rotating", 1, {rotation=0, radius=1.1, img="fireice_nova"}, {type="circular_flames", ellipsoidalFactor={1,2}, time_factor=22000, noup=1.0, verticalIntensityAdjust=-3.0}))
+		end
+		
+		return ret
+	end,
+	deactivate = function(self, t, p)
+		if p.particle1 then self:removeParticles(p.particle1) end
+		if p.particle2 then self:removeParticles(p.particle2) end
+		return true
+	end,
+	info = function(self, t)
+		local threshold = t.getLifePercent(self, t) * 100
+		local turn = t.getTurn(self, t)
+		return ([[The Fire Wyrm is driven into a frenzy by violence and danger.
 		At the start of each turn in which you have lost at least %d%% of your maximum life since your last turn, you will gain %d%% of a turn and Flickering Embers will recharge immediately.]]):
-	 format(threshold, turn)
-   end,
+			format(threshold, turn)
+	end,
 }
