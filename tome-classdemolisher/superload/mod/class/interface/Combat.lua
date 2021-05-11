@@ -3,7 +3,7 @@ local DamageType = require "engine.DamageType"
 local _M = loadPrevious(...)
 
 local base_bumpInto = _M.bumpInto
-function _M:bumpInto(target)
+function _M:bumpInto(target, x, y)
 	local reaction = self:reactionToward(target)
 	if reaction < 0 and self:isTalentActive(self.T_REK_DEML_ENGINE_FULL_THROTTLE) then
 		local dam = self:callTalent(self.T_REK_DEML_ENGINE_FULL_THROTTLE, "getDamage")
@@ -20,7 +20,7 @@ function _M:bumpInto(target)
 		local energy = game.energy_to_act * self:combatMovementSpeed(x, y)
 		self:useEnergy(energy)
 		self.did_energy = true
-	else return base_bumpInto(self, target) end
+	else return base_bumpInto(self, target, x, y) end
 end
 
 local base_combatSteampower = _M.combatSteampower

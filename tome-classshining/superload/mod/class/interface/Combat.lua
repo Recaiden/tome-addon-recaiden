@@ -10,7 +10,7 @@ function _M:spellCrit(dam, add_chance, crit_power_add)
 end
 
 local base_bumpInto = _M.bumpInto
-function _M:bumpInto(target)
+function _M:bumpInto(target, x, y)
 	--local reaction = self:reactionToward(target)
 	if self:isTalentActive(self.T_REK_SHINE_MANTRA_PRECESSION) then
 		self.shining_precession_jump = true
@@ -22,9 +22,9 @@ function _M:bumpInto(target)
 			self:useEnergy(energy)
 			self.did_energy = true
 		else
-			return base_bumpInto(self, target)
+			return base_bumpInto(self, target, x, y)
 		end
-	else return base_bumpInto(self, target) end
+	else return base_bumpInto(self, target, x, y) end
 end
 
 local base_combatDefenseBase = _M.combatDefenseBase

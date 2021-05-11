@@ -156,6 +156,10 @@ newEffect{
 	on_lose = function(self, err) return _t"#Target# returns to normal space.", _t"-Immersed" end,
 	activate = function(self, eff)
 		eff.tmpid = self:addTemporaryValue("numbed", eff.numb)
+		if core.shader.active() then
+			self:effectParticles(eff, {type="shader_shield", args={toback=true,  size_factor=1, img="heka_immersed"}, shader={type="rotatingshield", noup=2.0, cylinderRotationSpeed=1.7, appearTime=0.2}})
+			self:effectParticles(eff, {type="shader_shield", args={toback=false, size_factor=1, img="heka_immersed"}, shader={type="rotatingshield", noup=1.0, cylinderRotationSpeed=1.7, appearTime=0.2}})
+		end
 	end,
 	deactivate = function(self, eff)
 		self:removeTemporaryValue("numbed", eff.tmpid)

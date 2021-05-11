@@ -131,7 +131,10 @@ newTalent{
 		self:project(tg, self.x, self.y, function(px, py, tg, self)
 				local target = game.level.map(px, py, Map.ACTOR)
 				if target and self:reactionToward(target) < 0 then
-					self:attackTarget(target, nil, t.getDamage(self, t), true, true)
+					local hit = self:attackTarget(target, nil, t.getDamage(self, t), true, true)
+					if hit then
+						game.level.map:particleEmitter(target.x, target.y, 1, "image_rise", {img="hundred_hand_hit"})
+					end
 				end
 			end)
 	end,

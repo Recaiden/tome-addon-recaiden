@@ -33,11 +33,15 @@ newTalent{
 					local a = game.level.map(px, py, engine.Map.ACTOR)
 					if a and a:reactionToward(self) < 0 then
 						local alt = {}
+						local found  = false
 						for tid, cd in pairs(a.talents_cd) do
-							if rng.percent(chance) then alt[tid] = true end
+							if rng.percent(chance) then alt[tid] = true found = true end
 						end
 						for tid, cd in pairs(alt) do
 							a:alterTalentCoolingdown(tid, 1)
+						end
+						if found then
+							game.level.map:particleEmitter(a.x, a.y, 1, "image_rise", {img="heka_devil_claws"})
 						end
 					end
 				end)

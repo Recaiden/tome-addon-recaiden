@@ -399,8 +399,10 @@ The maximum damage reflected will increase with your spellpower.]]):tformat(t.ge
 
 class:bindHook("DamageProjector:final", function(self, hd)
 	local src = hd.src
+	if not src then return hd end
 	local dam = hd.dam
 	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
+	if not target then return hd end
 
 	local seff = game.level.map:hasEffectType(src.x, src.y, DamageType.REK_SHINE_MIRROR)
 	local deff = game.level.map:hasEffectType(target.x, target.y, DamageType.REK_SHINE_MIRROR)
