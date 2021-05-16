@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="dg_dungeon32" tilewidth="32" tileheight="32" tilecount="90">
+  <image source="../../../../../../../tiled-maps/gfx/dg_dungeon32.gif" width="288" height="320"/>
+  <tile id="0">
+   <properties>
+    <property name="display" value="#"/>
+    <property name="value" value="&quot;WALL&quot;"/>
+   </properties>
+  </tile>
+  <tile id="9">
+   <properties>
+    <property name="display" value="+"/>
+   </properties>
+  </tile>
+  <tile id="21">
+   <properties>
+    <property name="display" value="&lt;"/>
+   </properties>
+  </tile>
+  <tile id="22">
+   <properties>
+    <property name="display" value="&gt;"/>
+    <property name="value" value="&quot;IRON_COUNCIL&quot;"/>
+   </properties>
+  </tile>
+  <tile id="24">
+   <properties>
+    <property name="display" value="T"/>
+   </properties>
+  </tile>
+  <tile id="49">
+   <properties>
+    <property name="end" value=""/>
+    <property name="id" value="BACK_TO_CAVE"/>
+    <property name="start" value=""/>
+   </properties>
+  </tile>
+  <tile id="51">
+   <properties>
+    <property name="display" value="."/>
+    <property name="value" value="&quot;FLOOR&quot;"/>
+   </properties>
+  </tile>
+  <tile id="54">
+   <properties>
+    <property name="id" value="MOON_PILAR"/>
+   </properties>
+  </tile>
+  <tile id="55">
+   <properties>
+    <property name="id" value="SUN_PILAR"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="91" name="dg_features32" tilewidth="32" tileheight="32" tilecount="117">
+  <image source="../../../../../../../tiled-maps/gfx/dg_features32.gif" width="288" height="416"/>
+  <tile id="0">
+   <properties>
+    <property name="id" value="OBSERVATORY_ROCKS"/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="id" value="EMPTY"/>
+   </properties>
+  </tile>
+  <tile id="39">
+   <properties>
+    <property name="id" value="ROCKY_SNOWY_TREE"/>
+   </properties>
+  </tile>
+  <tile id="45">
+   <properties>
+    <property name="display" value=";"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="208" name="numbers" tilewidth="32" tileheight="32" tilecount="36">
+  <image source="../../../../../../../tiled-maps/gfx/numbers.png" width="192" height="192"/>
+  <tile id="0">
+   <properties>
+    <property name="id" value="STAR_GAZER"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="display" value="V"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="display" value="R"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="display" value="g"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="display" value="G"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Terrain" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt1ksKhEAMRdFakxPdi3MX4sodCaGo1E8wT7mDM2lpyCWR7iOldAAAAADAz+1G9Cyt+Xbns5LouWsNnlO4pTTjaeQd3jPFjpndqDR4HWtHk0JDbmvMXHqu2DEjusPeU8/9ePcW3THzfivuo9Qx8n7c343ssLfVez+K+7A7eXpj0R15i/dbrd5Q20vvf5Lo2VstrS7VjlrL3bB8pGNkR19p8Jqi5wAAAADwrgsFjdui
+  </data>
+ </layer>
+ <layer name="Actor" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztzzERAAAMArH6V1dJ1cBILxl/ghkAAAAAyG3YG3zc3vwJAAAAAFIH+gAEEQ==
+  </data>
+ </layer>
+</map>

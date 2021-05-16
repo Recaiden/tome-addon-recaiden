@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="30" height="30" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="dg_dungeon32" tilewidth="32" tileheight="32">
+  <image source="../../../../tiled-maps/gfx/dg_dungeon32.gif" width="288" height="320"/>
+  <tile id="0">
+   <properties>
+    <property name="display" value="#"/>
+    <property name="value" value="&quot;WALL&quot;"/>
+   </properties>
+  </tile>
+  <tile id="9">
+   <properties>
+    <property name="display" value="+"/>
+   </properties>
+  </tile>
+  <tile id="21">
+   <properties>
+    <property name="display" value="&lt;"/>
+   </properties>
+  </tile>
+  <tile id="22">
+   <properties>
+    <property name="display" value="&gt;"/>
+    <property name="value" value="&quot;IRON_COUNCIL&quot;"/>
+   </properties>
+  </tile>
+  <tile id="24">
+   <properties>
+    <property name="display" value="T"/>
+   </properties>
+  </tile>
+  <tile id="51">
+   <properties>
+    <property name="display" value="."/>
+    <property name="value" value="&quot;FLOOR&quot;"/>
+   </properties>
+  </tile>
+  <tile id="54">
+   <properties>
+    <property name="display" value="&lt;"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="91" name="dg_features32" tilewidth="32" tileheight="32">
+  <image source="../../../../tiled-maps/gfx/dg_features32.gif" width="288" height="416"/>
+  <tile id="39">
+   <properties>
+    <property name="display" value="T"/>
+   </properties>
+  </tile>
+  <tile id="45">
+   <properties>
+    <property name="display" value=";"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="208" name="numbers" tilewidth="32" tileheight="32">
+  <image source="../../../../tiled-maps/gfx/numbers.png" width="192" height="192"/>
+  <tile id="0">
+   <properties>
+    <property name="display" value="h"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="display" value="V"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="display" value="R"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="display" value="g"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="display" value="G"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Terrain" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJwzYWBgMCEDMwLxRShNjn5yMSMaPWrv0LG3iQaYFHs78OAmNBqfOlLsxWcWqXjUXuLtRU4jxPCpaS+xfhsO9mILc3Q2KfHLiAVjM6sJB5sYuSYsdlyhIJzNCai7gMO/lwbQvwMVv4M9PQ+kvQNRXlGCR+3Fbe9AtTcGon1FDB5O7djBbu9lCuwFAGtmP6k=
+  </data>
+ </layer>
+ <objectgroup name="Actor" width="30" height="30"/>
+ <objectgroup name="addSpot" width="30" height="30">
+  <object name="door" x="485" y="164" width="23" height="21">
+   <properties>
+    <property name="subtype" value="&quot;door&quot;"/>
+    <property name="type" value="&quot;pop&quot;"/>
+   </properties>
+  </object>
+  <object name="door" x="808" y="483" width="23" height="21">
+   <properties>
+    <property name="subtype" value="&quot;door&quot;"/>
+    <property name="type" value="&quot;pop&quot;"/>
+   </properties>
+  </object>
+  <object name="door" x="485" y="805" width="23" height="21">
+   <properties>
+    <property name="subtype" value="&quot;door&quot;"/>
+    <property name="type" value="&quot;pop&quot;"/>
+   </properties>
+  </object>
+  <object name="door" x="161" y="485" width="23" height="21">
+   <properties>
+    <property name="subtype" value="&quot;door&quot;"/>
+    <property name="type" value="&quot;pop&quot;"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="addZone" width="30" height="30">
+  <object name="no-teleport" x="4" y="4" width="953" height="151">
+   <properties>
+    <property name="subtype" value="&quot;no-teleport&quot;"/>
+    <property name="type" value="&quot;no-teleport&quot;"/>
+   </properties>
+  </object>
+  <object name="no-teleport" x="3" y="837" width="957" height="123">
+   <properties>
+    <property name="subtype" value="&quot;no-teleport&quot;"/>
+    <property name="type" value="&quot;no-teleport&quot;"/>
+   </properties>
+  </object>
+  <object name="no-teleport" x="3" y="160" width="151" height="667">
+   <properties>
+    <property name="subtype" value="&quot;no-teleport&quot;"/>
+    <property name="type" value="&quot;no-teleport&quot;"/>
+   </properties>
+  </object>
+  <object name="no-teleport" x="836" y="161" width="117" height="665">
+   <properties>
+    <property name="subtype" value="&quot;no-teleport&quot;"/>
+    <property name="type" value="&quot;no-teleport&quot;"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

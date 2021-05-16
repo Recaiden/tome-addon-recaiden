@@ -1,0 +1,13 @@
+long_name = "The Hammer of Urh'Rok"
+short_name = "campaign-hammer"
+for_module = "tome"
+version = {1,7,3}
+addon_version = {0,1,0}
+weight = 1020
+author = { "Recaiden" }
+homepage = "http://te4.org/"
+description = [[Spearhead the demonic invasion of Maj'Eyal in this high-speed mini-campaign.]]
+overload = true
+superload = true
+hooks = true
+data = true

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="dg_dungeon32" tilewidth="32" tileheight="32" tilecount="90">
+  <image source="../../../../tiled-maps/gfx/dg_dungeon32.gif" width="288" height="320"/>
+  <tile id="0">
+   <properties>
+    <property name="display" value="#"/>
+    <property name="value" value="&quot;WALL&quot;"/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="display" value="="/>
+   </properties>
+  </tile>
+  <tile id="9">
+   <properties>
+    <property name="display" value="+"/>
+   </properties>
+  </tile>
+  <tile id="21">
+   <properties>
+    <property name="display" value="&lt;"/>
+   </properties>
+  </tile>
+  <tile id="22">
+   <properties>
+    <property name="display" value="&gt;"/>
+    <property name="value" value="&quot;IRON_COUNCIL&quot;"/>
+   </properties>
+  </tile>
+  <tile id="51">
+   <properties>
+    <property name="display" value="."/>
+    <property name="value" value="&quot;FLOOR&quot;"/>
+   </properties>
+  </tile>
+  <tile id="54">
+   <properties>
+    <property name="display" value="&amp;"/>
+   </properties>
+  </tile>
+  <tile id="87">
+   <properties>
+    <property name="display" value="T"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Terrain" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYBxC2AQJ09tesQGydyD8C8JcRLiHWu4zwYPR5dmR2BFUsheXGK39y4jDbFrFN6FwpgceiLQMwtjSM73CFhlzUTn8yYnTUXtH7aXELfjUkJrPCOUXYuwlx7+D2V58dpBbbhBbPhFbZtHDXkr8S6zbqGneYLaXVmFIatzT017zAfYzveOYUgwAzJQu/A==
+  </data>
+ </layer>
+ <objectgroup name="Actor"/>
+</map>

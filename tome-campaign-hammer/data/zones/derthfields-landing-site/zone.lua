@@ -1,0 +1,111 @@
+return {
+	name = _t"Derthfields Landing Site",
+	level_range = {5, 10},
+	level_scheme = "player",
+	max_level = 3,
+	debug_auto_clear_max_level = 4,
+	decay = {300, 800},
+	actor_adjust_level = function(zone, level, e) return zone.base_level + level.level-1 + e:getRankLevelAdjust() + 1 end,
+	width = 65, height = 40,
+--	all_remembered = true,
+	all_lited = true,
+	day_night = true,
+	tier1 = true,
+	tier1_escort = 2,
+	persistent = "zone",
+	-- Apply a greenish tint to all the map
+--	color_shown = {0.8, 1, 0.6, 1},
+--	color_obscure = {0.8*0.6, 1*0.6, 0.6*0.6, 0.6},
+	ambient_music = "Rainy Day.ogg",
+	min_material_level = function() return game.state:isAdvanced() and 3 or 1 end,
+	max_material_level = function() return game.state:isAdvanced() and 5 or 1 end,
+	is_flooded = true,
+	nicer_tiler_overlay = "DungeonWallsGrass",
+	generator =  {
+		map = {
+			class = "engine.generator.map.Forest",
+			edge_entrances = {4,6},
+			zoom = 7,
+			sqrt_percent = 30,
+			sqrt_percent2 = 25,
+			noise = "fbm_perlin",
+			floor2 = function() if rng.chance(20) then return "BOGWATER_MISC" else return "BOGWATER" end end,
+			floor = function() if rng.chance(20) then return "FLOWER" else return "GRASS" end end,
+			wall = "BOGTREE",
+			up = "GRASS_UP4",
+			down = "GRASS_DOWN6",
+			door = "BOGWATER",
+			road = "GRASS_ROAD_DIRT",
+			add_road = true,
+
+			nb_rooms = {0,1},
+			rooms = {"lesser_vault"},
+			lesser_vaults_list = {"honey_glade", "forest-ruined-building1", "forest-ruined-building2", "forest-ruined-building3", "snake-pit", "mage-hideout", "collapsed-tower"},
+			lite_room_chance = 100,
+		},
+		actor = {
+			class = "mod.class.generator.actor.OnSpots",
+			nb_npc = {20, 30},
+			filters = { {max_ood=2}, },
+			nb_spots = 2, on_spot_chance = 35,
+			guardian = "TROLL_SHAX",
+			guardian_spot = {type="guardian", subtype="guardian"},
+		},
+		object = {
+			class = "engine.generator.object.OnSpots",
+			nb_object = {6, 9},
+			nb_spots = 2, on_spot_chance = 80,
+		},
+		trap = {
+			class = "engine.generator.trap.Random",
+			nb_trap = {0, 0},
+		},
+	},
+	levels =
+	{
+		[1] = {
+			generator = { map = {
+			}, },
+		},
+		[3] = {
+			generator = { map = {
+				end_road = true,
+				down = "GRASS_UP_WILDERNESS",
+				force_last_stair = true,
+				stew = "STEW",
+			}, },
+		}
+	},
+
+	post_process = function(level)
+		-- Place a lore note on each level
+		game:placeRandomLoreObject("NOTE"..level.level)
+
+		if level.level == 2 and config.settings.tome.weather_effects then
+			local Map = require "engine.Map"
+			level.foreground_particle = require("engine.Particles").new("raindrops", 1, {width=Map.viewport.width, height=Map.viewport.height})
+		end
+
+		-- Some clouds floating happily
+		game.state:makeWeather(level, 7, {max_nb=1, speed={0.5, 1.6}, shadow=true, alpha={0.23, 0.35}, particle_name="weather/grey_cloud_%02d"})
+		game.state:makeAmbientSounds(level, {
+			wind={ chance=120, volume_mod=1.5, pitch=0.9, files={"ambient/forest/wind1","ambient/forest/wind2","ambient/forest/wind3","ambient/forest/wind4"}},
+			bird={ chance=600, volume_mod=0.75, files={"ambient/forest/bird1","ambient/forest/bird2","ambient/forest/bird3","ambient/forest/bird4","ambient/forest/bird5","ambient/forest/bird6","ambient/forest/bird7"}},
+			cricket={ chance=1200, volume_mod=0.75, files={"ambient/forest/cricket1","ambient/forest/cricket2"}},
+		})
+	end,
+
+	foreground = function(level, x, y, nb_keyframes)
+		if not config.settings.tome.weather_effects or not level.foreground_particle then return end
+		level.foreground_particle.ps:toScreen(x, y, true, 1)
+
+		if nb_keyframes > 10 then return end
+		if nb_keyframes > 0 and rng.chance(400 / nb_keyframes) then local s = game:playSound("ambient/horror/ambient_horror_sound_0"..rng.range(1, 6)) if s then s:volume(s:volume() * 1.5) end end
+	end,
+
+	on_enter = function(lev, old_lev, newzone)
+		if lev == 3 and game.player:hasQuest("trollmire-treasure") then
+			game.player:hasQuest("trollmire-treasure"):enter_level3()
+		end
+	end,
+}
