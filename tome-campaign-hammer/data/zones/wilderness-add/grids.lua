@@ -33,7 +33,7 @@ newEntity{ base="ZONE_PLAINS", define_as = "DERTHFIELDS_LANDING_SITE",
 	name="Landing Site",
 	color={r=0, g=0, b=255},
 	add_mos={{image="terrain/cave_entrance02.png"}},
-	change_zone="campaign-hammer+landing-site",
+	change_zone="campaign-hammer+derthfields-landing-site",
 }
 
 newEntity{ base="ZONE_PLAINS", define_as = "FIELDS_OF_HOPE",

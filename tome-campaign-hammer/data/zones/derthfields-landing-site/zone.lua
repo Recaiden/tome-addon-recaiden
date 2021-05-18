@@ -3,19 +3,14 @@ return {
 	level_range = {5, 10},
 	level_scheme = "player",
 	max_level = 3,
-	debug_auto_clear_max_level = 4,
 	decay = {300, 800},
 	actor_adjust_level = function(zone, level, e) return zone.base_level + level.level-1 + e:getRankLevelAdjust() + 1 end,
 	width = 65, height = 40,
---	all_remembered = true,
 	all_lited = true,
 	day_night = true,
 	tier1 = true,
 	tier1_escort = 2,
 	persistent = "zone",
-	-- Apply a greenish tint to all the map
---	color_shown = {0.8, 1, 0.6, 1},
---	color_obscure = {0.8*0.6, 1*0.6, 0.6*0.6, 0.6},
 	ambient_music = "Rainy Day.ogg",
 	min_material_level = function() return game.state:isAdvanced() and 3 or 1 end,
 	max_material_level = function() return game.state:isAdvanced() and 5 or 1 end,
@@ -33,7 +28,7 @@ return {
 			floor = function() if rng.chance(20) then return "FLOWER" else return "GRASS" end end,
 			wall = "BOGTREE",
 			up = "GRASS_UP4",
-			down = "GRASS_DOWN6",
+			down = "GRASS",
 			door = "BOGWATER",
 			road = "GRASS_ROAD_DIRT",
 			add_road = true,
@@ -48,7 +43,7 @@ return {
 			nb_npc = {20, 30},
 			filters = { {max_ood=2}, },
 			nb_spots = 2, on_spot_chance = 35,
-			guardian = "TROLL_SHAX",
+			guardian = "MAGRIN",
 			guardian_spot = {type="guardian", subtype="guardian"},
 		},
 		object = {
@@ -67,13 +62,64 @@ return {
 			generator = { map = {
 			}, },
 		},
+		[2] = {
+			width = 150, height = 12,
+			generator =  {
+				map = {
+					class = "mod.class.generator.map.GenericTunnel",
+					start = 6,
+					stop = 6,
+					['#'] = "AUTUMN_TREE",
+					['.'] = "AUTUMN_GRASS",
+					up = "AUTUMN_GRASS_UP4",
+					down = "AUTUMN_GRASS_DOWN6",
+				},
+				actor = {
+					class = "mod.class.generator.actor.Random",
+					nb_npc = {40, 40},
+				},
+				object = {
+					class = "engine.generator.object.Random",
+					nb_object = {6, 9},
+					filters = { {type="gem"} }
+				},
+				trap = {
+					class = "engine.generator.trap.Random",
+					nb_trap = {0, 0},
+				},
+			},
+		},
 		[3] = {
-			generator = { map = {
-				end_road = true,
-				down = "GRASS_UP_WILDERNESS",
-				force_last_stair = true,
-				stew = "STEW",
-			}, },
+			generator =  {
+				map = {
+					class = "engine.generator.map.Roomer",
+					nb_rooms = 10,
+					end_road = true,
+					down = "ROCKY_UP_WILDERNESS",
+					force_last_stair = true,
+					edge_entrances = {4,6},
+					rooms = {"forest_clearing"},
+					['.'] = "ROCKY_GROUND",
+					['#'] = {"ROCKY_SNOWY_TREE","ROCKY_SNOWY_TREE2","ROCKY_SNOWY_TREE3","ROCKY_SNOWY_TREE4","ROCKY_SNOWY_TREE5","ROCKY_SNOWY_TREE6","ROCKY_SNOWY_TREE7","ROCKY_SNOWY_TREE8","ROCKY_SNOWY_TREE9","ROCKY_SNOWY_TREE10","ROCKY_SNOWY_TREE11","ROCKY_SNOWY_TREE12","ROCKY_SNOWY_TREE13","ROCKY_SNOWY_TREE14","ROCKY_SNOWY_TREE15","ROCKY_SNOWY_TREE16","ROCKY_SNOWY_TREE17","ROCKY_SNOWY_TREE18","ROCKY_SNOWY_TREE19","ROCKY_SNOWY_TREE20",},
+					up = "ROCKY_UP6",
+					door = "ROCKY_GROUND",
+				},
+				actor = {
+					class = "mod.class.generator.actor.Random",
+					nb_npc = {20, 30},
+					filters = { {max_ood=2}, },
+				},
+				object = {
+					class = "engine.generator.object.Random",
+					class = "engine.generator.object.Random",
+					nb_object = {6, 9},
+					filters = { {} }
+				},
+				trap = {
+					class = "engine.generator.trap.Random",
+					nb_trap = {0, 0},
+				},
+			},
 		}
 	},
 
@@ -103,9 +149,5 @@ return {
 		if nb_keyframes > 0 and rng.chance(400 / nb_keyframes) then local s = game:playSound("ambient/horror/ambient_horror_sound_0"..rng.range(1, 6)) if s then s:volume(s:volume() * 1.5) end end
 	end,
 
-	on_enter = function(lev, old_lev, newzone)
-		if lev == 3 and game.player:hasQuest("trollmire-treasure") then
-			game.player:hasQuest("trollmire-treasure"):enter_level3()
-		end
-	end,
+	on_enter = function(lev, old_lev, newzone) end,
 }
