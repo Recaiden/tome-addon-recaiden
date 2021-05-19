@@ -19,13 +19,12 @@ local mod_max_tpl_len = { Minimalist = { small = { fantasy = 73, web = 73, basic
                                          big = { fantasy = 29, web = 29, basic = 29 } } }
 
 function mod_get_tlp_len( mode, font_size, font_type )
-   assert(mod_max_tpl_len[mode],
-          "better_item_desc: ERROR: no data for " .. mode .. " mode found")
-   assert(mod_max_tpl_len[mode][font_size],
-          "better_item_desc: ERROR: no data for " .. mode .. "->" .. font_size .. " font size found")
-   assert(mod_max_tpl_len[mode][font_size][font_type],
-          "better_item_desc: ERROR: no data for " .. mode .. "->" .. font_size .. "->" .. font_type .. " font type found")
-   return mod_max_tpl_len[mode][font_size][font_type]
+	if not mod_max_tpl_len then return 50 end
+	if not mod_max_tpl_len[mode] then return 50 end
+	if not mod_max_tpl_len[mode][font_size] then return mod_max_tpl_len[mode]["normal"]["basic"] end
+	if not mod_max_tpl_len[mode][font_size][font_type] then return mod_max_tpl_len[mode][font_size]["basic"] end
+
+	return mod_max_tpl_len[mode][font_size][font_type]
 end
 
 local mod_cur_tlp_len = mod_get_tlp_len( config.settings.tome.uiset_mode,
