@@ -6,35 +6,30 @@ return {
 	decay = {300, 800},
 	actor_adjust_level = function(zone, level, e) return zone.base_level + e:getRankLevelAdjust() + level.level-1 + rng.range(-1,2) end,
 	width = 50, height = 50,
---	all_remembered = true,
-	all_lited = true,
-	day_night = true,
-	tier1 = true,
-	--tier1_escort = 2,
+	ambient_music = "Bazaar of Tal-Mashad.ogg",
 	persistent = "zone",
-	ambient_music = "orcs/Vaporous Emporium.ogg",
-	min_material_level = 1,
-	max_material_level = 2,
-	generator = {
+	max_material_level = 5,
+	no_random_lore = true,
+	generator =  {
 		map = {
-			class = "engine.generator.map.Octopus", zoneclass=true,
-			main_radius = {0.3, 0.4},
-			arms_radius = {0.1, 0.2},
-			arms_range = {0.7, 0.8},
-			nb_rooms = {5, 9},
-			edge_entrances = {6,4},
-			['.'] = "ROCKY_GROUND",
-			['#'] = "SNOW_MOUNTAIN_WALL",
-			up = "ROCKY_UP6",
-			down = "ROCKY_DOWN4",
-			door = "ROCKY_GROUND",
+			class = "engine.generator.map.Roomer",
+			nb_rooms = 10,
+			edge_entrances = {4,6},
+			rooms = {"forest_clearing"},
+			lite_room_chance = 90,
+			rooms_config = {forest_clearing={pit_chance=15, filters={{type="horror", subtype="eldritch", max_ood=2}}}},
+			['.'] = "UNDERGROUND_SAND",
+			['#'] = "SANDWALL_STABLE",
+			up = "SAND_LADDER_UP",
+			down = "SAND_LADDER_DOWN",
+			door = "UNDERGROUND_SAND",
 		},
 		actor = {
 			class = "engine.generator.actor.Random",
-			--class = "mod.class.generator.actor.Random",
-			filters = {{max_ood=2}},
 			nb_npc = {20, 30},
-			guardian = "TALOSIS",
+			filters = { {max_ood=2}, },
+			randelite = 0,
+			guardian = "BURIED_FORGOTTEN",
 		},
 		object = {
 			class = "engine.generator.object.Random",
@@ -42,20 +37,17 @@ return {
 		},
 		trap = {
 			class = "engine.generator.trap.Random",
-			nb_trap = {0, 0},
+			nb_object = {0, 0},
 		},
 	},
 	levels =
-	{
-		[1] = {
-			generator = { map = {
-				up = "ROCKY_UP_WILDERNESS",
-			}, },
+		{
+			[1] = {
+				generator = {
+					map = {
+						up = "SAND_LADDER_UP_WILDERNESS",
+					},
+				},
+			},
 		},
-	},
-
-	post_process = function(level)
-		-- Place a lore note on each level
-		game:placeRandomLoreObjectScale("NOTE", {{1}, {2,3}, {4,5}}, level.level)
-	end,
 }

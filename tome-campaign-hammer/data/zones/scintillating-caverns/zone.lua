@@ -4,33 +4,31 @@ return {
 	level_scheme = "player",
 	max_level = 5,
 	decay = {300, 800},
-	actor_adjust_level = function(zone, level, e) return zone.base_level + e:getRankLevelAdjust() + level.level-1 + rng.range(-1,2) end,
-	width = 80, height = 80,
-	no_worldport = true,
---	all_remembered = true,
-	-- all_lited = true,
-	-- day_night = true,
+	actor_adjust_level = function(zone, level, e) return zone.base_level + level.level-1 + e:getRankLevelAdjust() + 1 end,
+	width = 30, height = 30,
+	all_lited = true,
 	persistent = "zone",
-	ambient_music = "orcs/Vaporous Emporium.ogg",
-	min_material_level = 5,
-	max_material_level = 5,
-	generator = {
+	ambient_music = "Mystery.ogg",
+	min_material_level = function() return game.state:isAdvanced() and 3 or 1 end,
+	max_material_level = function() return game.state:isAdvanced() and 4 or 1 end,
+	generator =  {
 		map = {
-			class = "engine.generator.map.Hexacle",
-			segment_wide_chance = 70,
-			nb_segments = 8,
-			nb_layers = 6,
-			segment_miss_percent = 10,
-			['+'] = "CAVEDOOR",
-			['.'] = "CAVEFLOOR",
-			['#'] = "CAVEWALL",
-			door = "CAVEFLOOR",
-			up = "CAVE_LADDER_UP",
-			down = "CAVE_LADDER_DOWN",
+			class = "engine.generator.map.Roomer",
+			nb_rooms = 5,
+			rooms = {"random_room", {"money_vault",5}, {"lesser_vault",8}},
+			lesser_vaults_list = {"amon-sul-crypt","skeleton-mage-cabal","crystal-cabal","snake-pit"},
+			lite_room_chance = 20,
+			['.'] = "CRYSTAL_FLOOR",
+			['#'] = {"CRYSTAL_WALL","CRYSTAL_WALL2","CRYSTAL_WALL3","CRYSTAL_WALL4","CRYSTAL_WALL5","CRYSTAL_WALL6","CRYSTAL_WALL7","CRYSTAL_WALL8","CRYSTAL_WALL9","CRYSTAL_WALL10","CRYSTAL_WALL11","CRYSTAL_WALL12","CRYSTAL_WALL13","CRYSTAL_WALL14","CRYSTAL_WALL15","CRYSTAL_WALL16","CRYSTAL_WALL17","CRYSTAL_WALL18","CRYSTAL_WALL19","CRYSTAL_WALL20",},
+			up = "CRYSTAL_LADDER_UP",
+			down = "CRYSTAL_LADDER_DOWN",
+			door = "CRYSTAL_FLOOR",
 		},
 		actor = {
 			class = "mod.class.generator.actor.Random",
-			nb_npc = {25, 35},
+			nb_npc = {12, 16},
+			filters = { {max_ood=2}, },
+			guardian = "SPELLBLAZE_CRYSTAL",
 		},
 		object = {
 			class = "engine.generator.object.Random",
@@ -42,45 +40,62 @@ return {
 		},
 	},
 	levels =
-	{
-		[1] = {
-			generator = { 
-				map = {up = "CAVEFLOOR",}, 
-				actor = {class = "engine.generator.actor.Random" },
+		{
+			[1] = {
+				generator = {
+					map = {
+						up = "CRYSTAL_LADDER_UP_WILDERNESS",
+					},
+				},
+			},
+			[5] = {
+				width = 50, height = 50,
+				generator =  {
+					map = {
+						class = "engine.generator.map.Cavern",
+						zoom = 14,
+						min_floor = 700,
+						floor = "FLOOR",
+						wall = {"CRYSTAL_WALL","CRYSTAL_WALL2","CRYSTAL_WALL3","CRYSTAL_WALL4","CRYSTAL_WALL5","CRYSTAL_WALL6","CRYSTAL_WALL7","CRYSTAL_WALL8","CRYSTAL_WALL9","CRYSTAL_WALL10","CRYSTAL_WALL11","CRYSTAL_WALL12","CRYSTAL_WALL13","CRYSTAL_WALL14","CRYSTAL_WALL15","CRYSTAL_WALL16","CRYSTAL_WALL17","CRYSTAL_WALL18","CRYSTAL_WALL19","CRYSTAL_WALL20",},
+						up = "CRYSTAL_LADDER_UP",
+						down = "CRYSTAL_LADDER_DOWN",
+						door = "CRYSTAL_FLOOR",
+					},
+					actor = {
+						class = "mod.class.generator.actor.Random",
+						nb_npc = {20, 30},
+						filters = { {max_ood=2}, },
+						guardian = "CRYSTAL_INQUISITOR",
+					},
+					object = {
+						class = "engine.generator.object.Random",
+						nb_object = {6, 9},
+					},
+					trap = {
+						class = "engine.generator.trap.Random",
+						nb_trap = {0, 0},
+					},
+				},
 			},
 		},
-		[2] = {
-			generator = { map = {
-				nb_segments = 5,
-			}, },
-		},
-		[3] = {
-			generator = { map = {
-				nb_segments = 7,
-			}, },
-		},
-		[4] = {
-			generator = { map = {
-				nb_segments = 9,
-			}, },
-		},
-		[5] = {
-			generator = { actor = {
-				area = {x1=0, x2=29, y1=0, y2=11},
-				nb_npc = {15, 15},
-			}, map = {
-				class = "engine.generator.map.Static",
-				map = "!final",
-			}, },
-		},
-	},
-	on_enter = function(lev)
-		if lev == 1 then
-			require("engine.ui.Dialog"):simpleLongPopup("Fall", "The end of the staircase was trapped, you fell for a long time, luckily not breaking anything. But you have no way back now...", 500)
-		end
+	
+	post_process = function(level)
+		-- Place a lore note on each level
+		game:placeRandomLoreObject("NOTE")
 	end,
 
-	post_process = function(level)
-		if level.level <= 4 then game:placeRandomLoreObject("NOTE"..level.level) end
-	end
+	foreground = function(level, dx, dx, nb_keyframes)
+		local tick = core.game.getTime()
+		local sr, sg, sb
+		sr = 4 + math.sin(tick / 2000) / 2
+		sg = 3 + math.sin(tick / 2700)
+		sb = 3 + math.sin(tick / 3200)
+		local max = math.max(sr, sg, sb)
+		sr = sr / max
+		sg = sg / max
+		sb = sb / max
+
+		level.map:setShown(sr, sg, sb, 1)
+		level.map:setObscure(sr * 0.6, sg * 0.6, sb * 0.6, 1)
+	end,
 }
