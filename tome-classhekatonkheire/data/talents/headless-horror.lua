@@ -547,7 +547,7 @@ newTalent{
 	getStaggerLevel = function(self, t) return self:getTalentLevelRaw(t) end,
 	getSP = function(self, t) return self.level + self:combatTalentScale(t, 10, 50) end,
 	getSelfSP = function(self, t) return math.floor((self.level + self:combatTalentScale(t, 10, 50))/8) end,
-	getKnockChance = function(self, t) return self:combatTalentScale(t, 25, 66) end,
+	getKnockChance = function(self, t) return self:combatTalentScale(t, 25, 45) end,
 	info = function(self, t)
 		return ([[Your eyes open upon realms of distortion and impossibility, increasing their spellpower by %d, your spellpower by %d per eye, and giving them a %d%% chance to cast Staggering Gaze on enemies in melee range.  This talent stuns for 3 turns and pushes the target towards you, their summoner.
 The spellpower bonuses increase with level.]]):tformat(t.getSP(self, t), t.getSelfSP(self, t), t.getKnockChance(self, t))

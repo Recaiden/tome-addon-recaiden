@@ -53,6 +53,7 @@ newTalent{
 		return ([[Now that your vital organs have no need to be connected in normal space, you can hide them away from harm.
 
 You take %d%% less damage from direct critical hits.
+
 The Flow bonus also applies to life regeneration, at half power.]]):tformat(t.critResist(self, t), 100*t.immunities(self, t))
 	end,
 }
@@ -88,6 +89,7 @@ newTalent{
 		local timer = math.ceil(dur / t.getAttacks(self, t))
 		return ([[Your body parts no longer need to stay together; send a few arms out to attack distant enemies.
 Every %d turns for the next %d turns, all enemies in the targeted area will be attacked for %d%% damage.
+
 The Flow bonus also applies to Defense.]]):tformat(timer, dur, t.getDamage(self, t)*100)
 	end,
 }
@@ -127,6 +129,7 @@ newTalent{
 		return ([[Separate an enemy into many parts, just like you!  Of course, for them it is rather more dangerous.
 
 Spend all of your Flow to make an attack that does %d%% damage and cripples (#SLATE#Accuracy vs Physical#LAST#) the target for %d turns.  The cripple is more intense for each stack of Flow.
+
 The Flow bonus also applies to Accuracy.]]):tformat(t.getDamage(self, t)*100, t.getDuration(self, t))
 	end,
 }

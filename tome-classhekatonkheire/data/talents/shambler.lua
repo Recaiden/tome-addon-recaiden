@@ -23,7 +23,7 @@ newTalent{
 	tactical = { BUFF = 1 },
 	cooldown = 0,
 	passives = function(self, t, p) self:talentTemporaryValue(p, "size_category", 1) end,
-	getPower = function(self, t) return self:combatTalentScale(t, .94, 1.5) end,
+	getPower = function(self, t) return self:combatTalentScale(t, .94, 1.35) end,
 	getMaxStacks = function(self, t) return 3 end,
 	action = function(self, t)
 		self:setEffect(self.EFF_REK_HEKA_TOWERING_WRATH, 2, {power=t.getPower(self, t), stacks=1, max_stacks=t.getMaxStacks(self, t), src=self})
