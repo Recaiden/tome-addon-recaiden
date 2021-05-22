@@ -74,6 +74,10 @@ newTalent{
 		local count = table.count(self:projectCollect(tg, x, y, Map.ACTOR))
 		if count == 0 then
 			self.ai_state.stare_down = nil
+			local geff = game.level.map:hasEffectType(self.x, self.y, DamageType.COSMETIC)
+			if geff and geff.src == self then
+				game.level.map:removeEffect(geff)
+			end
 			return nil
 		end
 		self:project(tg, x, y, DamageType.REK_HEKA_STARE, {dam=self:spellCrit(t.getDamage(self, t)), slow=t.getSlow(self, t), overwatch=t.getOverwatch(self, t), multiplier=t.getMultiplier(self, t)})

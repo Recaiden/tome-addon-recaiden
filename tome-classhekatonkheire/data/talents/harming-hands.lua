@@ -99,8 +99,8 @@ newTalent{
 		local x, y, target = self:getTarget(tg)
 		if not x or not y then return nil end
 		local _ _, x, y = self:canProject(tg, x, y)
-		game.level.map:particleEmitter(x, y, 2, "circle", {appear_size=0, base_rot=0, a=250, appear=6, limit_life=4, speed=0, img="hurricane_throw", radius=-0.3})
-		self:project(tg, x, y, DamageType.GRAVITY, {dam=self:physicalCrit(t:_getDamage(self)), slow=t:_getSlow(self), dur=t:_getSlowDuration(self)}, {type="bones"})
+		game.level.map:particleEmitter(x, y, 2, "circle", {appear_size=0, a=250, appear=6, limit_life=5, speed=9, img="vortex_slam", radius=2})
+		self:project(tg, x, y, DamageType.GRAVITY, {dam=self:physicalCrit(t:_getDamage(self)), slow=t:_getSlow(self), dur=t:_getSlowDuration(self)})
 		return true
 	end,
 	info = function(self, t)

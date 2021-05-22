@@ -2,7 +2,7 @@
 newBirthDescriptor{
 	type = "subclass",
 	name = "Hekatonkheire",
-	locked = function() return profile.mod.allow_build.divine_anorithil end,
+	locked = function() return profile.mod.allow_build.warrior_brawler end,
 	locked_desc = _t"A thousand eyes open wide, a hundred hands embrace-",
 	desc = {
 		"You've finally realized: you are not just you.  You are bigger than your body, a vast entity with many hands and many eyes reaching into Eyal.",
@@ -77,4 +77,25 @@ newBirthDescriptor{
 }
 
 -- Add to metaclass
-getBirthDescriptor("class", "Warrior").descriptor_choices.subclass["Hekatonkheire"] = "allow"
+if not getBirthDescriptor("class", "Demented") then
+	newBirthDescriptor{
+		type = "class",
+		name = "Demented",
+		desc = {
+			_t"The thirst for knowledge is seen by most arcane users as as good thing.",
+			_t"But some take it too far, some delve into lost knowledge. They may gain huge power from it, but at what cost?"
+		},
+		descriptor_choices =
+			{
+				subclass =
+					{
+						__ALL__ = "disallow",
+					},
+			},
+		copy = {
+			max_life = 110,
+		},
+	}
+end
+
+getBirthDescriptor("class", "Demented").descriptor_choices.subclass["Hekatonkheire"] = "allow"

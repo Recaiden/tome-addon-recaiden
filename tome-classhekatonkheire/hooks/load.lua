@@ -9,7 +9,7 @@ local Zone = require "engine.Zone"
 local Map = require "engine.Map"
 
 ActorResource:defineResource ("Hands", "hands", "T_HANDS_POOL", "hands_regen", "Hands represents your ability to reach into the world from the other place.  It recovers at a fixed fast rate, based on your global speed.", 0, 100, {
-	color = "#c68642#", 
+	color = "#cccccc#", --"#c68642#", 
 	wait_on_rest = true,
 	--status_text = function(act)
 	--	return ("%d/%d %s %d"):format(act:getHands(), act:getMaxHands(), (act.hands_regen >= 0) and "+" or "-", (act.hands_regen >= 0) and act.hands_regen or -act.hands_regen)
@@ -23,25 +23,26 @@ ActorResource:defineResource ("Hands", "hands", "T_HANDS_POOL", "hands_regen", "
 				if cur_t > 20 then return true end
 			end
 		end,
-		shader_params = {display_resource_bar = function(player, shader, x, y, color, a)
-				if player ~= table.get(game, "player") or not shader or not a then return end
-				local cur_t = player.hands
-				local max_t = player.max_hands
-				local s = max_t - cur_t
-				if s > max_t then s = max_t end
-				s = s / max_t
-				if shader.shad then
-					shader:setUniform("pivot", math.sqrt(s))
-					shader:setUniform("a", a)
-					shader:setUniform("speed", 10000 - s * 7000)
-					shader.shad:use(true)
-				end
+		shader_params = {name = "resources2", require_shader=4, delay_load=true, color1={0xef/255, 0xef/255, 0xef/255}, color2={0xff/255, 0xff/255, 0xff/255}, amp=0.8, speed=2000, distort={0.2,0.25}}
+		-- shader_params = {display_resource_bar = function(player, shader, x, y, color, a)
+		-- 		if player ~= table.get(game, "player") or not shader or not a then return end
+		-- 		local cur_t = player.hands
+		-- 		local max_t = player.max_hands
+		-- 		local s = max_t - cur_t
+		-- 		if s > max_t then s = max_t end
+		-- 		s = s / max_t
+		-- 		if shader.shad then
+		-- 			shader:setUniform("pivot", math.sqrt(s))
+		-- 			shader:setUniform("a", a)
+		-- 			shader:setUniform("speed", 10000 - s * 7000)
+		-- 			shader.shad:use(true)
+		-- 		end
 
-				local p = cur_t / max_t
-				shat[1]:toScreenPrecise(x+49, y+10, shat[6] * p, shat[7], 0, p * 1/shat[4], 0, 1/shat[5], color[1], color[2], color[3], a)
-				if shader.shad then shader.shad:use(false) end
-			end
-		}
+		-- 		local p = cur_t / max_t
+		-- 		shat[1]:toScreenPrecise(x+49, y+10, shat[6] * p, shat[7], 0, p * 1/shat[4], 0, 1/shat[5], color[1], color[2], color[3], a)
+		-- 		if shader.shad then shader.shad:use(false) end
+		-- 	end
+		-- }
 	}
 })
 

@@ -49,6 +49,31 @@ mag_req_high5 = {
 	level = function(level) return 26 + (level-1)  end,
 }
 
+eye_req_high1 = {
+	stat = { mag=function(level) return 22 + (level-1) * 2 end },
+	level = function(level) return 10 + (level-1) end,
+	special={desc=_t"Know Wandering Eyes", fct=function(self)
+						 return self:getTalentLevelRaw(self.T_REK_HEKA_HEADLESS_EYES) >= 1
+	end},
+}
+eye_req_high2 = {
+	stat = { mag=function(level) return 30 + (level-1) * 2 end },
+	level = function(level) return 14 + (level-1)  end,
+}
+eye_req_high3 = {
+	stat = { mag=function(level) return 38 + (level-1) * 2 end },
+	level = function(level) return 18 + (level-1)  end,
+}
+eye_req_high4 = {
+	stat = { mag=function(level) return 46 + (level-1) * 2 end },
+	level = function(level) return 22 + (level-1)  end,
+}
+eye_req_high5 = {
+	stat = { mag=function(level) return 54 + (level-1) * 2 end },
+	level = function(level) return 26 + (level-1)  end,
+}
+
+
 str_req_slow = {
 	stat = { str=function(level) return 12 + (level-1) * 2 end },
 	level = function(level) return 0 + (level-1)*4  end,

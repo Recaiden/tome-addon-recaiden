@@ -128,6 +128,11 @@ newTalent{
 		if not target or not self:canProject(tg, x, y) then return nil end
 		local aprid = self:addTemporaryValue("combat_apr", 1000)
 		local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
+		if hit then
+			game.level.map:particleEmitter(target.x, target.y, 1, "melee_attack", {color=target.blood_color})
+			game.level.map:particleEmitter(target.x, target.y, 1, "melee_attack", {color=target.blood_color})
+			game.level.map:particleEmitter(target.x, target.y, 1, "melee_attack", {color=target.blood_color})
+		end
 		self:removeTemporaryValue("combat_apr", aprid)
 		return true
 	end,

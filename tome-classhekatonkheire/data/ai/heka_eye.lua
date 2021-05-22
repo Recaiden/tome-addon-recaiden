@@ -1,4 +1,5 @@
 local Astar = require "engine.Astar"
+local DamageType = require "engine.DamageType"
 
 -- Eye Action Priority
 -- Teleport back within range of summoner
@@ -223,6 +224,11 @@ newAI("heka_eye", function(self)
 
 	-- emergency heal
 	if self.life < self.max_life * 0.3 then
+		self.ai_state.stare_down = nil
+		local geff = game.level.map:hasEffectType(self.x, self.y, DamageType.COSMETIC)
+		if geff and geff.src == self then
+			game.level.map:removeEffect(geff)
+		end
 		--game.logPlayer(self.summoner, "#PINK#%s needs emergency healing.", self.name:capitalize())
 		if self.ai_target.actor and not self.ai_target.actor.dead then
 			--game.logPlayer(self.summoner, "#PINK#%s has existing target.", self.name:capitalize())
@@ -245,6 +251,10 @@ newAI("heka_eye", function(self)
 		if self.ai_state.stare_down_time <= 0 then
 			--game.logPlayer(self.summoner, "#PINK#%s stare has timed out.", self.name:capitalize())
 			self.ai_state.stare_down = nil
+			local geff = game.level.map:hasEffectType(self.x, self.y, DamageType.COSMETIC)
+			if geff and geff.src == self then
+				game.level.map:removeEffect(geff)
+			end
 		else
 			--game.logPlayer(self.summoner, "#PINK#%s still has time on stare.", self.name:capitalize())
 			if self:useTalent(self.T_REK_HEKA_EYE_STAREDOWN, nil, nil, true, self.ai_state.stare_down_target, true) then

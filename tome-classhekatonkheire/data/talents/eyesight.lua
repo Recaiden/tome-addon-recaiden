@@ -11,7 +11,7 @@ end
 
 newTalent{
 	name = "Evil Eye", short_name = "REK_HEKA_EYESIGHT_STARE",
-	type = {"spell/eyesight", 1}, require = mag_req_high1, points = 5,
+	type = {"spell/eyesight", 1}, require = eye_req_high1, points = 5,
 	cooldown = 5,
 	tactical = { ATTACKAREA = {MIND = 2}, DISABLE = 2 },
 	range = 10,
@@ -49,7 +49,7 @@ newTalent{
 		
 		local tg = {multiple=true}
 		local eyes = {target}
-		tg[#tg+1] = {type="cone", range=0, radius=self:getTalentRadius(t), start_x=target.x, start_y=target.y, selffire=false, talent=t}
+		tg[#tg+1] = {type="cone", range=0, radius=self:getTalentRadius(t), start_x=target.x, start_y=target.y, selffire=false, nolock=true, talent=t}
 			
 		-- Pick a target
 		local x, y = self:getTarget(tg)
@@ -77,6 +77,15 @@ newTalent{
 					target:crossTierEffect(target.EFF_BRAINLOCKED, self:combatSpellpower())
 				end
 			end)
+
+			game.level.map:addEffect(a,
+															 a.x, a.y, t.getDurationStare(self, t)+1,
+															 DamageType.COSMETIC, 1,
+															 tg.radius,
+															 {delta_x=x-a.x, delta_y=y-a.y}, 55,
+															 engine.MapEffect.new{color_br=255, color_bg=255, color_bb=255, effect_shader="shader_images/pale_paradox_effect.png"},
+															 nil, true
+			)
 			
 			game.level.map:particleEmitter(a.x, a.y, tg.radius, "breath_time", {radius=tg.radius, tx=x-a.x, ty=y-a.y})
 		end
@@ -87,13 +96,13 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Direct one of your eyes to stare down a targeted area. Enemies in a cone extending from the eye are instantly brainlocked using your spellpower, and each turn take %0.1f mind damage and are slowed by %d%%.  The stare will last up to %d turns, ending early if there are no targets in the area, or if the eye needs to heal.
-]]):tformat(damDesc(self, DamageType.MIND, t.getDamage(self, t)), t.getSlow(self, t), t.getDurationStare(self, t))
+]]):tformat(damDesc(self, DamageType.MIND, t.getDamage(self, t)), t.getSlow(self, t)*100, t.getDurationStare(self, t))
 	end,
 }
 
 newTalent{
 	name = "Oversight", short_name = "REK_HEKA_EYESIGHT_OVERWATCH",
-	type = {"spell/eyesight", 2},	require = mag_req_high2, points = 5,
+	type = {"spell/eyesight", 2},	require = eye_req_high2, points = 5,
 	mode = "passive",
 	getOverwatch = function(self, t) return self:combatTalentScale(t, 1, 5) end,
 	--used in an effect applied in the eye's stare down talent via the STARE damage type
@@ -104,7 +113,7 @@ newTalent{
 
 newTalent{
 	name = "Inescapable Gaze", short_name = "REK_HEKA_EYESIGHT_INESCAPABLE",
-	type = {"spell/eyesight", 3}, require = mag_req_high3, points = 5,
+	type = {"spell/eyesight", 3}, require = eye_req_high3, points = 5,
 	mode = "passive",
 	getMultiplier = function(self, t) return math.max(1, self:combatTalentLimit(t, 5, 1.5, 2.25)) end,
 	-- handled in the STARE damage type
@@ -116,7 +125,7 @@ newTalent{
 
 newTalent{
 	name = "Panopticon", short_name = "REK_HEKA_EYESIGHT_PANOPTICON",
-	type = {"spell/eyesight", 4}, require = mag_req_high4, points = 5,
+	type = {"spell/eyesight", 4}, require = eye_req_high4, points = 5,
 	hands = 40,
 	tactical = { DISABLE = 5 },
 	cooldown = 50,

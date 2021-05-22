@@ -36,14 +36,18 @@ newEffect{
 	parameters = { power=0.5, stacks=1, max_stacks=3 },
 	on_merge = function(self, old_eff, new_eff, e)
 		self:removeTemporaryValue("size_category", old_eff.sizeid)
+		self:removeParticles(old_eff.particle)
 		new_eff.stacks = util.bound(old_eff.stacks + 1, 1, new_eff.max_stacks)
 		new_eff.sizeid = self:addTemporaryValue("size_category", 1)
+		new_eff.particle = self:addParticles(Particles.new("otherside_rising_sparks", 1, {base_rot=0,  a=235, appear=12, y=self.y, nb=new_eff.stacks}))
 		return new_eff
 	end,
 	activate = function(self, eff)
 		eff.sizeid = self:addTemporaryValue("size_category", 1)
+		eff.particle = self:addParticles(Particles.new("otherside_rising_sparks", 1, {base_rot=0,  a=235, appear=12, y=self.y}))
 	end,
 	deactivate = function(self, eff)
+		self:removeParticles(eff.particle)
 		game:onTickEnd(function()
 										 self:removeTemporaryValue("size_category", eff.sizeid)
 									 end)
@@ -310,12 +314,25 @@ newEffect{
 	activate = function(self, eff)
 		if self:canBe("pin") then
 			self:effectTemporaryValue(eff, "never_move", 1)
+			
+			if not self.add_displays then
+				self.add_displays = { Entity.new{image='npc/bone_grab_pin.png', display=' ', display_on_seen=true } }
+				eff.added_display = true
+			end
+			self:removeAllMOs()
+			game.level.map:updateMap(self.x, self.y)
+			
 		end
 		if (eff.silence > 0) and self:canBe("silence") then
 			self:effectTemporaryValue(eff, "silence", 1)
 		end
 	end,
 	deactivate = function(self, eff)
+		if eff.added_display then
+			self.add_displays = nil
+			self:removeAllMOs()
+			game.level.map:updateMap(self.x, self.y)
+		end
 	end,
 	on_timeout = function(self, eff)
 		DamageType:get(DamageType.PHYSICAL).projector(eff.src, self.x, self.y, DamageType.PHYSICAL, eff.power)
