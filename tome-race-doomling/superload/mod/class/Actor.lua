@@ -5,7 +5,7 @@ function _M:canSeeNoCache(actor, def, def_pct)
 	if not actor then return false, 0 end
 
 	if self:hasEffect(self.EFF_REK_DOOMLING_HUNTER) then
-		if actor:hasEffect(actor.EFF_REK_DOOMLING_VICTIM) then
+		if actor.hasEffect and actor:hasEffect(actor.EFF_REK_DOOMLING_VICTIM) then
 			return true, 100
 		elseif actor == self then
 			return true, 100
