@@ -79,6 +79,7 @@ class:bindHook("DamageProjector:final", function(self, hd)
 	local src = hd.src
 	local dam = hd.dam
 	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
+	if not target then return hd end
 
 	local seff = game.level.map:hasEffectType(src.x, src.y, DamageType.REK_SHINE_SEAL)
 	local deff = game.level.map:hasEffectType(target.x, target.y, DamageType.REK_SHINE_SEAL)
