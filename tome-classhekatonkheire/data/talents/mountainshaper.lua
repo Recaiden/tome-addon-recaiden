@@ -202,6 +202,7 @@ class:bindHook("DamageProjector:final", function(self, hd)
 	local src = hd.src
 	local dam = hd.dam
 	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
+	if not target then return hd end
 
 	local deff = game.level.map:hasEffectType(target.x, target.y, DamageType.REK_HEKA_PIT)
 	if deff and src.knowTalent and src:knowTalent(src.T_REK_HEKA_MOUNTAIN_CRUMBLING) then

@@ -5,7 +5,7 @@ newBirthDescriptor{
 	locked = function() return profile.mod.allow_build.warrior_brawler end,
 	locked_desc = _t"A thousand eyes open wide, a hundred hands embrace-",
 	desc = {
-		"You've finally realized: you are not just you.  You are bigger than your body, a vast entity with many hands and many eyes reaching into Eyal.",
+		"You've finally realized: you are not just you.  You are bigger than your body, not limited to these two hands, these weak eyes.",
 		"A hekatonkhiere is a melee combatant who mixes weapons, martial arts, and weird otherworldly magic.",
 		"Their most important stat is Strength, then Dexterity and Magic.",
 		"#GOLD#Stat modifiers:",
@@ -78,6 +78,12 @@ newBirthDescriptor{
 
 -- Add to metaclass
 if not getBirthDescriptor("class", "Demented") then
+	for i, bdata in ipairs(Birther.birth_descriptor_def.world) do
+		if bdata.descriptor_choices and bdata.descriptor_choices.class and bdata.descriptor_choices.class.Defiler == "allow" then
+			bdata.descriptor_choices.class.Demented = "allow"
+		end
+	end
+	
 	newBirthDescriptor{
 		type = "class",
 		name = "Demented",

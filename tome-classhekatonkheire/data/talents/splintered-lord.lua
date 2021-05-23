@@ -41,7 +41,7 @@ The first stack of Flow increases your physical power by 5, each additional stac
 }
 
 newTalent{
-	name = "Diffuse Anatomy", short_name = "REK_HEKA_SPLINTER_ORGANS",
+	name = "In Safe Hands", short_name = "REK_HEKA_SPLINTER_ORGANS",
 	type = {"technique/splintered-lord", 2},	require = str_req_high2, points = 5,
 	mode = "passive",
 	critResist = function(self, t) return self:combatTalentScale(t, 15, 50, 0.75) end,
@@ -59,7 +59,7 @@ The Flow bonus also applies to life regeneration, at half power.]]):tformat(t.cr
 }
 
 newTalent{
-	name = "Divided Arms", short_name = "REK_HEKA_SPLINTER_ARMS",
+	name = "Lend a Hand", short_name = "REK_HEKA_SPLINTER_ARMS",
 	type = {"technique/splintered-lord", 3}, require = str_req_high3, points = 5,
 	speed = "weapon",
 	hands = 30,
@@ -95,7 +95,7 @@ The Flow bonus also applies to Defense.]]):tformat(timer, dur, t.getDamage(self,
 }
 
 newTalent{
-	name = "Disjoin", short_name = "REK_HEKA_SPLINTER_ATTACK",
+	name = "Hand From Hand", short_name = "REK_HEKA_SPLINTER_ATTACK",
 	type = {"technique/splintered-lord", 4}, require = str_req_high4, points = 5,
 	speed = "weapon",
 	hands = 25,

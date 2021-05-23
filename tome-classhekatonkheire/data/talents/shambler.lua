@@ -119,7 +119,7 @@ Activate this talent to shove an adjacent enemy, dealing %d%% unarmed damage, kn
 }
 
 newTalent{
-	name = "Unstoppable March", short_name = "REK_HEKA_SHAMBLER_UNSTOPPABLE_MARCH",
+	name = "Hands-Off", short_name = "REK_HEKA_SHAMBLER_UNSTOPPABLE_MARCH",
 	type = {"spell/shambler", 4},	require = mag_req4, points = 5,
 	mode = "passive",
 	getDamageChange = function(self, t)
