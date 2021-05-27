@@ -117,12 +117,16 @@ newTalent{
 	speed = "weapon",
 	mode = "sustained",
 	drain_hands = 20,
+	on_learn = function(self, t) self:attr("show_gloves_combat", 1) end,
+	on_unlearn = function(self, t) self:attr("show_gloves_combat", -1) end,
 	no_energy = function(self, t) return self:isTalentActive(t.id) end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.2, 1.2) end,
 	target = function(self, t) return {type="ball", range=0, friendlyfire=false, radius=self:getTalentRange(t), talent=t} end,
 	doPunch = function(self, t)
 		if self:getHands() < t.drain_hands then
-			self:forceUseTalent(t.id, {ignore_energy=true})
+			if self:isTalentActive(t.id) then
+				self:forceUseTalent(t.id, {ignore_energy=true})
+			end
 			return
 		end
 		

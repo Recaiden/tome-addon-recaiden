@@ -151,6 +151,8 @@ newTalent{
 	tactical = { ATTACK = { weapon = 1 }, DISABLE = 3 },
 	--no_npc_use = true,
 	is_melee = true,
+	on_learn = function(self, t) self:attr("show_gloves_combat", 1) end,
+	on_unlearn = function(self, t) self:attr("show_gloves_combat", -1) end,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.2, 1.2) end,
 	getDamageImmersion = function(self, t) return self:combatTalentWeaponDamage(t, 0.1, 0.6) end,

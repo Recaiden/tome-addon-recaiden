@@ -210,12 +210,12 @@ end
 newAI("heka_eye", function(self)
 	--game.logPlayer(self.summoner, "#PINK#%s BEGINS.", self.name:capitalize())
 
-	-- out of summon time? summoner gone?
+	-- eyes don't time out, but they can still be set to 0 as a shorthand for getting rid of them
 	if self.summon_time <= 0 or self.summoner.dead then
 		--game.logPlayer(self.summoner, "#PINK#%s vanishes.", self.name:capitalize())
 		self:die()
 	end
-	self.summon_time = self.summon_time - 1
+	self.summon_time = math.min(999, self.summon_time + 1)
 
 	-- make sure no one has turned us against our summoner
 	if self.isMySummoner and self:isMySummoner(self.ai_target.actor) then

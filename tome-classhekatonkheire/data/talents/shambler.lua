@@ -63,6 +63,8 @@ newTalent{
 	tactical = { ATTACK = 1, DISABLE = { knockback = 2 } },
 	is_melee = true,
 	speed = "weapon",
+	on_learn = function(self, t) self:attr("show_gloves_combat", 1) end,
+	on_unlearn = function(self, t) self:attr("show_gloves_combat", -1) end,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t)} end,
 	getAutoPunchDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.5, 1.5) end,
 	getActivePunchDamage = function(self, t) return 0.5 end,

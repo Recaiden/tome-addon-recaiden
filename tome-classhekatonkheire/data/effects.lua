@@ -151,7 +151,7 @@ newEffect{
 newEffect{
 	name = "REK_HEKA_IMMERSED", image = "talents/rek_heka_titanic_immersion.png",
 	desc = _t"Immersed",
-	long_desc = function(self, eff) return ("Projected into the warped realm of a hekatonkheire, reducing damge taken by %d%%, reducing damage dealt by %d%%, and being continually beaten for %d%% damage."):tformat(eff.resist, eff.numb, eff.dam) end,
+	long_desc = function(self, eff) return ("Projected into the warped realm of a hekatonkheire, reducing damge taken by %d%%, reducing damage dealt by %d%%, and being continually beaten for %d%% damage."):tformat(eff.resist, eff.numb, eff.dam*100) end,
 	type = "magical",
 	subtype = { warp=true },
 	status = "detrimental",

@@ -352,6 +352,17 @@ newTalent{
 		self:talentTemporaryValue(p, "blind_immune", 1.0)
 		--self:talentTemporaryValue(p, "sight", -9)
 	end,
+
+	iconOverlay = function(self, t, p)
+		local p = self.sustain_talents[t.id]
+		if not p then return "" end
+		if not self.eyes then return "" end
+		if not self.eyes.remainingCooldown then return "" end
+		if self.eyes.remainingCooldown <= 0 then return "" end
+		if t.nbEyesUp(self, t) >= t.getMaxEyes(self, t) then return "" end
+
+		return ("%d"):format(self.eyes.remainingCooldown)
+	end,
 	
 	activate = function(self, t)
 		local ret = {}
@@ -443,7 +454,9 @@ newTalent{
 		local maxEyes = t.getMaxEyes(self, t)
 		return ([[Reorganize your head, allowing your eyes to fly free.
 Each Wandering Eye is a weak combatant that can attack with magical blasts or a life-draining bite attack. You can have %d wandering eyes at once and they will regrow after 10 turns if killed.
-Your sight radius becomes 1, but you cannot be blinded and can see through each eye out to a range of 7.  Any other increases and decreases to your sight radius apply to your eyes.  
+
+Your sight radius permanently becomes 1, but you cannot be blinded and can see through each eye out to a range of 7.  Any other increases and decreases to your sight radius apply to your eyes.
+
 You cannot hurt or be hurt by your own eyes.]]):tformat(maxEyes)
 	end,
 }

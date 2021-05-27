@@ -121,8 +121,8 @@ newTalent{
 												
 
 											end
-										end)
-									
+									end)
+									local MapEffect = require "engine.MapEffect"
 									game.level.map:addEffect(self, self.x, self.y, self.pit_duration, engine.DamageType.REK_HEKA_PIT, {dam=1}, 1, 5, nil, MapEffect.new{zdepth=5, overlay_particle={zdepth=5, only_one=true, type="circle", args={appear=8, img="pitfall", radius=2, base_rot=0, oversize=1.5, a=187}}, alpha=0, effect_shader="shader_images/blank_effect.png"}, nil, true)									
 								end
 							end
@@ -138,7 +138,7 @@ newTalent{
 					e.tooltip = mod.class.Grid.tooltip
 					game.level:addEntity(e)
 					game.level.map(px, py, Map.TERRAIN, e)
-					
+
 					-- draw fake pillar
 					game.level.map:addEffect(self, px, py, 5, engine.DamageType.REK_HEKA_PILLAR, {dam=1}, 0, 5, nil, MapEffect.new{zdepth=5, overlay_particle={zdepth=5, only_one=true, type="circle", args={appear=8, img="shaped_pillar", radius=0, base_rot=1, speed=0, oversize=1.0, a=250}}, alpha=0, effect_shader="shader_images/blank_effect.png"}, nil, true)
 				end
