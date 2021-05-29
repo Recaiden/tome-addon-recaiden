@@ -6,7 +6,7 @@ return {
 	decay = {300, 800},
 	actor_adjust_level = function(zone, level, e) return zone.base_level + e:getRankLevelAdjust() + level.level-1 + rng.range(-1,2) end,
 	width = 50, height = 50,
-	all_remembered = true,
+	all_remembered = false,
 	all_lited = true,
 	persistent = "zone",
 	ambient_music = "Straight Into Ambush.ogg",
@@ -27,6 +27,7 @@ return {
 		actor = {
 			class = "mod.class.generator.actor.Random",
 			nb_npc = {30, 40},
+			guardian = "VOID_VORTEX",
 		},
 		object = {
 			class = "engine.generator.object.Random",
@@ -44,7 +45,7 @@ return {
 					map = {
 						class = "engine.generator.map.Building",
 						wall = "MALROK_WALL",
-						margin_w = 1, margin_h = 1,
+						margin_w = 0, margin_h = 0,
 						max_block_w = 15, max_block_h = 15,
 						max_building_w = 5, max_building_h = 5,
 						down = "PORTAL_EYAL",

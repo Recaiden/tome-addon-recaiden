@@ -6,71 +6,71 @@ return {
 	decay = {300, 800},
 	actor_adjust_level = function(zone, level, e) return zone.base_level + e:getRankLevelAdjust() + level.level-1 + rng.range(-1,2) end,
 	width = 50, height = 50,
---	all_remembered = true,
 	all_lited = true,
 	day_night = true,
 	persistent = "zone",
-	ambient_music = "orcs/steam.ogg",
-	min_material_level = 3,
-	max_material_level = 5,
-	generator = {
+	ambient_music = {"Virtue lost.ogg", "weather/town_small_base.ogg"},
+	min_material_level = 2,
+	max_material_level = 4,
+	generator =  {
 		map = {
-			class = "engine.generator.map.Cavern",
-			zoom = 16,
-			min_floor = 1100,
-			edge_entrances = {6,4},
-			floor = "ROCKY_GROUND",
-			wall = "SNOW_MOUNTAIN_WALL",
-			['.'] = "ROCKY_GROUND",
-			['#'] = "SNOW_MOUNTAIN_WALL",
-			['+'] = "ROCK_VAULT",
-			up = "ROCKY_UP6",
-			down = "ROCKY_DOWN4",
-			door = "ROCKY_GROUND",
-			nb_rooms = 0,
+			class = "engine.generator.map.Forest",
+			edge_entrances = {4,6},
+			zoom = 4,
+			sqrt_percent = 30,
+			noise = "fbm_perlin",
+			floor = function() if rng.chance(20) then return "FLOWER" else return "GRASS" end end,
+				wall = "TREE",
+				up = "GRASS_UP4",
+				down = "GRASS_DOWN6",
+				door = "GRASS",
+				road = "GRASS_ROAD_DIRT",
+				add_road = true,
+				do_ponds = {
+					nb = {0, 2},
+					size = {w=25, h=25},
+					pond = {{0.6, "DEEP_WATER"}, {0.8, "DEEP_WATER"}},
+				},
+				
+				nb_rooms = {0,1},
+				rooms = {"lesser_vault"},
+				lesser_vaults_list = {"honey_glade", "forest-ruined-building1", "forest-ruined-building2", "mage-hideout", "collapsed-tower"},
+				lite_room_chance = 100,
 		},
 		actor = {
-			class = "mod.class.generator.actor.Random",
+			class = "mod.class.generator.actor.OnSpots",
 			nb_npc = {20, 30},
-			guardian = "AUTOMATED_DEFENCE_SYSTEM3",
+			filters = { {max_ood=2}, },
+			nb_spots = 2, on_spot_chance = 35,
 		},
 		object = {
-			class = "engine.generator.object.Random",
+			class = "engine.generator.object.OnSpots",
 			nb_object = {6, 9},
+			nb_spots = 2, on_spot_chance = 80,
 		},
 		trap = {
 			class = "engine.generator.trap.Random",
 			nb_trap = {0, 0},
 		},
-	},
+	},	
 	levels =
-	{
-		[1] = {
+		{
+			[1] = {
 			generator = { map = {
 				up = "ROCKY_UP_WILDERNESS",
-				v = "STEAM_VALVE1",
-				required_rooms = {"!valve1"},
 			}, },
 		},
 		[2] = {
 			generator = { map = {
-				v = "STEAM_VALVE2",
-				required_rooms = {"!valve2"},
 			}, },
 		},
 		[3] = {
 			generator = { map = {
-				v = "STEAM_VALVE3",
-				required_rooms = {"!valve3"},
 			}, },
 		},
 	},
 
 	post_process = function(level)
-		if level.level == 2 then
-			game:placeRandomLoreObject("SAW_STORM_SCHEMATIC") -- Not lore but it's useful
-		end
-
 		-- Place a lore note on each level
 		game:placeRandomLoreObject("NOTE"..level.level)
 

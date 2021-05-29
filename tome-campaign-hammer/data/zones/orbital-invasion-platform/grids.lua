@@ -3,18 +3,6 @@ load("/data/general/grids/void.lua", function(e) if e.image then e.image = e.ima
 load("/data/general/grids/burntland.lua", function(e) if e.image == "terrain/grass_burnt1.png" then e.image = "terrain/red_floating_rocks05_01.png" end end)
 
 newEntity{
-	define_as = "CRATER_SPLATTER",
-	type = "floor", subtype = "rocks",
-	name = "demon killed by a meteor", image = "terrain/red_floating_rocks05_01.png",
-	add_displays = {
-		class.new{z=4, image="terrain/impact_crater_lava.png", display_w=4, display_h=4, display_x=-1.5, display_y=-1.5},
-		class.new{z=5, image="terrain/demon_cratter_splatter.png", display_w=4, display_h=4, display_x=-1.5, display_y=-1.5},
-	},
-	display = '*', color_r=255, color_g=255, color_b=0,
-	_noalpha = false,
-}
-
-newEntity{
 	define_as = "CRATER",
 	type = "floor", subtype = "rocks",
 	name = "impact crater", image = "terrain/red_floating_rocks05_01.png",
@@ -63,8 +51,7 @@ newEntity{
 	change_level = 1, change_zone = "wilderness",
 	change_level_check = function(self)
 		local player = game:getPlayer(true)
-		--player:setQuestStatus("ashes-urhrok+start-ashes", engine.Quest.COMPLETED, "escaped")
-
+		player:setQuestStatus("campaign-hammer+start-demon", engine.Quest.COMPLETED, "secured")
 		game:changeLevel(1, ("campaign-hammer+derthfields-landing-site"), {direct_switch=true})
 
 		local a = require("engine.Astar").new(game.level.map, player)
@@ -90,8 +77,7 @@ newEntity{
 			end
 		end, {from=game.zone.short_name})
 
-		require("engine.ui.Dialog"):simplePopup(_t"Onward!", _t"You made it to Eyal! You are not quite sure where, but it matches what you expected of the landing zone.")
-
+		require("engine.ui.Dialog"):simplePopup(_t"Onward!", _t"You made it to Eyal! Now you must clear this area, which will be the beachhead for the demon invasion.  Kill everything you find.")
 		return true
 	end,
 }

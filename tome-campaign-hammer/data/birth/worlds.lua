@@ -50,9 +50,13 @@ newBirthDescriptor{
 			self.starting_level = 1
 			self.starting_level_force_down = nil
 			self.starting_zone = "campaign-hammer+orbital-invasion-platform"
-			--TODO self.starting_quest = "campaign-hammer+hammer-invasion"
+			self.starting_quest = "campaign-hammer+start-demon"
 			self.starting_intro = "doombringer"
+			self.faction = 'fearscape'
 			self.default_wilderness = {"playerpop", "hammer-demon"}
+
+			engine.Faction:setInitialReaction("fearscape", "enemies", -50, true)
+			engine.Faction:setInitialReaction("enemies", "fearscape", -50, true)
 		end,
 	},
 	game_state = {
