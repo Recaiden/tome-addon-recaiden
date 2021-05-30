@@ -49,7 +49,7 @@ defineTile("scintillating-caverns", "SCINTILLATING_CAVERNS")
 defineTile("fearscape-town", "TOWN_FEARSCAPE")
 
 -- Load encounters for this map
---prepareEntitiesList("maj_eyal_encounters", "mod.class.Encounter", "/data/general/encounters/maj-eyal.lua")
+prepareEntitiesList("caravan_encounter", "mod.class.Encounter", "/data-campaign-hammer/general/encounters/caravans.lua")
 prepareEntitiesList("maj_eyal_encounters_npcs", "mod.class.WorldNPC", "/data/general/encounters/maj-eyal-npcs.lua")
 addData{
 	wda = { script="campaign-hammer+hammer", zones={} },
@@ -57,6 +57,9 @@ addData{
 
 -- addSpot section
 addSpot({28, 13}, "playerpop", "hammer-demon")
+
+addSpot({60, 39}, "patrol", "campaign-hammer+caravan")
+addSpot({70, 24}, "patrol", "campaign-hammer+caravan")
 
 addSpot({33, 40}, "patrol", "allied-kingdoms")
 addSpot({24, 17}, "patrol", "allied-kingdoms")
