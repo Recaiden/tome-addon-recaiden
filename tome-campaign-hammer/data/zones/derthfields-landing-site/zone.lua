@@ -44,7 +44,6 @@ return {
 			filters = { {max_ood=2}, },
 			nb_spots = 2, on_spot_chance = 35,
 			guardian = "MAGRIN",
-			guardian_spot = {type="guardian", subtype="guardian"},
 		},
 		object = {
 			class = "engine.generator.object.OnSpots",

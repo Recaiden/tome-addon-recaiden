@@ -79,6 +79,8 @@ newEntity{
 	resolvers.inscriptions(1, {"manasurge rune"}),
 	resolvers.sustains_at_birth(),
 
+	low_level_tactics_override = {escape=0},
+
 	autolevel = "caster",
 	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", },
 	ai_tactic = resolvers.tactic"ranged",

@@ -1,57 +1,115 @@
--- ToME - Tales of Maj'Eyal
--- Copyright (C) 2009 - 2016 Nicolas Casalini
---
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
---
--- Nicolas Casalini "DarkGod"
--- darkgod@te4.org
+load("/data/general/npcs/canine.lua", rarity(1))
+load("/data/general/npcs/troll.lua", rarity(2))
+load("/data/general/npcs/bear.lua", rarity(2))
+load("/data/general/npcs/plant.lua", rarity(3))
 
-load("/data/general/npcs/sandworm.lua", rarity(0))
-load("/data/general/npcs/ritch.lua", rarity(0))
-load("/data/general/npcs/snake.lua", rarity(3))
-load("/data/general/npcs/fire-drake.lua", rarity(6))
-load("/data/general/npcs/multihued-drake.lua", rarity(8))
-load("/data/general/npcs/horror.lua", rarity(12))
-load("/data/general/npcs/ghost.lua", switchRarity("guardian_rarity"))
+newEntity{
+	define_as = "BASE_CARAVANEER",
+	type = "humanoid", subtype = "human", image="npc/humanoid_human_spectator02.png",
+	display = "p", color=colors.DARK_KHAKI,
+	faction = "allied-kingdoms",
 
---load("/data/general/npcs/all.lua", rarity(4, 35))
+	combat = { dam=resolvers.rngavg(5,12), atk=2, apr=6, physspeed=2 },
 
-local Talents = require("engine.interface.ActorTalents")
+	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, QUIVER=1 },
+	infravision = 10,
+	lite = 1,
 
-newEntity{ base = "BASE_NPC_GHOST", define_as = "GUARDIAN_PSIGHOST",
-	name = "guardian psi-ghost", color=colors.BLUE,
-	desc = [[A strangely humanoid shaped-ghost, blurring in and out of existence as its form is shaken by psionic discharges.]],
-	level_range = {32, nil}, exp_worth = 1,
-	rank = 3.5,
-	max_life = 2000, life_rating = 25,
-	faction = "neutral",
+	life_rating = 15,
+	rank = 2,
+	size_category = 3,
 
-	ai = "tactical",
+	open_door = true,
 
-	ai = "dumb_talented_simple", ai_state = { ai_target="target_simple", ai_move="move_complex", talent_in=2, },
+	resolvers.racial(),
+	resolvers.talents{ [Talents.T_ARMOUR_TRAINING]=2, [Talents.T_WEAPON_COMBAT]={base=1, every=10, max=5}, [Talents.T_WEAPONS_MASTERY]={base=1, every=10, max=5} },
 
-	cant_be_moved = 1,
+	autolevel = "warrior",
+	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=3, },
+	stats = { str=20, dex=8, mag=6, con=16 },
+	
+	emote_random = {chance=10, _t"To arms!", _t"Demon!", _t"Die!", _t"Monster!", _t"Protect the caravan!"},
+}
 
-	emote_random = {chance=2, "Soon...", "The day is drawing near...", "They will come back...", "It is approaching..."},
+newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_MERCHANT",
+	name = "caravan merchant", color=colors.KHAKI, image="npc/humanoid_human_spectator02.png",
+	subtype = "human",
+	desc = _t[[A caravan merchant.]],
+	level_range = {1, 10}, exp_worth = 1,
+	rarity = 3,
+	max_life = resolvers.rngavg(40,50), life_rating = 7,
+	combat_armor = 0, combat_def = 6,
 
-	combat_armor = 0, combat_def = resolvers.mbonus(10, 50),
-	stealth = resolvers.mbonus(30, 20),
+	resolvers.equip{
+		{type="weapon", subtype="longsword", autoreq=true},
+	},
+	make_escort = {
+		{name="caravan guard", number=3},
+		{name="caravan porter", number=4},
+	},
+}
 
-	combat = { dam=resolvers.mbonus(65, 65), atk=resolvers.mbonus(25, 45), apr=100, dammod={str=0.5, mag=0.5} },
+newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_GUARD",
+	name = "caravan guard", color=colors.KHAKI, image="npc/humanoid_human_spectator.png",
+	subtype = "human",
+	desc = _t[[A caravan guard.]],
+	rarity = 2,
+	level_range = {5, 20}, exp_worth = 1,
+	max_life = resolvers.rngavg(80,90), life_rating = 11,
+	combat_armor = 0, combat_def = 6,
 
+	resolvers.equip{
+		{type="weapon", subtype="longsword", autoreq=true},
+		{type="armor", subtype="shield", autoreq=true},
+		{type="armor", subtype="heavy", autoreq=true},
+	},
+	resolvers.talents{ [Talents.T_SHIELD_PUMMEL]={base=2, every=10, max=6}, },
+	make_escort = {
+		{name="war dog", number=2},
+		{name="caravan guard", number=1, no_subescort=true},
+	},
+}
+
+newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_PORTER",
+	name = "caravan porter", color=colors.KHAKI, image="npc/humanoid_human_spectator03.png",
+	subtype = "human",
+	desc = _t[[A caravan porter.]],
+	level_range = {1, 8}, exp_worth = 1,
+	max_life = resolvers.rngavg(60,70), life_rating = 8,
+	combat_armor = 0, combat_def = 6,
+
+	resolvers.equip{
+		{type="weapon", subtype="waraxe", autoreq=true},
+	},
+}
+
+newEntity{ base = "BASE_NPC_CANINE", define_as = "WAR_DOG",
+	name = "war dog", color=colors.KHAKI, image="npc/canine_dw.png",
+	desc = _t[[This is a large dog, bred and trained for fighting.]],
+	level_range = {15, 30}, exp_worth = 1,
+	max_life = resolvers.rngavg(60,100), life_rating = 10,
+	combat_armor = 4, combat_def = 7,
+	combat = { dam=resolvers.levelup(30, 1, 1), atk=resolvers.levelup(25, 1, 1), apr=15 },
 	resolvers.talents{
-		[Talents.T_SILENCE]={base=2, every=10, max=6},
-		[Talents.T_MIND_DISRUPTION]={base=3, every=7, max=8},
+		[Talents.T_RUSH]=2,
+		[Talents.T_GRAPPLING_STANCE]=2,
+		[Talents.T_CLINCH]=2,
+	},
+}
+
+newEntity{ base = "BASE_NPC_CANINE", define_as = "CORRUPTED_WAR_DOG",
+	name = "corrupted war dog", color=colors.BLACK, image="npc/canine_dw.png",
+	desc = _t[[This is a large dog, bred and trained for fighting. Something about the way it moves doesn't look normal.]],
+	level_range = {15, 30}, exp_worth = 1,
+	rarity = 5,
+	max_life = resolvers.rngavg(60,100),
+	combat_armor = 5, combat_def = 7,
+	combat = { dam=resolvers.levelup(30, 1, 1), atk=resolvers.levelup(25, 1, 1), apr=15 },
+	resolvers.talents{ [Talents.T_RUSH]=2, },
+	resolvers.talents{ [Talents.T_GRAPPLING_STANCE]=2, },
+	resolvers.talents{ [Talents.T_CLINCH]=2, },
+
+	make_escort = {
+		{name="war dog", number=4, no_subescort=true},
 	},
 }

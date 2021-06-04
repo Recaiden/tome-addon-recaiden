@@ -101,6 +101,7 @@ return {
 				actor = {
 					filters = {{special_rarity="water_rarity"},{special_rarity="horror_water_rarity"}},
 					nb_npc = {25, 30},
+					guardian = "SWARMING_ABYSSAL_HORROR",
 				},
 			},
 		},
