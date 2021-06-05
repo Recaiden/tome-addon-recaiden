@@ -42,6 +42,7 @@ return {
 			nb_npc = {20, 30},
 			filters = { {max_ood=2}, },
 			nb_spots = 2, on_spot_chance = 35,
+			guardian = "URKIS_IN_TOWN",
 		},
 		object = {
 			class = "engine.generator.object.OnSpots",
@@ -56,17 +57,40 @@ return {
 	levels =
 		{
 			[1] = {
-			generator = { map = {
-				up = "ROCKY_UP_WILDERNESS",
-			}, },
+				generator = {
+					map = {
+						up = "ROCKY_UP_WILDERNESS",
+					},
+					actor = {
+						class = "engine.generator.actor.Random",
+						filters = { {type="animal"}, {type="humanoid"},},
+						nb_npc = {20, 25},
+					},
+			},
 		},
 		[2] = {
-			generator = { map = {
-			}, },
+			generator = {
+				map = {
+				},
+				actor = {
+					class = "engine.generator.actor.Random",
+					filters = { {type="humanoid"}, {type="elemental"}, {type="undead"},},
+					nb_npc = {20, 25},
+				},
+			},
 		},
 		[3] = {
-			generator = { map = {
-			}, },
+			generator = {
+				map = {
+					class = "engine.generator.map.Static",
+					map = "campaign-hammer+zones/derth",
+				},
+				actor = {
+					class = "engine.generator.actor.Random",
+					filters = { {type="elemental"}, {type="dragon"}, {type="giant"}, {type="undead"},},
+					nb_npc = {20, 25},
+				},
+			},
 		},
 	},
 
