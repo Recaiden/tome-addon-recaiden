@@ -1,6 +1,6 @@
 local function getMaxResistIncrease(self)
 	local combined_TL = self:getTalentLevel(self.T_REK_SHINE_NUCLEAR_SEARING_CORE) + self:getTalentLevel(self.T_REK_SHINE_NUCLEAR_FUEL_ENRICHMENT) + self:getTalentLevel(self.T_REK_SHINE_NUCLEAR_CRITICALITY_EXCURSION) + self:getTalentLevel(self.T_REK_SHINE_NUCLEAR_SUPERCRITICAL)
-	local resists = math.round(60 * (combined_TL / 20)^.5)
+	local resists = math.round(54 * (combined_TL / 20)^.5)
 	return resists
 end
 
@@ -14,7 +14,7 @@ newTalent{
 	type = {"demented/inner-power", 1},
 	require = mag_req1, points = 5,
 	mode = "passive",
-	getAffinity = function(self, t) return self:combatTalentScale(t, 10, 29, 0.75) end,
+	getAffinity = function(self, t) return self:combatTalentScale(t, 9, 26, 0.75) end,
 	on_learn = function(self, t) self.blood_color = colors.GOLD end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(
@@ -30,7 +30,8 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[All life comes from the sun, and all brightness and warmth is a reminder of this.  You gain %d%% Light and Fire damage affinity.
-In addition, your light and fire penetration do not apply when damaging allies.
+
+In addition, when hitting allies, your light and fire penetration do not apply, but you do 10%% less damage.
 
 %s]]):tformat(t.getAffinity(self, t), getResistBlurb(self))
 	end,
@@ -46,6 +47,7 @@ DamageType.dam_def.FIRE.projector = function(src, x, y, type, dam, state)
 	local pen_old = src:combatGetResistPen(type) or 0
 	local penalty = nil
 	if src:knowTalent(src.T_REK_SHINE_NUCLEAR_SEARING_CORE) and target and src:reactionToward(target) < 0 then
+		dam = dam * 0.9
 		penalty = src:addTemporaryValue("resists_pen", {[DamageType.FIRE]= -1 * pen_old})
 	end
 	local dam_dealt = base_FireProjector(src, x, y, type, dam, state)
@@ -64,6 +66,7 @@ DamageType.dam_def.LIGHT.projector = function(src, x, y, type, dam, state)
 	local pen_old = src:combatGetResistPen(type) or 0
 	local penalty = nil
 	if src:knowTalent(src.T_REK_SHINE_NUCLEAR_SEARING_CORE) and target and src:reactionToward(target) < 0 then
+		dam = dam * 0.9
 		penalty = src:addTemporaryValue("resists_pen", {[DamageType.LIGHT]= -1 * pen_old})
 	end
 	local dam_dealt = base_LightProjector(src, x, y, type, dam, state)
@@ -187,7 +190,7 @@ newTalent{
 	end,
 	
 	mode = "passive",
-	getSurge = function(self, t) return self:combatTalentScale(t, 5, 25, 1.0) end,
+	getSurge = function(self, t) return self:combatTalentScale(t, 4, 12, 1.0) end,
 	getImmune = function(self, t) return self:combatTalentLimit(t, 1, 0.22, 0.55) end,
 	getEvasion = function(self, t) return self:combatTalentLimit(t, 25, 5, 15) end,
 	getPrice = function(self, t) return self:getTalentLevelRaw(t) / 2 end,

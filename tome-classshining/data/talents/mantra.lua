@@ -184,7 +184,7 @@ You may only have one Mantra active at a time.]]):tformat(t1.getDefense(self, t1
 mantraFireshield = function(self, t, ret)
 	if self:knowTalent(self.T_REK_SHINE_MANTRA_ADEPT) then
 		local t2 = self:getTalentFromId(self.T_REK_SHINE_MANTRA_ADEPT)
-		self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.FIRE]=t2.getDamageOnMeleeHit(self, t2)})
+		self:talentTemporaryValue(ret, "on_melee_hit", {[DamageType.FIRE_STUN]=t2.getDamageOnMeleeHit(self, t2)})
 	end
 end
 
@@ -196,7 +196,7 @@ newTalent{
 	-- insanity effect implemented in superload mod/class/Actor.lua:insanityEffect
 	-- fireshield implemented in each mantra talent
 	info = function(self, t)
-		return ([[Your Mantras sear the air with unassailable truth, which does %0.1f fire damage to anyone who hits you in melee.  Additionally, your insanity effects are twice as likely to have high values, both positive and negative.
+		return ([[Your Mantras sear the air with unassailable truth, which does %0.1f fire damage to anyone who hits you in melee, with a 25%% chance to flameshock them.  Additionally, your insanity effects are twice as likely to have high values, both positive and negative.
 Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.FIRE, t.getDamageOnMeleeHit(self, t)))
 	end,
 }
@@ -232,7 +232,7 @@ mantraRecitation = function(self)
 		end
 	end
 	if #tgts <= 0 then return true end
-	
+	self:incInsanity(2*r.stacks)
 	local dam = self:spellCrit(t.getDamage(self, t) * r.stacks / r.max_stacks)
 	for i = 1, r.stacks do
 		if #tgts <= 0 then break end
@@ -255,7 +255,7 @@ newTalent{
 	getHeal = function(self,t) return self:combatTalentSpellDamage(t, 20, 330) end,
 	getDamage = function(self,t) return self:combatTalentSpellDamage(t, 20, 400) end,
 	info = function(self, t)
-		return ([[Conclude your mantras with a word of purifying flame.  While in combat, your Mantras generate stacks of Repetition each round, up to %d stacks.  When you deactivate a mantra, you are healed for up to %0.1f life and up to %d enemies in sight suffer up to %0.1f fire damage, based on your stacks of Repetition.
+		return ([[Conclude your mantras with a word of purifying flame.  While in combat, your Mantras generate stacks of Repetition each round, up to %d stacks.  When you deactivate a mantra, you are healed for up to %0.1f life and up to %d enemies in sight suffer up to %0.1f fire damage, based on your stacks of Repetition.  If this damages an enemy, you gain #INSANE_GREEN#2 insanity#LAST# per stack.
 The healing is increased based on your increased fire damage.
 Spellpower: increases healing and damage.]]):tformat(t.getMaxStacks(self, t), damDesc(self, DamageType.FIRE, t.getHeal(self, t)), t.getMaxStacks(self, t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)))
 	end,
@@ -265,7 +265,7 @@ newTalent{
 	name = "Mantra Prophet", short_name = "REK_SHINE_MANTRA_PROPHET",
 	type = {"celestial/shining-mantras", 4},	require = mag_req4,	points = 5,
 	mode = "passive",
-	getBoost = function(self, t) return self:combatTalentScale(t, 0.3, 0.6) end,
+	getBoost = function(self, t) return self:combatTalentScale(t, 0.25, 0.6) end,
 	getCapBoost = function(self, t) return 1.2 end,
 	-- implemented in superload mod/class/Actor.lua:insanityEffect
 	info = function(self, t)

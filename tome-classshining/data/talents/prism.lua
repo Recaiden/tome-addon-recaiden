@@ -124,6 +124,7 @@ newTalent{
 		self:updateTalentPassives(t)
 	end,
 	callReflections = function(self, t, chirality)
+		if game.zone.wilderness then return end -- not on the world map
 		if not chirality then chirality = "right" end
 		if not self.stored_luminous_life then
 			self.stored_luminous_life = self.max_life * 0.3

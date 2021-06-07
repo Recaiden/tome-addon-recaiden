@@ -73,7 +73,10 @@ newTalent{
 		self:setEffect(self.EFF_REK_SHINE_SOLETTA, 2, {power=t.getEnergy(self, t), stacks=1, src=self})
 	end,
 	info = function(self, t)
-		return ([[The sun shines on all, both heroes and monsters, but it shines especially bright for you.  Every %d spells you cast (that take a turn) in quick succession, you receive a burst of energy and gain %d%% of a turn. This is more effective the more it triggers, but never gives more than 1 whole turn.]]):tformat(3, t.getEnergy(self, t))
+		return ([[Every %d spells you cast (that take a turn) in quick succession, you receive a burst of energy and gain %d%% of a turn. This is more effective the more it triggers, but never gives more than 1 whole turn.
+
+#{italic}#The sun shines on all, heroes and monsters alike, but it shines especially bright for you.#{normal}#
+]]):tformat(3, t.getEnergy(self, t))
 	end,
 }
 
@@ -109,7 +112,6 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Dedicate yourself to destruction by fire, increasing your fire and light resistance penetration by %d%%, allowing your Sunburn to trigger %d additional times per turn, and increasing the duration of Scorched Earth effects by %d.]])
-		:tformat(t.getResistPenalty(self, t), t.getExtraBurn(self, t), t.getExtraDuration(self, t))
+		return ([[Dedicate yourself to destruction by fire, increasing your fire and light resistance penetration by %d%%, allowing your Sunburn to trigger %d additional times per turn, and increasing the duration of Scorched Earth effects by %d.]]):tformat(t.getResistPenalty(self, t), t.getExtraBurn(self, t), t.getExtraDuration(self, t))
 	end,
 }

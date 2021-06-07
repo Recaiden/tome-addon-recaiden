@@ -26,15 +26,6 @@ newTalent{
 		local gridsCenter = self:project(tgI, self.x, self.y, function() end)
 		game.level.map:addEffect(self, self.x, self.y, t.getDuration(self, t), DamageType.REK_SHINE_SEAL, {dam=dam, knock=false, disarm=true, damFire=damFire, silence=vox}, 0, 5, gridsCenter, MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, img="solar_citadel_inner", radius=self:getTalentRadius(t), base_rot=0, oversize=1.5}}, color_br=200, color_bg=200, color_bb=200, effect_shader="shader_images/blank_effect.png"}, nil, true)
 
-
-		--MapEffect.new{color_br=200, color_bg=140, color_bb=20, effect_shader="shader_images/water_effect1.png"}, nil, true)
-
-
-		--MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, img="sun_circle", radius=self:getTalentRadius(t)}}, color_br=255, color_bg=255, color_bb=255, effect_shader="shader_images/sunlight_effect.png"},
-			
-		
-		--MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, oversize=0, img="sun_sigil_dark", radius=1}}, color_br=255, color_bg=187, color_bb=187, alpha=10, effect_shader="shader_images/sunlight_effect.png"}
-		
 		local tg = self:getTalentTarget(t)
 		local gridsRim = self:project(tg, self.x, self.y, function() end)
 		game.level.map:addEffect(self, self.x, self.y, t.getDuration(self, t), DamageType.REK_SHINE_SEAL, {dam=dam, knock=true, disarm=false, damFire=damFire, silence=vox}, 0, 5, gridsRim, MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, img="solar_citadel_outer", radius=self:getTalentRadius(t), base_rot=0, oversize=1.5}}, color_br=200, color_bg=200, color_bb=200, effect_shader="shader_images/blank_effect.png"}, nil, true)
@@ -65,14 +56,15 @@ newTalent{
 	getDuration = function(self, t) return 3 end,
 	getCooldown = function(self, t) return 3 end,
 	getDamage = function(self, t) return reflectAmp(self, self:combatTalentSpellDamage(t, 0, 45)) end,
+	getChance = function(self, t) return self:combatTalentScale(t, 22, 40) end,
 	-- implemented in hook just below
 	info = function(self, t)
-		return ([[Enhance your solar citadel with the darkness of the void. Whenever anyone inside your solar citadel damages someone outside of it, they also deal do %0.1f darkness damage with a 25%% chance to blind for %d turns (#SLATE#Spellpower vs. Physical#LAST#).  This has a %d turn cooldown per attacker.
+		return ([[Enhance your solar citadel with the darkness of the void. Whenever anyone inside your solar citadel damages someone outside of it, they also deal do %0.1f darkness damage with a %d%% chance to blind for %d turns (#SLATE#Spellpower vs. Physical#LAST#).  This has a %d turn cooldown per attacker.
 The damage will increase with your spellpower.
 
 #{italic}#After the light comes darkness, deep and hungry.#{normal}#
 
-#YELLOW#Learning this talent is optional and increases the cost of Solar Citadel by 10 Positive Energy#LAST#]]):tformat(damDesc(self, DamageType.DARKNESS, t.getDamage(self, t)), t.getDuration(self, t), t.getCooldown(self, t))
+#YELLOW#Learning this talent is optional and increases the cost of Solar Citadel by 10 Positive Energy#LAST#]]):tformat(damDesc(self, DamageType.DARKNESS, t.getDamage(self, t)), t.getChance(self, t), t.getDuration(self, t), t.getCooldown(self, t))
 	end,
 }
 class:bindHook("DamageProjector:final", function(self, hd)
@@ -90,7 +82,8 @@ class:bindHook("DamageProjector:final", function(self, hd)
 			local t = seff.src:getTalentFromId(seff.src.T_REK_SHINE_SEALS_ARMAMENTS)
 			src:setProc("shining_empyreal_darkness", true, 3)
 			local damBolt = t.getDamage(seff.src, t)
-			src:project(target, target.x, target.y, DamageType.DARKNESS_BLIND, damBolt)
+			local chanceBolt = t.getChance(seff.src, t)
+			src:project(target, target.x, target.y, DamageType.REK_SHINE_DARKNESS_BLIND, {dam=damBolt, chance=chanceBolt, dur=3})
 			game.level.map:particleEmitter(target.x, target.y, 1, "quick_fade_image", {img="empyreal_arms"})
 		end
 	end

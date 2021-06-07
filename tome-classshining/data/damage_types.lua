@@ -91,6 +91,25 @@ newDamageType{
 }
 
 newDamageType{
+	name = _t("darkness of the citadel", "damage type"), type = "REK_SHINE_DARKNESS_BLIND",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		if _G.type(dam) ~= "table" then dam = {dam=dam, chance=25, dur=3} end
+		local realdam = DamageType:get(DamageType.DARKNESS).projector(src, x, y, DamageType.DARKNESS, dam.dam, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target and rng.percent(dam.chance) then
+			if target:canBe("blind") then
+				target:setEffect(target.EFF_BLINDED, dam.dur, {src=src, apply_power=src:combatSpellpower()})
+			else
+				game.logSeen(target, "%s resists the blinding darkness!", target:getName():capitalize())
+			end
+		end
+		return realdam
+	end,
+}
+
+newDamageType{
 	name = _t"burning light", type = "REK_SHINE_SEAL_WALK", text_color = "#GOLD#",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)

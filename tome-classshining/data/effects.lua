@@ -293,10 +293,10 @@ newEffect{
 newEffect{
 	name = "REK_SHINE_SUNBURN", image = "talents/rek_shine_mantra_recitator.png",
 	desc = "Sunburn",
-	long_desc = function(self, eff) return ("%s"):format(string.rep("THESUN", eff.stacks)) end,
+	long_desc = function(self, eff) return ("This target takes %0.1f extra damage after being hit by non-fire damage."):tformat(eff.power_base) end,
 	type = "magical",
 	subtype = { fire=true },
-	status = "beneficial",
+	status = "other",
 	charges = function(self, eff) return math.round(eff.power) end,
 	parameters = { power=5, stacks = 1, max_stacks = 5 },
 	on_merge = function(self, old_eff, new_eff)

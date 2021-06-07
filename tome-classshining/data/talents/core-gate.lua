@@ -63,7 +63,7 @@ newTalent{
 	tactical = { ATTACKAREA = { LIGHT = 3 } },
 	target = function(self, t) return {type="ball", range=0, radius=10, talent=t} end,
 	getCount = function(self, t) return 3 end,
-	getChance = function(self, t) return 30 end,
+	getChance = function(self, t) return 34 end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2.4, 4.8))+1 end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 50, 180, self:rescaleCombatStats(self:getMag())) end,
 	summon = function(self, t)
@@ -173,6 +173,7 @@ newTalent{
 	end,
 	tactical = { DEFEND = 2 },
 	cooldown = 10,
+	no_energy = true,
 	getDuration = function(self, t) return 10 end,
 	getAbsorb = function(self, t) return self:combatTalentSpellDamage(t, 0, 220) end,
 	on_pre_use = function(self, t, silent)
