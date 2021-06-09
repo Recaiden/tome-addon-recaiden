@@ -40,7 +40,7 @@ In addition, when hitting allies, your light and fire penetration do not apply, 
 -- 'superload' damage projectors for fire and light
 local base_FireProjector = DamageType.dam_def.FIRE.projector
 DamageType.dam_def.FIRE.projector = function(src, x, y, type, dam, state)
-	if src.__is_actor == nil then
+	if src.__is_actor == nil or not src.knowTalent then
 		return base_FireProjector(src, x, y, type, dam, state)
 	end
 	local target = game.level.map(x, y, Map.ACTOR)
@@ -59,7 +59,7 @@ end
 
 local base_LightProjector = DamageType.dam_def.LIGHT.projector
 DamageType.dam_def.LIGHT.projector = function(src, x, y, type, dam, state)
-	if src.__is_actor == nil then
+	if src.__is_actor == nil or not src.knowTalent then
 		return base_LightProjector(src, x, y, type, dam, state)
 	end
 	local target = game.level.map(x, y, Map.ACTOR)

@@ -76,7 +76,7 @@ newTalent{
 		local delay = t.getDelay(self, t)
 		local radius = self:getTalentRadius(t)
 		local damage = t.getDamage(self, t)
-		return ([[After %d turns, the target area in (radius %d) is blasted with a beam of light, dealing %0.2f damage and lighting the area.  
+		return ([[After %d turns, the target area (radius %d) is blasted with a beam of light, dealing %0.2f damage and lighting the area.  
 This talent's cooldown goes through a cycle as you cast it repeatedly: 2, 2, 14 (and double insanity)]]):tformat(delay, radius, damDesc(self, DamageType.LIGHT, damage))
 	end,
 }
