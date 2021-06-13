@@ -1,0 +1,128 @@
+{
+    "6": {
+        "id": 6,
+        "name": "chat",
+        "data": {
+            "chatid": "welcome",
+            "chat": "The caravan lies broken, its defenders slaughtered.  The Allied Kingdoms will be deprived of crucial supplies.  You feel a surge of power as you contemplate the battle ahead.",
+            "answer1": "Onwards!"
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "8",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 45,
+        "pos_y": 370
+    },
+    "7": {
+        "id": 7,
+        "name": "attr-inc",
+        "data": {
+            "who": "player",
+            "attr": "unused_generics",
+            "value": "1"
+        },
+        "class": "attr-inc",
+        "html": "attr-inc",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "8",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "9",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 638,
+        "pos_y": 448
+    },
+    "8": {
+        "id": 8,
+        "name": "attr-inc",
+        "data": {
+            "who": "player",
+            "attr": "unused_talents",
+            "value": "1"
+        },
+        "class": "attr-inc",
+        "html": "attr-inc",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "6",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "7",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 638,
+        "pos_y": 275
+    },
+    "9": {
+        "id": 9,
+        "name": "attr-inc",
+        "data": {
+            "who": "player",
+            "attr": "unused_stats",
+            "value": "3"
+        },
+        "class": "attr-inc",
+        "html": "attr-inc",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "7",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 638,
+        "pos_y": 612
+    }
+}

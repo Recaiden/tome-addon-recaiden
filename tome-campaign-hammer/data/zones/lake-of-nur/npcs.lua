@@ -43,6 +43,9 @@ newEntity{
 	low_level_tactics_override = {escape=0},
 	
 	on_die = function(self, who)
+		local Chat = require "engine.Chat"
+		local chat = Chat.new("campaign-hammer+memory-crystals-tactics", {name=_t"Memory Crystals"}, game.player)
+		chat:invoke()
 	end,
 	resolvers.talents{
 		[Talents.T_CREEPING_DARKNESS]=3,

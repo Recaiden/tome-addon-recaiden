@@ -112,7 +112,7 @@ newEffect{
 				tg, eff.x, eff.y,
 				function(px, py, tg, self)
 					local target = game.level.map(px, py, Map.ACTOR)
-					if target and target ~= self then
+					if target and target ~= self and self:reactionToward(target) < 0 then
 						self:attackTarget(target, nil, eff.mult or 1.0, true)
 					end
 				end)

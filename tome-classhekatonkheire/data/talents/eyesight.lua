@@ -37,14 +37,14 @@ newTalent{
 		game.logPlayer(self, "Select an eye...")
 		local tg_eye = {default_target=self, type="hit", friendlyblock = false, nowarning=true, range=self:getTalentRange(t), first_target = "friend"}
 		tx, ty = self:getTarget(tg_eye)
+		if not tx or not ty then return nil end
 		if tx then
 			_, _, _, tx, ty = self:canProject(tg_eye, tx, ty)
-			if tx then
-				target = game.level.map(tx, ty, Map.ACTOR)
-				if not target then return nil end
-				if not target.is_wandering_eye then return nil end
-				if not target.summoner or target.summoner ~= self then return nil end
-			end
+			if not tx then return nil end
+			target = game.level.map(tx, ty, Map.ACTOR)
+			if not target then return nil end
+			if not target.is_wandering_eye then return nil end
+			if not target.summoner or target.summoner ~= self then return nil end
 		end
 		
 		local tg = {multiple=true}
