@@ -86,7 +86,7 @@ newTalent{
 	psi = 15,
 	tactical = { ATTACK = 2, RESOURCE = 2 },
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t)} end,
-	getCount = function (self, t) return 3 end,
+	getCount = function (self, t) return 1 + math.floor(self:combatTalentLimit(t, 4, 1, 2.5)) end,
 	getConversionDamage = function (self, t) return self:combatTalentWeaponDamage(t, 0.30, 0.65) end,
 	getAmmo = function (self, t) return math.ceil(self:combatTalentScale(t, 3, 8)) end,
 	getReadySpeed = function (self, t) return self:combatTalentMindDamage(t, 0.20, 0.90) end,

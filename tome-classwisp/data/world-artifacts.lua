@@ -18,7 +18,7 @@ newEntity{
 	level_range = {35, 50},
 	color=colors.CRIMSON,
 	rarity = 170,
-	desc = [[A tiny hurricane of bloody raindrops and basalt hail, whirling eternally in the air.  It seems friendly.]],
+	desc = [[A tiny hurricane of bloody raindrops and basalt hail, whirling eternally in the air.  It seems ... friendly.]],
 	cost = 200,
 	material_level = 5,
 	sentient = true,
@@ -29,6 +29,7 @@ newEntity{
 		travel_speed = 4,
 		physspeed = 0.95,
 		attack_recurse = 2,
+		dam_mult=0.35,
 		ranged_project = {[DamageType.PHYSICAL] = 5},
 		combat_physcrit=20,
 		apr = 11,
@@ -41,14 +42,6 @@ newEntity{
 		},
 		talent_cd_reduction={[Talents.T_REK_GLR_ARROWSTORM_VITARIS]=4},
 	},
-	--?Stronger per distinct arrowstorm talent you have
-		
-	on_wear = function(self, who)
-		self.worn_by = who
-	end,
-	on_takeoff = function(self)
-		self.worn_by = nil
-	end,
 }
 
 newEntity{
@@ -81,12 +74,6 @@ newEntity{
 		game.state:addRandartProperties(self, {lev = 0, nb_points_add=15, egos = 1,
 			force_egos = {"voyaging"},
 			force_themes = {'physical'}})
-	end,
-	on_wear = function(self, who)
-		self.worn_by = who
-	end,
-	on_takeoff = function(self)
-		self.worn_by = nil
 	end,
 }
 

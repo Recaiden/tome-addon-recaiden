@@ -9,7 +9,7 @@ newTalent{
 	cooldown = 20,
 	mode = "sustained",
 	target = function(self, t) return {type="ball", range=0, radius=self:getTalentRange(t), selffire=false, talent=t} end,
-	getDamage = function(self, t) return math.min(0.85, self:combatTalentWeaponDamage(t, 0.05, 0.60)) end,
+	getDamage = function(self, t) return math.min(0.85, self:combatTalentWeaponDamage(t, 0.1, 0.65)) end,
 	doStorm = function(self, t)
 		local rearmed = self:attr("disarmed")
 		if rearmed then self:attr("disarmed", -1 * rearmed) end
@@ -22,18 +22,21 @@ newTalent{
 		local tg = self:getTalentTarget(t)
 		local targets = self:projectCollect(tg, self.x, self.y, Map.ACTOR, "hostile")
 		local old_target_forced = game.target.forced
-		
+
+		local penalty = (1.0 - t.getDamage(self, t)) * 100
+		self:attr("generic_damage_penalty", penalty)
 		self:attr("instant_shot", 1)
 		for i, target in pairs(targets) do
 			game.target.forced = {target.x, target.y, target}
 			local subtargets = self:archeryAcquireTargets({type = "hit", speed=200}, {one_shot=true, no_energy=true, no_sound=true, infinite=true})
 			if subtargets then
-				self:archeryShoot(subtargets, t, {type = "bolt", start_x=target.x, start_y=target.y}, {mult=t.getDamage(self, t)})
+				self:archeryShoot(subtargets, t, {type = "bolt", start_x=target.x, start_y=target.y}, {mult=1})
 			else
 				break
 			end
 		end
 		self:attr("instant_shot", -1)
+		self:attr("generic_damage_penalty", -1*penalty)
 		game.target.forced = old_target_forced
 		
 		if rearmed then self:attr("disarmed", rearmed) end
@@ -62,9 +65,9 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Use your telekinesis to set countless arrows, arrowheads, and bits of scrap whirling around you at high speeds.  Each round, enemies within range will be struck as if you had shot them for %d%% damage.
+		return ([[Use your telekinesis to set countless arrows, arrowheads, and bits of scrap whirling around you at high speeds.  Each round, you will make an archery attack against each enemy within range. These attacks (including their on-hit effects) will do only %d%% damage.
 
-Reduces your reload rate by 1 while active.]]):format(t.getDamage(self, t)*100)
+Arrowstorm attacks don't use ammo, but this talent reduces your reload rate by 1 while active.]]):format(t.getDamage(self, t)*100)
 	end,
 }
 

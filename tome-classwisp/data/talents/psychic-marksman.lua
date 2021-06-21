@@ -36,7 +36,7 @@ newTalent{
 Mindpower: increases on-hit damage
 
 Your arrow attacks benefit from an additional accuracy bonus: %0.1f%% increased on-hit damage per excess accuracy.
-Your on-hit damage can get mental critical hits.]]):format(t.getDamage(self, t), t.getAccBonus(self, t))
+Your on-hit damage can get mental critical hits (with -25%% critical damage)]]):format(t.getDamage(self, t), t.getAccBonus(self, t))
 	end,
 }
 

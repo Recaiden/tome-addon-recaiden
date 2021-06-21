@@ -37,8 +37,8 @@ newEntity{
 		e.combat.range = math.max(e.combat.range - 1, 3)
 	end),
 	combat = {
-		attack_recurse = 2,
-		dam_mult=0.35,
+		attack_recurse = 1,
+		dam_mult=0.45,
 		ranged_project = { 
 			[DamageType.PHYSICAL] = resolvers.mbonus_material(10, 5),
 		},
