@@ -1,7 +1,7 @@
 return {
 	name = "Lake of Nur",
 	display_name = function(x, y)
-		if game.level.level == 1 then return "Path to Lake of Nur" end
+		if game.level.level == 1 then return "Lake of Nur" end
 		if game.level.level == 2 then return "Lake of Nur" end
 		return "Yiilkgur Excavation Site"
 	end,
@@ -47,7 +47,7 @@ return {
 	{
 		[1] = {
 			underwater = true,
-			effects = {"EFF_ZONE_AURA_UNDERWATER"},
+			effects = {"EFF_ZONE_AURA_UNDERWATER", "EFF_HAMMER_DEMONIC_WATERBREATHING"},
 			generator = {
 				map =  {
 					rooms = {"random_room",{"lesser_vault",7}},
@@ -60,12 +60,12 @@ return {
 		},
 		[2] = {
 			underwater = is_flooded,
+			effects = {"EFF_ZONE_AURA_UNDERWATER"},
 			generator =  {
 				map = {
 					rooms = {"random_room",{"lesser_vault",5}},
 					lesser_vaults_list = {"flooded-prison"},
 					['.'] = {"WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR_BUBBLE"},
-					effects = {"EFF_ZONE_AURA_UNDERWATER"},
 				},
 				actor = {
 					filters = {{special_rarity="water_rarity"},{special_rarity="horror_water_rarity"}},
@@ -75,12 +75,12 @@ return {
 		},
 		[3] = {
 			underwater = is_flooded,
+			effects = {"EFF_ZONE_AURA_UNDERWATER"},
 			generator =  {
 				map = {
 					rooms = {"random_room",{"lesser_vault",5}},
 					lesser_vaults_list = {"flooded-prison"},
 					['.'] = {"WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR_BUBBLE"},
-					effects = {"EFF_ZONE_AURA_UNDERWATER"},
 				},
 				actor = {
 					filters = {{special_rarity="water_rarity"},{special_rarity="horror_water_rarity"}},

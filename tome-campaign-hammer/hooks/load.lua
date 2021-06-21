@@ -27,7 +27,7 @@ class:bindHook(
 		
 		--ActorTalents:loadDefinition("/data-campaign-hammer/talents.lua")
 		
-		--ActorTemporaryEffects:loadDefinition("/data-campaign-hammer/effects.lua")
+		ActorTemporaryEffects:loadDefinition("/data-campaign-hammer/effects.lua")
 		
 		Birther:loadDefinition("/data-campaign-hammer/birth/worlds.lua")
 		--Birther:loadDefinition("/data-campaign-hammer/birth/races/duathedlen.lua")
@@ -72,3 +72,13 @@ class:bindHook(
 		self:loadList("/data-campaign-hammer/general/npcs/horror.lua", data.no_default, data.res, data.mod, data.loaded)
 	end
 end)
+
+class:bindHook(
+	"ToME:runDone",
+	function(self, data)
+	if game.state.birth.campaign_name == "hammer" then
+		engine.Faction:setInitialReaction("fearscape", "enemies", -50, true)
+		engine.Faction:setInitialReaction("enemies", "fearscape", -50, true)
+	end
+end)
+
