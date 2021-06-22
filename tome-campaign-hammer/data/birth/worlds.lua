@@ -56,7 +56,7 @@ newBirthDescriptor{
 			self.default_wilderness = {"playerpop", "hammer-demon"}
 
 			engine.Faction:setInitialReaction("fearscape", "enemies", -50, true)
-			engine.Faction:setInitialReaction("enemies", "fearscape", -50, true)
+			engine.Faction:setInitialReaction("orc-pride", "fearscape", -50, true)
 		end,
 	},
 	game_state = {

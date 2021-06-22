@@ -60,25 +60,27 @@ class:bindHook(
 class:bindHook(
 	"Entity:loadList",
 	function(self, data)
-	if type(game) ~= "table" then return end
-	if game.state.birth.campaign_name == "hammer" then
-		if data.file == "/data/zones/wilderness/grids.lua" then
-			self:loadList("/data-campaign-hammer/zones/wilderness-add/grids.lua", data.no_default, data.res, data.mod, data.loaded)
+		if type(game) ~= "table" then return end
+		if game.state.birth.campaign_name == "hammer" then
+			if data.file == "/data/zones/wilderness/grids.lua" then
+				self:loadList("/data-campaign-hammer/zones/wilderness-add/grids.lua", data.no_default, data.res, data.mod, data.loaded)
+			end
+		end
+		
+		-- TODO load extra enemies
+		if data.file == "/data/general/npcs/horror.lua" then
+			self:loadList("/data-campaign-hammer/general/npcs/horror.lua", data.no_default, data.res, data.mod, data.loaded)
 		end
 	end
-
-	-- TODO load extra enemies
-	if data.file == "/data/general/npcs/horror.lua" then
-		self:loadList("/data-campaign-hammer/general/npcs/horror.lua", data.no_default, data.res, data.mod, data.loaded)
-	end
-end)
+)
 
 class:bindHook(
 	"ToME:runDone",
 	function(self, data)
-	if game.state.birth.campaign_name == "hammer" then
-		engine.Faction:setInitialReaction("fearscape", "enemies", -50, true)
-		engine.Faction:setInitialReaction("enemies", "fearscape", -50, true)
+		if game.state.birth.campaign_name == "hammer" then
+			engine.Faction:setInitialReaction("fearscape", "enemies", -50, true)
+			engine.Faction:setInitialReaction("orc-pride", "fearscape", -50, true)
+		end
 	end
-end)
+)
 
