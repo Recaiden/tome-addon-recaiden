@@ -69,21 +69,10 @@ return {
 		game.state:makeWeather(level, 7, {max_nb=1, speed={0.5, 1.6}, shadow=true, alpha={0.3, 0.45}, particle_name="weather/grey_cloud_%02d"})
 	end,
 
-	on_leave = function(lev, old_lev, newzone)
-		if not newzone then return end
-		-- Go back to the town for quest completion
-		if game.player:hasQuest("orcs+kruk-invasion") and game.level.max_turn_counter then
-			return 1, "orcs+town-kruk"
-		end
-	end,
-
-	on_turn = function(self)
-		if not game.level.turn_counter then return end
-		game.level.turn_counter = game.level.turn_counter - 1
-		game.player.changed = true
-		if game.level.turn_counter < 0 then
-			game.level.turn_counter = nil
-			game.player:hasQuest("orcs+kruk-invasion"):do_destruction()
+	on_enter = function(lev)
+		local q = game.player:hasQuest("campaign-hammer+counterattack")
+		if q and not q:isCompleted("victory") then
+			game:changeLevel(1, "beachhead-siege")
 		end
 	end,
 }

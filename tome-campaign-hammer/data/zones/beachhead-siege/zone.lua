@@ -1,5 +1,5 @@
 return {
-	name = "Beachhead",
+	name = "Beachhead (Siege)",
 	level_range = {30, 35},
 	level_scheme = "player",
 	max_level = 3,
@@ -36,10 +36,12 @@ return {
 					class = "engine.generator.map.Building",
 					wall = "MALROK_WALL",
 					floor = "BURNT_GROUND",
-					margin_w = 1, margin_h = 1,
+					margin_w = 0, margin_h = 0,
 					max_block_w = 15, max_block_h = 15,
 					max_building_w = 5, max_building_h = 5,
-					down = "BURNT_DOWN6",
+					edge_entrances = {2,8},
+					up = "BURNT_UP_WILDERNESS", --you can retreat, but can't get to town
+					down = "BURNT_DOWN8",
 				},
 			},
 			actor = {
@@ -56,7 +58,8 @@ return {
 					min_floor = 1400,
 					floor = "BURNT_GROUND",
 					wall = "BURNT_TREE",
-					up = "BURNT_UP4",
+					edge_entrances = {2,6},
+					up = "BURNT_UP2",
 					down = "BURNT_DOWN6",
 				},
 			},
@@ -67,14 +70,13 @@ generator =  {
 				map = {
 					class = "engine.generator.map.Roomer",
 					nb_rooms = 10,
-					end_road = true,
-					down = "ROCKY_UP_WILDERNESS",
+					down = "ROCKY_GROUND",
 					force_last_stair = true,
 					edge_entrances = {4,6},
 					rooms = {"forest_clearing"},
 					['.'] = "ROCKY_GROUND",
 					['#'] = {"ROCKY_SNOWY_TREE","ROCKY_SNOWY_TREE2","ROCKY_SNOWY_TREE3","ROCKY_SNOWY_TREE4","ROCKY_SNOWY_TREE5","ROCKY_SNOWY_TREE6","ROCKY_SNOWY_TREE7","ROCKY_SNOWY_TREE8","ROCKY_SNOWY_TREE9","ROCKY_SNOWY_TREE10","ROCKY_SNOWY_TREE11","ROCKY_SNOWY_TREE12","ROCKY_SNOWY_TREE13","ROCKY_SNOWY_TREE14","ROCKY_SNOWY_TREE15","ROCKY_SNOWY_TREE16","ROCKY_SNOWY_TREE17","ROCKY_SNOWY_TREE18","ROCKY_SNOWY_TREE19","ROCKY_SNOWY_TREE20",},
-					up = "ROCKY_UP6",
+					up = "ROCKY_UP4",
 					door = "ROCKY_GROUND",
 				},
 				actor = {
@@ -100,30 +102,5 @@ generator =  {
 		if level.level ~= 3 then return end
 
 		game:placeRandomLoreObject("NOTE1")
-
-		local Map = require "engine.Map"
-		local Particles = require "engine.Particles"
-		level.data.background_particle2 = Particles.new("image", 1, {size=Map.viewport.mwidth * 1.2 * 64, image="shockbolt/terrain/observatory_bg_01"})
-
-		local ps = {}
-		for i = 1, 7 do
-			local p = {max_nb=9, speed={0.5, 1.6}, alpha={0.4, 0.6}, particle_name="weather/grey_cloud_%02d", width = level.map.w*level.map.tile_w, height = level.map.h*level.map.tile_h}
-			p.particle_name = p.particle_name:format(i)
-			ps[#ps+1] = Particles.new("weather_storm", 1, p)
-		end
-		level.data.background_particle1 = ps
-	end,
-
-	background = function(level, x, y, nb_keyframes)
-		if not level.data.background_particle1 then return end
-
-		local Map = require "engine.Map"
-		local parx, pary = level.map.mx / (level.map.w - Map.viewport.mwidth), level.map.my / (level.map.h - Map.viewport.mheight)
-		level.data.background_particle2.ps:toScreen(x + Map.viewport.mwidth * Map.tile_w / 2 - parx * 40, y + Map.viewport.mheight * Map.tile_h / 2 - pary * 40, true, 1)
-
-		local dx, dy = level.map:getScreenUpperCorner() -- Display at map border, always, so it scrolls with the map
-		for j = 1, #level.data.background_particle1 do
-			level.data.background_particle1[j].ps:toScreen(dx, dy, true, 1)
-		end
 	end,
 }

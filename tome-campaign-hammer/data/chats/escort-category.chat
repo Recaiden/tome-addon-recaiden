@@ -1,0 +1,235 @@
+{
+    "5": {
+        "id": 5,
+        "name": "chat",
+        "data": {
+            "chatid": "welcome",
+            "chat": "In recognition of your success, a freshly-made memory crystal is delivered to you.  It will allow you to learn a new group of talents almost instantly.\n(You will learn a new generic category, unlocked, at 1.0 mastery)",
+            "answer1": "Remember spells",
+            "answer2": "Remember mental techniques",
+            "answer3": "Remember physical techniques",
+            "answer4": "Remember something else"
+        },
+        "class": "chat",
+        "html": "chat4",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "input": "output_7"
+                    },
+                    {
+                        "node": "20",
+                        "input": "output_6"
+                    },
+                    {
+                        "node": "25",
+                        "input": "output_3"
+                    },
+                    {
+                        "node": "24",
+                        "input": "output_4"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": []
+            },
+            "output_3": {
+                "connections": []
+            },
+            "output_4": {
+                "connections": []
+            }
+        },
+        "pos_x": 39,
+        "pos_y": 206
+    },
+    "15": {
+        "id": 15,
+        "name": "chat",
+        "data": {
+            "chatid": "spells",
+            "chat": "Which spells were in your memory crystal?",
+            "answer1": "Stone Alchemy",
+            "answer2": "Chronomancy",
+            "answer3": "Chants",
+            "answer4": "Curses",
+            "answer5": "Staff Combat",
+            "answer6": "Divination",
+            "answer7": "Not spells..."
+        },
+        "class": "chat",
+        "html": "chat7",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": []
+            },
+            "output_3": {
+                "connections": []
+            },
+            "output_4": {
+                "connections": []
+            },
+            "output_5": {
+                "connections": []
+            },
+            "output_6": {
+                "connections": []
+            },
+            "output_7": {
+                "connections": [
+                    {
+                        "node": "5",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 859.5,
+        "pos_y": -505
+    },
+    "20": {
+        "id": 20,
+        "name": "chat",
+        "data": {
+            "chatid": "psi",
+            "chat": "What mental powers were in your memory crystal?",
+            "answer1": "Mindstar Mastery",
+            "answer2": "Call of the Wild",
+            "answer3": "Feedback",
+            "answer4": "Augmented Mobility",
+            "answer5": "Dreaming",
+            "answer6": "Not mind powers..."
+        },
+        "class": "chat",
+        "html": "chat6",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": []
+            },
+            "output_3": {
+                "connections": []
+            },
+            "output_4": {
+                "connections": []
+            },
+            "output_5": {
+                "connections": []
+            },
+            "output_6": {
+                "connections": [
+                    {
+                        "node": "5",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1017.3333333333334,
+        "pos_y": 44
+    },
+    "24": {
+        "id": 24,
+        "name": "chat",
+        "data": {
+            "chatid": "other",
+            "chat": "What were these memories?",
+            "answer1": "Memories of Zigur",
+            "answer2": "Memories of Machinery",
+            "answer3": "It's Empty",
+            "answer4": "None of these..."
+        },
+        "class": "chat",
+        "html": "chat4",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": []
+            },
+            "output_3": {
+                "connections": []
+            },
+            "output_4": {
+                "connections": [
+                    {
+                        "node": "5",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 393,
+        "pos_y": 737
+    },
+    "25": {
+        "id": 25,
+        "name": "chat",
+        "data": {
+            "chatid": "technique",
+            "chat": "What physical techniques were in your memory crystal?",
+            "answer1": "Conditioning",
+            "answer2": "Soundrel",
+            "answer3": "Not techniques..."
+        },
+        "class": "chat",
+        "html": "chat3",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": []
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "5",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1028,
+        "pos_y": 469
+    }
+}
