@@ -3,6 +3,8 @@ load("/data/general/npcs/troll.lua", rarity(2))
 load("/data/general/npcs/bear.lua", rarity(2))
 load("/data/general/npcs/plant.lua", rarity(3))
 
+local Talents = require("engine.interface.ActorTalents")
+
 newEntity{
 	define_as = "BASE_CARAVANEER",
 	type = "humanoid", subtype = "human", image="npc/humanoid_human_spectator02.png",

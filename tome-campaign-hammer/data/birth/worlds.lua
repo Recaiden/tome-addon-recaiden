@@ -31,7 +31,7 @@ end
 newBirthDescriptor{
 	type = "world",
 	name = "Demons",
-	display_name = "Demons: The Hammer of Urh'Rok",
+	display_name = _t"Demons: The Hammer of Urh'Rok",
 	selection_default = config.settings.tome.default_birth and config.settings.tome.default_birth.campaign == "Hammer",
 	desc =
 		{

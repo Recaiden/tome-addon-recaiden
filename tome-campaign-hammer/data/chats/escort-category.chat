@@ -4,7 +4,7 @@
         "name": "chat",
         "data": {
             "chatid": "welcome",
-            "chat": "In recognition of your success, a freshly-made memory crystal is delivered to you.  It will allow you to learn a new group of talents almost instantly.\n(You will learn a new generic category, unlocked, at 1.0 mastery)",
+            "chat": "In recognition of your success, a freshly-made memory crystal is delivered to you.  It will allow you to learn a new group of talents almost instantly.\n(You will learn a new generic category, unlocked, at 1.0 mastery, or improve a category you already know by 0.2 mastery)",
             "answer1": "Remember spells",
             "answer2": "Remember mental techniques",
             "answer3": "Remember physical techniques",
@@ -31,22 +31,46 @@
                     {
                         "node": "24",
                         "input": "output_4"
+                    },
+                    {
+                        "node": "32",
+                        "input": "output_4"
                     }
                 ]
             }
         },
         "outputs": {
             "output_1": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "26",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_2": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "28",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_3": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "25",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_4": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "24",
+                        "output": "input_1"
+                    }
+                ]
             }
         },
         "pos_x": 39,
@@ -71,27 +95,62 @@
         "typenode": true,
         "inputs": {
             "input_1": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "26",
+                        "input": "output_1"
+                    }
+                ]
             }
         },
         "outputs": {
             "output_1": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "36",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_2": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "37",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_3": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "38",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_4": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "33",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_5": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "34",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_6": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "35",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_7": {
                 "connections": [
@@ -102,8 +161,8 @@
                 ]
             }
         },
-        "pos_x": 859.5,
-        "pos_y": -505
+        "pos_x": 1777.5,
+        "pos_y": -463
     },
     "20": {
         "id": 20,
@@ -123,24 +182,54 @@
         "typenode": true,
         "inputs": {
             "input_1": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "27",
+                        "input": "output_1"
+                    }
+                ]
             }
         },
         "outputs": {
             "output_1": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "41",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_2": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "42",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_3": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "44",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_4": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "43",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_5": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "45",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_6": {
                 "connections": [
@@ -151,8 +240,8 @@
                 ]
             }
         },
-        "pos_x": 1017.3333333333334,
-        "pos_y": 44
+        "pos_x": 1500,
+        "pos_y": 9.571428571428571
     },
     "24": {
         "id": 24,
@@ -160,9 +249,9 @@
         "data": {
             "chatid": "other",
             "chat": "What were these memories?",
-            "answer1": "Memories of Zigur",
-            "answer2": "Memories of Machinery",
-            "answer3": "It's Empty",
+            "answer1": "Memories of Zigur (Antimagic)",
+            "answer2": "Memories of Machinery (Tinkers)",
+            "answer3": "It's Empty (Gain a category point later)",
             "answer4": "None of these..."
         },
         "class": "chat",
@@ -170,7 +259,12 @@
         "typenode": true,
         "inputs": {
             "input_1": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "5",
+                        "input": "output_4"
+                    }
+                ]
             }
         },
         "outputs": {
@@ -181,7 +275,12 @@
                 "connections": []
             },
             "output_3": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "46",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_4": {
                 "connections": [
@@ -192,8 +291,8 @@
                 ]
             }
         },
-        "pos_x": 393,
-        "pos_y": 737
+        "pos_x": 935,
+        "pos_y": 799.4285714285714
     },
     "25": {
         "id": 25,
@@ -210,15 +309,30 @@
         "typenode": true,
         "inputs": {
             "input_1": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "5",
+                        "input": "output_3"
+                    }
+                ]
             }
         },
         "outputs": {
             "output_1": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "40",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_2": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "39",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_3": {
                 "connections": [
@@ -229,7 +343,571 @@
                 ]
             }
         },
-        "pos_x": 1028,
-        "pos_y": 469
+        "pos_x": 1582,
+        "pos_y": 621.5
+    },
+    "26": {
+        "id": 26,
+        "name": "attr-get",
+        "data": {
+            "not": false,
+            "who": "player",
+            "attr": "forbid_arcane",
+            "value": "",
+            "test": "!"
+        },
+        "class": "attr-get",
+        "html": "attr-get",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "5",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 787,
+        "pos_y": -98.57142857142857
+    },
+    "27": {
+        "id": 27,
+        "name": "attr-get",
+        "data": {
+            "not": false,
+            "who": "player",
+            "attr": "forbid_nature",
+            "value": "",
+            "test": "!"
+        },
+        "class": "attr-get",
+        "html": "attr-get",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "28",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1025.142857142857,
+        "pos_y": 73
+    },
+    "28": {
+        "id": 28,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "chat2",
+            "code": ""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "5",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "27",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "32",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 772,
+        "pos_y": 136.57142857142858
+    },
+    "32": {
+        "id": 32,
+        "name": "chat",
+        "data": {
+            "chatid": "psi no nature",
+            "chat": "What mental powers were in your memory crystal?",
+            "answer1": "Feedback",
+            "answer2": "Augmented Mobility",
+            "answer3": "Dreaming",
+            "answer4": "Not mind powers..."
+        },
+        "class": "chat",
+        "html": "chat4",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "28",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "44",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "43",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "45",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_4": {
+                "connections": [
+                    {
+                        "node": "5",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1937.2857230050222,
+        "pos_y": 337.09524972098217
+    },
+    "33": {
+        "id": 33,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"corruption/curses\") then\n    game.player:setTalentTypeMastery(\"corruption/curses\", game.player:getTalentTypeMastery(\"corruption/curses\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"corruption/curses\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "input": "output_4"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1822,
+        "pos_y": -916.4285714285714
+    },
+    "34": {
+        "id": 34,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"spell/staff-combat\") then\n    game.player:setTalentTypeMastery(\"spell/staff-combat\", game.player:getTalentTypeMastery(\"spell/staff-combat\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"spell/staff-combat\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "input": "output_5"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2325,
+        "pos_y": -915.4285714285714
+    },
+    "35": {
+        "id": 35,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"spell/divination\") then\n    game.player:setTalentTypeMastery(\"spell/divination\", game.player:getTalentTypeMastery(\"spell/divination\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"spell/divination\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "input": "output_6"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2826,
+        "pos_y": -915.4285714285714
+    },
+    "36": {
+        "id": 36,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"spell/stone-alchemy\") then\n    game.player:setTalentTypeMastery(\"spell/stone-alchemy\", game.player:getTalentTypeMastery(\"spell/stone-alchemy\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"spell/stone-alchemy\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1821.5714285714287,
+        "pos_y": -1309
+    },
+    "37": {
+        "id": 37,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"chronomancy/chronomancy\") then\n    game.player:setTalentTypeMastery(\"chronomancy/chronomancy\", game.player:getTalentTypeMastery(\"chronomancy/chronomancy\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"chronomancy/chronomancy\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2325,
+        "pos_y": -1313.5714285714287
+    },
+    "38": {
+        "id": 38,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"celestial/chants\") then\n    game.player:setTalentTypeMastery(\"celestial/chants\", game.player:getTalentTypeMastery(\"celestial/chants\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"celestial/chants\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2823.4285714285716,
+        "pos_y": -1313
+    },
+    "39": {
+        "id": 39,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"cunning/scoundrel\") then\n    game.player:setTalentTypeMastery(\"cunning/scoundrel\", game.player:getTalentTypeMastery(\"cunning/scoundrel\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"cunning/scoundrel\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2134,
+        "pos_y": 1055.5714285714287
+    },
+    "40": {
+        "id": 40,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"technique/conditioning\") then\n    game.player:setTalentTypeMastery(\"technique/conditioning\", game.player:getTalentTypeMastery(\"technique/conditioning\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"technique/conditioning\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1595.5714285714287,
+        "pos_y": 1055
+    },
+    "41": {
+        "id": 41,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"wild-gift/mindstar-mastery\") then\n    game.player:setTalentTypeMastery(\"wild-gift/mindstar-mastery\", game.player:getTalentTypeMastery(\"wild-gift/mindstar-mastery\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"wild-gift/mindstar-mastery\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2130.6666666666665,
+        "pos_y": -125
+    },
+    "42": {
+        "id": 42,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"wild-gift/call\") then\n    game.player:setTalentTypeMastery(\"wild-gift/call\", game.player:getTalentTypeMastery(\"wild-gift/call\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"wild-gift/call\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2252.6666666666665,
+        "pos_y": 147
+    },
+    "43": {
+        "id": 43,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"psionic/augmented-mobility\") then\n    game.player:setTalentTypeMastery(\"psionic/augmented-mobility\", game.player:getTalentTypeMastery(\"psionic/augmented-mobility\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"psionic/augmented-mobility\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "input": "output_4"
+                    },
+                    {
+                        "node": "32",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2843,
+        "pos_y": 189.66666666666666
+    },
+    "44": {
+        "id": 44,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"psionic/feedback\") then\n    game.player:setTalentTypeMastery(\"psionic/feedback\", game.player:getTalentTypeMastery(\"psionic/feedback\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"psionic/feedback\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "input": "output_3"
+                    },
+                    {
+                        "node": "32",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2756.3333333333335,
+        "pos_y": -129.66666666666666
+    },
+    "45": {
+        "id": 45,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"psionic/dreaming\") then\n    game.player:setTalentTypeMastery(\"psionic/dreaming\", game.player:getTalentTypeMastery(\"psionic/dreaming\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"psionic/dreaming\", true)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "input": "output_5"
+                    },
+                    {
+                        "node": "32",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2918.6666666666665,
+        "pos_y": 522
+    },
+    "46": {
+        "id": 46,
+        "name": "quest-give",
+        "data": {
+            "quest": "campaign-hammer+empty-memory"
+        },
+        "class": "quest-give",
+        "html": "quest-give",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "24",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1187.2500038146973,
+        "pos_y": 1249.1875076293943
     }
 }

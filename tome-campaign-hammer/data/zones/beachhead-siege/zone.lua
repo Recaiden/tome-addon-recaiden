@@ -99,6 +99,12 @@ generator =  {
 	},
 
 	post_process = function(level)
+		for uid, e in pairs(level.entities) do
+			if e.type ~= "demon" then
+				e.faction = e.hard_faction or "thalore"
+			end
+		end
+		
 		if level.level ~= 3 then return end
 
 		game:placeRandomLoreObject("NOTE1")

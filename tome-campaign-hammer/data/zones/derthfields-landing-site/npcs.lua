@@ -60,5 +60,8 @@ newEntity{ base="BASE_NPC_BEAR", define_as = "MAGRIN",
 
 	on_die = function(self, who)
 		game.player:resolveSource():setQuestStatus("campaign-hammer+start-demon", engine.Quest.COMPLETED, "landing")
+		local Chat = require "engine.Chat"
+		local chat = Chat.new("campaign-hammer+escort-category", {name=_t"Memory Crystals"}, game.player)
+		chat:invoke()
 	end,
 }
