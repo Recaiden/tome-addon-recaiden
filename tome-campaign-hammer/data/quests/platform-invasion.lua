@@ -6,7 +6,7 @@ desc = function(self, who)
 	if self:isStatus(self.DONE) then
 		desc[#desc+1] = "#LIGHT_GREEN#* You have destroyed the void creatures.#WHITE#"
 	else
-		desc[#desc+1] = "#LIGHT_GREY#* You must reach the portal to Eyal and ensure it is safe fromt he monsters.#WHITE#"
+		desc[#desc+1] = "#LIGHT_GREY#* You must reach the portal to Eyal and ensure it is safe from the monsters.#WHITE#"
 	end
 	return table.concat(desc, "\n")
 end

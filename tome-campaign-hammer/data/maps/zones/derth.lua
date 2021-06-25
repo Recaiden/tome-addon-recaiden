@@ -1,4 +1,4 @@
-defineTile('<', "GRASS_UP_WILDERNESS")
+defineTile('<', "GRASS_UP")
 defineTile('t', "TREE")
 defineTile('~', "DEEP_WATER")
 defineTile('.', "GRASS")
@@ -25,7 +25,7 @@ defineTile('a', "DOOR")
 defineTile('b', "DOOR")
 
 startx = 0
-starty = 21
+starty = 20
 
 -- addZone section
 

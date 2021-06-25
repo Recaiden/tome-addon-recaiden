@@ -12,6 +12,7 @@ newEffect{
 	no_stop_enter_worlmap = true,
 	long_desc = function(self, eff) return (_t"Gives you a large but limited supply of air underwater.  Not useful when buried alive.") end,
 	no_remove = true,
+	cancel_on_level_change = false,
 	type = "other",
 	subtype = { aura=true },
 	status = "beneficial",

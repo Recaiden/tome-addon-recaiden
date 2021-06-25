@@ -2,7 +2,7 @@ local Talents = require("engine.interface.ActorTalents")
 
 load("/data/general/npcs/losgoroth.lua", function(e) e.combat_def = 0; e.inc_damage = {all=-70} end)
 load("/data/general/npcs/demon-major.lua", rarity(40))
-load("/data/general/npcs/demon-minor.lua", rarity(40))
+load("/data/general/npcs/demon-minor.lua", rarity(20))
 
 newEntity{
 	define_as = "BASE_NPC_PLATFORM",
@@ -119,7 +119,7 @@ newEntity{
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/demon_major_dolleg.png", display_h=2, display_y=-1}}},
 	desc = _t"This injured, panicked warbeast is running out of control.  Perhaps you should put it down, but mind the thorns!",
 	level_range = {1, nil}, exp_worth = 1,
-	rarity = 1,
+	rarity = 3,
 	rank = 2,
 	autolevel = "warrior",
 	combat_armor = 5, combat_def = 0,

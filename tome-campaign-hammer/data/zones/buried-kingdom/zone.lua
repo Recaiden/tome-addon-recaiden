@@ -1,6 +1,6 @@
 return {
 	name = "Buried Kingdom",
-	level_range = {40, 45},
+	level_range = {40, 50},
 	level_scheme = "player",
 	max_level = 3,
 	decay = {300, 800},

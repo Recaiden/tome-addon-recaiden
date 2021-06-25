@@ -1,4 +1,4 @@
-name = "First Steps"
+name = "The Beachhead"
 desc = function(self, who)
    local desc = {}
    desc[#desc+1] = "You've landed on Eyal.\n"

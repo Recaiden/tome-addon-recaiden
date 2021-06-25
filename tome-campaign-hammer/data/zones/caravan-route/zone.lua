@@ -1,13 +1,13 @@
 return {
 	name = "Caravan",
-	level_range = {15, 20},
+	level_range = {10, 20},
 	level_scheme = "player",
 	max_level = 3,
 	decay = {300, 800},
 	actor_adjust_level = function(zone, level, e) return zone.base_level + e:getRankLevelAdjust() + level.level-1 + rng.range(-1,2) end,
-	width = 50, height = 50,
+	width = 80, height = 28,
 	persistent = "zone",
-	ambient_music = {"Bazaar of Tal-Mashad.ogg", "weather/jungle_base.ogg"},
+	ambient_music = {"Enemy at the gates.ogg", "weather/jungle_base.ogg"},
 	all_lited = true,
 	day_night = true,
 	min_material_level = 2,
@@ -29,8 +29,6 @@ return {
 	levels =
 	{
 		[1] = {
-			
-			width = 90, height = 90,
 			generator = { 
 				map = {
 					class = "engine.generator.map.Forest",
@@ -57,46 +55,8 @@ return {
 			},
 		},
 		[2] = {
-			color_shown = {0.6, 0.6, 0.6, 1},
-			color_obscure = {0.6*0.6, 0.6*0.6, 0.6*0.6, 0.6},
-			width = 40, height = 40,
-			generator = { 
-				map = {
-					class = "engine.generator.map.Cavern",
-					zoom = 19,
-					lacunarity = 20,
-					min_floor = 600,
-					floor = "CAVEFLOOR",
-					wall = "CAVEWALL",
-					up = "CAVE_LADDER_UP",
-					down = "CAVE_LADDER_DOWN",
-				},
-				actor = {
-					filters = { {type="horror"}, },
-					nb_npc = {12, 12},
-				},
-			},
 		},
 		[3] = {
-			color_shown = {0.6, 0.6, 0.6, 1},
-			color_obscure = {0.6*0.6, 0.6*0.6, 0.6*0.6, 0.6},
-			width = 40, height = 40,
-			generator = { 
-				map = {
-					class = "engine.generator.map.Cavern",
-					zoom = 19,
-					lacunarity = 20,
-					min_floor = 600,
-					floor = "CAVEFLOOR",
-					wall = "CAVEWALL",
-					up = "CAVE_LADDER_UP",
-					down = "CAVE_LADDER_DOWN",
-				},
-				actor = {
-					filters = { {type="horror"}, },
-					nb_npc = {12, 12},
-				},
-			},
 		},
 	},
 

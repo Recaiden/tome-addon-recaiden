@@ -1,6 +1,11 @@
 return {
 	name = "Derth",
-	level_range = {20, 25},
+	display_name = function(x, y)
+		if game.level.level == 1 then return "Fields Outside Derth" end
+		if game.level.level == 2 then return "Derth River" end
+		return "Town of Derth"
+	end,
+	level_range = {20, 30},
 	level_scheme = "player",
 	max_level = 3,
 	decay = {300, 800},

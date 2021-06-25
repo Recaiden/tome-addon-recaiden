@@ -37,7 +37,7 @@ newEntity{
 	
 	resists = {[DamageType.DARKNESS] = 25, [DamageType.LIGHT] = -25},
 	resolvers.auto_equip_filters("Oozemancer"),
-	auto_classes={{class="Oozemancer", start_level=15, level_rate=35}},
+	auto_classes={{class="Oozemancer", start_level=20, level_rate=35}},
 	summon = {{type="horror", subtype="aquatic", name="swarming horror", number=2, special_rarity="horror_water_rarity", hasxp=false}, },
 	-- Override the recalculated AI tactics to avoid problematic kiting
 	low_level_tactics_override = {escape=0},

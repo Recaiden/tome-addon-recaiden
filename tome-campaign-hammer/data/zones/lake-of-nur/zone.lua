@@ -5,9 +5,9 @@ return {
 		if game.level.level == 2 then return "Lake of Nur" end
 		return "Yiilkgur Excavation Site"
 	end,
-	level_range = {10, 15},
+	level_range = {10, 20},
 	level_scheme = "player",
-	max_level = 4,
+	max_level = 3,
 	decay = {300, 800},
 	actor_adjust_level = function(zone, level, e) return zone.base_level + e:getRankLevelAdjust() + level.level-1 + rng.range(-1,2) end,
 	width = 38, height = 38,
@@ -74,21 +74,6 @@ return {
 			},
 		},
 		[3] = {
-			underwater = is_flooded,
-			effects = {"EFF_ZONE_AURA_UNDERWATER"},
-			generator =  {
-				map = {
-					rooms = {"random_room",{"lesser_vault",5}},
-					lesser_vaults_list = {"flooded-prison"},
-					['.'] = {"WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR_BUBBLE"},
-				},
-				actor = {
-					filters = {{special_rarity="water_rarity"},{special_rarity="horror_water_rarity"}},
-					nb_npc = {25, 30},
-				},
-			},
-		},
-		[4] = {
 			underwater = is_flooded,
 			generator =  {
 				map = {

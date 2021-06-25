@@ -1,6 +1,6 @@
 return {
 	name = _t"Derthfields Landing Site",
-	level_range = {5, 10},
+	level_range = {5, 15},
 	level_scheme = "player",
 	max_level = 3,
 	decay = {300, 800},

@@ -1,7 +1,7 @@
-load("/data/general/npcs/canine.lua", rarity(1))
-load("/data/general/npcs/troll.lua", rarity(2))
-load("/data/general/npcs/bear.lua", rarity(2))
-load("/data/general/npcs/plant.lua", rarity(3))
+load("/data/general/npcs/canine.lua", rarity(2))
+load("/data/general/npcs/troll.lua", rarity(3))
+load("/data/general/npcs/bear.lua", rarity(3))
+load("/data/general/npcs/plant.lua", rarity(4 ))
 
 local Talents = require("engine.interface.ActorTalents")
 
@@ -37,7 +37,7 @@ newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_MERCHANT",
 	name = "caravan merchant", color=colors.KHAKI, image="npc/humanoid_human_spectator02.png",
 	subtype = "human",
 	desc = _t[[A caravan merchant.]],
-	level_range = {1, 10}, exp_worth = 1,
+	level_range = {1, 30}, exp_worth = 1,
 	rarity = 3,
 	max_life = resolvers.rngavg(40,50), life_rating = 7,
 	combat_armor = 0, combat_def = 6,
@@ -51,12 +51,26 @@ newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_MERCHANT",
 	},
 }
 
+newEntity{ base = "BASE_NPC_CANINE", define_as = "WAR_DOG",
+	name = "war dog", color=colors.KHAKI, image="npc/canine_dw.png",
+	desc = _t[[This is a large dog, bred and trained for fighting.]],
+	level_range = {15, 30}, exp_worth = 1,
+	max_life = resolvers.rngavg(60,100), life_rating = 10,
+	combat_armor = 4, combat_def = 7,
+	combat = { dam=resolvers.levelup(30, 1, 1), atk=resolvers.levelup(25, 1, 1), apr=15 },
+	resolvers.talents{
+		[Talents.T_RUSH]=2,
+		[Talents.T_GRAPPLING_STANCE]=2,
+		[Talents.T_CLINCH]=2,
+	},
+}
+
 newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_GUARD",
 	name = "caravan guard", color=colors.KHAKI, image="npc/humanoid_human_spectator.png",
 	subtype = "human",
 	desc = _t[[A caravan guard.]],
-	rarity = 2,
-	level_range = {5, 20}, exp_worth = 1,
+	rarity = 1,
+	level_range = {5, 30}, exp_worth = 1,
 	max_life = resolvers.rngavg(80,90), life_rating = 11,
 	combat_armor = 0, combat_def = 6,
 
@@ -76,7 +90,7 @@ newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_PORTER",
 	name = "caravan porter", color=colors.KHAKI, image="npc/humanoid_human_spectator03.png",
 	subtype = "human",
 	desc = _t[[A caravan porter.]],
-	level_range = {1, 8}, exp_worth = 1,
+	level_range = {1, 30}, exp_worth = 1,
 	max_life = resolvers.rngavg(60,70), life_rating = 8,
 	combat_armor = 0, combat_def = 6,
 
@@ -85,25 +99,11 @@ newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_PORTER",
 	},
 }
 
-newEntity{ base = "BASE_NPC_CANINE", define_as = "WAR_DOG",
-	name = "war dog", color=colors.KHAKI, image="npc/canine_dw.png",
-	desc = _t[[This is a large dog, bred and trained for fighting.]],
-	level_range = {15, 30}, exp_worth = 1,
-	max_life = resolvers.rngavg(60,100), life_rating = 10,
-	combat_armor = 4, combat_def = 7,
-	combat = { dam=resolvers.levelup(30, 1, 1), atk=resolvers.levelup(25, 1, 1), apr=15 },
-	resolvers.talents{
-		[Talents.T_RUSH]=2,
-		[Talents.T_GRAPPLING_STANCE]=2,
-		[Talents.T_CLINCH]=2,
-	},
-}
-
 newEntity{ base = "BASE_NPC_CANINE", define_as = "CORRUPTED_WAR_DOG",
 	name = "corrupted war dog", color=colors.BLACK, image="npc/canine_dw.png",
 	desc = _t[[This is a large dog, bred and trained for fighting. Something about the way it moves doesn't look normal.]],
 	level_range = {15, 30}, exp_worth = 1,
-	rarity = 5,
+	rarity = 4,
 	max_life = resolvers.rngavg(60,100),
 	combat_armor = 5, combat_def = 7,
 	combat = { dam=resolvers.levelup(30, 1, 1), atk=resolvers.levelup(25, 1, 1), apr=15 },

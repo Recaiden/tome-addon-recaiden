@@ -44,6 +44,7 @@ newEntity{ base="BASE_NPC_BEAR", define_as = "MAGRIN",
 	resolvers.talents{
 		[Talents.T_STUN]={base=1, every=6, max=6},
 		[Talents.T_RUSH]={base=5, every=6, max=10},
+		[Talents.T_DOUBLE_STRIKE]={base=1, every=6, max=4},
 	},
 
 	autolevel = "warrior",
@@ -51,7 +52,7 @@ newEntity{ base="BASE_NPC_BEAR", define_as = "MAGRIN",
 	ai_tactic = resolvers.tactic"melee",
 
 	resolvers.auto_equip_filters("Brawler"),
-	auto_classes={{class="Brawler", start_level=12, level_rate=50}},
+	auto_classes={{class="Brawler", start_level=18, level_rate=50}},
 
 	-- Override the recalculated AI tactics to avoid problematic kiting in the early game
 	low_level_tactics_override = {escape=0},
