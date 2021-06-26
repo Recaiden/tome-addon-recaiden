@@ -97,4 +97,11 @@ newEntity{ define_as = "CRYSTAL_INQUISITOR",
 	ai = "tactical", ai_state = { talent_in=2, ai_move="move_astar", },
 
 	auto_classes={{class="Arcane Blade", start_level=30, level_rate=75}},
+
+	on_die = function(self, who)
+		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "shalore")
+		local Chat = require "engine.Chat"
+		local chat = Chat.new("campaign-hammer+crystal-power", {name=_t"Spellblaze Crystals"}, game.player)
+		chat:invoke()
+	end,
 }

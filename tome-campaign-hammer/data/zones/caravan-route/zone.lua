@@ -13,6 +13,25 @@ return {
 	min_material_level = 2,
 	max_material_level = 3,
 	generator =  {
+		map = {
+			class = "engine.generator.map.Forest",
+			edge_entrances = {8,2},
+			zoom = 6,
+			sqrt_percent = 40,
+			noise = "fbm_perlin",
+			floor = "SAND",
+			wall = "PALMTREE",
+			up = "SAND_UP_WILDERNESS",
+			down = "TO_CAVE",
+			road = "GRASS_ROAD_DIRT",
+			add_road = true,
+			
+			nb_rooms = {8+3, 8+5},
+			required_rooms = {"!oasis1", "!oasis2", "!oasis3", "!oasis4", "!ruins1", "!ruins2", "!ruins3", "!ruins4", },
+			rooms = {"!ruins3", "!ruins4", "!ruins3", "!ruins4", "greater_vault"},
+			greater_vaults_list = {"dragon_lair"},
+			lite_room_chance = 100,
+		},
 		actor = {
 			class = "engine.generator.actor.Random",
 			nb_npc = {30, 40},
@@ -29,30 +48,6 @@ return {
 	levels =
 	{
 		[1] = {
-			generator = { 
-				map = {
-					class = "engine.generator.map.Forest",
-					edge_entrances = {8,2},
-					zoom = 6,
-					sqrt_percent = 40,
-					noise = "fbm_perlin",
-					floor = "SAND",
-					down = "SAND",
-					wall = "PALMTREE",
-					up = "SAND_UP_WILDERNESS",
-					realdown = "TO_CAVE",
-					
-					nb_rooms = {8+3, 8+5},
-					required_rooms = {"!oasis1", "!oasis2", "!oasis3", "!oasis4", "!ruins1", "!ruins2", "!ruins3", "!ruins4", },
-					rooms = {"!ruins3", "!ruins4", "!ruins3", "!ruins4", "greater_vault"},
-					greater_vaults_list = {"dragon_lair"},
-					lite_room_chance = 100,
-				},
-				actor = {
-					filters = {  },
-					nb_npc = {40, 45},
-				},
-			},
 		},
 		[2] = {
 		},

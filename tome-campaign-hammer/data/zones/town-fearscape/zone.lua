@@ -59,18 +59,12 @@ return {
 
 	post_process = function(level)
 		if level.level ~= 1 then return end
-
-		-- TODO: forge & smith sounds
-		-- game.state:makeAmbientSounds(level, {
-		-- 	town_small={ chance=250, volume_mod=1, pitch=1, random_pos={rad=10}, files={"ambient/town/town_small1","ambient/town/town_small2"}},
-		-- })
-
-		-- Some clouds floating happily over kruk
+		
 		game.state:makeWeather(level, 7, {max_nb=1, speed={0.5, 1.6}, shadow=true, alpha={0.3, 0.45}, particle_name="weather/grey_cloud_%02d"})
 	end,
 
 	on_enter = function(lev)
-		local q = game.player:hasQuest("campaign-hammer+counterattack")
+		local q = game.player:hasQuest("campaign-hammer+demon-siege")
 		if q and not q:isCompleted("victory") then
 			game:changeLevel(1, "beachhead-siege")
 		end

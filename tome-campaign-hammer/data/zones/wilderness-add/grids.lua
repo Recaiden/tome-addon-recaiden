@@ -42,9 +42,12 @@ newEntity{ base="ZONE_PLAINS", define_as = "FIELDS_OF_HOPE",
 	desc = _t"Capital city of the Allied Kingdoms ruled by King Tolak",
 	change_level_check = function()
 		local p = game.party:findMember{main=true}
-		--local p = game.party:findMember{main=true} if p:hasQuest("start-yeek") and not p:isQuestStatus("start-yeek", engine.Quest.DONE) then require("engine.ui.Dialog"):simplePopup(_t"Long tunnel", _t"You cannot abandon the yeeks of Rel to the dangers that lie within the island.") return true end p:setQuestStatus("rel-tunnel", engine.Quest.DONE) return false
-		if true then
-			game.log("There is no way you could get through the patrols, guards, and walls of the kingdom's capital") return true
+		if p:hasQuest("campaign-hammer+demon-ruins") and p:isQuestStatus("campaign-hammer+demon-ruins", engine.Quest.DONE) then
+			require("engine.ui.Dialog"):simplePopup(_t"The Battle for Last Hope", _t"Meteors and catapult-stones rain down, sling-stones and fireballs fill the air.  Champions of Urh'rok wade through the fray as wretchlings die in droves.  In the confusion of battle, you slip through the front-lines...")
+			return false
+		else
+			game.log("There is no way you could get through the patrols, guards, and walls of the kingdom's capital.")
+			return true
 		end
 		return false
 	end,

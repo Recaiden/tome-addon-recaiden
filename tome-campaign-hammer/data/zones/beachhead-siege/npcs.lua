@@ -157,4 +157,9 @@ newEntity{
 		{name="thalore wilder", number=1, no_subescort=true},
 		{name="treant", number=4, no_subescort=true},
 	},
+
+	on_die = function(self, who)
+		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "thalore")
+		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-siege", engine.Quest.COMPLETED, "victory")
+	end,
 }

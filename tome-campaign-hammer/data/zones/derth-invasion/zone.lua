@@ -114,4 +114,10 @@ return {
 		if not config.settings.tome.weather_effects or not level.foreground_particle then return end
 		level.foreground_particle.ps:toScreen(x, y, true, 1)
 	end,
+
+	on_enter = function(lev)
+		if lev == 3 then
+			game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "derth")
+		end
+	end,
 }
