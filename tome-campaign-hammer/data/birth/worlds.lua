@@ -36,12 +36,11 @@ newBirthDescriptor{
 	desc =
 		{
 			"Centuries ago, the Spellblaze plunged the world into an age of darkness.",
-			"The people of Eyal were the lucky ones, as unshielded worlds were utterly destroyed.",
-			"Mal'Rok was unique, as its sleeping god allowed remnants of the sundered world to survive.",
+			"The people of Eyal were the lucky ones; Mal'rok was blasted apart, the broken peices of the world transformed to ever-burning hellscapes.",
 			"Amidst the flames, the survivors remade themselves into demons, bent on revenge.",
 			"They spent centuries traversing the void, preparing themselves for war.",
 			"Now, Goedalath has arrived in high orbit.  A linked Orb of Many Ways allows passage through the planetary shield.  Khulmanar's armies are ready.  It is time.",
-			"Descend to the surface, and unleash the fury of hell!",
+			"Unleash the fury of hell!",
 		},
 	descriptor_choices = default_hammer_descriptors{},
 	copy = {

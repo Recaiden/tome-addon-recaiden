@@ -14,8 +14,8 @@ newEntity{
 	ai = "world_patrol", ai_state = {route_kind="campaign-hammer+caravan", no_follow_beyond=1},
 	on_encounter = function()
 		for uid, e in pairs(game.level.entities) do
-			if e.on_encounter and e.subtype == "caravan" then e:die()
-		end		
+			if e.on_encounter and e.subtype == "caravan" then e:die() end
+		end
 		game:changeLevel(1, "campaign-hammer+caravan-route")
 	end,
 }

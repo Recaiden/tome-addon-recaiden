@@ -11,7 +11,7 @@ desc = function(self, who)
 end
 
 on_status_change = function(self, who, status, sub)
-	if self:isCompleted("landing") then
+	if self:isCompleted("landing") and not who:isQuestStatus("campaign-hammer+demon-landing", engine.Quest.DONE) then
 		who:setQuestStatus(self.id, engine.Quest.DONE)
 		who:grantQuest("campaign-hammer+demon-main")
 

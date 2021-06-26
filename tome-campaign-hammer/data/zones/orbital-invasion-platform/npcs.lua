@@ -1,6 +1,10 @@
 local Talents = require("engine.interface.ActorTalents")
 
-load("/data/general/npcs/losgoroth.lua", function(e) e.combat_def = 0; e.inc_damage = {all=-70} end)
+load("/data/general/npcs/losgoroth.lua", function(e)
+			 e.combat_def = 0; e.inc_damage = {all=-70}
+			 --TODO this is a test
+			 e.bonus_loot = resolvers.drops{chance=100, nb=10, {ego_chance=100} } 
+end)
 load("/data/general/npcs/demon-major.lua", rarity(40))
 load("/data/general/npcs/demon-minor.lua", rarity(20))
 

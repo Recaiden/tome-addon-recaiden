@@ -1,4 +1,4 @@
-defineTile('<', "GRASS_UP")
+defineTile('<', "GRASS_UP4")
 defineTile('t', "TREE")
 defineTile('~', "DEEP_WATER")
 defineTile('.', "GRASS")
