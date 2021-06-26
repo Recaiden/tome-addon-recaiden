@@ -18,6 +18,7 @@ return {
 		actor = {
 			class = "mod.class.generator.actor.Random",
 			nb_npc = {20, 30},
+			guardian = "THALORE_LEADER",
 		},
 		object = {
 			class = "engine.generator.object.Random",

@@ -89,7 +89,7 @@ newEntity{
 	color=colors.GREEN,
 	resolvers.nice_tile{image="invis.png"},
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/elemental_void_losgoroth_corrupted_greater.png", display_h=2, display_y=-1}}},
-	desc = _t[[The ancient leader of the Thaloren, said to be the wisest of elves, and also the most wrathful.]],
+	desc = _t[[The ancient leader of the Thaloren, said to be the wisest of elves.]],
 	killer_message = _t" and made into compost",
 	level_range = {30, nil}, exp_worth = 2,
 	max_life = 220, life_rating = 11, fixed_rating = true,
