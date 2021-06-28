@@ -98,4 +98,17 @@ return {
 		level.map:setShown(sr, sg, sb, 1)
 		level.map:setObscure(sr * 0.6, sg * 0.6, sb * 0.6, 1)
 	end,
+
+	on_leave = function(lev, old_lev, newzone)
+		if not newzone then return end
+		if game.player:isQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "crystals") then
+			require("engine.ui.Dialog"):simpleLongPopup("Crystals", [[With the Rhaloren out of the way, the fearscape's mages move in to investigate the crystals.  Soon enough, demonic crystal beings are rampaging out of control, consuming the elven lands.  Your work here is done.]], 500)
+		end
+
+		if game.player:isQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "crystals") or game.player:isQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "rhalore")then
+			local Chat = require "engine.Chat"
+			local chat = Chat.new("campaign-hammer+crystal-power", {name=_t"Spellblaze Crystals"}, game.player)
+			chat:invoke()
+		end
+	end,
 }

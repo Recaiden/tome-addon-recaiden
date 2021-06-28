@@ -1,13 +1,14 @@
-load("/data/general/npcs/horror.lua", rarity(1))
-load("/data/general/npcs/horror-corrupted.lua", rarity(1))
-load("/data/general/npcs/horror-undead.lua", rarity(3))
+load("/data/general/npcs/ghost.lua", rarity(1))
+load("/data/general/npcs/horror.lua", rarity(2))
+load("/data/general/npcs/horror-corrupted.lua", rarity(3))
+load("/data/general/npcs/horror-undead.lua", rarity(2))
 
 local Talents = require("engine.interface.ActorTalents")
 
 newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 	allow_infinite_dungeon = true,
 	unique = true,
-	name = "Placeholder boss",
+	name = "Placeholder boss 2",
 	display = "q", color=colors.VIOLET,
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/animal_bear_norgos_the_guardian.png", display_h=2, display_y=-1}}},
 	desc = _t[[placeholder desc]],

@@ -15,7 +15,7 @@ newEntity{
 	level_range = {10, nil}, exp_worth = 2,
 	instakill_immune = 1,
 	rank = 4,
-	size_category = 2,
+	size_category = 4,
 	autolevel = "wildcaster",
 	max_life = 80, life_rating = 10, fixed_rating = true,
 	hate_regen=4,
@@ -43,6 +43,7 @@ newEntity{
 	low_level_tactics_override = {escape=0},
 	
 	on_die = function(self, who)
+		who:grantQuest("campaign-hammer+demon-caravan")
 		local Chat = require "engine.Chat"
 		local chat = Chat.new("campaign-hammer+memory-crystals-tactics", {name=_t"Memory Crystals"}, game.player)
 		chat:invoke()

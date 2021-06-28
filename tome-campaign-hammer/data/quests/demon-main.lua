@@ -12,8 +12,10 @@ desc = function(self, who)
 	else
 		desc[#desc+1] = _t"#SLATE#* You must destroy the town of Derth, a major focus of allied Agriculture.#WHITE#"
 	end
-	if self:isCompleted("shalore") then
-		desc[#desc+1] = _t"#LIGHT_GREEN#* The Rhaloren have plunged Elvala into chaos.  It will be easy to round up the survivors.#WHITE#"
+	if self:isCompleted("crystals") then
+		desc[#desc+1] = _t"#LIGHT_GREEN#* The unbound crystal beings have laid waste to Elvala.  It will be easy to round up the survivors.#WHITE#"
+	elseif self:isCompleted("rhalore") then
+		desc[#desc+1] = _t"#LIGHT_GREEN#* The Rhaloren have plunged Elvala into chaos.  It will be easy to round up the survivors.#WHITE#" 
 	else
 		desc[#desc+1] = _t"#SLATE#* In the southern forests is a hidden city of elves.  Find a way to destroy them.#WHITE#"
 	end

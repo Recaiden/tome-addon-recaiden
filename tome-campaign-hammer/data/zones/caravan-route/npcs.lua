@@ -30,7 +30,7 @@ newEntity{
 	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=3, },
 	stats = { str=20, dex=8, mag=6, con=16 },
 	
-	emote_random = {chance=10, _t"To arms!", _t"Demon!", _t"Die!", _t"Monster!", _t"Protect the caravan!"},
+	emote_random = {chance=5, _t"To arms!", _t"Demon!", _t"Die!", _t"Monster!", _t"Protect the caravan!"},
 }
 
 newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_MERCHANT",
@@ -79,7 +79,11 @@ newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_GUARD",
 		{type="armor", subtype="shield", autoreq=true},
 		{type="armor", subtype="heavy", autoreq=true},
 	},
-	resolvers.talents{ [Talents.T_SHIELD_PUMMEL]={base=2, every=10, max=6}, },
+	resolvers.talents{
+		[Talents.T_WEAPON_COMBAT]={base=1, every=5, max=5},
+		[Talents.T_SHIELD_PUMMEL]={base=2, every=7, max=6},
+		[Talents.T_RUSH]={base=1, every=10, max=4},
+	},
 	make_escort = {
 		{name="war dog", number=2},
 		{name="caravan guard", number=1, no_subescort=true},
@@ -95,7 +99,13 @@ newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_PORTER",
 	combat_armor = 0, combat_def = 6,
 
 	resolvers.equip{
-		{type="weapon", subtype="waraxe", autoreq=true},
+		{type="weapon", subtype="sling", autoreq=true},
+		{type="ammo", subtype="shot", autoreq=true},
+	},
+	resolvers.talents{
+		[Talents.T_SHOOT]=1,
+		[Talents.T_DISENGAGE]=2,
+		[Talents.T_SLING_MASTERY]=1,
 	},
 }
 

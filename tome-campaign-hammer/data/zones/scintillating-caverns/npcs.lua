@@ -6,8 +6,8 @@ alter = function(add, mult)
 			e.rarity = math.ceil(e.rarity * mult + add)
 			e.name = rng.table{_t"crystalline ", _t"shining ", _t"scintillating "}..e:getName()
 			e.make_escort = e.make_escort or {}
-			e.make_escort[#emake_escort+1] = {
-				{type="immovable", subtype="crystal", number=3, no_subescort=true},
+			e.make_escort[#e.make_escort+1] = {
+				type="immovable", subtype="crystal", number=3, no_subescort=true
 			}
 			e.faction = "rhalore"
 		end
@@ -98,10 +98,27 @@ newEntity{ define_as = "CRYSTAL_INQUISITOR",
 
 	auto_classes={{class="Arcane Blade", start_level=30, level_rate=75}},
 
+	on_takehit = function(self, value, src)
+		if not self.chatted and (self.life - value) < self.max_life * 0.33 and not game._chronoworlds then
+			self.chatted = true
+			-- Check for magical knowledge
+			local has_spells = 0
+			for tid, lev in pairs(game.player.talents) do
+				local t = game.player:getTalentFromId(tid)
+				if t.is_spell then has_spells = has_spells + lev end
+			end
+			print("Player has a total of "..has_spells.." spell levels")
+			if not game.player:hasQuest("antimagic") and has_spells > 10 then
+				local Chat = require "engine.Chat"
+				local chat = Chat.new("campaign-hammer+inquisitor", self, game:getPlayer(true))
+				chat:invoke()
+				return 0
+			end
+		end
+		return value
+	end,
+	
 	on_die = function(self, who)
-		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "shalore")
-		local Chat = require "engine.Chat"
-		local chat = Chat.new("campaign-hammer+crystal-power", {name=_t"Spellblaze Crystals"}, game.player)
-		chat:invoke()
+		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "crystals")
 	end,
 }

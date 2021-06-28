@@ -1,0 +1,222 @@
+{
+    "2": {
+        "id": 2,
+        "name": "chat",
+        "data": {
+            "chatid": "welcome",
+            "chat": "Wait, @playerdescriptor.subclass@!\nI see you are a worthy opponent, powerful indeed. I can see, and feel, the power of blight within you.\nWe are the same.",
+            "answer1": "(Kill her)",
+            "answer2": "(Listen)"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "13",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "11",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 219,
+        "pos_y": 116.75
+    },
+    "7": {
+        "id": 7,
+        "name": "lua-code",
+        "data": {
+            "code": "engine.Faction:setFactionReaction(game.player.faction, \"rhalore\", 100, true)\n\ngame.player:resetToFull()\nlocal effs = {}\nfor eff_id, p in pairs(game.player.tmp) do\n\tlocal e = game.player.tempeffect_def[eff_id]\n\tif e.status == \"detrimental\" then effs[#effs+1] = {\"effect\", eff_id} end\nend\nwhile #effs > 0 do\n\tlocal eff = rng.tableRemove(effs)\n\tgame.player:removeEffect(eff[2])\nend\n\nfor _, act in pairs(game.level.entities) do\n\tlocal rsrc, rtarget = act, game.player\n\tif rsrc.reaction_actor and rsrc.reaction_actor[rtarget.unique or rtarget.name] then \n\t\trsrc.reaction_actor[rtarget.unique or rtarget.name] = 100\n\tend\nend\n\ngame.turn = game.turn + 3 * game.calendar.DAY\n\ngame.player:resolveSource():setQuestStatus(\"campaign-hammer+demon-main\", engine.Quest.COMPLETED, \"rhalore\")"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "11",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "12",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "9",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1718.6666666666667,
+        "pos_y": 275.3333333333333
+    },
+    "9": {
+        "id": 9,
+        "name": "chat",
+        "data": {
+            "chatid": "chat3",
+            "chat": "You bring in some ruby magi, and with painstaking work, they infuse the crystals' power into the Rhaloren, making them formidable enough to face the rest of the Shalore.\n",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "7",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2430,
+        "pos_y": 461.7692307692308
+    },
+    "11": {
+        "id": 11,
+        "name": "chat",
+        "data": {
+            "chatid": "chat2",
+            "chat": "The fools in Elvala turn away from this place, shying from the power of the spellblaze.  Join forces with us, and we can unlock the full magic of these crystals, and show the world true strength.",
+            "answer1": "(Kill her)",
+            "answer2": "(Agree - betray them later)",
+            "answer3": "(Agree - truthfully)"
+        },
+        "class": "chat",
+        "html": "chat3",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "2",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "13",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "7",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "12",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 925,
+        "pos_y": 351.25
+    },
+    "12": {
+        "id": 12,
+        "name": "birth-descriptor",
+        "data": {
+            "not": false,
+            "what": "race",
+            "value": "Demon"
+        },
+        "class": "birth-descriptor",
+        "html": "birth-descriptor",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "11",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "7",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1404,
+        "pos_y": 685.6666666666666
+    },
+    "13": {
+        "id": 13,
+        "name": "lua-code",
+        "data": {
+            "code": "for _, act in pairs(game.level.entities) do\n\tif act.define_as == \"CRYSTAL_INQUISITOR\" then\n\t\tact:die()\n\tend\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "2",
+                        "input": "output_1"
+                    },
+                    {
+                        "node": "11",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1556,
+        "pos_y": -70.75
+    }
+}
