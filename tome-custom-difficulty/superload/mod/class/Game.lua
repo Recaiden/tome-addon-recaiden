@@ -194,8 +194,16 @@ function _M:newGame()
 					     if __module_extra_info.no_birth_popup then d.key:triggerVirtual("EXIT") end
 					  end
 					  
-					  if self.player.no_birth_levelup or __module_extra_info.no_birth_popup then birthend()
-					  else self.player:playerLevelup(birthend, true) end
+						local birthend_lvlup = function()
+							if self.player.no_birth_levelup or __module_extra_info.no_birth_popup then birthend()
+							else self.player:playerLevelup(birthend, true) end
+						end
+						if self.player.custom_birthend then
+							self.player:custom_birthend(birth, birthend_lvlup)
+							self.player.custom_birthend = nil
+						else
+							birthend_lvlup()
+						end
 					  -- Player was loaded from a premade
 				       else
 					  self.calendar = Calendar.new("/data/calendar_"..(self.player.calendar or "allied")..".lua", "Today is the %s %s of the %s year of the Age of Ascendancy of Maj'Eyal.\nThe time is %02d:%02d.", 122, 167, 11)
@@ -229,7 +237,7 @@ function _M:newGame()
 					     self:setTacticalMode(self.always_target)
 					     self:triggerHook{"ToME:birthDone"}
 				       end
-																																end, quickbirth, 800, 600)
+						end, quickbirth, math.min(math.max(game.w * 0.8, 800), 1200, game.w), 600)
    self:registerDialog(birth)
 end
 
