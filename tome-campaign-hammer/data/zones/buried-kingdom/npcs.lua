@@ -1,6 +1,6 @@
 load("/data/general/npcs/ghost.lua", rarity(1))
 load("/data/general/npcs/horror.lua", rarity(2))
-load("/data/general/npcs/horror-corrupted.lua", rarity(3))
+load("/data/general/npcs/horror_temporal.lua", rarity(2))
 load("/data/general/npcs/horror-undead.lua", rarity(2))
 
 local Talents = require("engine.interface.ActorTalents")
@@ -8,50 +8,121 @@ local Talents = require("engine.interface.ActorTalents")
 newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 	allow_infinite_dungeon = true,
 	unique = true,
-	name = "Placeholder boss 2",
+	name = "The Forgotten King",
 	display = "q", color=colors.VIOLET,
-	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/animal_bear_norgos_the_guardian.png", display_h=2, display_y=-1}}},
-	desc = _t[[placeholder desc]],
-	killer_message = _t"and was placeholdered to double-death",
-	level_range = {7, nil}, exp_worth = 2,
-	max_life = 200, life_rating = 17, fixed_rating = true,
-	max_stamina = 85,
-	max_mana = 200,
-	stats = { str=25, dex=15, cun=8, mag=10, wil=20, con=20 },
-	tier1 = true,
-	rank = 4,
-	size_category = 5,
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/horror_eldritch_dreaming_horror.png", display_h=2, display_y=-1}}},
+	desc = _t[[Once upon a time there was a storyteller, and he said-]],
+	killer_message = _t"and was made to relive the kingdom's final moments for eternity",
+	level_range = {40, nil}, exp_worth = 2,
+	max_life = 200, life_rating = 20, fixed_rating = true,
+	stats = { str=5, dex=15, cun=20, mag=50, wil=70, con=20 },
+	rank = 6,
+	size_category = 3,
 	infravision = 10,
 	instakill_immune = 1,
+	immune_possession = 1,
+	vim_regen = 8,
+	disease_immune = 1,
+	stun_immune = 1,
 	move_others=true,
 
-	combat = { dam=resolvers.levelup(17, 1, 0.8), atk=10, apr=9, dammod={str=1.2} },
+	combat = { dam=resolvers.levelup(17, 1, 0.8), atk=10, apr=9, dammod={wil=1.2} },
 
-	resists = { [DamageType.COLD] = 20 },
+	resists = { [DamageType.TEMPORAL] = 50, [DamageType.DARKNESS] = 30 },
 
 	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1 },
 	resolvers.drops{chance=100, nb=1, {unique=true, not_properties={"lore"}} },
 	resolvers.drops{chance=100, nb=3, {tome_drops="boss"} },
 
 	resolvers.talents{
-		[Talents.T_STUN]={base=1, every=6, max=6},
-		[Talents.T_RUSH]={base=5, every=6, max=10},
-		[Talents.T_DOUBLE_STRIKE]={base=1, every=6, max=4},
+		[Talents.T_SPACETIME_STABILITY]=15,
+		[Talents.T_DRACONIC_WILL]=1,
+
+		[Talents.T_CALL_OF_THE_CRYPT]={base=4, every=5, max=7},
+		[Talents.T_LORD_OF_SKULLS]={base=4, every=5, max=7},
+		[Talents.T_ASSEMBLE]={base=4, every=5, max=7},
+
+		[Talents.T_CURSE_OF_VULNERABILITY]={base=5, every=6, max=8},
+		[Talents.T_CURSE_OF_DEATH]={base=5, every=6, max=8},
+		
+		[Talents.T_ENERGY_ABSORPTION]={base=3, every=7},
+		[Talents.T_ENERGY_DECOMPOSITION]={base=3, every=7},
+		[Talents.T_ENTROPY]={base=3, every=7},
+		[Talents.T_ECHOES_FROM_THE_VOID]={base=3, every=7},
+		[Talents.T_VOID_SHARDS]={base=2, every=7, max=5},
+		
+		[Talents.T_TEMPORAL_BOLT]={base=3, every=10, max=6},
+		[Talents.T_ECHOES_FROM_THE_PAST]={base=3, every=10, max=6},
 	},
 
-	autolevel = "warrior",
-	ai = "tactical", ai_state = { talent_in=2, ai_move="move_astar", },
-	ai_tactic = resolvers.tactic"melee",
+	self_resurrect = 2,
 
-	resolvers.auto_equip_filters("Brawler"),
-	auto_classes={{class="Brawler", start_level=18, level_rate=50}},
+	emote_random = {chance=3, _t"Help me!", _t"He can't!", _t"You can't let him in!", _t"Put an end to this!"},
 
+	on_acquire_target = function(self, who)
+		if not self.rewind then
+			self.self.rewind = game.turn
+		end
+		self:doEmote(_t"Children, is that you?", 100)
+	end,
+	
+	on_resurrect = function(self)
+		game.bignews:saySimple(120, "#GOLD#Time strains and snaps.  You are thrown back to the beginning of the fight!  But things aren't quite the same...")
+
+		game.player:resetToFull()
+		local effs = {}
+		for eff_id, p in pairs(game.player.tmp) do
+			local e = game.player.tempeffect_def[eff_id]
+			if e.status == "detrimental" then effs[#effs+1] = {"effect", eff_id} end
+		end
+		while #effs > 0 do
+			local eff = rng.tableRemove(effs)
+			game.player:removeEffect(eff[2])
+		end
+		
+		local tlevel = self:getTalentLevelRaw(self.T_ECHOES_FROM_THE_VOID)
+		if self:knowTalent(self.T_FEED) then --second death
+			self:learnTalent(self.T_DISINTEGRATION, true, tlevel)
+			self:learnTalent(self.T_DUST_TO_DUST, true, tlevel)
+			self:learnTalent(self.T_HASTE, true, tlevel)
+			self:learnTalent(self.T_CHRONO_TIME_SHIELD, true, tlevel)
+			self:forceUseTalent(self.T_DISINTEGRATION, {ignore_energy=true})
+			self:unlearnTalentFull(self.T_FEED, true, tlevel)
+			self:unlearnTalentFull(self.T_DEVOUR_LIFE, true, tlevel)
+			self:unlearnTalentFull(self.T_FEED_POWER, true, tlevel)
+			self:unlearnTalentFull(self.T_FEED_STRENGTHS, true, tlevel)
+			self.inc_damage.all = self.inc_damage.all + 24
+			self:doEmote(_t"Brother, can you not see that your changes are ruining the project!?", 100)
+			emote_random = {chance=3, _t"Finally, the king is silent.", _t"All of this will be undone!", _t"At last, I live!"},
+		end
+		if self:knowTalent(self.T_CURSE_OF_VULNERABILITY) then --first death
+			self:learnTalent(self.T_FEED, true, tlevel)
+			self:learnTalent(self.T_DEVOUR_LIFE, true, tlevel)
+			self:learnTalent(self.T_FEED_POWER, true, tlevel)
+			self:learnTalent(self.T_FEED_STRENGTHS, true, tlevel)
+			self:unlearnTalentFull(self.T_CURSE_OF_VULNERABILITY)
+			self:unlearnTalentFull(self.T_CURSE_OF_DEATH)
+			self.inc_damage.all = self.inc_damage.all + 20
+			self:doEmote(_t"Where is your sister?", 100)
+			emote_random = {chance=3, _t"They were here even then.", _t"I made them well.", _t"Please, stranger-"},
+		end
+		game.turn = self.rewind	
+	end,
+	
+	autolevel = "caster",
+	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", },
+	ai_tactic = resolvers.tactic"ranged",
+
+	auto_classes={{class="Paradox Mage", start_level=18, level_rate=50}},
+
+	resolvers.inscriptions(2, "rune"),
 	resolvers.inscriptions(1, "infusion"),
 
 	on_die = function(self, who)
+		self:doEmote(_t"This is not the end!", 100)
 		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-ruins", engine.Quest.COMPLETED)
 		local Chat = require "engine.Chat"
-		local chat = Chat.new("campaign-hammer+horror-power", {name=_t"Sunlight Within"}, game.player)
+		local chat = Chat.new("campaign-hammer+horror-power", {name=_t"Power Behind the Throne"}, game.player)
 		chat:invoke()
 	end,
 }

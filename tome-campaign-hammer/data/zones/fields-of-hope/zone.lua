@@ -2,7 +2,7 @@ return {
 	name = "Fields of Hope",
 	level_range = {45, 90},
 	level_scheme = "player",
-	max_level = 7,
+	max_level = 6,
 	decay = {300, 800},
 	actor_adjust_level = function(zone, level, e) return zone.base_level + e:getRankLevelAdjust() + level.level-1 + rng.range(-1,2) end,
 	width = 40, height = 40,
@@ -51,6 +51,22 @@ return {
 		},
 		[2] = {
 			width = 25, height = 25,
+		},
+		[6] = {
+			generator = {
+				map = {
+					class = "engine.generator.map.Static",
+					map = "campaign-hammer+zones/hope-castle",
+				},
+				actor = {
+					class = "mod.class.generator.actor.Random",
+					nb_npc = {0, 0},
+				},
+				trap = {
+					class = "engine.generator.trap.Random",
+					nb_trap = {0, 0},
+				},
+			},
 		},
 	},
 }

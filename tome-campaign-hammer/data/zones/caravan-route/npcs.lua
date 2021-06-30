@@ -175,3 +175,66 @@ newEntity{ base="BASE_NPC_BEAR", define_as = "CARVAN_MASTER",
 		chat:invoke()
 	end,
 }
+
+
+newEntity{ define_as = "CARAVAN_MASTER",
+	allow_infinite_dungeon = true,
+	type = "humanoid", subtype = "human", unique = true,
+	faction = "allied-kingdom",
+	name = "Caravan Guard Captain",
+	display = "h", color=colors.VIOLET,
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_orc_golbug_the_destroyer.png", display_h=2, display_y=-1}}},
+	desc = _t[[This was supposed to be an easy job.  Scare off the bears, fight a couple trolls,  make sure nothing funny went on.
+He never signed up to fight off a demon invasion.
+But he'll do his best.]],
+	level_range = {18, nil}, exp_worth = 2,
+	max_life = 250, life_rating = 16, fixed_rating = true,
+	max_stamina = 145,
+	rank = 5,
+	size_category = 3,
+	infravision = 10,
+	instakill_immune = 1,
+	stats = { str=22, dex=19, cun=34, mag=10, con=16 },
+	move_others=true,
+
+	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, NECK=1, HEAD=1, },
+	resolvers.auto_equip_filters("Bulwark"),
+	equipment = resolvers.equip{
+		{type="weapon", subtype="mace", force_drop=true, tome_drops="boss", autoreq=true},
+		{type="armor", subtype="shield", force_drop=true, tome_drops="boss", autoreq=true},
+		{type="armor", subtype="head", autoreq=true},
+		{type="armor", subtype="massive", force_drop=true, tome_drops="boss", autoreq=true},
+	},
+	resolvers.drops{chance=100, nb=5, {tome_drops="boss"} },
+	stun_immune = 1,
+	see_invisible = 5,
+
+	resolvers.talents{
+		[Talents.T_ARMOUR_TRAINING]={base=4, every=6, max=8},
+		[Talents.T_WEAPON_COMBAT]={base=3, every=10, max=5},
+		[Talents.T_WEAPONS_MASTERY]={base=3, every=10, max=5},
+		[Talents.T_SHIELD_PUMMEL]={base=4, every=5, max=6},
+		[Talents.T_RUSH]={base=4, every=5, max=6},
+		[Talents.T_RIPOSTE]={base=4, every=5, max=6},
+		[Talents.T_BLINDING_SPEED]={base=4, every=5, max=6},
+		[Talents.T_OVERPOWER]={base=3, every=5, max=5},
+		[Talents.T_ASSAULT]={base=3, every=5, max=5},
+		[Talents.T_SHIELD_WALL]={base=3, every=5, max=5},
+		[Talents.T_SHIELD_EXPERTISE]={base=2, every=5, max=5},
+	},
+	resolvers.sustains_at_birth(),
+
+	autolevel = "warrior",
+	auto_classes={
+		{class="Bulwark", start_level=28, level_rate=50},
+	},
+	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", },
+	ai_tactic = resolvers.tactic"melee",
+	resolvers.inscriptions(3, "infusion"),
+
+	on_die = function(self, who)
+		local Chat = require "engine.Chat"
+		local chat = Chat.new("campaign-hammer+caravan-power", {name=_t"Memory Crystals"}, game.player)
+		chat:invoke()
+	end,
+}

@@ -1,14 +1,9 @@
 return {
 	name = "Daikara",
-	display_name = function(x, y)
-		if game.level.level == 1 then return "Daikara (1)" end
-		if game.level.level == 2 then return "Daikara (2)" end
-		if game.level.level == 3 then return "Daikara (3)" end
-		return "Shasshhiy'Kaish's Sanctum"
-	end,
+	display_name = function(x, y) return "Shasshhiy'Kaish's Sanctum" end,
 	level_range = {35, 40},
 	level_scheme = "player",
-	max_level = 4,
+	max_level = 1,
 	decay = {300, 800},
 	actor_adjust_level = function(zone, level, e) return zone.base_level + e:getRankLevelAdjust() + level.level-1 + rng.range(-1,2) end,
 	width = 55, height = 55,
