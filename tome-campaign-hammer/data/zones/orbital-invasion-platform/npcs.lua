@@ -148,4 +148,8 @@ newEntity{
 		[Talents.T_ACIDIC_SKIN]={base=1, every=5, max=10},
 		[Talents.T_SLIME_SPIT]={base=2, every=5, max=8},
 	},
+
+	on_die = function(self, who)
+		game.player:resolveSource():setQuestStatus("campaign-hammer+start-demon", engine.Quest.COMPLETED, "secured")
+	end,	
 }

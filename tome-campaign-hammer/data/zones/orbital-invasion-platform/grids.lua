@@ -51,7 +51,7 @@ newEntity{
 	change_level = 1, change_zone = "wilderness",
 	change_level_check = function(self)
 		local player = game:getPlayer(true)
-		player:setQuestStatus("campaign-hammer+start-demon", engine.Quest.COMPLETED, "secured")
+	
 		game:changeLevel(1, ("campaign-hammer+derthfields-landing-site"), {direct_switch=true})
 
 		local a = require("engine.Astar").new(game.level.map, player)
