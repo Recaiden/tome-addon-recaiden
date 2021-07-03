@@ -368,51 +368,47 @@ newTalent{
 	points = 5,
 	on_learn = function(self, t) self:learnTalent(self.T_REK_GLR_IDOL_STARPOWER, true) end,
 	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
+	getPrice = function(self, t) return math.floor(self:combatTalentScale(t, 5, 2)) end,
 	getThresh = function(self, t) return self:combatTalentLimit(t, 0.10, 0.33, 0.16) end,
 	callbackPriorities = {callbackOnTakeDamage = -100},
 	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
 		local thresh = t.getThresh(self, t) * self.max_life
+		local threshShock = 0.2 * self.max_life
 		if dam >= thresh then
-			local caged = false
 			local dmg_src = self
 			if src.__is_actor then dmg_src = src end
-			
-			-- ignore special immunities too
-			local immun_phys = self:attr("physical_negative_status_effect_immune")
-			local immun_all = self:attr("negative_status_effect_immune")
-			if immun_phys then
-				self:attr("physical_negative_status_effect_immune", -1*immun_phys)
-			end
-			if immun_phys then
-				self:attr("negative_status_effect_immune", -1*immun_all)
-			end
-			
-			-- give effects
-			if not self:hasEffect(self.EFF_SLOW_MOVE) then
-				self:setEffect(self.EFF_SLOW_MOVE, 5, {power=0.50, src=dmg_src})
-				caged = true
-			-- elseif not self:hasEffect(self.EFF_PINNED) then
-			-- 	self:setEffect(self.EFF_PINNED, 4, {dmg_src=self})
-			-- 	caged = true
-			else
-				self:setEffect(self.EFF_STUNNED, 3, {src=dmg_src})
-				caged = true
-			end
 
-			-- restore special immunities
-			if immun_phys then
-				self:attr("physical_negative_status_effect_immune", immun_phys)
-			end
-			if immun_phys then
-				self:attr("negative_status_effect_immune", immun_all)
+			if dam >= threshShock then
+				-- ignore special immunities too
+				local immun_phys = self:attr("physical_negative_status_effect_immune")
+				local immun_all = self:attr("negative_status_effect_immune")
+				if immun_phys then
+					self:attr("physical_negative_status_effect_immune", -1*immun_phys)
+				end
+				if immun_phys then
+					self:attr("negative_status_effect_immune", -1*immun_all)
+				end
+				
+				-- give effects
+				if not self:hasEffect(self.EFF_SLOW_MOVE) then
+					self:setEffect(self.EFF_SLOW_MOVE, 5, {power=0.50, src=dmg_src})
+				else
+					self:setEffect(self.EFF_STUNNED, 3, {src=dmg_src})
+				end
+				
+				-- restore special immunities
+				if immun_phys then
+					self:attr("physical_negative_status_effect_immune", immun_phys)
+				end
+				if immun_phys then
+					self:attr("negative_status_effect_immune", immun_all)
+				end
 			end
 
 			-- ignore damage
-			if caged then
-				game:playSoundNear(self, "talents/heal")
-				incPsi2(self, -5)
-				return {dam=0.05*self.max_life}
-			end
+			game:playSoundNear(self, "talents/heal")
+			incPsi2(self, -t.getPrice(self,t))
+			return {dam=0.05*self.max_life}
 		end
 		
 		return {dam=dam}
@@ -436,13 +432,13 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[If you would take damage over %d%% of your maximum life, that damage is reduced to 5%% of your maximum life, but your movement is slowed by 50%% for 5 turns and you lose #4080ff#5 Psi#LAST#.
+		return ([[If you would take damage over %d%% of your maximum life, that damage is reduced to 5%% of your maximum life at the cost of #4080ff#%d Psi#LAST#.  If the damage would have been at least 20%% of your maximum life, your movement is slowed by 50%% for 5 turns.
 If you are already slowed, you will be stunned for 3 turns.
 
 These effects ignore immunities and saves.
 
 #{italic}#No one would really hurt you, not on purpose.  But they would try to control you.#{normal}#
 
-Each point in Idol talents increases your mindpower by 2.]]):format(t.getThresh(self, t)*100)
+Each point in Idol talents increases your mindpower by 2.]]):format(t.getThresh(self, t)*100, t.getPrice(self, t))
 	end,
 }

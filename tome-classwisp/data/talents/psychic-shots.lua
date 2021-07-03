@@ -88,7 +88,7 @@ newTalent{
 								spaces[#spaces + 1] = {x=px, y=py}
 							end
 						end)
-					for i = 0, t.getStack(self, t) do
+					for i = 1, t.getStack(self, t) do
 						targets[#targets + 1] = target
 					end
 				end

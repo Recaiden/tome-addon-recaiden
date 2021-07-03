@@ -89,7 +89,7 @@ newTalent{
 	getCount = function (self, t) return 1 + math.floor(self:combatTalentLimit(t, 4, 1, 2.5)) end,
 	getConversionDamage = function (self, t) return self:combatTalentWeaponDamage(t, 0.30, 0.65) end,
 	getAmmo = function (self, t) return math.ceil(self:combatTalentScale(t, 3, 8)) end,
-	getReadySpeed = function (self, t) return self:combatTalentMindDamage(t, 0.20, 0.90) end,
+	getReadySpeed = function (self, t) return self:combatTalentMindDamage(t, 0.10, 0.45) end,
 	--on_pre_use = function(self, t, silent) return archerPreUse(self, t, silent, "bow") end,
 	on_pre_use = function(self, t, silent) if not self:hasArcheryWeapon("bow") then if not silent then game.logPlayer(self, "You require a bow for this talent.") end return false end return true end,
 
@@ -114,12 +114,12 @@ newTalent{
 		end
 
 		-- go fast
-		self:setEffect(self.EFF_REK_GLR_SHARDS_READY, 1, {power=t.getReadySpeed(self, t), src=self})
+		self:setEffect(self.EFF_REK_GLR_SHARDS_READY, 2, {power=t.getReadySpeed(self, t), src=self})
 		
 		return true
 	end,
 	info = function(self, t)
-		return ([[Transmute part of an adjacent target's body into arrows and ready them for shooting.  The target is hit %d times for %d%% damage, you regain %d ammo, and your combat speed is increased by %d%% for 1 turn.]]):format(t.getCount(self, t), t.getConversionDamage(self, t)*100, t.getAmmo(self, t), t.getReadySpeed(self, t)*100)
+		return ([[Transmute part of an adjacent target's body into arrows and ready them for shooting.  The target is hit %d times for %d%% damage, you regain %d ammo, and your combat speed is increased by %d%% for 2 turns.]]):format(t.getCount(self, t), t.getConversionDamage(self, t)*100, t.getAmmo(self, t), t.getReadySpeed(self, t)*100)
 	end,
 }
 

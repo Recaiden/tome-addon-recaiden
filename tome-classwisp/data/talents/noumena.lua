@@ -109,8 +109,8 @@ newTalent{
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
-		local crit = self:mindCrit(1.0)
 		if not x or not y then return nil end
+		local crit = self:mindCrit(1.0)
 		self:project(tg, x, y, DamageType.REK_GLR_CRYSTAL_LIGHT, {dam=t.getDamage(self, t)*crit, dur=math.floor(t.getDuration(self, t)*crit), power=self:combatMindpower()})
 		game.level.map:particleEmitter(self.x, self.y, tg.radius, "light_cone", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
 		game:playSoundNear(self, "talents/shimmershine")
@@ -181,6 +181,7 @@ newTalent{
 	require = wil_req4,
 	points = 5,
 	cooldown = 12,
+	psi = 15,
 	getCount = function(self, t) return math.max(1, math.floor(self:combatTalentMindDamage(t, 2, 5))) end,
 	getDuration = function(self, t) return self:combatTalentScale(t, 3, 5) end,
 	range = 10,
@@ -198,6 +199,6 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Seal away a target's thoughts (#SLATE#Mindpower vs. Mental#LAST#), reducing them to base instinct.  They will have %d talents put on cooldown and for %d turns be silenced, disarmed, and have talents cooldown at only half speed.
-Mindpower: increases talents affected.]]):format(t.getCount(self, t), t.getDuration(self, t))
+Mindpower: increases number of talents affected.]]):format(t.getCount(self, t), t.getDuration(self, t))
 	end,
 }

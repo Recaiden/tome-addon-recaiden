@@ -28,7 +28,7 @@ newEntity{
 newEntity{
 	power_source = {technique=true},
 	name = "harpstrung ", prefix=true, instant_resolve=true,
-	keywords = {recurse=true},
+	keywords = {harp=true},
 	level_range = {20, 50},
 	greater_ego = 1,
 	rarity = 50,
