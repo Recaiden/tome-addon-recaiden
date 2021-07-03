@@ -155,12 +155,12 @@ newTalent{
 	info = function(self, t)
 		return ([[
 
-While Active: Each turn, nearby non-fascinated enemies will be fascinated, dazing them (#SLATE#Mindpower vs Mind#LAST#) for %d turns.  This can never inflict Brainlock. Once they recover from fascination, they are immune for %d turns.
+While Active: Each turn, nearby non-fascinated enemies will be fascinated, dazing them (#SLATE#Mental Save#LAST#) for %d turns.  This can never inflict Brainlock. Once they recover from fascination, they are immune for %d turns.
 Costs #4080ff#2 Psi#LAST# when triggered
 Range: 10
 
 Deactivate: Focus your fascination to overwhelm a single creature, causing it to lose 1 turn for every 20%% of its life it was missing (up to %d turns).
-Costs #4080ff#%d psi#LAST#
+Costs #4080ff#%d Psi#LAST#
 Uses Mind Speed
 
 #{italic}#All who look upon you lose the will to fight.#{normal}#
@@ -263,7 +263,7 @@ newTalent{
 While Active: Enemies within %d have their mental save reduced by %d. (#SLATE#No Save#LAST#)
 
 Deactivate: Focus your awesomeness to dazzle a single creature, giving them a 1/3 chance to fail to use talents for %d turns.
-Costs #4080ff#%d psi#LAST#
+Costs #4080ff#%d Psi#LAST#
 Uses Mind Speed
 
 #{italic}#All who approach you realize how unimportant they are.#{normal}#
@@ -343,9 +343,9 @@ newTalent{
 	info = function(self, t)
 		return ([[
 
-While Active: Each round, you gain %0.2f #4080ff#psi #LAST#for each visible enemy within range %d.
+While Active: Each round, you gain %0.2f #4080ff#Psi #LAST#for each visible enemy within range %d.
 
-Deactivate: You gain %0.2f #4080ff#psi #LAST#and %d%% movement speed (which lasts 2 turns or %d steps, whichever comes first).
+Deactivate: You gain %0.2f #4080ff#Psi #LAST#and %d%% movement speed (which lasts 2 turns or %d steps, whichever comes first).
 
 When you kill an enemy, gain the deactivation effect of this talent (but it stays active).
 
@@ -368,12 +368,12 @@ newTalent{
 	points = 5,
 	on_learn = function(self, t) self:learnTalent(self.T_REK_GLR_IDOL_STARPOWER, true) end,
 	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
-	getPrice = function(self, t) return math.floor(self:combatTalentScale(t, 5, 2)) end,
+	getPrice = function(self, t) return math.floor(self:combatTalentScale(t, 6, 2)) end,
 	getThresh = function(self, t) return self:combatTalentLimit(t, 0.10, 0.33, 0.16) end,
 	callbackPriorities = {callbackOnTakeDamage = -100},
 	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
 		local thresh = t.getThresh(self, t) * self.max_life
-		local threshShock = 0.2 * self.max_life
+		local threshShock = 0.25 * self.max_life
 		if dam >= thresh then
 			local dmg_src = self
 			if src.__is_actor then dmg_src = src end
@@ -432,8 +432,8 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[If you would take damage over %d%% of your maximum life, that damage is reduced to 5%% of your maximum life at the cost of #4080ff#%d Psi#LAST#.  If the damage would have been at least 20%% of your maximum life, your movement is slowed by 50%% for 5 turns.
-If you are already slowed, you will be stunned for 3 turns.
+		return ([[If you would take damage over %d%% of your maximum life, that damage is reduced to 5%% of your maximum life at the cost of %d #4080ff# Psi. #LAST#  
+If the damage would have been at least 25%% of your maximum life, your movement is slowed by 50%% for 5 turns. If you are already slowed, you will be stunned for 3 turns.
 
 These effects ignore immunities and saves.
 

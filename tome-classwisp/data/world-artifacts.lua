@@ -62,17 +62,88 @@ newEntity{
 	encumber = 6,
 	combat = {
 		range = 10,
+		ranged_project = { 
+			[DamageType.NATURE] = 15,
+		},
+		burst_on_crit = {
+			[DamageType.NATURE] = 10,
+		}
 	},
 	wielder = {
 		combat_atk = 10,
 		talents_types_mastery = {
 			["race/higher"] = 0.2,
 		},
-		learn_talent = {[Talents.T_OVERSEER_OF_NATIONS] = 5},
+		lite = 3,
+		blind_immune = 0.4,
+		learn_talent = {
+			[Talents.T_OVERSEER_OF_NATIONS] = 5,
+			[Talents.T_REK_GLR_SHOT_VOYAGE] = 2,
+		},
 	},
-	finish = function(self, zone, level) -- add the voyager active ego and 15 points of physical or mental themed random powers
+	
+	act = function(self)
+		self:useEnergy()
+		if not self.worn_by then return end
+		if game.zone.wilderness then return end
+		if game.level and not game.level:hasEntity(self.worn_by) then self.worn_by = nil return end
+		if self.worn_by:attr("dead") then return end
+		if not self.worn_by.in_combat then return end
+		local who = self.worn_by
+		local Map = require "engine.Map"
+		local tgts = {}
+		local DamageType = require "engine.DamageType"
+		local grids = core.fov.circle_grids(who.x, who.y, 5, true)
+		for x, yy in pairs(grids) do for y, _ in pairs(grids[x]) do
+			local a = game.level.map(x, y, Map.ACTOR)
+			if a and who:reactionToward(a) < 0 and not game.level.map:hasEffectType(x, y, DamageType.GRASPING_MOSS) then
+				tgts[#tgts+1] = a
+			end
+		end end
+
+		local tg = {type="hit", range=5, friendlyfire=false}
+
+		if #tgts <= 0 then return end
+		local a, id = rng.table(tgts)
+		table.remove(tgts, id)
+
+		game.level.map:addEffect(self.worn_by,
+			a.x, a.y, 8,
+			DamageType.GRASPING_MOSS, {dam=30, pin=33, slow=45},
+			0,
+			5, nil,
+			{type="moss"},
+			nil, false, false
+		)
+	end,
+	special_desc = function(self, who)		
+		return _t"Automatically sprouts grasping moss underneath nearby enemies, dealing nature damage and slowing their movement."
+	end,
+	on_wear = function(self, who)
+		self.worn_by = who
+	end,
+	on_takeoff = function(self)
+		self.worn_by = nil
+	end,
+	callbackOnKill = function(self, who, target)
+		if not rng.percent(4) then return end
+		local msg = rng.table{
+			_t"Yhudran!",
+			_t"Vycdan!",
+			_t"Kad ic lmucan!",
+			_t"Oui nasaspan dra udranc, nekrd?",
+			_t"Ryryry!",
+			_t"Fa'ja paah rana duu muhk.  Mayja!",
+			_t"Feamtan, yna oui mecdahehk?",
+			_t"Suja, suja!",
+			_t"Ajanouha rana ec dra cysa.  Mad'c ku cusabmyla haf.",
+			_t"Oui teth'd haat sa vun dryd uha.",
+		}
+		who:setEmote(require("engine.Emote").new(self:getName()..': "'..msg..'"', 120, colors.CRIMSON))
+	end,
+	finish = function(self, zone, level) -- add and 15 points of physical random powers
+		-- the stats of Voyager ego are builit-in, except that the active is learned rather than a charm power, to allow the moss to work
 		game.state:addRandartProperties(self, {lev = 0, nb_points_add=15, egos = 1,
-			force_egos = {"voyaging"},
 			force_themes = {'physical'}})
 	end,
 }
@@ -150,17 +221,17 @@ newEntity{ base = "BASE_ARROW",
 		apr = 30, -- triple normal
 		dammod = {dex=0.7, str=0.7}, -- higher str value
 		ranged_project={[DamageType.PHYSICAL] = 12},
-	},
-	special_on_hit = {
-		on_kill = 0,
-		desc=function(self, who, special)
-			return ("Shred the target, reducing their phyiscal damage resistance by 5%% (stacks 6 times)"):tformat()
+		special_on_hit = {
+			on_kill = 0,
+			desc=function(self, who, special)
+				return ("Shred the target, reducing their phyiscal damage resistance by 5%% (stacks 6 times)"):tformat()
 		end,
-		fct=function(combat, who, target, dam, special)
-			if target  target:canBe("poison") then
-				target:setEffect(target.EFF_WEAKENED_DEFENSES, 3, {inc = -5, max = -30})
+			fct=function(combat, who, target, dam, special)
+				if target then
+					target:setEffect(target.EFF_WEAKENED_DEFENSES, 3, {inc = -5, max = -30})
+				end
 			end
-		end
+		}
 	},
 	-- no wielder effects on ammo, you fool!
 	-- wielder = {
@@ -173,7 +244,7 @@ newEntity{ base = "BASE_ARROW",
 newEntity{ base = "BASE_ARROW",
 	power_source = {psionic=true},
 	unique = true,
-	name = "Jaguar's Teeth", short_name = "GLR_JAGUAR_ARROW",
+	name = "Jaguar's Teeth",
 	unided_name = _t"primitive arrows",
 	desc = _t[[Each of these arrowheads are carved from the fang of a Tar'Eyalian great cat, and the fletchings are all of silk.  Holding an arrow, you feel a desperate hunger.]],
 	color = colors.BLUE, image = "object/artifact/glr_jaguar_arrow.png",
@@ -236,7 +307,7 @@ newEntity{ base = "BASE_ARROW",
 		end},
 	},
 	wielder = { -- making an exception here because this is archery stuff
-		talents_types_mastery = {["psionic/psychic-marksman"] = 0.2},
+		talents_types_mastery = {["technique/psychic-marksman"] = 0.2},
 	},
 }
 

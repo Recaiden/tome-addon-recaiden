@@ -47,7 +47,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[You project a psionic net around a target (#SLATE#Mindpower vs Mental#LAST#) that lasts for %d turns and deals %0.2f mind damage each turn. If the target dies while the net is active, you regain #4080ff#20 psi#LAST#.
+		return ([[You project a psionic net around a target (#SLATE#Mental Save#LAST#) that lasts for %d turns and deals %0.2f mind damage each turn. If the target dies while the net is active, you regain #4080ff#20 psi#LAST#.
 If a rare or stronger target dies with the net in place you will capture its mind and absorb it into your dreams.
 Mindpower: increases damage.
 Their psychic energy grants you additional mental critical chance, currently: %d%%.

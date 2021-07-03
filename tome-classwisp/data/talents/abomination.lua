@@ -162,7 +162,7 @@ newTalent{
 	end,
 
 	info = function(self, t)
-		return ([[Reading an enemy's subtle impulses, you know when they're going to strike before  they do, and can interrupt the attack with a well-timed arrow.  When you would be damaged by an enemy, there is a %d%% chance that they are instantly struck by an arrow that you already fired, doing %d%% damage and reducing their damage to you by %d%%.
+		return ([[Reading an enemy's subtle impulses, you know when they're going to strike before they do, and can interrupt the attack with a well-timed arrow.  When you would be damaged by an enemy, there is a %d%% chance that they are instantly struck by an arrow that you already fired, doing %d%% damage and reducing their damage to you by %d%%.
 This can only happen once per enemy per turn.]]):format(t.getChance(self, t), t.getDamage(self, t)*100, t.getReduction(self, t)*100)
 	end,
 }

@@ -119,9 +119,9 @@ newEffect{
 			if not t then break end
 			self.talents_cd[t.id] = 1
 		end
+		self:effectParticles(eff, {type="lockdown_dizzy", args={radius=1}})
 	end,
-	deactivate = function(self, eff)
-	end,
+	deactivate = function(self, eff) end,
 }
 
 newEffect{

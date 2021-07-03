@@ -96,7 +96,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return([[Puts the target into a sudden sleep for %d turns, rendering it mostly unable to act.  Every %d points of damage the target suffers will reduce the effect duration by one turn.
+		return([[Puts the target into a sudden sleep (#SLATE#Mental Save#LAST#) for %d turns, rendering it mostly unable to act.  Every %d points of damage the target suffers will reduce the effect duration by one turn.
 Mindpower: increases damage threshold 
 When they wake, the target will benefit from Insomnia for a number of turns equal to the amount of time it was asleep (up to ten turns max), granting it %d%% sleep immunity.]]):format(t.getDuration(self, t), t.getSleepPower(self, t), t.getInsomniaPower(self, t))
 	end,

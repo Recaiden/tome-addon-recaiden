@@ -113,7 +113,7 @@ newTalent{
 		local crit = self:mindCrit(1.0)
 		self:project(tg, x, y, DamageType.REK_GLR_CRYSTAL_LIGHT, {dam=t.getDamage(self, t)*crit, dur=math.floor(t.getDuration(self, t)*crit), power=self:combatMindpower()})
 		game.level.map:particleEmitter(self.x, self.y, tg.radius, "light_cone", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
-		game:playSoundNear(self, "talents/shimmershine")
+		game:playSoundNear(self, "talents/chime")
 		return true
 	end,
 	info = function(self, t)
@@ -198,7 +198,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Seal away a target's thoughts (#SLATE#Mindpower vs. Mental#LAST#), reducing them to base instinct.  They will have %d talents put on cooldown and for %d turns be silenced, disarmed, and have talents cooldown at only half speed.
+		return ([[Seal away a target's thoughts (#SLATE#Mental Save#LAST#), reducing them to base instinct.  They will have %d talents put on cooldown and for %d turns be silenced, disarmed, and have talents cooldown at only half speed.
 Mindpower: increases number of talents affected.]]):format(t.getCount(self, t), t.getDuration(self, t))
 	end,
 }

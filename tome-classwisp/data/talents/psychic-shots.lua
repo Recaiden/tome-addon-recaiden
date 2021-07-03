@@ -27,7 +27,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[You spin up an arrow that cuts right through anything, hitting multiple targets in a line for %d%% armor-piercing damage and reducing their armor (#SLATE#Physical Power vs Physical#LAST#) by %d for %d turns.]]):format(t.getDamage(self, t)*100, t.getShred(self, t), t.getDuration(self, t))
+		return ([[You spin up an arrow that cuts right through anything, hitting multiple targets in a line for %d%% armor-piercing damage and reducing their armor (#SLATE#Physical Save#LAST#) by %d for %d turns.]]):format(t.getDamage(self, t)*100, t.getShred(self, t), t.getDuration(self, t))
 	end,
 }
 
@@ -228,6 +228,7 @@ newTalent{
 	archery_onhit = function(self, t, target, x, y)
 		if target:canBe("knockback") then
 			local shot = false
+			game.level.map:particleEmitter(target.x, target.y, 4, "gravity_breath", {radius=4, tx=(x-self.x), ty=(y-self.y), allow=core.shader.allow("distort")})
 			target:knockback(
 				self.x, self.y, 4, nil,
 				function(g, x, y)		
@@ -259,7 +260,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Shoot an arrow encased in a shell of tremendous kinetic energy, doing %d%% damage and knocking the target back 4 spaces.  If the target collides with anything, it takes %d%% additional physical damage and is stunned (#SLATE#Physical Power vs Physical#LAST#) for %d turns.  If it collided with a creature, that creature also takes the bonus damage (but is not stunned).]]):format(t.getDamage(self, t) * 100, t.getSlamDamage(self, t) * 100, t.getDuration(self, t))
+		return ([[Shoot an arrow encased in a shell of tremendous kinetic energy, doing %d%% damage and knocking the target back 4 spaces.  If the target collides with anything, it takes %d%% additional physical damage and is stunned (#SLATE#Physical Save#LAST#) for %d turns.  If it collided with a creature, that creature also takes the bonus damage (but is not stunned).]]):format(t.getDamage(self, t) * 100, t.getSlamDamage(self, t) * 100, t.getDuration(self, t))
 	end,
 }
 
