@@ -151,10 +151,22 @@ newEntity{ base = "BASE_ARROW",
 		dammod = {dex=0.7, str=0.7}, -- higher str value
 		ranged_project={[DamageType.PHYSICAL] = 12},
 	},
-	wielder = {
-		inc_damage={[DamageType.PHYSICAL] = 20},
-		resists_pen={[DamageType.PHYSICAL] = 15},
+	special_on_hit = {
+		on_kill = 0,
+		desc=function(self, who, special)
+			return ("Shred the target, reducing their phyiscal damage resistance by 5%% (stacks 6 times)"):tformat()
+		end,
+		fct=function(combat, who, target, dam, special)
+			if target  target:canBe("poison") then
+				target:setEffect(target.EFF_WEAKENED_DEFENSES, 3, {inc = -5, max = -30})
+			end
+		end
 	},
+	-- no wielder effects on ammo, you fool!
+	-- wielder = {
+	-- 	inc_damage={[DamageType.PHYSICAL] = 20},
+	-- 	resists_pen={[DamageType.PHYSICAL] = 15},
+	-- },
 }
 
 -- Aim is to make this the ideal Psychic Marksman weapon
@@ -182,7 +194,7 @@ newEntity{ base = "BASE_ARROW",
 		special_on_crit = {
 			desc=function(self, who, special)
 				local dam, hf = special.wound(self.combat, who)
-				return ("Wound the target dealing #RED#%d#LAST# physical damage across 3 turns and reducing healing by %d%%"):tformat(dam, hf)
+				return ("Wound the target, dealing #RED#%d#LAST# physical damage across 3 turns and reducing healing by %d%%.  This gives you 3 psi and 3 hate."):tformat(dam, hf)
 			end,
 			wound=function(combat, who)
 				local dam = math.max(15, math.floor(who:combatStatScale(who:combatPhysicalpower(), 1, 350)))
@@ -193,7 +205,9 @@ newEntity{ base = "BASE_ARROW",
 				if target:canBe("cut") then
 					local dam, hf = special.wound(combat, who)
 					local check = math.max(who:combatMindpower(), who:combatAttack())
-					target:setEffect(target.EFF_DEEP_WOUND, 3, {src=who, heal_factor=hf, power=who:physicalCrit(dam) / 3, apply_power=check})
+					target:setEffect(target.EFF_DEEP_WOUND, 3, {src=who, heal_factor=hf, power=who:physicalCrit(dam) / 3, apply_power=check}) 
+					if who:knowTalent(who.T_PSI_POOL) then who:incPsi(3) end
+					if who:knowTalent(who.T_HATE_POOL) then who:incHate(3) end
 				end
 			end
 		},
@@ -221,12 +235,8 @@ newEntity{ base = "BASE_ARROW",
 												 ammo.combat.shots_left = ammo.combat.capacity
 		end},
 	},
-	wielder = {
-		psi_on_crit = 3,
-		hate_on_crit = 3,
-		combat_dam = 30,
-		combat_mindcrit = 20,
-		talents_types_mastery = { ["psionic/voracity"] = 0.2, ["psionic/psychic-marksman"] = 0.2},
+	wielder = { -- making an exception here because this is archery stuff
+		talents_types_mastery = {["psionic/psychic-marksman"] = 0.2},
 	},
 }
 
