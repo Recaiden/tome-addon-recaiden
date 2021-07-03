@@ -189,7 +189,7 @@ newEntity{ base = "BASE_ARROW",
 		capacity = 30, -- That's the right number of teeth
 		dam = 40, apr = 10, -- can be low for T5, the hit isn't the point.
 		dammod = {dex=0.7, str=0.5},
-		ranged_project={[DamageType.PHYSICAL] = 105},
+		ranged_project={[DamageType.PHYSICAL] = 75},
 		physspeed = 0.90,
 		special_on_crit = {
 			desc=function(self, who, special)
