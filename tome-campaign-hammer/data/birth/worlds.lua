@@ -76,5 +76,7 @@ newBirthDescriptor{
 	game_state_execute = function()
 		-- Khulmanar is not killed by the Scourge in this timeline, but shouldn't randomly appear.
 		game.uniques["mod.class.NPC/Khulmanar, General of Urh'Rok"] = 1
+		-- Walrog shouldn't randomly show up in Nur, as he's part of a quest
+		game.uniques["mod.class.NPC/Walrog"] = 1
 	end,
 }

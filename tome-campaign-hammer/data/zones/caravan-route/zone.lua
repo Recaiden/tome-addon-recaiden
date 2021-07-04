@@ -14,23 +14,13 @@ return {
 	max_material_level = 3,
 	generator =  {
 		map = {
-			class = "engine.generator.map.Forest",
-			edge_entrances = {8,2},
-			zoom = 6,
-			sqrt_percent = 40,
-			noise = "fbm_perlin",
-			floor = "SAND",
-			wall = "PALMTREE",
-			up = "SAND_UP_WILDERNESS",
-			down = "TO_CAVE",
-			road = "GRASS_ROAD_DIRT",
-			add_road = true,
-			
-			nb_rooms = {8+3, 8+5},
-			required_rooms = {"!oasis1", "!oasis2", "!oasis3", "!oasis4", "!ruins1", "!ruins2", "!ruins3", "!ruins4", },
-			rooms = {"!ruins3", "!ruins4", "!ruins3", "!ruins4", "greater_vault"},
-			greater_vaults_list = {"dragon_lair"},
-			lite_room_chance = 100,
+			class = "engine.generator.map.MapScript",
+			['<'] = "COBBLESTONE_UP4", ['>'] = "COBBLESTONE_DOWN6",
+			['.'] = "FLOOR", ['+'] = "DOOR", ['#'] = "WALL",
+			['_'] = "FLOOR", ['O'] = "WALL", 
+			[';'] = "GRASS", ['T'] = "TREE",
+			['='] = "COBBLESTONE",
+			mapscript = "!main",
 		},
 		actor = {
 			class = "engine.generator.actor.Random",
@@ -48,12 +38,22 @@ return {
 	},
 	levels =
 	{
-		[1] = {
-		},
-		[2] = {
-		},
-		[3] = {
-		},
+			[1] = {
+				generator = {
+					map = {
+						['<'] = "COBBLESTONE_UP_WILDERNESS",
+					},
+				},
+			},
+			[3] = {
+				width=28, height=80,
+				generator = {
+					map = {
+						['<'] = "COBBLESTONE_UP8",
+						['>'] = "COBBLESTONE",
+					},
+				},
+			},
 	},
 
 	post_process = function(level)

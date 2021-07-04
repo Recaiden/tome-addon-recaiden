@@ -1,5 +1,15 @@
 load("/data/general/npcs/aquatic_critter.lua", function(e) if e.rarity then e.water_rarity, e.rarity = e.rarity, nil end end)
-load("/data/general/npcs/aquatic_demon.lua", function(e) if e.rarity then e.water_rarity, e.rarity = e.rarity, nil end end)
+load(
+	"/data/general/npcs/aquatic_demon.lua",
+	function(e)
+		if e.rarity then e.water_rarity, e.rarity = e.rarity, nil end
+		if e.name == "water imp" then
+			e.name == "devolved water imp"
+			e.corrupt_talents = resolvers.talents{ [Talents.T_TENTACLE_GRAB]=3 }
+			e.desc = e.desc.._t"You're fairly sure it's not supposed to look like that."
+		end
+	end
+)
 load("/data/general/npcs/horror_aquatic.lua", function(e) if e.rarity then e.horror_water_rarity, e.rarity = e.rarity, nil end end)
 load("/data/general/npcs/horror.lua", rarity(0))
 load("/data/general/npcs/snake.lua", rarity(3))
@@ -15,7 +25,7 @@ newEntity{
 	level_range = {10, nil}, exp_worth = 2,
 	instakill_immune = 1,
 	rank = 4,
-	size_category = 4,
+	size_category = 5,
 	autolevel = "wildcaster",
 	max_life = 80, life_rating = 10, fixed_rating = true,
 	hate_regen=4,
@@ -39,7 +49,7 @@ newEntity{
 	resolvers.auto_equip_filters("Oozemancer"),
 	auto_classes={{class="Oozemancer", start_level=20, level_rate=35}},
 	summon = {{type="horror", subtype="aquatic", name="swarming horror", number=2, special_rarity="horror_water_rarity", hasxp=false}, },
-	-- Override the recalculated AI tactics to avoid problematic kiting
+	-- Don't run away
 	low_level_tactics_override = {escape=0},
 	
 	on_die = function(self, who)

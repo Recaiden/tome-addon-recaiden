@@ -53,6 +53,7 @@ newEntity{
 		local player = game:getPlayer(true)
 	
 		game:changeLevel(1, ("campaign-hammer+derthfields-landing-site"), {direct_switch=true})
+		player:grantQuest("campaign-hammer+demon-landing")
 
 		local a = require("engine.Astar").new(game.level.map, player)
 

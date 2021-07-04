@@ -1,4 +1,7 @@
-load("/data/general/npcs/rodent.lua", rarity(5))
+load("/data/general/npcs/rodent.lua", function(e)
+			 e.bonus_loot = resolvers.drops{chance=100, nb=3, {}}
+			 e:rarity(5)
+end )
 load("/data/general/npcs/vermin.lua", rarity(2))
 load("/data/general/npcs/canine.lua", rarity(0))
 load("/data/general/npcs/troll.lua", rarity(1))
@@ -39,7 +42,7 @@ newEntity{ base="BASE_NPC_BEAR", define_as = "MAGRIN",
 
 	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1 },
 	resolvers.drops{chance=100, nb=1, {unique=true, not_properties={"lore"}} },
-	resolvers.drops{chance=100, nb=3, {tome_drops="boss"} },
+	resolvers.drops{chance=100, nb=10, {tome_drops="boss"} },
 
 	resolvers.talents{
 		[Talents.T_STUN]={base=1, every=6, max=6},

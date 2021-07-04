@@ -2,8 +2,7 @@ local Talents = require("engine.interface.ActorTalents")
 
 load("/data/general/npcs/losgoroth.lua", function(e)
 			 e.combat_def = 0; e.inc_damage = {all=-70}
-			 --TODO this is a test
-			 e.bonus_loot = resolvers.drops{chance=100, nb=10, {ego_chance=100} } 
+			 e.bonus_loot = resolvers.drops{chance=100, nb=3, {}} 
 end)
 load("/data/general/npcs/demon-major.lua", rarity(40))
 load("/data/general/npcs/demon-minor.lua", rarity(20))
@@ -46,6 +45,7 @@ newEntity{ base = "BASE_NPC_PLATFORM",
 	},
 	combat_armor = 2, combat_def = 0,
 	resolvers.talents{ [Talents.T_RUSH]=1, [Talents.T_PERFECT_STRIKE]=1, [Talents.T_OSMOSIS_SHIELD]=1 },
+	resolvers.drops{chance=100, nb=3, {}},
 }
 
 newEntity{
@@ -56,7 +56,7 @@ newEntity{
 	resolvers.nice_tile{image="invis.png"},
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/elemental_void_losgoroth_corrupted_greater.png", display_h=2, display_y=-1}}},
 	desc = _t[[A vast aether elemental, bloated with the power of the fearscape]],
-	killer_message = _t"and drained of every scrap of mana and vim",
+	killer_message = _t"and drained of every scrap of vim",
 	level_range = {5, nil}, exp_worth = 2,
 	max_life = 150, life_rating = 10, fixed_rating = true,
 	mana_regen = 7,
@@ -72,7 +72,7 @@ newEntity{
 	equipment = resolvers.equip{
 		{defined="VOID_STAR", autoreq=true},
 	},
-	resolvers.drops{chance=100, nb=3, {tome_drops="boss"} },
+	resolvers.drops{chance=100, nb=10, {tome_drops="boss"} },
 
 	resolvers.talents{
 		[Talents.T_VOID_BLAST]={base=1, every=7, max=7},
@@ -88,6 +88,10 @@ newEntity{
 	autolevel = "caster",
 	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", },
 	ai_tactic = resolvers.tactic"ranged",
+
+	on_die = function(self, who)
+		game.player:resolveSource():setQuestStatus("campaign-hammer+start-demon", engine.Quest.COMPLETED, "secured")
+	end,
 }
 
 newEntity{
@@ -149,7 +153,5 @@ newEntity{
 		[Talents.T_SLIME_SPIT]={base=2, every=5, max=8},
 	},
 
-	on_die = function(self, who)
-		game.player:resolveSource():setQuestStatus("campaign-hammer+start-demon", engine.Quest.COMPLETED, "secured")
-	end,	
+	resolvers.drops{chance=100, nb=2, {}},
 }

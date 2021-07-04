@@ -12,6 +12,5 @@ end
 on_status_change = function(self, who, status, sub)
    if self:isCompleted("secured") then
       who:setQuestStatus(self.id, engine.Quest.DONE)
-      who:grantQuest("campaign-hammer+demon-landing")
    end
 end
