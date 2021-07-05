@@ -35,6 +35,7 @@ return {
 			class = "mod.class.generator.actor.Random",
 			nb_npc = {30, 40},
 			guardian = "VOID_VORTEX",
+			guardian_spot = "default_down",
 		},
 		object = {
 			class = "engine.generator.object.Random",
@@ -52,6 +53,10 @@ return {
 					map = {
 						class = "engine.generator.map.Building",
 						wall = "MALROK_WALL",
+						floor = "FLOATING_ROCKS",
+						up = "PORTAL_PREV",
+						down = "PORTAL_NEXT",
+						door = "MALROK_DOOR",
 						margin_w = 0, margin_h = 0,
 						max_block_w = 15, max_block_h = 15,
 						max_building_w = 5, max_building_h = 5,

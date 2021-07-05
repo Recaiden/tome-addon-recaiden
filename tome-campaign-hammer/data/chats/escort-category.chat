@@ -269,7 +269,12 @@
         },
         "outputs": {
             "output_1": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "47",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_2": {
                 "connections": []
@@ -907,7 +912,34 @@
                 "connections": []
             }
         },
-        "pos_x": 1187.2500038146973,
-        "pos_y": 1249.1875076293943
+        "pos_x": 1119.4285714285713,
+        "pos_y": 1308
+    },
+    "47": {
+        "id": 47,
+        "name": "lua-code",
+        "data": {
+            "code": "if game.player:knowTalentType(\"wild-gift/antimagic\") then\n    game.player:setTalentTypeMastery(\"wild-gift/antimagic\", game.player:getTalentTypeMastery(\"wild-gift/antimagic\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"wild-gift/antimagic\", true)\nend\n\n\ngame.player:attr(\"forbid_arcane\", 1)\n\nfor tid, _ in pairs(game.player.sustain_talents) do\n\tlocal t = game.player:getTalentFromId(tid)\n\tif t.is_spell then game.player:forceUseTalent(tid, {ignore_energy=true}) end\nend\nremove_arcane_equipment(game.player)\ngame.player:learnTalent(game.player.T_ANTIMAGIC_ADEPT, true, nil, {no_unlearn=true})\t\n\nif game.player:knowTalentType(\"wild-gift/fungus\") then\n    game.player:setTalentTypeMastery(\"wild-gift/fungus\", game.player:getTalentTypeMastery(\"wild-gift/fungus\", true) + 0.1)\nelseif game.player:knowTalentType(\"wild-gift/fungus\") == false then\n\tgame.player:learnTalentType(\"wild-gift/fungus\", true)\nelse\n\tgame.player:learnTalentType(\"wild-gift/fungus\", false)\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "24",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1482.4285714285713,
+        "pos_y": 1425
     }
 }

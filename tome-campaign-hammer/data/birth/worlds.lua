@@ -39,8 +39,7 @@ newBirthDescriptor{
 			"The people of Eyal were the lucky ones; Mal'rok was blasted apart, the broken peices of the world transformed to ever-burning hellscapes.",
 			"Amidst the flames, the survivors remade themselves into demons, bent on revenge.",
 			"They spent centuries traversing the void, preparing themselves for war.",
-			"Now, Goedalath has arrived in high orbit.  A linked Orb of Many Ways allows passage through the planetary shield.  Khulmanar's armies are ready.  It is time.",
-			"Unleash the fury of hell!",
+			"Now, Goedalath has arrived in high orbit.  A linked Orb of Many Ways allows passage through the planetary shield.  Khulmanar's armies are ready.  It is time to unleash the fury of hell!",
 		},
 	descriptor_choices = default_hammer_descriptors{},
 	copy = {

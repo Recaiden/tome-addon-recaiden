@@ -66,7 +66,7 @@
         "id": 8,
         "name": "lua-code",
         "data": {
-            "code": "game.logPlayer(game.player, \"You have %d generic talent point(s) to spend. Press p to use them.\", game.player.unused_generics)"
+            "code": "game.logPlayer(game.player, \"You have %d generic talent point(s) to spend. Press p to use them.\", game.player.unused_generics)\n\nif game.player:knowTalentType(\"corruption/hexes\") then\n\tgame.player:setTalentTypeMastery(\"corruption/hexes\", game.player:getTalentTypeMastery(\"corruption/hexes\", true) + 0.2)\nelseif game.player:knowTalentType(\"corruption/hexes\") == false then\n\tgame.player:learnTalentType(\"corruption/hexes\", true)\nelse\n\tgame.player:learnTalentType(\"corruption/hexes\", false)\nend\n\ngame.logPlayer(game.player, \"You also study some hexes.  Everyone should know how to cast hexes.\")"
         },
         "class": "lua-code",
         "html": "lua-code",

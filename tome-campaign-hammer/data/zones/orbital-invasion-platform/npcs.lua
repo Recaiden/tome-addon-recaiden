@@ -117,7 +117,6 @@ newEntity{
 	random_name_def = "demon",
 
 	resolvers.inscriptions(1, "rune"),
-	ingredient_on_death = "GREATER_DEMON_BILE",
 }
 
 newEntity{
