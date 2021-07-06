@@ -9,6 +9,8 @@ return {
 	all_remembered = false,
 	all_lited = true,
 	persistent = "zone",
+	no_worldport = true,
+	is_demon_plane = true,
 	ambient_music = "Straight Into Ambush.ogg",
 	effects = {"EFF_ZONE_AURA_FEARSCAPE"},
 	min_material_level = 1,

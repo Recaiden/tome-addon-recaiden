@@ -2,7 +2,8 @@ local Talents = require("engine.interface.ActorTalents")
 
 load("/data/general/npcs/losgoroth.lua", function(e)
 			 e.combat_def = 0; e.inc_damage = {all=-70}
-			 e.bonus_loot = resolvers.drops{chance=100, nb=3, {}} 
+			 e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+			 e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
 end)
 load("/data/general/npcs/demon-major.lua", rarity(40))
 load("/data/general/npcs/demon-minor.lua", rarity(20))
@@ -89,6 +90,13 @@ newEntity{
 	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", },
 	ai_tactic = resolvers.tactic"ranged",
 
+	on_added = function(self, level, x, y)
+		if engine.Map.tiles.nicer_tiles then
+			local ps = self:addParticles(require("engine.Particles").new("farportal_vortex", 1, {rot=3, size=40, vortex="shockbolt/terrain/planar_demon_vortex"}))
+			ps.dy = -0.35
+			ps.dx = -0.07
+		end
+	end,
 	on_die = function(self, who)
 		game.player:resolveSource():setQuestStatus("campaign-hammer+start-demon", engine.Quest.COMPLETED, "secured")
 	end,

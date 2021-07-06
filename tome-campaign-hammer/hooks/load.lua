@@ -22,7 +22,7 @@ class:bindHook(
 		DamageType:loadDefinition("/data-campaign-hammer/damage_types.lua")
 		WorldAchievements:loadDefinition("/data-campaign-hammer/achievements/")
 		PartyLore:loadDefinition("/data-campaign-hammer/lore/lore.lua")
-		Store:loadStores("/data-campaign-hammer/general/stores/campaign-hammer.lua")
+		Store:loadStores("/data-campaign-hammer/general/stores/fearscape.lua")
 		ActorAI:loadDefinition("/data-campaign-hammer/ai/")
 		
 		--ActorTalents:loadDefinition("/data-campaign-hammer/talents.lua")

@@ -1,17 +1,23 @@
-load("/data/general/npcs/rodent.lua", function(e)
-			 e.bonus_loot = resolvers.drops{chance=100, nb=3, {}}
-			 e:rarity(5)
-end )
-load("/data/general/npcs/vermin.lua", rarity(2))
-load("/data/general/npcs/canine.lua", rarity(0))
-load("/data/general/npcs/troll.lua", rarity(1))
-load("/data/general/npcs/thieve.lua", rarity(1))
-load("/data/general/npcs/snake.lua", rarity(3))
-load("/data/general/npcs/plant.lua", rarity(0))
-load("/data/general/npcs/swarm.lua", rarity(3))
-load("/data/general/npcs/bear.lua", rarity(1))
+rarityWithLoot = function(add, mult)
+	add = add or 0; mult = mult or 1;
+	return function(e)
+		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
+	end
+end
 
-load("/data/general/npcs/all.lua", rarity(4, 35))
+load("/data/general/npcs/rodent.lua", rarityWithLoot(5))
+load("/data/general/npcs/vermin.lua", rarityWithLoot(2))
+load("/data/general/npcs/canine.lua", rarityWithLoot(0))
+load("/data/general/npcs/troll.lua", rarityWithLoot(1))
+load("/data/general/npcs/thieve.lua", rarityWithLoot(1))
+load("/data/general/npcs/snake.lua", rarityWithLoot(3))
+load("/data/general/npcs/plant.lua", rarityWithLoot(0))
+load("/data/general/npcs/swarm.lua", rarityWithLoot(3))
+load("/data/general/npcs/bear.lua", rarityWithLoot(1))
+
+load("/data/general/npcs/all.lua", rarityWithLoot(4, 35))
 
 
 local Talents = require("engine.interface.ActorTalents")
