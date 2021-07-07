@@ -61,6 +61,7 @@ newBirthDescriptor{
 		exp_multiplier = 5,
 		campaign_name = "hammer",
 		ignore_prodigies_special_reqs = true,
+		stores_restock_by_level = 1,
 		__allow_rod_recall = true,
 		__allow_transmo_chest = true,
 		grab_online_event_zone = function() return "wilderness-1" end,
