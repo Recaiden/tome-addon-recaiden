@@ -61,4 +61,9 @@ return {
 
 	on_enter = function(lev, old_lev, newzone)
 	end
+
+	on_leave = function(lev, old_lev, newzone)
+		if not newzone then return end
+		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "dwarves")
+	end,
 }
