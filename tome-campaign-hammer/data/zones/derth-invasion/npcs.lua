@@ -1,9 +1,18 @@
-load("/data/general/npcs/gwelgoroth.lua", rarity(0))
-load("/data/general/npcs/xorn.lua", rarity(2))
-load("/data/general/npcs/snow-giant.lua", rarity(0))
-load("/data/general/npcs/storm-drake.lua", rarity(1))
+rarityWithLoot = function(add, mult)
+	add = add or 0; mult = mult or 1;
+	return function(e)
+		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
+	end
+end
 
-load("/data/general/npcs/all.lua", rarity(4, 35))
+load("/data/general/npcs/gwelgoroth.lua", rarityWithLoot(0))
+load("/data/general/npcs/xorn.lua", rarityWithLoot(2))
+load("/data/general/npcs/snow-giant.lua", rarityWithLoot(0))
+load("/data/general/npcs/storm-drake.lua", rarityWithLoot(1))
+
+load("/data/general/npcs/all.lua", rarityWithLoot(4, 35))
 
 local Talents = require("engine.interface.ActorTalents")
 
@@ -31,7 +40,7 @@ newEntity{ define_as = "URKIS_IN_TOWN",
 		{type="weapon", subtype="staff", force_drop=true, tome_drops="boss", forbid_power_source={antimagic=true}, autoreq=true},
 		{type="armor", subtype="cloth", force_drop=true, tome_drops="boss", forbid_power_source={antimagic=true}, autoreq=true},
 	},
-	resolvers.drops{chance=100, nb=5, {tome_drops="boss"} },
+	resolvers.drops{chance=100, nb=12, {tome_drops="boss"} },
 	resolvers.drops{chance=100, nb=1, {unique=true} },
 
 	resists = { [DamageType.LIGHTNING] = 100, },

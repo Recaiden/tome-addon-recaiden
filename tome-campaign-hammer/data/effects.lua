@@ -16,7 +16,6 @@ newEffect{
 	type = "other",
 	subtype = { aura=true },
 	status = "beneficial",
-	zone_wide_effect = true,
 	parameters = {},
 	activate = function(self, eff)
 		eff.dur = 1000

@@ -42,7 +42,7 @@ newEntity{ base="CHARRED_SCAR", define_as = "DERTHFIELDS_LANDING_SITE",
 	color={r=0, g=255, b=0},
 	add_displays={class.new{image="terrain/road_going_right_01.png", display_w=2}},
 	change_zone="campaign-hammer+derthfields-landing-site",
-	change_level=3, glow=true, display='>', color=colors.VIOLET, notice = true,
+	change_level=3, force_down = true, glow=true, display='>', color=colors.VIOLET, notice = true,
 }
 
 newEntity{ base="ZONE_PLAINS", define_as = "FIELDS_OF_HOPE",

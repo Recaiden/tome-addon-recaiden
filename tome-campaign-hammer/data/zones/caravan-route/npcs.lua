@@ -1,7 +1,16 @@
-load("/data/general/npcs/canine.lua", rarity(2))
-load("/data/general/npcs/troll.lua", rarity(3))
-load("/data/general/npcs/bear.lua", rarity(3))
-load("/data/general/npcs/plant.lua", rarity(4 ))
+rarityWithLoot = function(add, mult)
+	add = add or 0; mult = mult or 1;
+	return function(e)
+		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
+	end
+end
+
+load("/data/general/npcs/canine.lua", rarityWithLoot(2))
+load("/data/general/npcs/troll.lua", rarityWithLoot(3))
+load("/data/general/npcs/bear.lua", rarityWithLoot(3))
+load("/data/general/npcs/plant.lua", rarityWithLoot(4 ))
 
 local Talents = require("engine.interface.ActorTalents")
 
@@ -26,6 +35,8 @@ newEntity{
 	resolvers.racial(),
 	resolvers.talents{ [Talents.T_ARMOUR_TRAINING]=2, [Talents.T_WEAPON_COMBAT]={base=1, every=10, max=5}, [Talents.T_WEAPONS_MASTERY]={base=1, every=10, max=5} },
 
+	resolvers.drops{chance=25, nb=4, {}},
+
 	autolevel = "warrior",
 	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=3, },
 	stats = { str=20, dex=8, mag=6, con=16 },
@@ -46,15 +57,17 @@ newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_MERCHANT",
 		{type="weapon", subtype="longsword", autoreq=true},
 	},
 	make_escort = {
-		{name="caravan guard", number=3},
+		{name="caravan guard", number=2},
 		{name="caravan porter", number=4},
 	},
 }
 
-newEntity{ base = "BASE_NPC_CANINE", define_as = "WAR_DOG",
-	name = "war dog", color=colors.KHAKI, image="npc/canine_dw.png",
+newEntity{ base = "BASE_NPC_CANINE", define_as = "CARAVAN_WAR_DOG",
+	name = "guard dog", color=colors.KHAKI, image="npc/canine_dw.png",
 	desc = _t[[This is a large dog, bred and trained for fighting.]],
-	level_range = {15, 30}, exp_worth = 1,
+	level_range = {5, 30}, exp_worth = 1,
+	rarity = 12,
+	faction = "allied-kingdoms",
 	max_life = resolvers.rngavg(60,100), life_rating = 10,
 	combat_armor = 4, combat_def = 7,
 	combat = { dam=resolvers.levelup(30, 1, 1), atk=resolvers.levelup(25, 1, 1), apr=15 },
@@ -85,7 +98,7 @@ newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_GUARD",
 		[Talents.T_RUSH]={base=1, every=10, max=4},
 	},
 	make_escort = {
-		{name="war dog", number=2},
+		{name="guard dog", number=2},
 		{name="caravan guard", number=1, no_subescort=true},
 	},
 }
@@ -109,88 +122,36 @@ newEntity{ base = "BASE_CARAVANEER", define_as = "CARAVAN_PORTER",
 	},
 }
 
-newEntity{ base = "BASE_NPC_CANINE", define_as = "CORRUPTED_WAR_DOG",
-	name = "corrupted war dog", color=colors.BLACK, image="npc/canine_dw.png",
+newEntity{ base = "BASE_NPC_CANINE", define_as = "CORRUPTED_CARAVAN_WAR_DOG",
+	name = "corrupted guard dog", color=colors.BLACK, image="npc/canine_dw.png",
 	desc = _t[[This is a large dog, bred and trained for fighting. Something about the way it moves doesn't look normal.]],
 	level_range = {15, 30}, exp_worth = 1,
-	rarity = 4,
+	rarity = 8,
+	faction = "allied-kingdoms",
 	max_life = resolvers.rngavg(60,100),
 	combat_armor = 5, combat_def = 7,
 	combat = { dam=resolvers.levelup(30, 1, 1), atk=resolvers.levelup(25, 1, 1), apr=15 },
-	resolvers.talents{ [Talents.T_RUSH]=2, },
-	resolvers.talents{ [Talents.T_GRAPPLING_STANCE]=2, },
-	resolvers.talents{ [Talents.T_CLINCH]=2, },
+	resolvers.talents{ [Talents.T_RUSH]=2, [Talents.T_GRAPPLING_STANCE]=2, [Talents.T_CLINCH]=2, [Talents.T_GLOOM] = 2,},
 
 	make_escort = {
-		{name="war dog", number=4, no_subescort=true},
+		{name="guard dog", number=4, no_subescort=true},
 	},
 }
-
-newEntity{ base="BASE_NPC_BEAR", define_as = "CARVAN_MASTER",
-	allow_infinite_dungeon = true,
-	unique = true,
-	name = "Placeholder boss",
-	display = "q", color=colors.VIOLET,
-	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/animal_bear_norgos_the_guardian.png", display_h=2, display_y=-1}}},
-	desc = _t[[placeholder desc]],
-	killer_message = _t"and was placeholdered to double-death",
-	level_range = {7, nil}, exp_worth = 2,
-	max_life = 200, life_rating = 17, fixed_rating = true,
-	max_stamina = 85,
-	max_mana = 200,
-	stats = { str=25, dex=15, cun=8, mag=10, wil=20, con=20 },
-	tier1 = true,
-	rank = 4,
-	size_category = 5,
-	infravision = 10,
-	instakill_immune = 1,
-	move_others=true,
-
-	combat = { dam=resolvers.levelup(17, 1, 0.8), atk=10, apr=9, dammod={str=1.2} },
-
-	resists = { [DamageType.COLD] = 20 },
-
-	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1 },
-	resolvers.drops{chance=100, nb=1, {unique=true, not_properties={"lore"}} },
-	resolvers.drops{chance=100, nb=3, {tome_drops="boss"} },
-
-	resolvers.talents{
-		[Talents.T_STUN]={base=1, every=6, max=6},
-		[Talents.T_RUSH]={base=5, every=6, max=10},
-		[Talents.T_DOUBLE_STRIKE]={base=1, every=6, max=4},
-	},
-
-	autolevel = "warrior",
-	ai = "tactical", ai_state = { talent_in=2, ai_move="move_astar", },
-	ai_tactic = resolvers.tactic"melee",
-
-	resolvers.auto_equip_filters("Brawler"),
-	auto_classes={{class="Brawler", start_level=18, level_rate=50}},
-
-	resolvers.inscriptions(1, "infusion"),
-
-	on_die = function(self, who)
-		local Chat = require "engine.Chat"
-		local chat = Chat.new("campaign-hammer+caravan-power", {name=_t"Memory Crystals"}, game.player)
-		chat:invoke()
-	end,
-}
-
 
 newEntity{ define_as = "CARAVAN_MASTER",
 	allow_infinite_dungeon = true,
 	type = "humanoid", subtype = "human", unique = true,
-	faction = "allied-kingdom",
+	faction = "allied-kingdoms",
 	name = "Caravan Guard Captain",
 	display = "h", color=colors.VIOLET,
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_orc_golbug_the_destroyer.png", display_h=2, display_y=-1}}},
 	desc = _t[[This was supposed to be an easy job.  Scare off the bears, fight a couple trolls,  make sure nothing funny went on.
 He never signed up to fight off a demon invasion.
-But he'll do his best.]],
+But that doesn't mean he's giving up!]],
 	level_range = {18, nil}, exp_worth = 2,
-	max_life = 250, life_rating = 16, fixed_rating = true,
+	max_life = 180, life_rating = 16, fixed_rating = true,
 	max_stamina = 145,
-	rank = 5,
+	rank = 4,
 	size_category = 3,
 	infravision = 10,
 	instakill_immune = 1,
@@ -205,20 +166,20 @@ But he'll do his best.]],
 		{type="armor", subtype="head", autoreq=true},
 		{type="armor", subtype="massive", force_drop=true, tome_drops="boss", autoreq=true},
 	},
-	resolvers.drops{chance=100, nb=5, {tome_drops="boss"} },
-	stun_immune = 1,
+	resolvers.drops{chance=100, nb=12, {tome_drops="boss"} },
+	stun_immune = 0.25,
 	see_invisible = 5,
 
 	resolvers.talents{
-		[Talents.T_ARMOUR_TRAINING]={base=4, every=6, max=8},
-		[Talents.T_WEAPON_COMBAT]={base=3, every=10, max=5},
-		[Talents.T_WEAPONS_MASTERY]={base=3, every=10, max=5},
-		[Talents.T_SHIELD_PUMMEL]={base=4, every=5, max=6},
-		[Talents.T_RUSH]={base=4, every=5, max=6},
+		[Talents.T_ARMOUR_TRAINING]={base=3, every=6, max=8},
+		[Talents.T_WEAPON_COMBAT]={base=1, every=10, max=5},
+		[Talents.T_WEAPONS_MASTERY]={base=1, every=10, max=5},
+		[Talents.T_SHIELD_PUMMEL]={base=1, every=5, max=6},
+		[Talents.T_RUSH]={base=1, every=5, max=6},
 		[Talents.T_RIPOSTE]={base=4, every=5, max=6},
-		[Talents.T_BLINDING_SPEED]={base=4, every=5, max=6},
-		[Talents.T_OVERPOWER]={base=3, every=5, max=5},
-		[Talents.T_ASSAULT]={base=3, every=5, max=5},
+		[Talents.T_BLINDING_SPEED]={base=1, every=5, max=6},
+		[Talents.T_OVERPOWER]={base=1, every=5, max=5},
+		[Talents.T_ASSAULT]={base=1, every=5, max=5},
 		[Talents.T_SHIELD_WALL]={base=3, every=5, max=5},
 		[Talents.T_SHIELD_EXPERTISE]={base=2, every=5, max=5},
 	},
@@ -230,9 +191,15 @@ But he'll do his best.]],
 	},
 	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", },
 	ai_tactic = resolvers.tactic"melee",
-	resolvers.inscriptions(3, "infusion"),
+	resolvers.inscriptions(2, "infusion"),
+
+	make_escort = {
+		{name="caravan merchant", number=2},
+	},
 
 	on_die = function(self, who)
+		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-caravan", engine.Quest.COMPLETED)
+
 		local Chat = require "engine.Chat"
 		local chat = Chat.new("campaign-hammer+caravan-power", {name=_t"Memory Crystals"}, game.player)
 		chat:invoke()

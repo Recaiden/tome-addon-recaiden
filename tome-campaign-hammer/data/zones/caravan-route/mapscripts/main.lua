@@ -52,7 +52,7 @@ end
 tm:merge(1, 1, road, merge_order)
 
 tm:put(start, '<')
-if level.level < 3 then tm:put(stop, '>') end
+tm:put(stop, '>')
 
 -- Elimitate the rest
 -- if tm:eliminateByFloodfill{'T', '#'} < 400 then return self:redo() end

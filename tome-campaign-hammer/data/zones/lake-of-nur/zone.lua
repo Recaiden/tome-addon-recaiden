@@ -47,11 +47,12 @@ return {
 	{
 		[1] = {
 			underwater = true,
-			effects = {"EFF_ZONE_AURA_UNDERWATER", "EFF_HAMMER_DEMONIC_WATERBREATHING"},
+			effects = {"EFF_ZONE_AURA_UNDERWATER"},
 			generator = {
 				map =  {
 					rooms = {"random_room",{"lesser_vault",7}},
 					lesser_vaults_list = {"flooded-prison"},
+					up = "WATER_UP_WILDERNESS",
 				},
 				actor = {
 					filters = {{special_rarity="water_rarity"}},
@@ -103,6 +104,10 @@ return {
 		end
 	end,
 
-	on_enter = function(lev, old_lev, newzone)
+	on_enter = function(lev)
+		if game and game.player and game.level.data.hammer_visited_nur then
+			game.player:setEffect(game.player.EFF_HAMMER_DEMONIC_WATERBREATHING, 5, {})
+			game.level.data.hammer_visited_nur = true
+		end
 	end,
 }

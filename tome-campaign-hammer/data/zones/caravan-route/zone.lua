@@ -49,8 +49,9 @@ return {
 				width=28, height=80,
 				generator = {
 					map = {
+						force_last_stair = true,
 						['<'] = "COBBLESTONE_UP8",
-						['>'] = "COBBLESTONE",
+						['>'] = "COBBLESTONE_UP_WILDERNESS",
 					},
 				},
 			},
@@ -60,7 +61,7 @@ return {
 	end,
 
 	on_enter = function(lev, old_lev, newzone)
-	end
+	end,
 
 	on_leave = function(lev, old_lev, newzone)
 		if not newzone then return end

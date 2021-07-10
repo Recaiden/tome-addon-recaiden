@@ -1,0 +1,625 @@
+{
+    "2": {
+        "id": 2,
+        "name": "chat",
+        "data": {
+            "chatid": "friendly",
+            "chat": "\"Welcome...bringer of doom...\"",
+            "answer1": "\"I need your help.\"",
+            "answer2": "\"The fearscape needs your help.\""
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "11",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "14",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "18",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 29.666666666666668,
+        "pos_y": 932
+    },
+    "4": {
+        "id": 4,
+        "name": "quest-cond",
+        "data": {
+            "not": false,
+            "quest": "campaign-hammer+demon-allies",
+            "status": "COMPLETED",
+            "sub": "death-s"
+        },
+        "class": "quest-cond",
+        "html": "quest-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "6",
+                        "output": "input_2"
+                    }
+                ]
+            }
+        },
+        "pos_x": -230.14285714285714,
+        "pos_y": 85.57142857142857
+    },
+    "5": {
+        "id": 5,
+        "name": "quest-cond",
+        "data": {
+            "not": false,
+            "quest": "campaign-hammer+demon-allies",
+            "status": "COMPLETED",
+            "sub": "death-k"
+        },
+        "class": "quest-cond",
+        "html": "quest-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "6",
+                        "output": "input_2"
+                    }
+                ]
+            }
+        },
+        "pos_x": -230.57142857142858,
+        "pos_y": -143
+    },
+    "6": {
+        "id": 6,
+        "name": "or",
+        "data": {},
+        "class": "or",
+        "html": "or",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "11",
+                        "input": "output_2"
+                    }
+                ]
+            },
+            "input_2": {
+                "connections": [
+                    {
+                        "node": "4",
+                        "input": "output_1"
+                    },
+                    {
+                        "node": "5",
+                        "input": "output_1"
+                    }
+                ]
+            },
+            "input_3": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "10",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 35,
+        "pos_y": 338
+    },
+    "8": {
+        "id": 8,
+        "name": "quest-cond",
+        "data": {
+            "not": false,
+            "quest": "campaign-hammer+demon-allies",
+            "status": "COMPLETED",
+            "sub": "angry-s"
+        },
+        "class": "quest-cond",
+        "html": "quest-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "11",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "9",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 9.571428571428571,
+        "pos_y": 576
+    },
+    "9": {
+        "id": 9,
+        "name": "chat",
+        "data": {
+            "chatid": "chat4",
+            "chat": "\"Ah...the failure...comes to me...\"\nThe water froths and boils as the demon laughs.",
+            "answer1": "\"The fearscape needs your help.\""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "8",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "18",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 332.3333333333333,
+        "pos_y": 581
+    },
+    "10": {
+        "id": 10,
+        "name": "chat",
+        "data": {
+            "chatid": "chat3",
+            "chat": "\"Companions...dead...\"\n\"And...for what...\"",
+            "answer1": "\"Help us take revenge on Eyal.\"",
+            "answer2": "Leave him alone"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "6",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "18",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": []
+            }
+        },
+        "pos_x": 326.3333333333333,
+        "pos_y": 263
+    },
+    "11": {
+        "id": 11,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "welcome",
+            "code": ""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector3",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "8",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "6",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "2",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -442.3333333333333,
+        "pos_y": 349
+    },
+    "14": {
+        "id": 14,
+        "name": "chat",
+        "data": {
+            "chatid": "chat6",
+            "chat": "\"Tell me...are you...afraid...to die...?\"",
+            "answer1": "\"Yes\"",
+            "answer2": "\"Never!\""
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "2",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "17",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 791.3333333333334,
+        "pos_y": 999
+    },
+    "15": {
+        "id": 15,
+        "name": "birth-descriptor",
+        "data": {
+            "not": false,
+            "what": "race",
+            "value": "demon"
+        },
+        "class": "birth-descriptor",
+        "html": "birth-descriptor",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "14",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "16",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1258.6666666666667,
+        "pos_y": 1152
+    },
+    "16": {
+        "id": 16,
+        "name": "chat",
+        "data": {
+            "chatid": "chat7",
+            "chat": "\"Hunt...the...ocean's creatures...bring them...alive...\"\n\"And I...will teach you...\"",
+            "answer1": "Accept"
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "22",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1522.3333333333333,
+        "pos_y": 1082
+    },
+    "17": {
+        "id": 17,
+        "name": "chat",
+        "data": {
+            "chatid": "chat8",
+            "chat": "\"Prove yourself...to me...\"\n\"Hunt...the...ocean's creatures...bring them...alive...\"",
+            "answer1": "\"I will not fail!\""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "14",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "18",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "21",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1535,
+        "pos_y": 741.3333333333334
+    },
+    "18": {
+        "id": 18,
+        "name": "chat",
+        "data": {
+            "chatid": "chat5",
+            "chat": "\"Yes...\"\n\"But first...you will...help me.\"",
+            "answer1": "\"What must I do?\"",
+            "answer2": "Refuse"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "10",
+                        "input": "output_1"
+                    },
+                    {
+                        "node": "9",
+                        "input": "output_1"
+                    },
+                    {
+                        "node": "2",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "17",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 943.6666666666666,
+        "pos_y": 677
+    },
+    "19": {
+        "id": 19,
+        "name": "lua-code",
+        "data": {
+            "code": "for _, act in pairs(game.level.entities) do\n    local rsrc, rtarget = act, game.player\n    if rsrc.reaction_actor and rsrc.reaction_actor[rtarget.unique or rtarget.name] then \n        rsrc.reaction_actor[rtarget.unique or rtarget.name] = -100\n    end\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1882,
+        "pos_y": 366.6666666666667
+    },
+    "20": {
+        "id": 20,
+        "name": "chat",
+        "data": {
+            "chatid": "chat9",
+            "chat": "\"Then I...have no use...for you...\"\nThe water around you begins to boil.\n\"Farewell...\"",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "18",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "19",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1542,
+        "pos_y": 433.6666666666667
+    },
+    "21": {
+        "id": 21,
+        "name": "lua-code",
+        "data": {
+            "code": "game.player:learnTalent(game.player.T_HAMMER_WALROG_CAPTURE, true)"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "17",
+                        "input": "output_1"
+                    },
+                    {
+                        "node": "22",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2464.6666666666665,
+        "pos_y": 780
+    },
+    "22": {
+        "id": 22,
+        "name": "lua-code",
+        "data": {
+            "code": "game.player:learnTalent(game.player.T_HAMMER_WALROG_STUDENT, true)"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "16",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "21",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1818.6666666666667,
+        "pos_y": 1109.6666666666667
+    }
+}

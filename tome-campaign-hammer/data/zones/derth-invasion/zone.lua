@@ -116,9 +116,9 @@ return {
 	end,
 
 	on_enter = function(lev)
-		if lev == 3 then
-			require("engine.ui.Dialog"):simpleLongPopup("The Tempest", [[As you cross the bridge into town, the wind calms; you are in the eye of the storm.  The city lies in ruins, buildings scorched black, bodies scattered in the streets.  A man's voice rings through the air, "Is that another would-be hero, come to test the power of the Tempest?  You're too late!"  Despite being confused about who you are, it seems this man has done your job for you. 
-Kill him anyway.]], 500)
+		if lev == 3 and not game.level.data.warned then
+			game.level.data.warned = true
+			require("engine.ui.Dialog"):simpleLongPopup(_t"The Tempest", _t"As you cross the bridge into town, the wind calms; you are in the eye of the storm.  The city lies in ruins, buildings scorched black, bodies scattered in the streets.  A man's voice rings through the air, 'Is that another would-be hero, come to test the power of the Tempest?  You're too late!'\n\nDespite being confused about who you are, it seems this man has done your job for you.\nKill him anyway.", 500)
 			game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "derth")
 		end
 	end,

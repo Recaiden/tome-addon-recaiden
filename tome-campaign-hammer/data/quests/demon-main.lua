@@ -3,7 +3,7 @@ desc = function(self, who)
 	local desc = {}
 	desc[#desc+1] = "The peoples of Maj'Eyal are divided into many different kingdoms and organizations.  Their power must be broken so that they may be punished properly."
 	if self:isCompleted("dwarves") then
-		desc[#desc+1] = _t"#LIGHT_GREEN#* It turns out that dwarves aren't Eyalites at all.  The decision has been made to consider them fellow victims of the Sher'tul and not immediately eradicated.#WHITE#"
+		desc[#desc+1] = _t"#LIGHT_GREEN#* It turns out that dwarves aren't Eyalites at all.  The decision has been made to consider them fellow victims of the Sher'tul.#WHITE#"
 	else
 		desc[#desc+1] = _t"#SLATE#* You must bring down the dwarven kingdom of the Iron Throne.#WHITE#"
 	end
@@ -12,10 +12,12 @@ desc = function(self, who)
 	else
 		desc[#desc+1] = _t"#SLATE#* You must destroy the town of Derth, a focal point of allied Agriculture and trade.#WHITE#"
 	end
-	if self:isCompleted("crystals") then
+	if self:isCompleted("crystals-2") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#* The unbound crystal beings have laid waste to Elvala.  It will be easy to round up the survivors.#WHITE#"
+	elseif self:isCompleted("crystals") then
+		desc[#desc+1] = _t"#LIGHT_GREEN#* The Rhaloren are defeated, giving you full access to the scintillting caves.#WHITE#"
 	elseif self:isCompleted("rhalore") then
-		desc[#desc+1] = _t"#LIGHT_GREEN#* The Rhaloren have plunged Elvala into chaos.  It will be easy to round up the survivors.#WHITE#" 
+		desc[#desc+1] = _t"#LIGHT_GREEN#* Your Rhaloren allies have plunged Elvala into chaos.  It will be easy to round up the survivors.#WHITE#" 
 	else
 		desc[#desc+1] = _t"#SLATE#* In the southern forests is a hidden city of elves.  Find a way to defeat them.#WHITE#"
 	end

@@ -1,10 +1,12 @@
+local Talents = require("engine.interface.ActorTalents")
+
 load("/data/general/npcs/aquatic_critter.lua", function(e) if e.rarity then e.water_rarity, e.rarity = e.rarity, nil end end)
 load(
 	"/data/general/npcs/aquatic_demon.lua",
 	function(e)
 		if e.rarity then e.water_rarity, e.rarity = e.rarity, nil end
 		if e.name == "water imp" then
-			e.name == "devolved water imp"
+			e.name = "devolved water imp"
 			e.corrupt_talents = resolvers.talents{ [Talents.T_TENTACLE_GRAB]=3 }
 			e.desc = e.desc.._t"You're fairly sure it's not supposed to look like that."
 		end
@@ -14,8 +16,6 @@ load("/data/general/npcs/horror_aquatic.lua", function(e) if e.rarity then e.hor
 load("/data/general/npcs/horror.lua", rarity(0))
 load("/data/general/npcs/snake.lua", rarity(3))
 load("/data/general/npcs/plant.lua", rarity(3))
-
-local Talents = require("engine.interface.ActorTalents")
 
 newEntity{
 	base = "BASE_NPC_HORROR_AQUATIC", define_as = "SWARMING_ABYSSAL_HORROR",

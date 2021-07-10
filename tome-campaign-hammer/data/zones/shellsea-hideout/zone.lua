@@ -1,16 +1,15 @@
 return {
-	name = "Daikara",
-	display_name = function(x, y) return "Shasshhiy'Kaish's Sanctum" end,
-	level_range = {35, 40},
+	name = "Shellsea Shores",
+	level_range = {30, 40},
 	level_scheme = "player",
-	max_level = 1,
+	max_level = 3,
 	decay = {300, 800},
 	actor_adjust_level = function(zone, level, e) return zone.base_level + e:getRankLevelAdjust() + level.level-1 + rng.range(-1,2) end,
 	width = 55, height = 55,
 	persistent = "zone",
 	color_shown = {0.5, 1, 0.7, 1},
 	color_obscure = {0.5*0.6, 1*0.6, 0.7*0.6, 0.6},
-	ambient_music = {"orcs/ureslak.ogg","weather/dungeon_base.ogg"},
+	ambient_music = "Inside a dream.ogg",
 	min_material_level = 3,
 	max_material_level = 5,
 	generator =  {
@@ -27,7 +26,6 @@ return {
 		actor = {
 			class = "mod.class.generator.actor.Random",
 			nb_npc = {20, 30},
-			guardian = "SHASSY",
 		},
 		object = {
 			class = "engine.generator.object.Random",
@@ -42,10 +40,64 @@ return {
 	{
 		[1] = {
 			generator = { 
-				map = { up = "CAVE_LADDER_UP_WILDERNESS",}, 
-				actor = {class = "engine.generator.actor.Random" },
+				map = {
+					class = "engine.generator.map.Static",
+					map = "campaign-hammer+zones/shellsea-shore",
+				},
+				actor = {
+					class = "mod.class.generator.actor.Random",
+					nb_npc = {0, 0},
+				},
+				object = {
+					class = "engine.generator.object.Random",
+					nb_object = {1, 3},
+				},
 			},
 		},
+		[2] = {
+			generator = { 
+				map = {
+					class = "engine.generator.map.Static",
+					map = "campaign-hammer+zones/shellsea-deeps",
+				},
+				actor = {
+					class = "mod.class.generator.actor.Random",
+					nb_npc = {0, 0},
+				},
+				object = {
+					class = "engine.generator.object.Random",
+					nb_object = {0, 0},
+				},
+			},
+		},
+		[3] = {
+			underwater = true,
+			effects = {"EFF_ZONE_AURA_UNDERWATER"},
+			generator = {
+				map = {
+					class = "engine.generator.map.Cavern",
+					zoom = 16,
+					min_floor = 1200,
+					floor = "DEEP_WATER",
+					wall = {"CORAL1", "CORAL2", "CORAL3"},
+					up = "WATER_UP",
+					down = "CORAL1",
+					door = "CORAL2",
+				},
+				actor = {
+					class = "mod.class.generator.actor.Random",
+					nb_npc = {20, 25},
+				},
+				object = {
+					class = "engine.generator.object.Random",
+					nb_object = {6, 9},
+				},
+				trap = {
+					class = "engine.generator.trap.Random",
+					nb_trap = {6, 9},
+				},
+			},
+		}
 	},
 
 	post_process = function(level)
