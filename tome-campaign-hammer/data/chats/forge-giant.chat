@@ -1,0 +1,352 @@
+{
+    "3": {
+        "id": 3,
+        "name": "attr-get",
+        "data": {
+            "not": false,
+            "who": "player",
+            "attr": "money",
+            "value": "2000",
+            "test": ">="
+        },
+        "class": "attr-get",
+        "html": "attr-get",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "6",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "8",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1594.4285714285713,
+        "pos_y": -134
+    },
+    "5": {
+        "id": 5,
+        "name": "chat",
+        "data": {
+            "chatid": "welcome",
+            "chat": "The forge-giant is hard at work forging weapons and gear for the armies of the fearscape.",
+            "answer1": "Requesition equipment.",
+            "answer2": "Leave it alone."
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "11",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": []
+            }
+        },
+        "pos_x": 383.42857142857144,
+        "pos_y": -62.42857142857143
+    },
+    "6": {
+        "id": 6,
+        "name": "quest-cond",
+        "data": {
+            "not": false,
+            "quest": "campaign-hammer+demon-caravan",
+            "status": "DONE",
+            "sub": ""
+        },
+        "class": "quest-cond",
+        "html": "quest-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "11",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "3",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1307.5,
+        "pos_y": -115.5
+    },
+    "8": {
+        "id": 8,
+        "name": "chat",
+        "data": {
+            "chatid": "chat3",
+            "chat": "You've proven yourself useful and productive enough to requisition custom-made gear from the forge giants.  Each piece will cost 2000 gold and produce an artifact with one of its egos chosen by you.",
+            "answer1": "Accept",
+            "answer2": "No thanks"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "3",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "16",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": []
+            }
+        },
+        "pos_x": 1956.25,
+        "pos_y": -142
+    },
+    "11": {
+        "id": 11,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "chat4",
+            "code": ""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector4",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "5",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "6",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "12",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "13",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_4": {
+                "connections": []
+            }
+        },
+        "pos_x": 1009,
+        "pos_y": -34.42857142857143
+    },
+    "12": {
+        "id": 12,
+        "name": "quest-cond",
+        "data": {
+            "not": true,
+            "quest": "campaign-hammer+demon-caravan",
+            "status": "DONE",
+            "sub": ""
+        },
+        "class": "quest-cond",
+        "html": "quest-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "11",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1307.75,
+        "pos_y": 118
+    },
+    "13": {
+        "id": 13,
+        "name": "attr-get",
+        "data": {
+            "not": false,
+            "who": "player",
+            "attr": "money",
+            "value": "2000",
+            "test": "<"
+        },
+        "class": "attr-get",
+        "html": "attr-get",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "11",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "14",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1313.5,
+        "pos_y": 382
+    },
+    "14": {
+        "id": 14,
+        "name": "chat",
+        "data": {
+            "chatid": "chat5",
+            "chat": "You haven't contributed enough material to the war effort.\n(Requires 2000 gold).",
+            "answer1": "Leave"
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "13",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1696,
+        "pos_y": 418.75
+    },
+    "15": {
+        "id": 15,
+        "name": "chat",
+        "data": {
+            "chatid": "chat6",
+            "chat": "The forge giant has more important things to do than deal with you.\n(Complete more quests)",
+            "answer1": "Leave"
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "12",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1671.25,
+        "pos_y": 151
+    },
+    "16": {
+        "id": 16,
+        "name": "lua-code",
+        "data": {
+            "code": "local maker_list = function()\n\tlocal mainbases = {\n\t\tarmours = {\n\t\t\t\"elven-silk robe\",\n\t\t\t\"drakeskin leather armour\",\n\t\t\t\"voratun mail armour\",\n\t\t\t\"voratun plate armour\",\n\t\t\t\"elven-silk cloak\",\n\t\t\t\"drakeskin leather gloves\",\n\t\t\t\"voratun gauntlets\",\n\t\t\t\"elven-silk wizard hat\",\n\t\t\t\"drakeskin leather cap\",\n\t\t\t\"voratun helm\",\n\t\t\t\"pair of drakeskin leather boots\",\n\t\t\t\"pair of voratun boots\",\n\t\t\t\"drakeskin leather belt\",\n\t\t\t\"voratun shield\",\n\t\t},\n\t\tweapons = {\n\t\t\t\"voratun battleaxe\",\n\t\t\t\"voratun greatmaul\",\n\t\t\t\"voratun greatsword\",\n\t\t\t\"voratun waraxe\",\n\t\t\t\"voratun mace\",\n\t\t\t\"voratun longsword\",\n\t\t\t\"voratun dagger\",\n\t\t\t\"living mindstar\",\n\t\t\t\"quiver of dragonbone arrows\",\n\t\t\t\"dragonbone longbow\",\n\t\t\t\"drakeskin leather sling\",\n\t\t\t\"dragonbone staff\",\n\t\t\t\"pouch of voratun shots\",\n\t\t},\n\t\tmisc = {\n\t\t\t\"voratun ring\",\n\t\t\t\"voratun amulet\",\n\t\t\t\"dwarven lantern\",\n\t\t\t\"voratun pickaxe\",\n\t\t\t{\"dragonbone wand\", _t\"dragonbone wand\"},\n\t\t\t{\"dragonbone totem\", _t\"dragonbone totem\"},\n\t\t\t{\"voratun torque\", _t\"voratun torque\"},\n\t\t},\n\t}\n\tlocal l = {{_t\"I've changed my mind.\", jump = \"welcome\"}}\n\tfor kind, bases in pairs(mainbases) do\n\t\tl[#l+1] = {_t(kind):capitalize(), action=function(npc, player)\n\t\t\tlocal l = {{_t\"I've changed my mind.\", jump = \"welcome\"}}\n\t\t\tnewChat{ id=\"makereal\",\n\t\t\t\ttext = _t[[Which kind of item would you like ?]],\n\t\t\t\tanswers = l,\n\t\t\t}\n\n\t\t\tfor i, name in ipairs(bases) do\n\t\t\t\tlocal dname = nil\n\t\t\t\tif type(name) == \"table\" then name, dname = name[1], name[2] end\n\t\t\t\tlocal not_ps, force_themes\n\t\t\t\tnot_ps = game.state:attrPowers(player) -- make sure randart is compatible with player\n\t\t\t\tif not_ps.arcane then force_themes = {'antimagic'} end\n\t\t\t\t\n\t\t\t\tlocal o, ok\n\t\t\t\tlocal tries = 100\n\t\t\t\trepeat\n\t\t\t\t\to = game.zone:makeEntity(game.level, \"object\", {name=name, ignore_material_restriction=true, no_tome_drops=true, ego_filter={keep_egos=true, ego_chance=-1000}}, nil, true)\n\t\t\t\t\tif o then ok = true end\n\t\t\t\t\tif o and not game.state:checkPowers(player, o, nil, \"antimagic_only\") then\n\t\t\t\t\t\tok = false o = nil \n\t\t\t\t\tend\n\t\t\t\t\ttries = tries - 1\n\t\t\t\tuntil ok or tries < 0\n\t\t\t\tif o then\n\t\t\t\t\tif not dname then dname = o:getName{force_id=true, do_color=true, no_count=true}\n\t\t\t\t\telse dname = \"#B4B4B4#\"..o:getDisplayString()..dname..\"#LAST#\" end\n\t\t\t\t\tl[#l+1] = {dname, action=function(npc, player)\n\t\t\t\t\t\tlocal art, ok\n\t\t\t\t\t\tlocal nb = 0\n\t\t\t\t\t\trepeat\n\t\t\t\t\t\t\tart = game.state:generateRandart{base=o, lev=70, egos=4, force_themes=force_themes, forbid_power_source=not_ps}\n\t\t\t\t\t\t\tif art then ok = true end\n\t\t\t\t\t\t\tif art and not game.state:checkPowers(player, art, nil, \"antimagic_only\") then\n\t\t\t\t\t\t\t\tok = false\n\t\t\t\t\t\t\tend\n\t\t\t\t\t\t\tnb = nb + 1\n\t\t\t\t\t\t\tif nb == 40 then break end\n\t\t\t\t\t\tuntil ok\n\t\t\t\t\t\tif art and nb < 40 then\n\t\t\t\t\t\t\tart:identify(true)\n\t\t\t\t\t\t\tplayer:addObject(player.INVEN_INVEN, art)\n\t\t\t\t\t\t\tplayer:incMoney(-4000)\n\t\t\t\t\t\t\t-- clear chrono worlds and their various effects\n\t\t\t\t\t\t\tgame:chronoCancel(_t\"#CRIMSON#Your timetravel has no effect on pre-determined outcomes such as this.\")\n\t\t\t\t\t\t\tif not config.settings.cheat then game:saveGame() end\n\n\t\t\t\t\t\t\tnewChat{ id=\"naming\",\n\t\t\t\t\t\t\t\ttext = (\"Do you want to name your item?\\n%s\"):tformat(tostring(art:getTextualDesc())),\n\t\t\t\t\t\t\t\tanswers = {\n\t\t\t\t\t\t\t\t\t{_t\"Yes, please.\", action=function(npc, player)\n\t\t\t\t\t\t\t\t\t\tlocal d = require(\"engine.dialogs.GetText\").new(_t\"Name your item\", _t\"Name\", 2, 40, function(txt)\n\t\t\t\t\t\t\t\t\t\t\tart.name = txt:removeColorCodes():gsub(\"#\", \" \")\n\t\t\t\t\t\t\t\t\t\t\tgame.log(\"#LIGHT_BLUE#The merchant carefully hands you: %s\", art:getName{do_color=true})\n\t\t\t\t\t\t\t\t\t\tend, function() game.log(\"#LIGHT_BLUE#The merchant carefully hands you: %s\", art:getName{do_color=true}) end)\n\t\t\t\t\t\t\t\t\t\tgame:registerDialog(d)\n\t\t\t\t\t\t\t\t\tend},\n\t\t\t\t\t\t\t\t\t{_t\"No thanks.\", action=function() game.log(\"#LIGHT_BLUE#The merchant carefully hands you: %s\", art:getName{do_color=true}) end},\n\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\treturn \"naming\"\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tnewChat{ id=\"oups\",\n\t\t\t\t\t\t\t\ttext = _t\"Oh I am sorry, it seems we could not make the item your require.\",\n\t\t\t\t\t\t\t\tanswers = {\n\t\t\t\t\t\t\t\t\t{_t\"Oh, let's try something else then.\", jump=\"make\"},\n\t\t\t\t\t\t\t\t\t{_t\"Oh well, maybe later then.\"},\n\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\treturn \"oups\"\n\t\t\t\t\t\tend\n\t\t\t\t\tend}\n\t\t\t\tend\n\t\t\tend\n\n\t\t\treturn \"makereal\"\n\t\tend}\n\tend\n\treturn l\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "8",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 2449.1666259765625,
+        "pos_y": -178.316650390625
+    }
+}

@@ -118,3 +118,51 @@ newEntity{ base = "BASE_NPC_FEARSCAPE_TOWN", define_as = "PLANAR_CONTROLLER_TOWN
 		[Talents.T_WEAPON_COMBAT]=1,
 	},
 }
+
+newEntity{ base = "BASE_NPC_MAJOR_DEMON", define_as = "SMITH",
+	name = "Forge-Giant Smith", color=colors.WHITE,
+	desc = _t[[A burning biomechanical giant wielding a forge hammer of Urh-Rok in each hand.  Disturb them at your peril.]],
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/demon_major_forge_giant.png", display_h=2, display_y=-1}}},
+	level_range = {47, nil}, exp_worth = 1,
+	rarity = 8,
+	rank = 3,
+	global_speed_base = 1,
+	size_category = 5,
+	autolevel = "warriormage",
+	life_rating = 30,
+	combat_armor = 32, combat_def = 40,
+	mana_regen = 1, positive_regen = 1, negative_regen = 1, equilibrium_regen = -1, vim_regen = 1, stamina_regen = 1,
+
+	ai = "tactical",
+
+	resolvers.auto_equip_filters("Reaver"),
+	resolvers.equip{ {type="weapon", subtype="mace", forbid_power_source={antimagic=true}, autoreq=true}, },
+	resolvers.equip{ {type="weapon", subtype="mace", forbid_power_source={antimagic=true}, autoreq=true}, },
+
+	resists={[DamageType.PHYSICAL] = resolvers.mbonus(15, 10), [DamageType.FIRE] = 100},
+	on_melee_hit = {[DamageType.FIRE]=resolvers.mbonus(25, 25)},
+	melee_project = {[DamageType.FIRE]=resolvers.mbonus(25, 35)},
+
+	stun_immune = 1,
+	knockback_immune = 1,
+
+	resolvers.talents{
+		[Talents.T_CORRUPTED_STRENGTH]={base=5, every=8, max=8},
+		[Talents.T_DUAL_WEAPON_TRAINING]={base=1, every=8, max=6},
+		[Talents.T_DUAL_WEAPON_DEFENSE]={base=5, every=8, max=8},
+		[Talents.T_WEAPON_COMBAT]={base=4, every=10, max=6},
+		[Talents.T_WEAPONS_MASTERY]={base=3, every=10, max=7},
+		[Talents.T_THROW_BOULDER]={base=5, every=8, max=14},
+		[Talents.T_FIREBEAM]={base=5, every=8, max=8},
+		[Talents.T_WILDFIRE]={base=5, every=8, max=8},
+		[Talents.T_INFERNO]={base=5, every=8, max=8},
+		[Talents.T_FLAME]={base=5, every=8, max=10},
+		[Talents.T_FLAMESHOCK]={base=5, every=8, max=10},
+		[Talents.T_FIREFLASH]={base=5, every=8, max=10},
+		[Talents.T_BURNING_WAKE]={base=5, every=8, max=10},
+		[Talents.T_CLEANSING_FLAMES]={base=5, every=8, max=10},
+	},
+	resolvers.sustains_at_birth(),
+
+	can_talk = "campaign-hammer+forge-giant",
+}
