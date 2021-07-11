@@ -36,6 +36,7 @@ return {
 				map = {
 					class = "engine.generator.map.Building",
 					wall = "MALROK_WALL",
+					door = "MALROK_BURNT_DOOR",
 					floor = "BURNT_GROUND",
 					margin_w = 0, margin_h = 0,
 					max_block_w = 15, max_block_h = 15,
@@ -109,5 +110,12 @@ generator =  {
 		if level.level ~= 3 then return end
 
 		game:placeRandomLoreObject("NOTE1")
+	end,
+
+	on_leave = function(lev, old_lev, newzone)
+		if not newzone then return end
+		if game.player:hasQuest("campaign-hammer+empty-memory") then
+			game.player:resolveSource():setQuestStatus("campaign-hammer+empty-memory", engine.Quest.COMPLETED)
+		end
 	end,
 }

@@ -105,7 +105,7 @@ return {
 	end,
 
 	on_enter = function(lev)
-		if game and game.player and game.level.data.hammer_visited_nur then
+		if game and game.player and lev == 1 and not game.level.data.hammer_visited_nur then
 			game.player:setEffect(game.player.EFF_HAMMER_DEMONIC_WATERBREATHING, 5, {})
 			game.level.data.hammer_visited_nur = true
 		end

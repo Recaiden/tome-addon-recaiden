@@ -11,16 +11,14 @@ newEffect{
 	desc = _t"Shell of Living Air",
 	no_stop_enter_worlmap = true,
 	long_desc = function(self, eff) return (_t"Gives you a large but limited supply of air underwater.  Not useful when buried alive.") end,
-	no_remove = true,
 	cancel_on_level_change = false,
 	type = "other",
 	subtype = { aura=true },
 	status = "beneficial",
 	parameters = {},
 	activate = function(self, eff)
-		eff.dur = 1000
+		eff.dur = 999
 		self:effectTemporaryValue(eff, "can_breath", {water = 1})
 	end,
-	deactivate = function(self, eff)
-	end,
+	deactivate = function(self, eff) end,
 }

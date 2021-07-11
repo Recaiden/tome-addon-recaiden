@@ -1,6 +1,15 @@
-load("/data/general/npcs/plant.lua", rarity(0))
-load("/data/general/npcs/canine.lua", rarity(3))
-load("/data/general/npcs/bear.lua", rarity(3))
+rarityWithLoot = function(add, mult)
+	add = add or 0; mult = mult or 1;
+	return function(e)
+		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
+	end
+end
+
+load("/data/general/npcs/plant.lua", rarityWithLoot(0))
+load("/data/general/npcs/canine.lua", rarityWithLoot(3))
+load("/data/general/npcs/bear.lua", rarityWithLoot(3))
 load("/data/general/npcs/demon-major.lua", switchRarity("demons"))
 load("/data/general/npcs/demon-minor.lua", switchRarity("demons"))
 
@@ -33,7 +42,7 @@ newEntity{
 	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=3, },
 	stats = { str=12, dex=8, mag=6, con=10 },
 
-	--emote_random = resolvers.emote_random{allow_backup_guardian=true},
+	resolvers.drops{chance=85, nb=1, {}}
 }
 
 newEntity{ base = "BASE_NPC_THALORE_SOLDIER",
@@ -106,7 +115,7 @@ newEntity{
 		{type="armor", subtype="cloth", force_drop=true, tome_drops="boss", autoreq=true},
 		{type="charm", subtype="totem"}
 	},
-	resolvers.drops{chance=100, nb=3, {tome_drops="boss"} },
+	resolvers.drops{chance=100, nb=7, {tome_drops="boss"} },
 
 	resolvers.talents{
 		[Talents.T_NATURE_TOUCH]={base=5, every=6, max=7},

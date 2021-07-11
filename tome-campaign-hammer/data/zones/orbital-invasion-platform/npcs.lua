@@ -5,8 +5,8 @@ load("/data/general/npcs/losgoroth.lua", function(e)
 			 e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
 			 e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
 end)
-load("/data/general/npcs/demon-major.lua", rarity(40))
-load("/data/general/npcs/demon-minor.lua", rarity(20))
+load("/data/general/npcs/demon-major.lua", rarity(20))
+load("/data/general/npcs/demon-minor.lua", rarity(10))
 
 newEntity{
 	define_as = "BASE_NPC_PLATFORM",

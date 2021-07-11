@@ -10,6 +10,8 @@ alter = function(add, mult)
 				type="immovable", subtype="crystal", number=3, no_subescort=true
 			}
 			e.faction = "rhalore"
+			e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+			e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
 		end
 	end
 end
@@ -22,6 +24,8 @@ alterCrystals = function(add, mult)
 			e.rarity = math.ceil(e.rarity * mult + add)
 			e.faction = "rhalore"
 		end
+		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
 	end
 end
 
@@ -59,7 +63,7 @@ newEntity{ define_as = "CRYSTAL_INQUISITOR",
 	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1 },
 	equipment = resolvers.equip{ {type="weapon", subtype="greatsword", forbid_power_source={antimagic=true}, auto_req=true}, {type="armor", subtype="light", forbid_power_source={antimagic=true}, autoreq=true}, },
 	resolvers.drops{chance=100, nb=1, {defined="ROD_OF_ANNULMENT", random_art_replace={chance=75}} },
-	resolvers.drops{chance=100, nb=3, {tome_drops="boss"} },
+	resolvers.drops{chance=100, nb=10, {tome_drops="boss"} },
 
 	resolvers.talents{
 		[Talents.T_FLAME]=3,

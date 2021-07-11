@@ -110,7 +110,7 @@ return {
 			local Chat = require "engine.Chat"
 			local chat = Chat.new("campaign-hammer+crystal-power", {name=_t"Spellblaze Crystals"}, game.player)
 			chat:invoke()
-			player:grantQuest("campaign-hammer+demon-siege")
+			game.player:grantQuest("campaign-hammer+demon-siege")
 		end
 	end,
 }

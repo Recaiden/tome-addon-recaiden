@@ -1,18 +1,28 @@
-load("/data/general/npcs/rodent.lua", rarity(5))
-load("/data/general/npcs/vermin.lua", rarity(5))
-load("/data/general/npcs/faeros.lua", rarity(2))
-load("/data/general/npcs/gwelgoroth.lua", rarity(2))
-load("/data/general/npcs/elven-caster.lua", rarity(2))
+rarityWithLoot = function(add, mult)
+	add = add or 0; mult = mult or 1;
+	return function(e)
+		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
+	end
+end
+
+load("/data/general/npcs/rodent.lua", rarityWithLoot(5))
+load("/data/general/npcs/vermin.lua", rarityWithLoot(5))
+load("/data/general/npcs/faeros.lua", rarityWithLoot(2))
+load("/data/general/npcs/gwelgoroth.lua", rarityWithLoot(2))
+
+load("/data/general/npcs/demon-major.lua", rarity(5))
+load("/data/general/npcs/demon-minor.lua", rarity(2))
 
 local Talents = require("engine.interface.ActorTalents")
 
 newEntity{
-	define_as = "BASE_NPC_LAST_HOPE_TOWN",
+	define_as = "BASE_NPC_LAST_HOPE",
 	type = "humanoid", subtype = "human",
 	display = "p", color=colors.WHITE,
 	faction = "allied-kingdoms",
-	anger_emote = _t"Catch @himher@!",
-	exp_worth = 0,
+	exp_worth = 1,
 	combat = { dam=resolvers.rngavg(1,2), atk=2, apr=0, dammod={str=0.4} },
 
 	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, QUIVER=1 },
@@ -30,11 +40,10 @@ newEntity{
 	autolevel = "warrior",
 	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=1, },
 	stats = { str=12, dex=8, mag=6, con=10 },
-
-	emote_random = resolvers.emote_random{allow_backup_guardian=true},
+	resolvers.drops{chance=85, nb=1, {}}
 }
 
-newEntity{ base = "BASE_NPC_LAST_HOPE_TOWN",
+newEntity{ base = "BASE_NPC_LAST_HOPE",
 	name = "last hope guard", color=colors.LIGHT_UMBER,
 	desc = _t[[A stern-looking guard, he will not let you disturb the town.]],
 	level_range = {1, nil}, exp_worth = 0,
@@ -48,7 +57,7 @@ newEntity{ base = "BASE_NPC_LAST_HOPE_TOWN",
 	resolvers.talents{ [Talents.T_RUSH]=1, [Talents.T_PERFECT_STRIKE]=1, },
 }
 
-newEntity{ base = "BASE_NPC_LAST_HOPE_TOWN",
+newEntity{ base = "BASE_NPC_LAST_HOPE",
 	name = "halfling guard", color=colors.UMBER,
 	subtype = "halfling",
 	desc = _t[[A Halfling, with a sling. Beware.]],
@@ -63,7 +72,7 @@ newEntity{ base = "BASE_NPC_LAST_HOPE_TOWN",
 		{type="ammo", subtype="shot", not_properties={"unique"}, autoreq=true} },
 	}
 
-newEntity{ base = "BASE_NPC_LAST_HOPE_TOWN",
+newEntity{ base = "BASE_NPC_LAST_HOPE",
 	name = "human citizen", color=colors.WHITE,
 	desc = _t[[A clean-looking Human resident of Last Hope.]],
 	level_range = {1, nil}, exp_worth = 0,
@@ -72,7 +81,7 @@ newEntity{ base = "BASE_NPC_LAST_HOPE_TOWN",
 	combat_armor = 2, combat_def = 0,
 }
 
-newEntity{ base = "BASE_NPC_LAST_HOPE_TOWN",
+newEntity{ base = "BASE_NPC_LAST_HOPE",
 	name = "halfling citizen", color=colors.WHITE,
 	subtype = "halfling",
 	desc = _t[[A clean-looking Halfling resident of Last Hope.]],
@@ -80,8 +89,6 @@ newEntity{ base = "BASE_NPC_LAST_HOPE_TOWN",
 	rarity = 1,
 	max_life = resolvers.rngavg(30,40),
 }
-
-
 
 newEntity{
 	define_as = "TOLAK",
@@ -124,7 +131,6 @@ newEntity{
 		{type="armor", subtype="head", name="voratun helm", forbid_power_source={antimagic=true}, force_drop=true, tome_drops="boss", autoreq=true},
 		{type="armor", subtype="hands", name="voratun gauntlets", forbid_power_source={antimagic=true}, force_drop=true, tome_drops="boss", autoreq=true},
 	},
-	resolvers.drops{chance=100, nb=1, {defined="ARGONIEL_ATHAME"} },
 	resolvers.drops{chance=100, nb=1, {defined="PEARL_LIFE_DEATH"} },
 	resolvers.drops{chance=100, nb=5, {tome_drops="boss"} },
 
@@ -253,6 +259,5 @@ newEntity{
 	resolvers.inscriptions(5, {"regeneration infusion", "shielding rune", "invisibility rune", "movement infusion", "wild infusion"}),
 
 	on_die = function(self, who)
-		game.player:resolveSource():setQuestStatus("high-peak", engine.Quest.COMPLETED, "elandar-dead")
 	end,
 }

@@ -46,7 +46,7 @@ return {
 	on_enter = function(lev)
 		local q = game.player:hasQuest("campaign-hammer+demon-siege")
 		if q and not q:isCompleted("victory") then
-			game:changeLevel(1, "beachhead-siege")
+			game:changeLevel(1, "campaign-hammer+beachhead-siege")
 		end
 	end,
 

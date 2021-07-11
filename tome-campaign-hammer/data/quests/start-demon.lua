@@ -4,7 +4,7 @@ desc = function(self, who)
    desc[#desc+1] = "The fearscape was in position.  The armies were ready.  The research was done.  Then a vast horde of void creatures descended.\n"
    desc[#desc+1] = "Fight them off, and take back the portal!\n"
    if self:isCompleted("secured") then
-      desc[#desc+1] = "The portal is secure once again.  The invasion begins!"
+      desc[#desc+1] = "#LIGHT_GREEN#The portal is secure once again.  The invasion begins!#WHITE#"
    end
    return table.concat(desc, "\n")
 end
