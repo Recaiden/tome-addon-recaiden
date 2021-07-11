@@ -290,15 +290,15 @@
                 "connections": []
             }
         },
-        "pos_x": 2813.3333333333335,
-        "pos_y": -438.6666666666667
+        "pos_x": 3168,
+        "pos_y": -721.6666666666666
     },
     "31": {
         "id": 31,
         "name": "entry-selector",
         "data": {
             "chatid": "build-chat",
-            "code": "chat_env.l = {{_t\"I've changed my mind.\", jump = \"welcome\"}}\nfor kind, bases in pairs(chat_env.mainbases) do\n  chat_env.l[#chat_env.l+1] = {_t(kind):capitalize(), action=function(npc, player)\n    local l = {{_t\"I've changed my mind.\", jump = \"welcome\"}}\n    newChat{ id=\"makereal\",\n      text = _t[[Which kind of item would you like ?]],\n      answers = l,\n    }\n    for i, name in ipairs(bases) do\n      local dname = nil\n      if type(name) == \"table\" then name, dname = name[1], name[2] end\n      local not_ps, force_themes\n      not_ps = game.state:attrPowers(player) -- make sure randart is compatible with player\n      if not_ps.arcane then force_themes = {'antimagic'} end\n        \n      local o, ok\n      local tries = 100\n      repeat\n        o = game.zone:makeEntity(game.level, \"object\", {name=name, ignore_material_restriction=true, no_tome_drops=true, ego_filter={keep_egos=true, ego_chance=-1000}}, nil, true)\n        if o then ok = true end\n        if o and not game.state:checkPowers(player, o, nil, \"antimagic_only\") then\n          ok = false o = nil \n        end\n        tries = tries - 1\n      until ok or tries < 0\n      if o then\n        if not dname then dname = o:getName{force_id=true, do_color=true, no_count=true}\n        else dname = \"#B4B4B4#\"..o:getDisplayString()..dname..\"#LAST#\" end\n        l[#l+1] = {dname, action=function(npc, player)\n          local art, ok\n          local nb = 0\n          repeat\n            art = game.state:generateRandart{base=o, lev=50, egos=3, force_themes=force_themes, forbid_power_source=not_ps}\n            if art then ok = true end\n            if art and not game.state:checkPowers(player, art, nil, \"antimagic_only\") then\n              ok = false\n            end\n            nb = nb + 1\n            if nb == 40 then break end\n          until ok\n          if art and nb < 40 then\n            art:identify(true)\n            player:addObject(player.INVEN_INVEN, art)\n            player:incMoney(-2000)\n            -- clear chrono worlds and their various effects\n            game:chronoCancel(_t\"#CRIMSON#Your timetravel has no effect on pre-determined outcomes such as this.\")\n            if not config.settings.cheat then game:saveGame() end\n\n            \n            chat_env.art = art\n\n            return \"pre-naming\"\n          else\n            return \"oups\"\n          end\n        end}\n      end\n    end\n\n    return \"makereal\"\n    end}\nend\n\nreturn \"jump\", \"build-shell\""
+            "code": "chat_env.l = {{_t\"I've changed my mind.\", jump = \"welcome\"}}\nfor kind, bases in pairs(chat_env.mainbases) do\n  chat_env.l[#chat_env.l+1] = {_t(kind):capitalize(), action=function(npc, player)\n    local l = {{_t\"I've changed my mind.\", jump = \"welcome\"}}\n    newChat{ id=\"makereal\",\n      text = _t[[Which kind of item would you like ?]],\n      answers = l,\n    }\n    for i, name in ipairs(bases) do\n      local dname = nil\n      if type(name) == \"table\" then name, dname = name[1], name[2] end\n      local not_ps, force_themes\n      not_ps = game.state:attrPowers(player) -- make sure randart is compatible with player\n      if not_ps.arcane then chat_env.force_themes = {'antimagic'} end\n        \n      local o, ok\n      local tries = 100\n      repeat\n        o = game.zone:makeEntity(game.level, \"object\", {name=name, ignore_material_restriction=true, no_tome_drops=true, ego_filter={keep_egos=true, ego_chance=-1000}}, nil, true)\n        if o then ok = true end\n        if o and not game.state:checkPowers(player, o, nil, \"antimagic_only\") then\n          ok = false o = nil \n        end\n        tries = tries - 1\n      until ok or tries < 0\n      if o then\n        if not dname then dname = o:getName{force_id=true, do_color=true, no_count=true}\n        else dname = \"#B4B4B4#\"..o:getDisplayString()..dname..\"#LAST#\" end\n        l[#l+1] = {dname, action=function(npc, player)\n          chat_env.object_base = o\n          return \"ego-select\"\n        end}\n      end\n    end\n\n    return \"makereal\"\n    end}\nend\n\nreturn \"jump\", \"build-shell\""
         },
         "class": "entry-selector",
         "html": "entry-selector2",
@@ -316,8 +316,8 @@
                 "connections": []
             }
         },
-        "pos_x": 2570.8333333333335,
-        "pos_y": -255
+        "pos_x": 2566,
+        "pos_y": -253
     },
     "34": {
         "id": 34,
@@ -442,7 +442,7 @@
         "name": "entry-selector",
         "data": {
             "chatid": "build-shell",
-            "code": "newChat{ id=\"make\",\n\ttext = _t[[Which category of item would you like ?]],\n\tanswers = chat_env.l,\n}\nreturn \"jump\", \"make\""
+            "code": "newChat{ id=\"make\",\n\ttext = _t[[Which category of item would you like?]],\n\tanswers = chat_env.l,\n}\nreturn \"jump\", \"make\""
         },
         "class": "entry-selector",
         "html": "entry-selector2",
@@ -465,8 +465,8 @@
                 "connections": []
             }
         },
-        "pos_x": 3903,
-        "pos_y": -134
+        "pos_x": 3939.5,
+        "pos_y": -620.5
     },
     "39": {
         "id": 39,
@@ -498,8 +498,8 @@
                 "connections": []
             }
         },
-        "pos_x": 3585.3333333333335,
-        "pos_y": -146
+        "pos_x": 3667,
+        "pos_y": -651.5
     },
     "48": {
         "id": 48,
@@ -557,5 +557,57 @@
         },
         "pos_x": 2534.9999999999995,
         "pos_y": -993.1666259765624
+    },
+    "53": {
+        "id": 53,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "enchant",
+            "code": "local o = chat_env.object_base\n\nlocal art, ok\nlocal nb = 0\nlocal force_egos = {}\nif chat_env.ego then force_egos[1] = chat_env.ego end\nrepeat\n  --------------------------------------------\n  --attempt to make it happen-----------------\n  --------------------------------------------\n  art = game.state:generateRandart{base=o, lev=50, egos=3, force_themes=chat_env.force_themes, force_egos=force_egos, forbid_power_source=not_ps}\n  if art then ok = true end\n  if art and not game.state:checkPowers(player, art, nil, \"antimagic_only\") then\n    ok = false\n  end\n  nb = nb + 1\n  if nb == 40 then break end\nuntil ok\nif art and nb < 40 then\n  art:identify(true)\n  player:addObject(player.INVEN_INVEN, art)\n  player:incMoney(-2000)\n  -- clear chrono worlds and their various effects\n  game:chronoCancel(_t\"#CRIMSON#Your timetravel has no effect on pre-determined outcomes such as this.\")\n  if not config.settings.cheat then game:saveGame() end\n  chat_env.art = art\n  return \"jump\", \"pre-naming\"\nelse\n  return \"jump\", \"oups\"\nend"
+        },
+        "class": "entry-selector",
+        "html": "entry-selector2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": []
+            }
+        },
+        "pos_x": 3134,
+        "pos_y": 343
+    },
+    "54": {
+        "id": 54,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "ego-select",
+            "code": "local o = chat_env.object_base\nlocal egos = o.egos and game.level:getEntitiesList(\"object/\"..o.egos..\":prefix\")\ntable.append(egos, game.level:getEntitiesList(\"object/\"..o.egos..\":suffix\") or {})\ntable.append(egos, game.level:getEntitiesList(\"object/\"..o.egos..\":\") or {})\n\n--table of .e.name\nlocal list_egoName = {{_t\"A different item.\", jump = \"welcome\"}}\nlocal seen_egos = {}\nfor i, egotype in pairs(egos) do\n  if type(egotype) ~= \"number\" and egotype.e and egotype.e.name and seen_egos[egotype.e.name] == nil then\n    seen_egos[egotype.e.name] = true\n    print(\"[CHAT-EDITOR]\", \"|\", egotype.e.name, \"|\")\n    list_egoName[#list_egoName+1] = {egotype.e.name, action=function(npc, player)\n          chat_env.ego = egotype.e.name\n          return \"enchant\"\n        end}\n  end\nend\n\nnewChat{ id=\"ego-make\",\n\ttext = _t[[Which ego should the item have?]],\n\tanswers = list_egoName,\n}\nreturn \"jump\", \"ego-make\""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": []
+            }
+        },
+        "pos_x": 3253.909090909091,
+        "pos_y": -385.90909090909093
     }
 }
