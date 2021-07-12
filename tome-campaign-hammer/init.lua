@@ -11,6 +11,6 @@ Spearhead the demonic invasion of Maj'Eyal in this high-speed mini-campaign.
 
 In this timeline, the Scourge from the West died after using the Demonic Orb of Many Ways, giving the demons everything they needed to get through the planetary shield.]]
 overload = true
-superload = true
+superload = false
 hooks = true
 data = true

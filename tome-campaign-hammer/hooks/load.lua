@@ -46,14 +46,6 @@ class:bindHook(
 			},
 		}
 		self.level:setEntitiesList("maj_eyal_encounters", {}, true)
-			
-		-- data.list[#data.list+1] = {
-		-- 	x = 2, y = 2, w = 75, h = 50, overlay = true,
-		-- 	generator = "engine.generator.map.Static",
-		-- 	data = {
-		-- 		map = "campaign-hammer+zones/worldmap",
-		-- 	},
-		-- }
 	end
 )
 
@@ -68,9 +60,9 @@ class:bindHook(
 		end
 		
 		-- TODO load extra enemies
-		if data.file == "/data/general/npcs/horror.lua" then
-			self:loadList("/data-campaign-hammer/general/npcs/horror.lua", data.no_default, data.res, data.mod, data.loaded)
-		end
+		-- if data.file == "/data/general/npcs/horror.lua" then
+		-- 	self:loadList("/data-campaign-hammer/general/npcs/horror.lua", data.no_default, data.res, data.mod, data.loaded)
+		-- end
 	end
 )
 

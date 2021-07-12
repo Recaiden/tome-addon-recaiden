@@ -28,7 +28,7 @@ desc = function(self, who)
 	elseif self:isCompleted("help-w") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#Walrog has agreed to aid you in destroying the Allied Kingdoms.#WHITE#"
 	else
-		desc[#desc+1] = _t"#LIGHT_GREY#Seek out the ancient necromancer Walrog along the ocean shore.#WHITE#"
+		desc[#desc+1] = _t"#RED#[UNIMPLEMENTED]#LIGHT_GREY#Seek out the ancient necromancer Walrog along the ocean shore.#WHITE#"
 	end
 
 	if self:isCompleted("death-m") then
@@ -54,9 +54,9 @@ on_status_change = function(self, who, status, sub)
 	) then
 		who:setQuestStatus(self.id, engine.Quest.FAILED)
 	elseif ((self:isCompleted("death-k") or self:isCompleted("help-k"))
-		and (self:isCompleted("death-k") or self:isCompleted("help-k"))
-		and (self:isCompleted("death-k") or self:isCompleted("help-k"))
-		and (self:isCompleted("death-k") or self:isCompleted("help-k"))
+		and (self:isCompleted("death-s") or self:isCompleted("help-s") or self:isCompleted("angry-s"))
+		and (self:isCompleted("death-w") or self:isCompleted("help-w"))
+		and (self:isCompleted("death-m") or self:isCompleted("help-m"))
 	) then
 		who:setQuestStatus(self.id, engine.Quest.DONE)
 	end

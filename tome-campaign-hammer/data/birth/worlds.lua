@@ -58,7 +58,7 @@ newBirthDescriptor{
 		end,
 	},
 	game_state = {
-		exp_multiplier = 5,
+		exp_multiplier = 4.6,
 		campaign_name = "hammer",
 		ignore_prodigies_special_reqs = true,
 		stores_restock_by_level = 1,
@@ -72,26 +72,18 @@ newBirthDescriptor{
 			local x, y = mod.class.Encounter:findSpot(where)
 			return x, y
 		end,
-		-- give rares/randbosses extra loot
 		random_boss_adjust_fct = function(act)
+			-- same as is normally used
 			local core_rnd_boss_adjust = function(b)
 				if b.level <= 30 then
-					-- Damage reduction is applied in all cases, acknowledging the frontloaded strength of randbosses and the potential for players to lack tools early
 					b.inc_damage = b.inc_damage or {}
-					--local change =  (70 * (30 - b.level + 1) / 30) + 20
 					local change = math.max(0, 95 - b.level * 4)
-					b.inc_damage.all = math.max(-80, (b.inc_damage.all or 0) - change)  -- Minimum of 20% damage
-					
-					-- Things prone to binary outcomes (0 damage, 0 hit rate, ...) like armor and defense are only reduced if they exceed a cap per level regardless of source
-					-- This lets us not worry about stuff like Shield Wall+lucky equipment creating early threats that some builds cannot hurt
-					-- Note that while these seem strict they are *not* saying these values are unreasonable early for anything, they're saying they're unreasonable for randbosses specifically
+					b.inc_damage.all = math.max(-80, (b.inc_damage.all or 0) - change)					
 					local max = b.level / 2
 					local flat = b:combatGetFlatResist()
 					change = (max - flat)
 					if flat > max then
 						b.flat_damage_armor.all = b.flat_damage_armor.all - (flat - max)
-						-- Do NOT activate this log for production, it may trigger undefined upvalue if print is redefined
-						-- print("[standard_rnd_boss_adjust]:  Adjusting flat armor", flat, "Max", max, "Change", change)
 					end
 
 					if b.level <= 20 then
@@ -100,8 +92,6 @@ newBirthDescriptor{
 						change = (max - armor)
 						if armor > max then
 							b.combat_armor = b.combat_armor - (armor - max)
-							-- Do NOT activate this log for production, it may trigger undefined upvalue if print is redefined
-							-- print("[standard_rnd_boss_adjust]:  Adjusting armor", armor, "Max", max, "Change", change)
 						end
 
 						local defense = b:combatDefense()
@@ -109,25 +99,17 @@ newBirthDescriptor{
 						change = (max - defense)
 						if defense > max then
 							b.combat_def = b.combat_def - (defense - max)
-							-- Do NOT activate this log for production, it may trigger undefined upvalue if print is redefined
-							-- print("[standard_rnd_boss_adjust]:  Adjusting defense", defense, "Max", max, "Change", change)
 						end
 
-						-- Temporarily just hard removing this early game pending this stat not being spammed everywhere causing tons of damage most people don't even notice is happening
 						local retal = rng.table(table.listify(b.on_melee_hit))
 						if retal then
 							b.on_melee_hit = {}
-							--b.on_melee_hit[retal[1]] = retal[2]
 						end
 					end
 
-					-- Early game melee don't have much mobility which makes randbosses too good at running and pulling more enemies in or being generally frustrating
 					b.ai_tactic.escape = 0
 					b.ai_tactic.safe_range = 1
 
-					-- Cap the talent level of disabling talents at the minimum of 1 and floor(level / 10)
-					-- rnd_boss_restrict is the right way to handle this for most things, but the early game we can assume players have no reasonable way to deal with debuff spam
-					-- Tactical tables can have a variety of structures, so we just look in all subtables for a key named "disable"
 					if b.level <= 25 then
 						for id, level in pairs(b.talents) do
 							local talent = b:getTalentFromId(id)
@@ -149,6 +131,8 @@ newBirthDescriptor{
 				end
 			end
 			core_rnd_boss_adjust(act)
+
+			-- give rares/randbosses extra loot
 			local lev = act.level
 			if act.rank == 3.2 then
 				for i = 1, 3 do
