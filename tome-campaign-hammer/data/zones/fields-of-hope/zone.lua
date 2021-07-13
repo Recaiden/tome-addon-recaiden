@@ -17,8 +17,8 @@ return {
 	persistent = "zone",
 	ambient_music = "Through the Dark Portal.ogg",
 	--ambient_music = {"For the king and the country!.ogg"},
-	min_material_level = 2,
-	max_material_level = 3,
+	min_material_level = 4,
+	max_material_level = 5,
 	generator =  {
 		map = {
 			class = "engine.generator.map.Forest",

@@ -47,7 +47,7 @@ newEntity{ base="BASE_NPC_BEAR", define_as = "MAGRIN",
 	resists = { [DamageType.COLD] = 20 },
 
 	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1 },
-	resolvers.drops{chance=100, nb=1, {unique=true, not_properties={"lore"}} },
+	resolvers.drops{chance=100, nb=2, {unique=true, not_properties={"lore"}} },
 	resolvers.drops{chance=100, nb=10, {tome_drops="boss"} },
 
 	resolvers.talents{

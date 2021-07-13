@@ -25,7 +25,7 @@ return {
 			door = "UNDERGROUND_SAND",
 		},
 		actor = {
-			class = "engine.generator.actor.Random",
+			class = "mod.class.generator.actor.Random",
 			nb_npc = {15, 26},
 			filters = { {max_ood=2}, },
 			randelite = 0,

@@ -8,8 +8,6 @@ return {
 	width = 65, height = 40,
 	all_lited = true,
 	day_night = true,
-	tier1 = true,
-	tier1_escort = 2,
 	persistent = "zone",
 	ambient_music = "Rainy Day.ogg",
 	min_material_level = function() return game.state:isAdvanced() and 3 or 1 end,

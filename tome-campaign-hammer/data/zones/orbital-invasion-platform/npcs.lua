@@ -56,7 +56,7 @@ newEntity{
 	color=colors.VIOLET,
 	resolvers.nice_tile{image="invis.png"},
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/elemental_void_losgoroth_corrupted_greater.png", display_h=2, display_y=-1}}},
-	desc = _t[[A vast aether elemental, bloated with the power of the fearscape]],
+	desc = _t[[A vast aether elemental, bloated with the power of the fearscape.]],
 	killer_message = _t"and drained of every scrap of vim",
 	level_range = {5, nil}, exp_worth = 2,
 	max_life = 150, life_rating = 10, fixed_rating = true,

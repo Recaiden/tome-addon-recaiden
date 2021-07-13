@@ -67,7 +67,7 @@ return {
 						up = "GRASS_UP_WILDERNESS",
 					},
 					actor = {
-						class = "engine.generator.actor.Random",
+						class = "mod.class.generator.actor.Random",
 						filters = { {type="animal"}, {type="humanoid"},},
 						nb_npc = {20, 25},
 					},
@@ -78,7 +78,7 @@ return {
 				map = {
 				},
 				actor = {
-					class = "engine.generator.actor.Random",
+					class = "mod.class.generator.actor.Random",
 					filters = { {type="humanoid"}, {type="elemental"}, {type="undead"},},
 					nb_npc = {20, 25},
 				},
@@ -91,7 +91,7 @@ return {
 					map = "campaign-hammer+zones/derth",
 				},
 				actor = {
-					class = "engine.generator.actor.Random",
+					class = "mod.class.generator.actor.Random",
 					filters = { {type="elemental"}, {type="dragon"}, {type="giant"}, {type="undead"},},
 					nb_npc = {20, 25},
 				},

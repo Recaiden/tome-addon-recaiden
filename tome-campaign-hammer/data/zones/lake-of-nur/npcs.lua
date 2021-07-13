@@ -35,6 +35,7 @@ newEntity{
 		{type="weapon", subtype="mindstar", autoreq=true, force_drop=true},
 		{type="weapon", subtype="mindstar", autoreq=true, force_drop=true},
 	},
+	resolvers.drops{chance=100, nb=2, {unique=true, not_properties={"lore"}} },
 	resolvers.drops{chance=100, nb=10, {tome_drops="boss"} },
 	combat = {
 		dam=15,

@@ -1,6 +1,6 @@
 return {
 	name = "Scintillating Caverns",
-	level_range = {20, 30},
+	level_range = {25, 35},
 	level_scheme = "player",
 	max_level = 5,
 	decay = {300, 800},
@@ -9,8 +9,8 @@ return {
 	all_lited = true,
 	persistent = "zone",
 	ambient_music = "Mystery.ogg",
-	min_material_level = function() return game.state:isAdvanced() and 3 or 1 end,
-	max_material_level = function() return game.state:isAdvanced() and 4 or 1 end,
+	min_material_level = 3,
+	max_material_level = 4,
 	generator =  {
 		map = {
 			class = "engine.generator.map.Roomer",

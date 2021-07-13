@@ -1,6 +1,6 @@
 return {
 	name = "Beachhead (Siege)",
-	level_range = {30, 35},
+	level_range = {30, 40},
 	level_scheme = "player",
 	max_level = 3,
 	decay = {300, 800},
@@ -10,8 +10,8 @@ return {
 	day_night = true,
 	persistent = "zone",
 	ambient_music = {"World of Ice.ogg", "weather/town_small_base.ogg"},
-	min_material_level = 2,
-	max_material_level = 4,
+	min_material_level = 3,
+	max_material_level = 5,
 	generator =  {
 		map = {
 		},

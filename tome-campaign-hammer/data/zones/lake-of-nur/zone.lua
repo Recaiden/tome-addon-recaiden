@@ -28,7 +28,7 @@ return {
 			['#'] = "WATER_WALL",
 			up = "WATER_UP",
 			down = "WATER_DOWN",
-			door = "WATER_DOOR",
+			door = "MALROK_WATER_DOOR",
 		},
 		actor = {
 			class = "mod.class.generator.actor.Random",

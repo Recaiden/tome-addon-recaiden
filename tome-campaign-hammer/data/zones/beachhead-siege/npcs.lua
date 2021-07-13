@@ -94,7 +94,7 @@ newEntity{ base = "BASE_NPC_THALORE_SOLDIER",
 newEntity{
 	base="BASE_NPC_THALORE_SOLDIER", define_as = "THALORE_LEADER",
 	unique = true,
-	name = "Nessilla Tantaelen",
+	name = "Nessilla Tantaelen", female = true,
 	color=colors.GREEN,
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_thalore_ziguranth_summoner.png"}}},
 	desc = _t[[The ancient leader of the Thaloren, said to be the wisest of elves.]],
@@ -126,7 +126,7 @@ newEntity{
 		[Talents.T_MINOTAUR]={base=10, every=6, max=12},		
 		[Talents.T_RAGE]={base=5, every=6, max=7},
 		[Talents.T_RESILIENCE]={base=5, every=6, max=7},
-		[Talents.T_MASTER_SUMMONER]={base=5, every=6, max=7},
+		[Talents.T_MASTER_SUMMONER]={base=1, every=6, max=7},
 		[Talents.T_WILD_SUMMON]={base=5, every=6, max=7},
 		[Talents.T_GRAND_ARRIVAL]={base=2, every=18, max=4},
 
@@ -140,12 +140,12 @@ newEntity{
 		-- [Talents.T_ROCKWALK]={base=3, every=8, max=5},
 		-- [Talents.T_ROCKSWALLOW]={base=3, every=8, max=5},
 
-		[Talents.T_HEALING_NEXUS]={base=3, every=8, max=5},
+		-- [Talents.T_HEALING_NEXUS]={base=3, every=8, max=5},
 
 		[Talents.T_ARMOUR_TRAINING]=3,
 
 		[Talents.T_DRACONIC_BODY]=1,
-		[Talents.T_FUNGAL_BLOOD]=1,
+		-- [Talents.T_FUNGAL_BLOOD]=1,
 	},
 	resolvers.inscriptions(4, "infusion"),
 	resolvers.sustains_at_birth(),
