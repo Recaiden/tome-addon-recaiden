@@ -39,7 +39,7 @@ return {
 				
 				nb_rooms = {0,1},
 				rooms = {"lesser_vault"},
-				lesser_vaults_list = {"honey_glade", "forest-ruined-building1", "forest-ruined-building2", "mage-hideout", "collapsed-tower"},
+				lesser_vaults_list = {"honey_glade", "collapsed-tower"},
 				lite_room_chance = 100,
 		},
 		actor = {
@@ -64,7 +64,7 @@ return {
 			[1] = {
 				generator = {
 					map = {
-						up = "ROCKY_UP_WILDERNESS",
+						up = "GRASS_UP_WILDERNESS",
 					},
 					actor = {
 						class = "engine.generator.actor.Random",

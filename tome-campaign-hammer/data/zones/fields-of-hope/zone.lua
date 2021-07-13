@@ -129,4 +129,20 @@ return {
 			},
 		},
 	},
+
+	post_process = function(level)
+		for uid, e in pairs(level.entities) do
+			if e.type ~= "demon" then
+				e.faction = e.hard_faction or "allied-kingdoms"
+			end
+		end
+	end,
+	
+	on_enter = function(lev)
+		if game and game.player and lev == 1 and not game.level.data.hammer_visited_hope then
+			game.level.data.hammer_visited_hope = true
+			require("engine.ui.Dialog"):simplePopup(_t"The Battle for Last Hope", _t"Meteors and catapult-stones rain down, sling-stones and fireballs fill the air.  Champions of Urh'rok wade through the fray as wretchlings die in droves.  In the confusion of battle, you could slip through to the city...")
+		end
+	end,
+	
 }

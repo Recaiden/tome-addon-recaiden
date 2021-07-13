@@ -96,8 +96,7 @@ newEntity{
 	unique = true,
 	name = "Nessilla Tantaelen",
 	color=colors.GREEN,
-	resolvers.nice_tile{image="invis.png"},
-	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/elemental_void_losgoroth_corrupted_greater.png", display_h=2, display_y=-1}}},
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_thalore_ziguranth_summoner.png"}}},
 	desc = _t[[The ancient leader of the Thaloren, said to be the wisest of elves.]],
 	killer_message = _t" and made into compost",
 	level_range = {30, nil}, exp_worth = 2,
@@ -136,10 +135,10 @@ newEntity{
 		[Talents.T_THORN_GRAB]={base=3, every=8, max=5},
 		[Talents.T_LEAVES_TIDE]={base=3, every=8, max=5},
 
-		[Talents.T_STONE_VINES]={base=3, every=8, max=5},
-		[Talents.T_ELDRITCH_VINES]={base=3, every=8, max=5},
-		[Talents.T_ROCKWALK]={base=3, every=8, max=5},
-		[Talents.T_ROCKSWALLOW]={base=3, every=8, max=5},
+		-- [Talents.T_STONE_VINES]={base=3, every=8, max=5},
+		-- [Talents.T_ELDRITCH_VINES]={base=3, every=8, max=5},
+		-- [Talents.T_ROCKWALK]={base=3, every=8, max=5},
+		-- [Talents.T_ROCKSWALLOW]={base=3, every=8, max=5},
 
 		[Talents.T_HEALING_NEXUS]={base=3, every=8, max=5},
 

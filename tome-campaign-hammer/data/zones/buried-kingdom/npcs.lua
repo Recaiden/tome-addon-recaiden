@@ -73,15 +73,15 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 	on_acquire_target = function(self, who)
 		if not self.rewind then
 			self.rewind = game.turn
+			self:doEmote(_t"Children, is that you?", 100)
 		end
-		self:doEmote(_t"Children, is that you?", 100)
 	end,
 	
 	on_resurrect = function(self)
 		game.bignews:saySimple(120, "#GOLD#Time strains and snaps.  You are thrown back to the beginning of the fight!  But things aren't quite the same...")
 
 		if game.player then
-			game.player:teleportRandom(game.player.x, game.player.y, 3, 7)
+			game.player:teleportRandom(self.x, self.y, 3, 7)
 			game.player:resetToFull()
 			local effs = {}
 			for eff_id, p in pairs(game.player.tmp) do

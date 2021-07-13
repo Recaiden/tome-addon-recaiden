@@ -41,7 +41,7 @@
         "id": 7,
         "name": "lua-code",
         "data": {
-            "code": "engine.Faction:setFactionReaction(game.player.faction, \"rhalore\", 100, true)\n\ngame.player:resetToFull()\nlocal effs = {}\nfor eff_id, p in pairs(game.player.tmp) do\n\tlocal e = game.player.tempeffect_def[eff_id]\n\tif e.status == \"detrimental\" then effs[#effs+1] = {\"effect\", eff_id} end\nend\nwhile #effs > 0 do\n\tlocal eff = rng.tableRemove(effs)\n\tgame.player:removeEffect(eff[2])\nend\n\nfor _, act in pairs(game.level.entities) do\n\tlocal rsrc, rtarget = act, game.player\n\tif rsrc.reaction_actor and rsrc.reaction_actor[rtarget.unique or rtarget.name] then \n\t\trsrc.reaction_actor[rtarget.unique or rtarget.name] = 100\n\tend\nend\n\ngame.turn = game.turn + 3 * game.calendar.DAY\n\ngame.player:resolveSource():setQuestStatus(\"campaign-hammer+demon-main\", engine.Quest.COMPLETED, \"rhalore\")"
+            "code": "engine.Faction:setFactionReaction(game.player.faction, \"rhalore\", 100, true)\n\ngame.player:resetToFull()\nlocal effs = {}\nfor eff_id, p in pairs(game.player.tmp) do\n\tlocal e = game.player.tempeffect_def[eff_id]\n\tif e.status == \"detrimental\" then effs[#effs+1] = {\"effect\", eff_id} end\nend\nwhile #effs > 0 do\n\tlocal eff = rng.tableRemove(effs)\n\tgame.player:removeEffect(eff[2])\nend\n\nfor _, act in pairs(game.level.entities) do\n\tlocal rsrc, rtarget = act, game.player\n\tif rsrc.reaction_actor and rsrc.reaction_actor[rtarget.unique or rtarget.name] then \n\t\trsrc.reaction_actor[rtarget.unique or rtarget.name] = 100\n\tend\n\tif act.faction == \"rhalore\" then\n\t\tact:resetToFull()\n\t\tlocal effs = {}\n\t\tfor eff_id, p in pairs(act .tmp) do\n\t\t\tlocal e = act.tempeffect_def[eff_id]\n\t\t\tif e.status == \"detrimental\" then effs[#effs+1] = {\"effect\", eff_id} end\n\t\tend\n\t\twhile #effs > 0 do\n\t\t\tlocal eff = rng.tableRemove(effs)\n\t\t\tact:removeEffect(eff[2])\n\t\tend\n\tend\nend\n\ngame.turn = game.turn + 3 * game.calendar.DAY\n\ngame.player:resolveSource():setQuestStatus(\"campaign-hammer+demon-main\", engine.Quest.COMPLETED, \"rhalore\")"
         },
         "class": "lua-code",
         "html": "lua-code",
@@ -78,7 +78,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat3",
-            "chat": "You bring in some ruby magi, and with painstaking work, they infuse the crystals' power into the Rhaloren, making them formidable enough to face the rest of the Shalore.\n",
+            "chat": "You bring in some ruby magi, and with painstaking work, they infuse the crystals' power into the Rhaloren, making them formidable enough to confront the rest of the Shaloren directly.\n",
             "answer1": ""
         },
         "class": "chat",

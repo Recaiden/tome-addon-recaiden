@@ -92,6 +92,7 @@ return {
 				generator = {
 					map = {
 						up = "MALROK_FLOOR",
+						['<'] = "MALROK_FLOOR",
 					},
 				},
 			},

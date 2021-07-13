@@ -17,7 +17,7 @@ return {
 			edge_entrances = {4,6},
 			rooms = {"forest_clearing"},
 			lite_room_chance = 90,
-			rooms_config = {forest_clearing={pit_chance=15, filters={{type="horror", subtype="eldritch", max_ood=2}}}},
+			rooms_config = {forest_clearing={pit_chance=3, filters={{type="horror", subtype="eldritch", max_ood=2}}}},
 			['.'] = "UNDERGROUND_SAND",
 			['#'] = "SANDWALL_STABLE",
 			up = "SAND_LADDER_UP",
@@ -26,7 +26,7 @@ return {
 		},
 		actor = {
 			class = "engine.generator.actor.Random",
-			nb_npc = {20, 30},
+			nb_npc = {15, 26},
 			filters = { {max_ood=2}, },
 			randelite = 0,
 			guardian = "BURIED_FORGOTTEN",

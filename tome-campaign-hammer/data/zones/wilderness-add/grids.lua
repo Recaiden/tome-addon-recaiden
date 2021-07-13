@@ -51,7 +51,6 @@ newEntity{ base="ZONE_PLAINS", define_as = "FIELDS_OF_HOPE",
 	change_level_check = function()
 		local p = game.party:findMember{main=true}
 		if p:hasQuest("campaign-hammer+demon-ruins") and p:isQuestStatus("campaign-hammer+demon-ruins", engine.Quest.DONE) then
-			require("engine.ui.Dialog"):simplePopup(_t"The Battle for Last Hope", _t"Meteors and catapult-stones rain down, sling-stones and fireballs fill the air.  Champions of Urh'rok wade through the fray as wretchlings die in droves.  In the confusion of battle, you slip through the front-lines...")
 			return false
 		else
 			game.log("There is no way you could get through the patrols, guards, and walls of the kingdom's capital.")

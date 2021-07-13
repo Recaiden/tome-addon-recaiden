@@ -12,7 +12,7 @@ defineTile('*', "HARDWALL", nil, nil, nil, {lite=true})
 defineTile('T', "FLOOR", nil, "TOLAK", nil, {lite=true})
 defineTile('M', "FLOOR", nil, "MERENAS", nil, {lite=true})
 defineTile("g", "FLOOR", nil, {entity_mod=function(e) e.make_escort = nil return e end, random_filter={type='humanoid', faction="allied-kingdoms"}})
-defineTile("G", "FLOOR", nil, {random_filter={type='humanoid', faction="allied-kingdoms" random_boss={nb_classes=1, loot_quality="store", loot_quantity=3, ai_move="move_complex", rank=3.5,}}})
+defineTile("G", "FLOOR", nil, {random_filter={type='humanoid', faction="allied-kingdoms", random_boss={nb_classes=1, loot_quality="store", loot_quantity=3, ai_move="move_complex", rank=3.5,}}})
 
 addSpot({12, 11}, "portal", "west")
 addSpot({34, 11}, "portal", "east")
@@ -30,10 +30,10 @@ return [[
 **********.....##...M.........##.....************
 **********.....##......T......##.....************
 ***********.........................*************
-***********.........................*************
-************...##....G....G...##...**************
-************...##..g..g..g..g.##...**************
-************........gg....gg.......**************
+***********............G............*************
+************...##....g....g...##...**************
+************...##.....gggg....##...**************
+************.......................**************
 ************.......................**************
 ************.......................**************
 ************...##.............##...**************

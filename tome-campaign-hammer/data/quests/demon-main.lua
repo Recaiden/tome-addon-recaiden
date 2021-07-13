@@ -9,7 +9,7 @@ desc = function(self, who)
 	desc[#desc+1] = _t"Your job will be to sabotage, assassinate, and destroy various targets to weaken the Eyalites."
 	
 	if self:isCompleted("dwarves") then
-		desc[#desc+1] = _t"#LIGHT_GREEN#* It turns out that dwarves aren't Eyalites at all.  The decision has been made to consider them fellow victims of the Sher'tul, and specialists dispatched to handle them appropriately.  They seem quite responsive to offerse of wealth...#WHITE#"
+		desc[#desc+1] = _t"#LIGHT_GREEN#* It turns out that dwarves aren't Eyalites at all.  The decision has been made to consider them fellow victims of the Sher'tul, and specialists dispatched to handle them appropriately.  They seem quite responsive to offers of material goods...#WHITE#"
 	else
 		desc[#desc+1] = _t"#SLATE#* You must bring down the dwarven kingdom of the Iron Throne.#WHITE#"
 	end
@@ -21,7 +21,7 @@ desc = function(self, who)
 	if self:isCompleted("crystals-2") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#* The unbound crystal beings have laid waste to Elvala.  It will be easy to round up the survivors.#WHITE#"
 	elseif self:isCompleted("crystals") then
-		desc[#desc+1] = _t"#LIGHT_GREEN#* The Rhaloren are defeated, giving you full access to the scintillting caves.#WHITE#"
+		desc[#desc+1] = _t"#LIGHT_GREEN#* The Rhaloren are defeated, giving you full access to the scintillating caves.#WHITE#"
 	elseif self:isCompleted("rhalore") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#* Your Rhaloren allies have plunged Elvala into chaos.  It will be easy to round up the survivors.#WHITE#" 
 	else
@@ -38,7 +38,7 @@ desc = function(self, who)
 		desc[#desc+1] = _t"#SLATE#* On the shores of the Sea of Sash is a town of antimagic adherents.  Destroy them.#WHITE#"
 	end
 
-	local statusRuins = who:hasQuest("campaign-hammer+demon-ruins") and who:hasQuest("campaign-hammer+demon-ruins"):idCompleted()
+	local statusRuins = who:hasQuest("campaign-hammer+demon-ruins") and who:hasQuest("campaign-hammer+demon-ruins"):isCompleted()
 	if self:isCompleted("last-hope") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#* The Allied Kingdom leadership is destroyed.  Victory is certain.#WHITE#"
 		desc[#desc+1] = _t"You have won the game!"
