@@ -7,7 +7,12 @@ desc = function(self, who)
 	--desc[#desc+1] = _t"#LIGHT_GREEN#* The northern regions have been reduced to a lifeless waste.#WHITE#"
 	desc[#desc+1] = _t"The Ambassador has been assigned to deal with scattered groups all throughout the northern reaches of Maj'Eyal."
 	desc[#desc+1] = _t"Your job will be to sabotage, assassinate, and destroy various targets to weaken the Eyalites."
-	
+
+	if self:isCompleted("waterimp") then
+		desc[#desc+1] = _t"#LIGHT_GREEN#* The sher'tul-made horrors beneath the lake overwhelmed the imps, but you managed to recover their records.#WHITE#"
+	else
+		desc[#desc+1] = _t"#SLATE#* Our water imp agents in the lake of Nur have stopped reporting.  Investigate.#WHITE#"
+	end
 	if self:isCompleted("dwarves") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#* It turns out that dwarves aren't Eyalites at all.  The decision has been made to consider them fellow victims of the Sher'tul, and specialists dispatched to handle them appropriately.  They seem quite responsive to offers of material goods...#WHITE#"
 	else
@@ -32,11 +37,11 @@ desc = function(self, who)
 	--else
 		--desc[#desc+1] = _t"#SLATE#* When the time comes, destroy the Thaloren elves.#WHITE#"
 	end
-	if self:isCompleted("zigur") then
-		desc[#desc+1] = _t"#LIGHT_GREEN#* There was once an organization of anti-mages working in these lands, but their headquarters is now a blighted ruin.  How convenient.#WHITE#"
-	else
-		desc[#desc+1] = _t"#SLATE#* On the shores of the Sea of Sash is a town of antimagic adherents.  Destroy them.#WHITE#"
-	end
+	-- if self:isCompleted("zigur") then
+	-- 	desc[#desc+1] = _t"#LIGHT_GREEN#* There was once an organization of anti-mages working in these lands, but their headquarters is now a blighted ruin.  How convenient.#WHITE#"
+	-- else
+	-- 	desc[#desc+1] = _t"#SLATE#* On the shores of the Sea of Sash is a town of antimagic adherents.  Destroy them.#WHITE#"
+	-- end
 
 	local statusRuins = who:hasQuest("campaign-hammer+demon-ruins") and who:hasQuest("campaign-hammer+demon-ruins"):isCompleted()
 	if self:isCompleted("last-hope") then

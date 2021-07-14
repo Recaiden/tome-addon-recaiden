@@ -136,6 +136,9 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 
 	on_die = function(self, who)
 		self:doEmote(_t"This is not the end!", 500)
+		if not game.player:resolveSource():hasQuest("campaign-hammer+demon-ruins") then
+			game.player:resolveSource():grantQuest("campaign-hammer+demon-ruins")
+		end 
 		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-ruins", engine.Quest.COMPLETED)
 		local Chat = require "engine.Chat"
 		local chat = Chat.new("campaign-hammer+horror-power", {name=_t"Power Behind the Throne"}, game.player)

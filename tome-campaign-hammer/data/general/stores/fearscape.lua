@@ -70,10 +70,22 @@ newEntity{
 		filters = {
 			{type="lite", id=true, tome_drops="store"},
 			{type="tool", subtype="digger", id=true, tome_drops="store"},
-			{type="jewelry", id=true, tome_drops="store"},
 			{type="charm", subtype="torque", id=true, tome_drops="boss"},
 			{type="charm", subtype="totem", id=true, tome_drops="boss"},
 			{type="charm", subtype="wand", id=true, tome_drops="boss"},
+		},
+	},
+}
+
+newEntity{
+	define_as = "DEMON_JEWELRY",
+	name = "gemcarver",
+	display = '6', color=colors.UMBER,
+	store = {
+		purse = 25,
+		empty_before_restock = false,
+		filters = {
+			{type="jewelry", id=true, tome_drops="store"},
 		},
 	},
 }

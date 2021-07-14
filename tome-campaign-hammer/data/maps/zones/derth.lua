@@ -24,6 +24,8 @@ defineTile('9', "DOOR")
 defineTile('a', "DOOR")
 defineTile('b', "DOOR")
 
+defineTile('_', "GRASS_ROAD_STONE", nil, "URKIS_IN_TOWN")
+
 startx = 0
 starty = 20
 
@@ -52,7 +54,7 @@ tttttttt~...t........_........_..........t~~~~tttt
 <______________......_.......__..####....t~~~~tttt
 <__________________.___.....__...#??#....tt~~~tttt
 <______________...___._______....#9##.....t~~~tttt
-ttttttt~~~~t.....__....._t_......___......t~~~tttt
+ttttttt~~~~t.....__....._tU......___......t~~~tttt
 tttttt~~~~~t....__......___......._.......t~~~tttt
 tttttt~~~~~t....__......___......._.......t~~~tttt
 tttttt~~~~~t..___........_.......__.......t~~~tttt

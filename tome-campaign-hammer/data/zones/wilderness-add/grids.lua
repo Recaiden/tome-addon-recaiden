@@ -16,19 +16,11 @@ newEntity{
 }
 
 newEntity{
-	base="ZONE_PLAINS", define_as = "BURIED_KINGDOM",
+	base="ZONE_DESERT", define_as = "BURIED_KINGDOM",
 	name="Tunnel into the sands",
 	color={r=200, g=255, b=55},
 	add_mos={{image="terrain/ladder_down.png"}},
 	change_zone="campaign-hammer+buried-kingdom",
-}
-
-newEntity{
-	base="ZONE_PLAINS", define_as = "DAIKARA_HIDEOUT",
-	name="Pass into the mountains",
-	color=colors.WHITE,
-	add_displays={mod.class.Grid.new{image="terrain/road_upwards_01.png", display_h=2, display_y=-1}},
-	change_zone="campaign-hammer+daikara-hideout",
 }
 
 newEntity{ base="ZONE_PLAINS", define_as = "DERTH_INVASION",
@@ -75,4 +67,39 @@ newEntity{
 	color={r=0, g=255, b=255},
 	add_mos={{image="terrain/cave_entrance02.png"}},
 	change_zone="campaign-hammer+scintillating-caverns",
+}
+
+-- TODO hide these until the right time.
+newEntity{
+	
+}
+
+newEntity{
+	base="ZONE_PLAINS", define_as = "SHELLSEA_HIDEOUT",
+	name="Road to a flooded city",
+	color=colors.WHITE,
+	add_displays={class.new{image="terrain/underwater/subsea_cave_entrance_01.png", z=4, display_h=2, display_y=-1}},
+	change_zone="campaign-hammer+shellsea-hideout",
+}
+
+newEntity{
+	base="ZONE_PLAINS", define_as = "ANGOLWEN_BATTLE",
+	name = "Demonic Teleportation Gate - Attack on Angolwen",
+	add_displays = {
+		class.new{z=3, image="terrain/planar_demon_portal_ground_down.png", display_x=-0.5, display_y=-0.5, display_w=2, display_h=2},
+		class.new{z=16, image="terrain/planar_demon_portal_ground_up.png", display_x=-0.5, display_y=-0.5, display_w=2, display_h=2},
+	},
+	desc = "From their base here, the demons hold back the wizards of Angolwen.",
+	change_level_check = function()
+		local p = game.party:findMember{main=true}
+		if p:hasQuest("campaign-hammer+demon-demon") and p:isQuestStatus("campaign-hammer+demon-main", engine.Quest.DONE) then
+			return false
+		else
+			game.log("If you went in here now, you would die instantly and uselessly.  Defeat all other threats first.")
+			return true
+		end
+		return false
+	end,
+	change_zone="campaign-hammer+angolwen",
+	change_level=1, glow=true, display='>', color=colors.VIOLET, notice = true,
 }

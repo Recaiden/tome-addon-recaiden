@@ -15,8 +15,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "11",
-                        "input": "output_3"
+                        "node": "23",
+                        "input": "output_4"
                     }
                 ]
             }
@@ -113,7 +113,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "11",
+                        "node": "23",
                         "input": "output_2"
                     }
                 ]
@@ -163,8 +163,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "11",
-                        "input": "output_1"
+                        "node": "23",
+                        "input": "output_3"
                     }
                 ]
             }
@@ -221,7 +221,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat3",
-            "chat": "\"Companions...dead...\"\n\"And...for what...\"",
+            "chat": "\"Companions...dead...\"\n\"And...for what...\"\n\"Why...have you...come here...\"",
             "answer1": "\"Help us take revenge on Eyal.\"",
             "answer2": "Leave him alone"
         },
@@ -253,50 +253,6 @@
         },
         "pos_x": 326.3333333333333,
         "pos_y": 263
-    },
-    "11": {
-        "id": 11,
-        "name": "entry-selector",
-        "data": {
-            "chatid": "welcome",
-            "code": ""
-        },
-        "class": "entry-selector",
-        "html": "entry-selector3",
-        "typenode": true,
-        "inputs": {
-            "input_1": {
-                "connections": []
-            }
-        },
-        "outputs": {
-            "output_1": {
-                "connections": [
-                    {
-                        "node": "8",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_2": {
-                "connections": [
-                    {
-                        "node": "6",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_3": {
-                "connections": [
-                    {
-                        "node": "2",
-                        "output": "input_1"
-                    }
-                ]
-            }
-        },
-        "pos_x": -442.3333333333333,
-        "pos_y": 349
     },
     "14": {
         "id": 14,
@@ -380,7 +336,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat7",
-            "chat": "\"Hunt...the...ocean's creatures...bring them...alive...\"\n\"And I...will teach you...\"",
+            "chat": "\"Hunt...the...ocean's creatures...with this...\"\n\"And I...will teach you...\"",
             "answer1": "Accept"
         },
         "class": "chat",
@@ -414,7 +370,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat8",
-            "chat": "\"Prove yourself...to me...\"\n\"Hunt...the...ocean's creatures...bring them...alive...\"",
+            "chat": "\"Prove yourself...to me...\"\n\"Hunt...the...ocean's creatures...with this...\"",
             "answer1": "\"I will not fail!\""
         },
         "class": "chat",
@@ -563,7 +519,7 @@
         "id": 21,
         "name": "lua-code",
         "data": {
-            "code": "game.player:learnTalent(game.player.T_HAMMER_WALROG_CAPTURE, true)"
+            "code": "local o = game.zone:makeEntityByName(game.level, \"object\", \"WAND_WALROG_QUEST\")\n\t\t\tif o then\n\t\t\t\to:identify(true)\n\t\t\t\tgame.zone:addEntity(game.level, o, \"object\")\n\t\t\t\tgame.player:addObject(game.player.INVEN_INVEN, o)\n\t\t\t\tgame.log(\"The demon hands you: %s.\", o:getName{do_color=true})\n\t\t\tend"
         },
         "class": "lua-code",
         "html": "lua-code",
@@ -587,8 +543,8 @@
                 "connections": []
             }
         },
-        "pos_x": 2464.6666666666665,
-        "pos_y": 780
+        "pos_x": 2840,
+        "pos_y": 752.75
     },
     "22": {
         "id": 22,
@@ -619,7 +575,123 @@
                 ]
             }
         },
-        "pos_x": 1818.6666666666667,
-        "pos_y": 1109.6666666666667
+        "pos_x": 2150.75,
+        "pos_y": 1128.25
+    },
+    "23": {
+        "id": 23,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "welcome",
+            "code": ""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector4",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "6",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "8",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_4": {
+                "connections": [
+                    {
+                        "node": "2",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -912,
+        "pos_y": 426.42857142857144
+    },
+    "24": {
+        "id": 24,
+        "name": "chat",
+        "data": {
+            "chatid": "success",
+            "chat": "\"Yes...well done...\"\n\"I...will aid you... when... the time comes...\"",
+            "answer1": "\"Farewell\""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": -213.57142857142858,
+        "pos_y": -361
+    },
+    "25": {
+        "id": 25,
+        "name": "quest-cond",
+        "data": {
+            "not": false,
+            "quest": "campaign-hammer+demon-allies",
+            "status": "COMPLETED",
+            "sub": "help-w"
+        },
+        "class": "quest-cond",
+        "html": "quest-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "23",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "24",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -667.4285714285714,
+        "pos_y": 131.57142857142858
     }
 }

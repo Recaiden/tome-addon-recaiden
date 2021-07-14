@@ -45,7 +45,7 @@ newEntity{ base = "BASE_NPC_PLATFORM",
 		{type="armor", subtype="shield", not_properties={"unique"}, autoreq=true},
 	},
 	combat_armor = 2, combat_def = 0,
-	resolvers.talents{ [Talents.T_RUSH]=1, [Talents.T_PERFECT_STRIKE]=1, [Talents.T_OSMOSIS_SHIELD]=1 },
+	resolvers.talents{ [Talents.T_RUSH]=1, [Talents.T_PERFECT_STRIKE]=1, [Talents.T_OSMOSIS_SHIELD]=1, [Talents.T_ARMOUR_TRAINING]=2, },
 	resolvers.drops{chance=100, nb=3, {}},
 }
 
@@ -54,7 +54,6 @@ newEntity{
 	unique = true,
 	name = "Corrupted Vortex",
 	color=colors.VIOLET,
-	resolvers.nice_tile{image="invis.png"},
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/elemental_void_losgoroth_corrupted_greater.png", display_h=2, display_y=-1}}},
 	desc = _t[[A vast aether elemental, bloated with the power of the fearscape.]],
 	killer_message = _t"and drained of every scrap of vim",
@@ -81,6 +80,10 @@ newEntity{
 		[Talents.T_PHASE_DOOR]=2,
 		[Talents.T_FLAME_OF_URH_ROK]={base=3, every=5, max=8},
 	},
+	talent_cd_reduction = {
+		[Talents.T_DARKFIRE]=5,
+	},
+	slow_projectiles_outgoing = 50,
 	resolvers.inscriptions(1, {"manasurge rune"}),
 	resolvers.sustains_at_birth(),
 

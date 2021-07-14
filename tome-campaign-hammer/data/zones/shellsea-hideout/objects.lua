@@ -1,38 +1,45 @@
--- ToME - Tales of Maj'Eyal
--- Copyright (C) 2009 - 2016 Nicolas Casalini
---
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
---
--- Nicolas Casalini "DarkGod"
--- darkgod@te4.org
+load("/data/general/objects/objects-maj-eyal.lua")
+load("/data/general/objects/objects-far-east.lua")
 
-load("/data-orcs/general/objects/objects.lua")
 
-newEntity{ base = "BASE_LORE",
-	define_as = "NOTE1",
-	name = "paper scrap", lore="ureslak-undead-1",
-	desc = [[A paper scrap.]],
+newEntity{ base = "BASE_ROD", define_as = "WAND_WALROG_QUEST",
+	power_source = {unknown=true},
+	unided_name = _t"coral rod",
+	name = "Walrog's Draining Wand", color=colors.LIGHT_RED, unique=true, image = "object/artifact/wand_gwais_burninator.png",
+	desc = _t[[This wand can extract the vim of a creature close to death, stealing their life energy to revitalise another.  It is attuned to Walrog, and cannot be used to heal yourself.]],
+	cost = 300,
 	rarity = false,
-	encumberance = 0,
-}
+	level_range = {25, 35},
+	add_name = false,
+	material_level = 1,
+	max_power = 15, power_regen = 0,
+	use_power = { power = 1,
+	wielder = {
+		combat_spellpowre = 9,
+		combat_spellcrit = 9,
+		fatigue = 3,
+	},
+	use_power = { power=1, name=_t"absorb a weakened creature", no_npc_use = true, use = function(self, who, inven, item)
+		local tg = {type="hit", nowarning=true, range=1}
+		local tx, ty, target = who:getTarget(tg)
+		if not tx or not ty then return nil end
+		local _ _, _, _, tx, ty = who:canProject(tg, tx, ty)
+		target = game.level.map(tx, ty, engine.Map.ACTOR)
+		if target == who then target = nil end
+		if not target then return nil end
+		if target.type == "undead" then
+			game.logPlayer(who, "#CRIMSON#That creature is already dead!")
+			return nil
+		end
+		if target.life / target.max_life > 0.3 then
+			game.logPlayer(who, "#CRIMSON#That creature is not hurt enough to drain.")
+			return nil
+		end
 
-newEntity{ base = "BASE_SCHEMATIC", define_as = "HANDS_CREATION_SCHEMATIC",
-	name = "schematic: Hands of Creation", no_unique_lore = true,
-	level_range = {30, 40},
-	unique = true,
-	rarity = false,
-	cost = 100,
-	material_level = 5,
-	tinker_id = "HANDS_CREATION",
+		game.logPlayer(who, "#AQUAMARINE#Your victim's life drains away, flowing through the wand to Walrog.")
+		game.bignews:saySimple(180, "#AQUAMARINE#Your victim's life drains away, flowing through the wand to Walrog.")
+		target:disappear()
+		who:hasQuest("campaign-hammer+demon-allies"):walrog_capture(who)
+		return {used=true, id=true}
+	end},
 }

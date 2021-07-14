@@ -14,7 +14,6 @@ class:bindHook(
 		local ActorResource = require "engine.interface.ActorResource"
 		local ActorAI = require "engine.interface.ActorAI"
 		local PartyIngredients = require "mod.class.interface.PartyIngredients"
-		local PartyTinker = require "mod.class.interface.PartyTinker"
 		local Store = require "mod.class.Store"
 		local PartyLore = require "mod.class.interface.PartyLore"
 		

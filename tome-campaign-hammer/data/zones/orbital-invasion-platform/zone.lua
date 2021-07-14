@@ -98,6 +98,10 @@ return {
 			},
 		},
 
+	on_enter = function(level)
+		game.player:resolveSource().faction = "fearscape"
+	end,
+	
 	post_process = function(level)
 		if core.renderer then
 			local Map = require "engine.Map"

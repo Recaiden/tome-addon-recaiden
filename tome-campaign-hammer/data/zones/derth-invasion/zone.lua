@@ -47,7 +47,7 @@ return {
 			nb_npc = {20, 30},
 			filters = { {max_ood=2}, },
 			nb_spots = 2, on_spot_chance = 35,
-			guardian = "URKIS_IN_TOWN",
+			--guardian = "URKIS_IN_TOWN",
 		},
 		object = {
 			class = "engine.generator.object.OnSpots",

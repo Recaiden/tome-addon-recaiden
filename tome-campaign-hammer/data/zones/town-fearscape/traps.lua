@@ -30,3 +30,10 @@ newEntity{ base = "BASE_STORE", define_as = "ARTIFACT_STORE",
 	display='7', color=colors.BLUE,
 	resolvers.store("DEMON_TREASURE", "fearscape", "store/shop_door.png", "store/shop_sign_alchemist.png"),
 }
+
+newEntity{ base = "BASE_STORE", define_as = "JEWELRY_STORE",
+	name="Gemcarver",
+	display='6', color=colors.UMBER, z=17,
+	resolvers.store("DEMON_JEWELRY", "fearscape", "store/shop_door.png", "store/shop_sign_rings.png"),
+	resolvers.chatfeature("jewelry-store", "fearscape"),
+}

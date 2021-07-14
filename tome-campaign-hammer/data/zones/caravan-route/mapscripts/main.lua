@@ -18,15 +18,15 @@ tm:merge(1, 1, wfcmain, merge_order)
 
 -- Find start & exit
 local start = tm:locateTile(';', nil, 1, 1, 1, math.floor(tm.data_h / 3))
-local stop = tm:locateTile(';', nil, tm.data_w, math.floor(tm.data_h * 2 / 3), tm.data_w, tm.data_h)
+local stop = tm:locateTile(';', nil, tm.data_w, math.floor(tm.data_h * 2 / 3), tm.data_w, tm.data_h-1)
 if tm.data_h > tm.data_w then
 	start = tm:locateTile(';', nil, 1, 1, math.floor(tm.data_w / 3), 1)
-	stop = tm:locateTile(';', nil, math.floor(tm.data_w * 2 / 3), tm.data_h, tm.data_w, tm.data_h)
+	stop = tm:locateTile(';', nil, math.floor(tm.data_w * 2 / 3), tm.data_h, tm.data_w-1, tm.data_h)
 end
 if not start or not stop then return self:redo() end
 
 -- Build up a road inside a new Tilemap
-local roadpath = tm:tunnelAStar(start, stop, '=', {';', 'T'}, {}, {virtual=true, erraticness=5, weights_fct=function(x, y, c)
+local roadpath = tm:tunnelAStar(start, stop, '=', nil, nil, {virtual=true, erraticness=5, weights_fct=function(x, y, c)
 	return 9 / (tm:countNeighbours(tm:point(x, y), ';')+0.001)
 end})
 if not roadpath then return self:redo() end

@@ -55,7 +55,8 @@ newEntity{
 	
 	on_die = function(self, who)
 		who:grantQuest("campaign-hammer+demon-caravan")
-		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "zigur")
+		who:grantQuest("campaign-hammer+demon-allies")
+		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "waterimp")
 		local Chat = require "engine.Chat"
 		local chat = Chat.new("campaign-hammer+memory-crystals-tactics", {name=_t"Memory Crystals"}, game.player)
 		chat:invoke()
