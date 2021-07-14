@@ -55,6 +55,9 @@ return {
 			},
 		},
 		[2] = {
+			all_remembered = true,
+			all_lited = true,
+			day_night = false,
 			generator = { 
 				map = {
 					class = "engine.generator.map.Static",

@@ -28,7 +28,7 @@ desc = function(self, who)
 	elseif self:isCompleted("help-w") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#Walrog has agreed to aid you in destroying the Allied Kingdoms.#WHITE#"
 	else
-		desc[#desc+1] = _t"#RED#[UNIMPLEMENTED]#LIGHT_GREY#Seek out the ancient necromancer Walrog along the ocean shore.#WHITE#"
+		desc[#desc+1] = _t"#LIGHT_GREY#Seek out the ancient necromancer Walrog along the ocean shore.#WHITE#"
 	end
 	
 	if self:isCompleted("death-m") then
@@ -36,7 +36,7 @@ desc = function(self, who)
 	elseif self:isCompleted("help-m") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#The Messenger has agreed to help you.#WHITE#"
 	elseif (self:isCompleted("help-k") or self:isCompleted("help-s") or self:isCompleted("help-w")) then
-		desc[#desc+1] = _t"#LIGHT_GREY#You have heard of a fourth old one, the Onyx who carried news of Mal'rok's destruction and saved the others by shutting down the portal.  Find this Messenger.#WHITE#"
+		desc[#desc+1] = _t"#RED#[UNIMPLEMENTED]#LIGHT_GREY#You have heard of a fourth old one, the Onyx who shut down the portal.  Find this Messenger.#WHITE#"
 	end
 	
 	if self:isEnded() then
@@ -113,5 +113,8 @@ function walrog_capture(self, who)
 	self.walrog_victims = (self.walrog_victims or 0) + 1
 	if self.walrog_victims >= 10 then
 		who:setQuestStatus(self.id, engine.Quest.COMPLETED, "help-w")
+		local wand_o, wand_item, wand_inven_id = player:findInAllInventories("WAND_WALROG_QUEST")
+		player:removeObject(wand_inven_id, wand_item, true)
+		wand_o:removed()
 	end
 end

@@ -82,7 +82,7 @@ return {
 					lesser_vaults_list = {"flooded-prison"},
 					['.'] = {"WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR_BUBBLE"},
 					['#'] = {"MALROK_WALL"},
-					['+'] = {"MALROK_WATER_DOOR"},
+					door = {"MALROK_WATER_DOOR"},
 					effects = {"EFF_ZONE_AURA_UNDERWATER"},
 				},
 				actor = {

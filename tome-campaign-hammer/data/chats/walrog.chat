@@ -15,8 +15,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "23",
-                        "input": "output_4"
+                        "node": "29",
+                        "input": "output_5"
                     }
                 ]
             }
@@ -25,7 +25,7 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "14",
+                        "node": "26",
                         "output": "input_1"
                     }
                 ]
@@ -113,8 +113,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "23",
-                        "input": "output_2"
+                        "node": "29",
+                        "input": "output_3"
                     }
                 ]
             },
@@ -163,8 +163,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "23",
-                        "input": "output_3"
+                        "node": "29",
+                        "input": "output_4"
                     }
                 ]
             }
@@ -221,7 +221,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat3",
-            "chat": "\"Companions...dead...\"\n\"And...for what...\"\n\"Why...have you...come here...\"",
+            "chat": "\"Companions...dead...\"\n\"And...for what...\"\n\"Why...have you...come here...?\"",
             "answer1": "\"Help us take revenge on Eyal.\"",
             "answer2": "Leave him alone"
         },
@@ -254,49 +254,6 @@
         "pos_x": 326.3333333333333,
         "pos_y": 263
     },
-    "14": {
-        "id": 14,
-        "name": "chat",
-        "data": {
-            "chatid": "chat6",
-            "chat": "\"Tell me...are you...afraid...to die...?\"",
-            "answer1": "\"Yes\"",
-            "answer2": "\"Never!\""
-        },
-        "class": "chat",
-        "html": "chat2",
-        "typenode": true,
-        "inputs": {
-            "input_1": {
-                "connections": [
-                    {
-                        "node": "2",
-                        "input": "output_1"
-                    }
-                ]
-            }
-        },
-        "outputs": {
-            "output_1": {
-                "connections": [
-                    {
-                        "node": "15",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_2": {
-                "connections": [
-                    {
-                        "node": "17",
-                        "output": "input_1"
-                    }
-                ]
-            }
-        },
-        "pos_x": 791.3333333333334,
-        "pos_y": 999
-    },
     "15": {
         "id": 15,
         "name": "birth-descriptor",
@@ -312,7 +269,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "14",
+                        "node": "26",
                         "input": "output_1"
                     }
                 ]
@@ -380,12 +337,12 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "14",
-                        "input": "output_2"
-                    },
-                    {
                         "node": "18",
                         "input": "output_1"
+                    },
+                    {
+                        "node": "26",
+                        "input": "output_2"
                     }
                 ]
             }
@@ -458,7 +415,7 @@
         "id": 19,
         "name": "lua-code",
         "data": {
-            "code": "for _, act in pairs(game.level.entities) do\n    local rsrc, rtarget = act, game.player\n    if rsrc.reaction_actor and rsrc.reaction_actor[rtarget.unique or rtarget.name] then \n        rsrc.reaction_actor[rtarget.unique or rtarget.name] = -100\n    end\nend"
+            "code": "for _, act in pairs(game.level.entities) do\n    if act.define_as == \"WALROG_HAMMER\" then\n        act:checkAngered(game.player, false, -200)\n    end\nend"
         },
         "class": "lua-code",
         "html": "lua-code",
@@ -469,6 +426,10 @@
                     {
                         "node": "20",
                         "input": "output_1"
+                    },
+                    {
+                        "node": "27",
+                        "input": "output_1"
                     }
                 ]
             }
@@ -478,8 +439,8 @@
                 "connections": []
             }
         },
-        "pos_x": 1882,
-        "pos_y": 366.6666666666667
+        "pos_x": 1941,
+        "pos_y": 371.57142857142856
     },
     "20": {
         "id": 20,
@@ -512,8 +473,8 @@
                 ]
             }
         },
-        "pos_x": 1542,
-        "pos_y": 433.6666666666667
+        "pos_x": 1428.4285714285713,
+        "pos_y": 447
     },
     "21": {
         "id": 21,
@@ -578,58 +539,6 @@
         "pos_x": 2150.75,
         "pos_y": 1128.25
     },
-    "23": {
-        "id": 23,
-        "name": "entry-selector",
-        "data": {
-            "chatid": "welcome",
-            "code": ""
-        },
-        "class": "entry-selector",
-        "html": "entry-selector4",
-        "typenode": true,
-        "inputs": {
-            "input_1": {
-                "connections": []
-            }
-        },
-        "outputs": {
-            "output_1": {
-                "connections": [
-                    {
-                        "node": "25",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_2": {
-                "connections": [
-                    {
-                        "node": "6",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_3": {
-                "connections": [
-                    {
-                        "node": "8",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_4": {
-                "connections": [
-                    {
-                        "node": "2",
-                        "output": "input_1"
-                    }
-                ]
-            }
-        },
-        "pos_x": -912,
-        "pos_y": 426.42857142857144
-    },
     "24": {
         "id": 24,
         "name": "chat",
@@ -656,8 +565,8 @@
                 "connections": []
             }
         },
-        "pos_x": -213.57142857142858,
-        "pos_y": -361
+        "pos_x": -219.42857142857142,
+        "pos_y": -469
     },
     "25": {
         "id": 25,
@@ -675,7 +584,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "23",
+                        "node": "29",
                         "input": "output_1"
                     }
                 ]
@@ -691,7 +600,218 @@
                 ]
             }
         },
-        "pos_x": -667.4285714285714,
-        "pos_y": 131.57142857142858
+        "pos_x": -670,
+        "pos_y": -73.42857142857143
+    },
+    "26": {
+        "id": 26,
+        "name": "chat",
+        "data": {
+            "chatid": "chat6",
+            "chat": "\"...My...help...?\"\n\"Tell me...are you...afraid...to die...?\"",
+            "answer1": "\"Yes\"",
+            "answer2": "\"Never!\" [Listen to him]",
+            "answer3": "\"Are you?!\" [Attack]"
+        },
+        "class": "chat",
+        "html": "chat3",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "2",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "17",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "27",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 791.3333333333334,
+        "pos_y": 999
+    },
+    "27": {
+        "id": 27,
+        "name": "chat",
+        "data": {
+            "chatid": "chat10",
+            "chat": "\"...hah...no...\"\nThe water around you begins to boil.\n\"Farewell...\"",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "26",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "19",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1267.1428571428569,
+        "pos_y": 1412.7142769949776
+    },
+    "28": {
+        "id": 28,
+        "name": "object-has",
+        "data": {
+            "not": false,
+            "who": "player",
+            "in": "all-inventories",
+            "search_by": "define_as",
+            "search": "WAND_WALROG_QUEST"
+        },
+        "class": "object-has",
+        "html": "object-has",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "29",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "30",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -658.4285714285714,
+        "pos_y": 301
+    },
+    "29": {
+        "id": 29,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "welcome",
+            "code": ""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector5",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "28",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "6",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_4": {
+                "connections": [
+                    {
+                        "node": "8",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_5": {
+                "connections": [
+                    {
+                        "node": "2",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -930,
+        "pos_y": 514.4285714285714
+    },
+    "30": {
+        "id": 30,
+        "name": "chat",
+        "data": {
+            "chatid": "chat11",
+            "chat": "\"Well...?\n\"Get...to work...\"",
+            "answer1": "\"Very well\""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "28",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 306.57142857142856,
+        "pos_y": -159
     }
 }

@@ -51,6 +51,12 @@ newEntity{ base = "BASE_NPC_AQUATIC_DEMON", define_as = "WALROG_HAMMER",
 
 		[Talents.T_RIGOR_MORTIS]=5,
 	},
-	can_talk = "campaign-hammer/walrog"
+	resolvers.sustains_at_birth(),
+
+	can_talk = "campaign-hammer+walrog",
 	on_death_lore = "walrog",
+	
+	on_die = function(self, who)
+		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-allies", engine.Quest.COMPLETED, "death-w")
+	end,
 }
