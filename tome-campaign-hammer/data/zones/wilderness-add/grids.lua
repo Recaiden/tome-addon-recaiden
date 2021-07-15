@@ -92,7 +92,7 @@ newEntity{
 	desc = "From their base here, the demons hold back the wizards of Angolwen.",
 	change_level_check = function()
 		local p = game.party:findMember{main=true}
-		if p:hasQuest("campaign-hammer+demon-demon") and p:isQuestStatus("campaign-hammer+demon-main", engine.Quest.DONE) then
+		if p:hasQuest("campaign-hammer+demon-main") and p:isQuestStatus("campaign-hammer+demon-main", engine.Quest.DONE) then
 			return false
 		else
 			game.log("If you went in here now, you would die instantly and uselessly.  Defeat all other threats first.")

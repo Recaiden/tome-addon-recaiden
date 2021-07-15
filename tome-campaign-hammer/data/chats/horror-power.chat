@@ -106,7 +106,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat2",
-            "chat": "The power flows into you, and you grow stronger as it fades away.",
+            "chat": "The power flows into you, and you grow stronger as the vision fades away.",
             "answer1": "More! (+2 Generic Talent points)",
             "answer2": "More! (+10 Stat points)"
         },
@@ -149,7 +149,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat4",
-            "chat": "The power flows into you, and you grow stronger as it fades away.",
+            "chat": "The power flows into you, and you grow stronger as the vision fades away.",
             "answer1": "More! (+2 Class Talent points)",
             "answer2": "More! (+2 Generic Talent points)"
         },
@@ -192,7 +192,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat3",
-            "chat": "The power flows into you, and you grow stronger as it fades away.",
+            "chat": "The power flows into you, and you grow stronger as the vision fades away.",
             "answer1": "More! (+2 Class Talent points)",
             "answer2": "More! (+10 Stat points)"
         },
@@ -303,8 +303,8 @@
                 ]
             }
         },
-        "pos_x": 1734.4285714285713,
-        "pos_y": 48
+        "pos_x": 1727,
+        "pos_y": 78
     },
     "21": {
         "id": 21,
@@ -349,7 +349,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat5",
-            "chat": "It is done.\nThe light has faded away, but it is not gone.  It is part of you now.",
+            "chat": "It is done.\nOnce again you can only see what *is*.\nBut you remember.  You are different now.",
             "answer1": ""
         },
         "class": "chat",
@@ -386,7 +386,7 @@
         "name": "chat",
         "data": {
             "chatid": "welcome",
-            "chat": "The light shines upon you.  It reminds you of your Father.  It is yours to take.",
+            "chat": "You see glowing threads of blue stretched out all around you.  They remind you of your Father.  They are yours to take.",
             "answer1": "Take it (+2 Class Talent points)",
             "answer2": "Take it (+2 Generic Talent points)",
             "answer3": "Take it (+10 Stat points)",

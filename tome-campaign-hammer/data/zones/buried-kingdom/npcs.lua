@@ -79,6 +79,7 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 	on_resurrect = function(self)
 		game.bignews:saySimple(120, "#GOLD#Time strains and snaps.  You are thrown back to the beginning of the fight!  But things aren't quite the same...")
 
+		if not self.rewind then self.rewind = game.turn end
 		if game.player then
 			game.player:teleportRandom(self.x, self.y, 3, 7)
 			game.player:resetToFull()
@@ -100,7 +101,7 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 			self:learnTalent(self.T_DUST_TO_DUST, true, tlevel)
 			self:learnTalent(self.T_HASTE, true, tlevel)
 			self:learnTalent(self.T_CHRONO_TIME_SHIELD, true, tlevel)
-			self:learnTalent(self.T_DRACONIC_WILL], true, 1)
+			self:learnTalent(self.T_DRACONIC_WILL, true, 1)
 			self:forceUseTalent(self.T_DISINTEGRATION, {ignore_energy=true})
 			self:unlearnTalentFull(self.T_FEED, true, tlevel)
 			self:unlearnTalentFull(self.T_DEVOUR_LIFE, true, tlevel)

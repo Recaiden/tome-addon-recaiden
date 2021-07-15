@@ -187,6 +187,7 @@ newEntity{
 
 	on_die = function(self, who)
 		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "last-hope")
+		game.level.data.no_worldport = nil
 	end,
 }
 
@@ -263,7 +264,7 @@ newEntity{
 	autolevel = "caster",
 	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", sense_radius=25, ai_target="target_simple_or_player_radius" },
 	ai_tactic = resolvers.tactic"ranged",
-	resolvers.inscriptions(5, {"regeneration infusion", "shielding rune", "stormshield rune", "blink rune", "wild infusion"}),
+	resolvers.inscriptions(4, {"regeneration infusion", "shielding rune", "stormshield rune", "wild infusion"}),
 
 	on_die = function(self, who)
 	end,

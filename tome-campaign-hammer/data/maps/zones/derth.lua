@@ -24,7 +24,7 @@ defineTile('9', "DOOR")
 defineTile('a', "DOOR")
 defineTile('b', "DOOR")
 
-defineTile('_', "GRASS_ROAD_STONE", nil, "URKIS_IN_TOWN")
+defineTile('U', "GRASS_ROAD_STONE", nil, "URKIS_IN_TOWN")
 
 startx = 0
 starty = 20

@@ -8,6 +8,8 @@ newEntity{
 	name = "Walrog's Draining Wand", color=colors.LIGHT_RED, unique=true, image = "object/artifact/wand_gwais_burninator.png",
 	desc = _t[[This wand can extract the vim of a creature close to death, stealing their life energy to revitalise another.  It is attuned to Walrog, and cannot be used to heal anyone else.]],
 	cost = 300,
+	encumber = 0,
+	plot = true, quest = true,
 	rarity = false,
 	level_range = {25, 35},
 	add_name = false,

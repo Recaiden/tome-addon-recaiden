@@ -72,6 +72,10 @@ on_grant = function(self, who)
 				notice = true, image="terrain/grass.png",
 				add_displays={mod.class.Grid.new{image="terrain/dungeon_entrance01.png", z=4}},
 				change_level=1, glow=true, change_zone="campaign-hammer+crypt-hideout",
+				change_level_check = function()
+					game.log("This dungeon isn't playable yet.  There is no way in.")
+					return true
+				end,
 			}
 			c:resolve() c:resolve(nil, true)
 			spot = level:pickSpot{type="zone-pop", subtype="crypt-hideout"}
@@ -113,8 +117,8 @@ function walrog_capture(self, who)
 	self.walrog_victims = (self.walrog_victims or 0) + 1
 	if self.walrog_victims >= 10 then
 		who:setQuestStatus(self.id, engine.Quest.COMPLETED, "help-w")
-		local wand_o, wand_item, wand_inven_id = player:findInAllInventories("WAND_WALROG_QUEST")
-		player:removeObject(wand_inven_id, wand_item, true)
+		local wand_o, wand_item, wand_inven_id = game.player:findInAllInventories("WAND_WALROG_QUEST")
+		game.player:removeObject(wand_inven_id, wand_item, true)
 		wand_o:removed()
 	end
 end
