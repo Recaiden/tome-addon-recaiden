@@ -165,7 +165,7 @@ return {
 				local x, y = util.findFreeGrid(player.x, player.y, 5, true, {[engine.Map.ACTOR]=true})
 				local kryl = game.zone:makeEntityByName(game.level, "actor", "KRYL_FEIJAN_REBORN")
 				if kryl then
-					game.zone:addEntity(game.level, aeryn, "actor", x, y)
+					game.zone:addEntity(game.level, kryl, "actor", x, y)
 					game.logPlayer(player, "The air is split open by a burning portal, and Kryl'Feijan appears next to you!")
 					for uid, e in pairs(game.level.entities) do
 						if e.define_as and (e.define_as == "TOLAK" or e.define_as == "MERENAS") then

@@ -24,9 +24,9 @@ return {
 			rooms = {"forest_clearing", "rocky_snowy_trees", {"lesser_vault",7}},
 			rooms_config = {forest_clearing={pit_chance=5, filters={{}}}},
 			lesser_vaults_list = {"snow-giant-camp", "perilous-cliffs"},
-			['.'] = is_volcano and function() if rng.percent(5 + game.level.level * 6) then return "LAVA_FLOOR" else return "ROCKY_GROUND" end end or "ROCKY_GROUND",
+			['.'] = {"ROCKY_GROUND", "SAND", "ROCKY_GROUND"},
 			['T'] = "ROCKY_SNOWY_TREE",
-			['#'] = "MOUNTAIN_WALL",
+			['#'] = {"MOUNTAIN_WALL", "SPACETIME_RIFT"},
 			up = "ROCKY_UP2",
 			down = "ROCKY_DOWN8",
 			door = "ROCKY_GROUND",
@@ -34,6 +34,7 @@ return {
 		actor = {
 			class = "mod.class.generator.actor.Random",
 			nb_npc = {20, 30},
+			guardian = "SHASSY_ABOMINATION",
 		},
 		object = {
 			class = "engine.generator.object.Random",
@@ -66,15 +67,34 @@ return {
 		},
 		[2] = {
 			generator = { 
-				map = { up = "CAVE_LADDER_UP_WILDERNESS",}, 
+				map = { up = "CAVE_LADDER_UP",}, 
 				actor = {class = "engine.generator.actor.Random" },
 			},
 		},
 	},
+
+	on_enter = function(lev)
+		if game and game.player and lev == 2 and not game.level.data.hammer_visited_rift then
+			game.level.data.hammer_visited_rift = true
+			require("engine.ui.Dialog"):simplePopup(_t"The Daikara That Was And Will Be", _t"As you climb up from the demon's sanctum, you pass your own future self fleeing down the stairs.  Outside, the mountains are faded and insubstantial, exposing the blue-white threads of the Calendar.  The sun is hidden by a massive temporal rift that splits the skies.  Shimmering figures flit around the edges of the rift, trying to contain the anomaly, but more nightmare creatures emerge every moment.")
+		end
+	end,
 	
 	post_process = function(level)
 		game.state:makeAmbientSounds(level, {
 																	 dungeon2={ chance=250, volume_mod=1, pitch=1, random_pos={rad=10}, files={"ambient/dungeon/dungeon1","ambient/dungeon/dungeon2","ambient/dungeon/dungeon3","ambient/dungeon/dungeon4","ambient/dungeon/dungeon5"}},
 		})
+		if level.level == 2 then
+			local Map = require "engine.Map"
+			if core.shader.allow("volumetric") then
+				level.starfield_shader = require("engine.Shader").new("starfield", {size={Map.viewport.width, Map.viewport.height}})
+			else
+				level.background_particle = require("engine.Particles").new("starfield", 1, {width=Map.viewport.width, height=Map.viewport.height})
+			end
+			if config.settings.tome.weather_effects and core.shader.allow("distort") then
+				level.foreground_particle = require("engine.Particles").new("temporalsnow", 1, {width=Map.viewport.width, height=Map.viewport.height, r=0.65, g=0.25, b=1, rv=-0.001, gv=0, bv=-0.001, factor=2, dir=math.rad(110+180)})
+			end
+			game.state:makeWeather(level, 6, {max_nb=7, chance=1, dir=120, speed={0.1, 0.9}, r=0.2, g=0.4, b=1, alpha={0.2, 0.4}, particle_name="weather/grey_cloud_%02d"})
+		end
 	end,
 }

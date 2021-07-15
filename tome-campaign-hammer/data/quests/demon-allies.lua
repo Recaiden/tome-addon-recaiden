@@ -20,7 +20,7 @@ desc = function(self, who)
 	elseif self:isCompleted("help-s") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#Shassy'Kaish will help you.  Probably.#WHITE#"
 	else
-		desc[#desc+1] = _t"#RED#[UNIMPLEMENTED]#LIGHT_GREY#Seek out the ancient explorer Shassy'Kaish among her cultists in the Daikara mountains.#WHITE#"
+		desc[#desc+1] = _t"#LIGHT_GREY#Seek out the ancient explorer Shassy'Kaish among her cultists in the Daikara mountains.#WHITE#"
 	end
 	
 	if self:isCompleted("death-w") then

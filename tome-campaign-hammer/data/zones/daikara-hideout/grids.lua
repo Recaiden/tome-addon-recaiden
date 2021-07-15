@@ -1,6 +1,9 @@
 load("/data/general/grids/basic.lua")
 load("/data/general/grids/cave.lua")
 load("/data/general/grids/mountain.lua")
+load("/data/general/grids/water.lua")
+load("/data/general/grids/sand.lua")
+load("/data/general/grids/void.lua")
 load("/data/general/grids/lava.lua", function(e) e.on_stand = nil end)
 
 newEntity{
@@ -33,4 +36,14 @@ newEntity{
 	notice = true,
 	always_remember = true,
 	change_level = 1,
+	change_level_check = function()
+		local p = game.party:findMember{main=true}
+		if p:hasQuest("campaign-hammer+demon-allies") and p:isQuestStatus("campaign-hammer+demon-allies", engine.Quest.COMPLETED, "daikara-gate-open") then
+			return false
+		else
+			game.log("Heading towards the stairs, your see yourself coming the other direction. You decide to turn around, and at the top of the stairs, the other you does the same.")
+			return true
+		end
+		return false
+	end,
 }
