@@ -1,6 +1,6 @@
 return {
 	name = "Shellsea Shores",
-	level_range = {30, 40},
+	level_range = {25, 40},
 	level_scheme = "player",
 	max_level = 3,
 	decay = {300, 800},

@@ -143,6 +143,37 @@ return {
 			game.level.data.hammer_visited_hope = true
 			require("engine.ui.Dialog"):simplePopup(_t"The Battle for Last Hope", _t"Meteors and catapult-stones rain down, sling-stones and fireballs fill the air.  Champions of Urh'rok wade through the fray as wretchlings die in droves.  In the confusion of battle, you could slip through to the city...")
 		end
+		if game and game.player and lev == 6 then
+			local happyWalrog = game.player:hasQuest("campaign-hammer+demon-allies") and game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-w") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("death-w")
+			local happyShassy = game.player:hasQuest("campaign-hammer+demon-allies") and game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-s") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("death-s") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("angry-s")
+			local happyKyrl = game.player:hasQuest("campaign-hammer+demon-allies") and game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-k") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("death-k")
+			-- Walrog kills the random enemies that initially populate the room.
+			if happyWalrog then
+				require("engine.ui.Dialog"):simplePopup(_t"The Battle for Last Hope", _t"As you approach the center of the city, the river rises at Walrog's command.  The palace begins to flood.  Just before you enter the throne room, a torrent of water smashes through the doors and washes away the king's guards.")
+				for uid, e in pairs(game.level.entities) do
+					if e.faction == "allied-kingdoms" and e.rank < 4 then
+						e:die()
+					end
+				end
+			end
+			-- Shasshy'kaish gives you an extra defense
+			if happyShassy then
+				game.player:setEffect(game.player.EFF_HAMMER_CULTIST_REVIVE, 99, {})
+			end
+			-- Kryl'Feijan joins the fight like Aeryn
+			if happyKyrl then
+				local x, y = util.findFreeGrid(player.x, player.y, 5, true, {[engine.Map.ACTOR]=true})
+				local kryl = game.zone:makeEntityByName(game.level, "actor", "KRYL_FEIJAN_REBORN")
+				if kryl then
+					game.zone:addEntity(game.level, aeryn, "actor", x, y)
+					game.logPlayer(player, "The air is split open by a burning portal, and Kryl'Feijan appears next to you!")
+					for uid, e in pairs(game.level.entities) do
+						if e.define_as and (e.define_as == "TOLAK" or e.define_as == "MERENAS") then
+							e:setTarget(kryl)
+						end
+					end
+				end
+			end
 	end,
 	
 }

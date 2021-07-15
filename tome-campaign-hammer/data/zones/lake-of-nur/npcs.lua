@@ -1,6 +1,19 @@
 local Talents = require("engine.interface.ActorTalents")
 
-load("/data/general/npcs/aquatic_critter.lua", function(e) if e.rarity then e.water_rarity, e.rarity = e.rarity, nil end end)
+rarityWithLoot = function(add, mult)
+	add = add or 0; mult = mult or 1;
+	return function(e)
+		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
+	end
+end
+
+load("/data/general/npcs/aquatic_critter.lua", function(e)
+			 e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+			 e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+			 if e.rarity then e.water_rarity, e.rarity = e.rarity, nil end
+end)
 load(
 	"/data/general/npcs/aquatic_demon.lua",
 	function(e)
@@ -12,10 +25,14 @@ load(
 		end
 	end
 )
-load("/data/general/npcs/horror_aquatic.lua", function(e) if e.rarity then e.horror_water_rarity, e.rarity = e.rarity, nil end end)
-load("/data/general/npcs/horror.lua", rarity(0))
-load("/data/general/npcs/snake.lua", rarity(3))
-load("/data/general/npcs/plant.lua", rarity(3))
+load("/data/general/npcs/horror_aquatic.lua", function(e)
+			 			 e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+						 e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+						 if e.rarity then e.horror_water_rarity, e.rarity = e.rarity, nil end
+end)
+load("/data/general/npcs/horror.lua", rarityWithLoot(0))
+load("/data/general/npcs/snake.lua", rarityWithLoot(3))
+load("/data/general/npcs/plant.lua", rarityWithLoot(3))
 
 newEntity{
 	base = "BASE_NPC_HORROR_AQUATIC", define_as = "SWARMING_ABYSSAL_HORROR",

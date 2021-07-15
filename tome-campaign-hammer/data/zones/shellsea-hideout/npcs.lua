@@ -1,7 +1,16 @@
-load("/data/general/npcs/aquatic_demon.lua", rarity(99))
-load("/data/general/npcs/aquatic_critter.lua", rarity(0))
-load("/data/general/npcs/naga.lua", rarity(0))
-load("/data/general/npcs/yaech.lua", rarity(0))
+rarityWithTreasure = function(add, mult)
+	add = add or 0; mult = mult or 1;
+	return function(e)
+		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=80, nb=1, {type="gem"}}
+		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
+	end
+end
+
+load("/data/general/npcs/aquatic_demon.lua", switchRarity("friendlies"))
+load("/data/general/npcs/aquatic_critter.lua", rarityWithTreasure(0))
+load("/data/general/npcs/naga.lua", rarityWithTreasure(0))
+load("/data/general/npcs/yaech.lua", rarityWithTreasure(0))
 
 local Talents = require("engine.interface.ActorTalents")
 

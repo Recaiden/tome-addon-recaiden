@@ -1,4 +1,4 @@
 return {
-	{ 364, "Vengeaance", },
+	{ 364, "Vengeance", },
 	{ 1, "Vigilance", },
 }

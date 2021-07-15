@@ -1,0 +1,854 @@
+{
+    "32": {
+        "id": 32,
+        "name": "lua-cond",
+        "data": {
+            "not": false,
+            "code": "chat_env.lucky"
+        },
+        "class": "lua-cond",
+        "html": "lua-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "50",
+                        "input": "output_5"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "60",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -1312,
+        "pos_y": 375.42857142857144
+    },
+    "34": {
+        "id": 34,
+        "name": "chat",
+        "data": {
+            "chatid": "back-to-shassy",
+            "chat": "You find Shasshhiy'Kaish idly tossing and catching a meteor.  She smiles at you, but says nothing.",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "51",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": -859.5714285714286,
+        "pos_y": -528
+    },
+    "37": {
+        "id": 37,
+        "name": "unique",
+        "data": {
+            "store": "player",
+            "id": "campaign-hammer+shassy:37"
+        },
+        "class": "unique",
+        "html": "unique",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "50",
+                        "input": "output_4"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "41",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -2263.6666666666665,
+        "pos_y": -219
+    },
+    "38": {
+        "id": 38,
+        "name": "quest-cond",
+        "data": {
+            "not": false,
+            "quest": "campaign-hammer+demon-allies",
+            "status": "COMPLETED",
+            "sub": "help-s"
+        },
+        "class": "quest-cond",
+        "html": "quest-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "50",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "53",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -1163.5714285714287,
+        "pos_y": -204
+    },
+    "39": {
+        "id": 39,
+        "name": "quest-cond",
+        "data": {
+            "not": false,
+            "quest": "campaign-hammer+demon-allies",
+            "status": "COMPLETED",
+            "sub": "angry-s"
+        },
+        "class": "quest-cond",
+        "html": "quest-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "50",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "49",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -1209.5714285714287,
+        "pos_y": 84
+    },
+    "41": {
+        "id": 41,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "chat16",
+            "code": "chat_env.lucky = rng.percent(game.player:getLck())"
+        },
+        "class": "entry-selector",
+        "html": "entry-selector2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "37",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "50",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": []
+            }
+        },
+        "pos_x": -2007,
+        "pos_y": -256.3333333333333
+    },
+    "43": {
+        "id": 43,
+        "name": "chat",
+        "data": {
+            "chatid": "unlucky",
+            "chat": "\"You've come here to ask for my help?  After all the test subjects I sent?  All the people I corrupted? You want more?  That seems downright greedy.\"",
+            "answer1": "(Agree that she's done enough)",
+            "answer2": "(Ignore her self-serving nonsense)",
+            "answer3": "\"You've been helping Eyalites escape their punishment.  You won't get away with this.\""
+        },
+        "class": "chat",
+        "html": "chat3",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "45",
+                        "input": "output_1"
+                    },
+                    {
+                        "node": "50",
+                        "input": "output_6"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "47",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "44",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -1391,
+        "pos_y": 653.5714285714286
+    },
+    "44": {
+        "id": 44,
+        "name": "lua-cond",
+        "data": {
+            "not": false,
+            "code": "game.state:attr(\"demon_statues_activated\") > 3"
+        },
+        "class": "lua-cond",
+        "html": "lua-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "43",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "45",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -849,
+        "pos_y": 953
+    },
+    "45": {
+        "id": 45,
+        "name": "chat",
+        "data": {
+            "chatid": "chat18",
+            "chat": "\"Oh, my dear, I absolutely will.  No one on the fearscape can touch me, and besides, you all need me.\"\n\"Now where were we?",
+            "answer1": "\"...we need your help.\""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "44",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "43",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -310,
+        "pos_y": 1044
+    },
+    "46": {
+        "id": 46,
+        "name": "quest-set",
+        "data": {
+            "quest": "campaign-hammer+demon-allies",
+            "status": "COMPLETED",
+            "sub": "angry-s"
+        },
+        "class": "quest-set",
+        "html": "quest-set",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "47",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "60",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "48",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -82,
+        "pos_y": 726.75
+    },
+    "47": {
+        "id": 47,
+        "name": "chat",
+        "data": {
+            "chatid": "chat17",
+            "chat": "\"Very well.  But you'll have to do me a small favor first.  You see, some of my sweet pathetic cultists have been vanishing.  Eaten by dragons, maybe?  Go sort it out.\"",
+            "answer1": "(Agree)",
+            "answer2": "(Refuse)"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "43",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "56",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "46",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -763.25,
+        "pos_y": 587
+    },
+    "48": {
+        "id": 48,
+        "name": "chat",
+        "data": {
+            "chatid": "chat19",
+            "chat": "Shasshhiy'Kaish jabs a tail at you, glowering, and walks away.\n\"Get out of here.  Don't waste my time.\"",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "46",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 278.75,
+        "pos_y": 674
+    },
+    "49": {
+        "id": 49,
+        "name": "chat",
+        "data": {
+            "chatid": "already-angry",
+            "chat": "\"Look who's come crawling back.\"\n\"It's too late.  Don't annoy me further.\"",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "39",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": -790.5714285714286,
+        "pos_y": 90
+    },
+    "50": {
+        "id": 50,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "welcome",
+            "code": ""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector6",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "41",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "51",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "38",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "39",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_4": {
+                "connections": [
+                    {
+                        "node": "37",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_5": {
+                "connections": [
+                    {
+                        "node": "32",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_6": {
+                "connections": [
+                    {
+                        "node": "43",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -1891.5714285714287,
+        "pos_y": 233.42857142857142
+    },
+    "51": {
+        "id": 51,
+        "name": "quest-cond",
+        "data": {
+            "not": false,
+            "quest": "campaign-hammer+demon-allies",
+            "status": "COMPLETED",
+            "sub": "reward-s"
+        },
+        "class": "quest-cond",
+        "html": "quest-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "50",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "34",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -1234,
+        "pos_y": -481.42857142857144
+    },
+    "53": {
+        "id": 53,
+        "name": "chat",
+        "data": {
+            "chatid": "reward-for-dungeon",
+            "chat": "\"Banished to the future, were they?  My my, we'll have such *fun* now that they're back in the present.\"\n\"...\"\n\"Oh, yes, you did well, didn't you?  You deserve a reward.\"",
+            "answer1": "(Accept her reward)",
+            "answer2": "(Insist on an actually useful reward)"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "38",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "57",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "54",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -771.6666666666666,
+        "pos_y": -230.33333333333334
+    },
+    "54": {
+        "id": 54,
+        "name": "chat",
+        "data": {
+            "chatid": "false-complaint",
+            "chat": "\"Oh, you're no fun at all.\"",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "53",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "55",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -130.57142857142858,
+        "pos_y": -95
+    },
+    "55": {
+        "id": 55,
+        "name": "quest-set",
+        "data": {
+            "quest": "campaign-hammer+demon-allies",
+            "status": "COMPLETED",
+            "sub": "reward-s"
+        },
+        "class": "quest-set",
+        "html": "quest-set",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "54",
+                        "input": "output_1"
+                    },
+                    {
+                        "node": "61",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "58",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 686.25,
+        "pos_y": -96.75
+    },
+    "56": {
+        "id": 56,
+        "name": "quest-set",
+        "data": {
+            "quest": "campaign-hammer+demon-allies",
+            "status": "COMPLETED",
+            "sub": "daikara-gate-open"
+        },
+        "class": "quest-set",
+        "html": "quest-set",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "47",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": -4.571428571428571,
+        "pos_y": 378
+    },
+    "57": {
+        "id": 57,
+        "name": "lua-code",
+        "data": {
+            "code": "game.player:gainExp(1500)"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "53",
+                        "input": "output_1"
+                    },
+                    {
+                        "node": "60",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "61",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -216,
+        "pos_y": -308.75
+    },
+    "58": {
+        "id": 58,
+        "name": "chat",
+        "data": {
+            "chatid": "chat23",
+            "chat": "\"-it will take some time to take effect, but during the battle, see, the lives volunteered by my cult will protect you should the worst should happen.\"\n\"We wouldn't want to lose such a *delightful* bringer of doom.\"",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "55",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 997.2307692307693,
+        "pos_y": -159
+    },
+    "60": {
+        "id": 60,
+        "name": "chat",
+        "data": {
+            "chatid": "lucky",
+            "chat": "\"You've come here to ask for my help with the invasion?  I'd be *delighted*.  Just do one small thing for me...\"\nThe demon's tails reach towards you",
+            "answer1": "(Agree)",
+            "answer2": "(Resist)"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "32",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "57",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "46",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -981.3333333333334,
+        "pos_y": 321
+    },
+    "61": {
+        "id": 61,
+        "name": "chat",
+        "data": {
+            "chatid": "regret",
+            "chat": "You had thought, after what you've seen on the fearscape, that nothing could phase you.  You were wrong.  And that wasn't even *supposed* to be torture.",
+            "answer1": "(Shudder)"
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "57",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "55",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 97,
+        "pos_y": -336.25
+    }
+}

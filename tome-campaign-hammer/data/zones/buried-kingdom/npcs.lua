@@ -26,7 +26,7 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 	level_range = {40, nil}, exp_worth = 2,
 	max_life = 200, life_rating = 20, fixed_rating = true,
 	stats = { str=5, dex=15, cun=20, mag=50, wil=70, con=20 },
-	rank = 5,
+	rank = 4,
 	size_category = 3,
 	infravision = 10,
 	instakill_immune = 1,
@@ -47,7 +47,6 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 
 	resolvers.talents{
 		[Talents.T_SPACETIME_STABILITY]=15,
-		[Talents.T_DRACONIC_WILL]=1,
 
 		[Talents.T_CALL_OF_THE_CRYPT]={base=4, every=5, max=7},
 		[Talents.T_LORD_OF_SKULLS]={base=4, every=5, max=7},
@@ -96,22 +95,23 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 		end
 		
 		local tlevel = self:getTalentLevelRaw(self.T_ECHOES_FROM_THE_VOID)
-		if self:knowTalent(self.T_FEED) then --second death
+		if self.died >= 2  then --second death
 			self:learnTalent(self.T_DISINTEGRATION, true, tlevel)
 			self:learnTalent(self.T_DUST_TO_DUST, true, tlevel)
 			self:learnTalent(self.T_HASTE, true, tlevel)
 			self:learnTalent(self.T_CHRONO_TIME_SHIELD, true, tlevel)
+			self:learnTalent(self.T_DRACONIC_WILL], true, 1)
 			self:forceUseTalent(self.T_DISINTEGRATION, {ignore_energy=true})
 			self:unlearnTalentFull(self.T_FEED, true, tlevel)
 			self:unlearnTalentFull(self.T_DEVOUR_LIFE, true, tlevel)
 			self:unlearnTalentFull(self.T_FEED_POWER, true, tlevel)
 			self:unlearnTalentFull(self.T_FEED_STRENGTHS, true, tlevel)
 			self.inc_damage.all = self.inc_damage.all + 24
-			self.rank = 6
+			self.rank = 10
 			self:doEmote(_t"Brother, can you not see that your changes are ruining the project!?", 100)
 			self.emote_random = {chance=3, _t"Finally, the king is silent.", _t"All of this will be undone!", _t"At last, I live again!"}
 		end
-		if self:knowTalent(self.T_CURSE_OF_VULNERABILITY) then --first death
+		if self.died == 1 then --first death
 			self:learnTalent(self.T_FEED, true, tlevel)
 			self:learnTalent(self.T_DEVOUR_LIFE, true, tlevel)
 			self:learnTalent(self.T_FEED_POWER, true, tlevel)
@@ -119,9 +119,13 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 			self:unlearnTalentFull(self.T_CURSE_OF_VULNERABILITY)
 			self:unlearnTalentFull(self.T_CURSE_OF_DEATH)
 			self.inc_damage.all = self.inc_damage.all + 30
+			self.rank = 5
 			self:doEmote(_t"But where is your sister? She-", 100)
 			self.emote_random = {chance=3, _t"They were here even then.", _t"I made them well.", _t"Please, stranger-"}
 		end
+		self.vim = self.max_vim
+		self.souls = self.max_souls
+		self.paradox = 300
 		game.turn = self.rewind	
 	end,
 	
