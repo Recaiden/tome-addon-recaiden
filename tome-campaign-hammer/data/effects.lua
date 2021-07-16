@@ -31,7 +31,7 @@ newEffect{
 	subtype = { aura=true },
 	status = "beneficial",
 	parameters = { life=100 },
-	decrease = 0,
+	decrease = 0, cancel_on_level_change = true,
 	activate = function(self, eff)	end,
 	deactivate = function(self, eff) end,
 	callbackOnHit = function(self, eff, cb, src)

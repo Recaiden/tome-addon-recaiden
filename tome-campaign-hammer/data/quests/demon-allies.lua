@@ -117,8 +117,12 @@ function walrog_capture(self, who)
 	self.walrog_victims = (self.walrog_victims or 0) + 1
 	if self.walrog_victims >= 10 then
 		who:setQuestStatus(self.id, engine.Quest.COMPLETED, "help-w")
-		local wand_o, wand_item, wand_inven_id = game.player:findInAllInventories("WAND_WALROG_QUEST")
-		game.player:removeObject(wand_inven_id, wand_item, true)
-		wand_o:removed()
+		game:onTickEnd(function()
+				local wand_o, wand_item, wand_inven_id = game.player:findInAllInventoriesBy("define_as", "WAND_WALROG_QUEST")
+				if wand_o and wand_inven_id and wand_item then
+					game.player:removeObject(wand_inven_id, wand_item, true)
+					wand_o:removed()
+				end
+		end)
 	end
 end
