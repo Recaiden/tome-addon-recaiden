@@ -31,6 +31,18 @@ newEntity{
 				game.logPlayer(who, "#CRIMSON#That creature is already dead!")
 				return nil
 			end
+			if target.type ~= "aquatic" then
+				game.logPlayer(who, "#CRIMSON#That creature is not one of your targets!")
+				return nil
+			end
+			if target.rank >= 4 then
+				game.logPlayer(who, "#CRIMSON#That creature is too powerful!")
+				return nil
+			end
+			if target.on_die then
+				game.logPlayer(who, "#CRIMSON#That creature is too unstable to drain!")
+				return nil
+			end
 			if target.life / target.max_life > 0.3 then
 				game.logPlayer(who, "#CRIMSON#That creature is not hurt enough to drain.")
 				return nil

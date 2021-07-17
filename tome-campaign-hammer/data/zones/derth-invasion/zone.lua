@@ -59,23 +59,31 @@ return {
 			nb_trap = {0, 0},
 		},
 	},	
-	levels =
-		{
-			[1] = {
-				generator = {
-					map = {
-						up = "GRASS_UP_WILDERNESS",
-					},
-					actor = {
-						class = "mod.class.generator.actor.Random",
-						filters = { {type="animal"}, {type="humanoid"},},
-						nb_npc = {20, 25},
-					},
+	levels = {
+		[1] = {
+			generator = {
+				map = {
+					up = "GRASS_UP_WILDERNESS",
+				},
+				actor = {
+					class = "mod.class.generator.actor.Random",
+					filters = { {type="animal"}, {type="humanoid"},},
+					nb_npc = {20, 25},
+				},
 			},
 		},
 		[2] = {
+			width=60, height=40,
 			generator = {
 				map = {
+					class = "engine.generator.map.MapScript",
+					mapscript = "!river-crossing",
+					['~'] = "GRASS_ROAD_DIRT",
+					['T'] = "TREE",
+					[';'] = "GRASS",
+					['w'] = "DEEP_WATER",
+					['<'] = "GRASS_UP4",
+					['>'] = "GRASS_DOWN6",
 				},
 				actor = {
 					class = "mod.class.generator.actor.Random",

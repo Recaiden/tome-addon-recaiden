@@ -4,10 +4,10 @@ alter = function(add, mult)
 	return function(e)
 		if e.rarity then
 			e.rarity = math.ceil(e.rarity * mult + add)
-			e.name = rng.table{_t"crystalline ", _t"shining ", _t"scintillating "}..e:getName()
+			if e.type ~= "dragon" then e.name = rng.table{_t"crystalline ", _t"glimmering ", _t"scintillating "}..e:getName() end
 			e.make_escort = e.make_escort or {}
 			e.make_escort[#e.make_escort+1] = {
-				type="immovable", subtype="crystal", number=3, no_subescort=true
+				type="immovable", subtype="crystal", number=2, no_subescort=true
 			}
 			e.faction = "rhalore"
 			e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
@@ -38,7 +38,7 @@ load("/data/general/npcs/bear.lua", alter(2))
 load("/data/general/npcs/elven-warrior.lua", alter(0))
 load("/data/general/npcs/elven-caster.lua", alter(0))
 
-load("/data/general/npcs/all.lua", alter(4, 35))
+load("/data/general/npcs/all.lua", rarity(4, 35))
 
 local Talents = require("engine.interface.ActorTalents")
 

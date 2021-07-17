@@ -15,8 +15,12 @@ return {
 	day_night = true,
 	no_worldport = true,
 	persistent = "zone",
-	ambient_music = "Through the Dark Portal.ogg",
-	--ambient_music = {"For the king and the country!.ogg"},
+	ambient_music = function()
+		if game.level.level == 6 then return "Through the Dark Portal.ogg" end
+		if game.level.level == 5 then return "For the king and the country!.ogg" end
+		return "Hold the Line.ogg"
+	end,
+	--ambient_music = 
 	min_material_level = 4,
 	max_material_level = 5,
 	generator =  {
@@ -43,7 +47,7 @@ return {
 				{type="humanoid", subtype="human", random_boss={rank = 3.5, loot_quantity = 2,}},
 				{type="humanoid", subtype="halfling", random_boss={rank = 3.5, loot_quantity = 2,}},
 			},
-			nb_npc = {20, 30},
+			nb_npc = {30, 45},
 		},
 		object = {
 			class = "engine.generator.object.Random",
@@ -64,6 +68,9 @@ return {
 		},
 		[2] = {
 			width = 25, height = 25,
+			actor = {
+				nb_npc = {15, 25},
+			},
 		},
 		[3] = {
 			generator = {

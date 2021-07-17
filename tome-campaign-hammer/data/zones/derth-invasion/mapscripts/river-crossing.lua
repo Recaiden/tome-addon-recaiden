@@ -1,14 +1,14 @@
-local merge_order = {'.', '_', 'r', '+', '#', 'O', ';', '=', 'T'}
+local merge_order = {'.', '_', 'r', '+', '#', 'O', ';', '~', 'T'}
 
 -- trees layer
 local wfcmain = WaveFunctionCollapse.new{
 	mode="overlapping", async=true,
-	sample=self:getFile("!forest-bits.tmx", "samples"),
+	sample=self:getFile("!trees.tmx", "samples"),
 	size={self.mapsize.w, self.mapsize.h},
 	n=3, symmetry=8, periodic_out=false, periodic_in=false, has_foundation=false
 }
 -- Wait for all generators to finish
-if not WaveFunctionCollapse:waitAll(wfcmain, wfcwater) then print("[inner_outer] a WFC failed") return self:redo() end
+if not WaveFunctionCollapse:waitAll(wfcmain) then print("[inner_outer] a WFC failed") return self:redo() end
 
 if wfcmain:eliminateByFloodfill{'T', '#'} < 400 then return self:redo() end
 
@@ -25,8 +25,8 @@ if tm.data_h > tm.data_w then
 end
 if not start or not stop then return self:redo() end
 
--- Build up a road inside a new Tilemap
-local roadpath = tm:tunnelAStar(start, stop, '=', nil, nil, {virtual=true, erraticness=5, weights_fct=function(x, y, c)
+-- Road
+local roadpath = tm:tunnelAStar(start, stop, '~', nil, nil, {virtual=true, erraticness=5, weights_fct=function(x, y, c)
 	return 9 / (tm:countNeighbours(tm:point(x, y), ';')+0.001)
 end})
 if not roadpath then return self:redo() end
@@ -34,22 +34,28 @@ if not roadpath then return self:redo() end
 local road = Tilemap.new(self.mapsize)
 local road_group = road:group{}
 for _, p in ipairs(roadpath) do
-	for _, np in ipairs(select(2, tm:countNeighbours(p, {';', 'T'}, '='))) do
-		road:put(np, '=') road_group:add(np)
-	end
-	road:put(p, '=') road_group:add(p)
+	road:put(p, '~') road_group:add(p)
 end
-
--- Find random points along the road
-for i = 1, rng.range(4, 7) do
-	local p = road_group:pickSpot("any")
-	if p then
-		road_group:remove(p)
-		self:addSpot(p.x, p.y, "road", "caravan")
-	end
-end
-
 tm:merge(1, 1, road, merge_order)
+
+-- River
+local rstart = tm:locateTile(';', nil, math.floor(tm.data_w*0.6), 1, math.floor(tm.data_w*0.9), 1)
+local rstop = tm:locateTile(';', nil, math.floor(tm.data_w*0.6), tm.data_h-1, math.floor(tm.data_w*0.9), tm.data_h-1)
+if not rstart or not rstop then return self:redo() end
+local riverpath = tm:tunnelAStar(rstart, rstop, 'w', nil, nil, {virtual=true, erraticness=10, weights_fct=function(x, y, c)
+	return 9 / (tm:countNeighbours(tm:point(x, y), ';')+0.001)
+end})
+if not riverpath then return self:redo() end
+
+local river = Tilemap.new(self.mapsize)
+local river_group = river:group{}
+for _, p in ipairs(riverpath) do
+	for _, np in ipairs(select(2, tm:countNeighbours(p, {';', 'T'}, 'w'))) do
+		river:put(np, 'w') river_group:add(np)
+	end
+	river:put(p, 'w') river_group:add(p)
+end
+tm:merge(1, 1, river, merge_order)
 
 tm:put(start, '<')
 tm:put(stop, '>')

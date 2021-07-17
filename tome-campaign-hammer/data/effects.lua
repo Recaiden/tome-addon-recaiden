@@ -17,7 +17,7 @@ newEffect{
 	status = "beneficial",
 	parameters = {},
 	activate = function(self, eff)
-		eff.dur = 666
+		eff.dur = 665
 		self:effectTemporaryValue(eff, "can_breath", {water = 1})
 	end,
 	deactivate = function(self, eff) end,

@@ -9,6 +9,7 @@ end
 
 load("/data/general/npcs/demon-major.lua", rarity(1))
 load("/data/general/npcs/demon-minor.lua", rarity(0))
+load("/data/general/npcs/plant.lua", rarity(50))
 load("/data/general/npcs/all.lua", rarity(20, 50))
 
 local Talents = require("engine.interface.ActorTalents")
@@ -43,7 +44,7 @@ newEntity{ base = "BASE_NPC_LAST_HOPE",
 	name = "last hope guard", color=colors.LIGHT_UMBER,
 	desc = _t[[A stern-looking guard, he will not let you disturb the town.]],
 	level_range = {1, nil}, exp_worth = 0,
-	rarity = 3,
+	rarity = 1,
 	max_life = resolvers.rngavg(70,80),
 	resolvers.equip{
 		{type="weapon", subtype="longsword", not_properties={"unique"}, autoreq=true},
@@ -51,6 +52,10 @@ newEntity{ base = "BASE_NPC_LAST_HOPE",
 	},
 	combat_armor = 2, combat_def = 0,
 	resolvers.talents{ [Talents.T_RUSH]=1, [Talents.T_PERFECT_STRIKE]=1, },
+	make_escort = {
+		{name="human citizen", number=1},
+		{name="halfling citizen", number=1},
+	},
 }
 
 newEntity{ base = "BASE_NPC_LAST_HOPE",
@@ -65,14 +70,188 @@ newEntity{ base = "BASE_NPC_LAST_HOPE",
 	autolevel = "slinger",
 	resolvers.equip{
 		{type="weapon", subtype="sling", not_properties={"unique"}, autoreq=true}, 
-		{type="ammo", subtype="shot", not_properties={"unique"}, autoreq=true} },
-	}
+		{type="ammo", subtype="shot", not_properties={"unique"}, autoreq=true}
+	},
+	make_escort = {
+		{name="human citizen", number=1},
+		{name="halfling citizen", number=1},
+	},
+}
 
+newEntity{ base = "BASE_NPC_LAST_HOPE",
+	name = "shadowblade", color_r=resolvers.rngrange(0, 10), color_g=resolvers.rngrange(0, 10), color_b=resolvers.rngrange(100, 120),
+	desc = _t[[These rogues are not who you'd usually expect to save the kingdom.  But having everyone dragged to hell is bad for business.]],
+	level_range = {14, nil}, exp_worth = 1,
+	rarity = 4,
+	combat_armor = 3, combat_def = 50,
+	combat_critical_power = 50,
+	resolvers.auto_equip_filters("Rogue"),
+	resolvers.equip{
+		{type="weapon", subtype="dagger", autoreq=true},
+		{type="weapon", subtype="dagger", autoreq=true},
+		{type="armor", subtype="light", autoreq=true}
+	},
+	resolvers.talents{
+		[Talents.T_LETHALITY]={base=1, every=6, max=5},
+		[Talents.T_KNIFE_MASTERY]={base=0, every=6, max=6},
+		[Talents.T_WEAPON_COMBAT]={base=0, every=6, max=6},
+		[Talents.T_STEALTH]={base=3, every=5, max=8},
+		[Talents.T_DUAL_WEAPON_MASTERY]={base=2, every=6, max=6},
+		[Talents.T_TEMPO]={base=2, every=6, max=6},
+		[Talents.T_DUAL_STRIKE]={base=1, every=6, max=6},
+		[Talents.T_SHADOWSTEP]={base=2, every=6, max=6},
+		[Talents.T_LETHALITY]={base=5, every=6, max=8},
+		[Talents.T_SHADOW_LEASH]={base=1, every=6, max=6},
+		[Talents.T_SHADOW_AMBUSH]={base=1, every=6, max=6},
+		[Talents.T_SHADOW_COMBAT]={base=1, every=6, max=6},
+		[Talents.T_SHADOW_VEIL]={last=20, base=0, every=6, max=6},
+		[Talents.T_INVISIBILITY]={last=30, base=0, every=6, max=6},
+	},
+	max_life = resolvers.rngavg(120,140),
+
+	resolvers.sustains_at_birth(),
+	autolevel = "rogue",
+	power_source = {technique=true, arcane=true},
+}
+
+-- bonus shalore
+newEntity{
+	define_as = "BASE_NPC_ELVEN_HERO",
+	type = "humanoid", subtype = "shalore",
+	display = "p", color=colors.UMBER,
+	faction = "allied-kingdoms",
+
+	combat = { dam=resolvers.rngavg(5,12), atk=2, apr=6, physspeed=2 },
+
+	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, QUIVER=1 },
+	resolvers.drops{chance=20, nb=1, {} },
+	resolvers.drops{chance=10, nb=1, {type="money"} },
+	infravision = 10,
+	lite = 1,
+
+	life_rating = 15,
+	rank = 2,
+	size_category = 3,
+
+	open_door = true,
+
+	resolvers.racial(),
+	resolvers.talents{ [Talents.T_ARMOUR_TRAINING]=3, [Talents.T_WEAPON_COMBAT]={base=1, every=10, max=5}, [Talents.T_WEAPONS_MASTERY]={base=0, every=10, max=5} },
+
+	autolevel = "warrior",
+	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=3, },
+	stats = { str=20, dex=8, mag=6, con=16 },
+	power_source = {technique=true},
+}
+
+newEntity{ base = "BASE_NPC_ELVEN_HERO",
+	name = "scarred elven warrior", color=colors.UMBER,
+	desc = _t[[A elven refugee from Elvala, taking any opportunity to fight back against the demon hordes.]],
+	level_range = {15, nil}, exp_worth = 1,
+	rarity = 5,
+	rank = 3,
+	ai = "tactical",
+	ai_tactic = resolvers.tactic"melee",
+	max_life = resolvers.rngavg(100,110),
+	resolvers.equip{
+		{type="weapon", subtype="waraxe", autoreq=true},
+		{type="armor", subtype="shield", autoreq=true},
+		{type="armor", subtype="heavy", autoreq=true},
+	},
+	combat_armor = 20, combat_def = 26,
+	resolvers.talents{
+		[Talents.T_SHIELD_PUMMEL]={base=2, every=10, max=7},
+		[Talents.T_ASSAULT]={base=3, every=7, max=7},
+		[Talents.T_BLEEDING_EDGE]={base=3, every=7, max=7},
+	},
+	resolvers.inscriptions(1, "rune"),
+	resolvers.inscriptions(2, {"heroism infusion", "biting gale rune"}),
+}
+
+-- bonus thalore
+newEntity{
+	define_as = "BASE_NPC_THALORE_HERO",
+	type = "humanoid", subtype = "thalore",
+	display = "p", color=colors.WHITE,
+	faction = "allied-kingdoms",
+	exp_worth = 0,
+	combat = { dam=resolvers.rngavg(1,2), atk=2, apr=0, dammod={str=0.4} },
+
+	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, QUIVER=1 },
+	lite = 3,
+
+	life_rating = 10,
+	rank = 2,
+	size_category = 3,
+
+	open_door = true,
+
+	resolvers.racial(),
+	resolvers.inscriptions(1, "rune"),
+
+	autolevel = "warrior",
+	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=3, },
+	stats = { str=12, dex=8, mag=6, con=10 },
+
+	resolvers.drops{chance=85, nb=1, {}}
+}
+
+newEntity{ base = "BASE_NPC_THALORE_HERO",
+	name = "thalore hunter", color=colors.LIGHT_UMBER,
+	desc = _t[[An elven refugee from Shatur, taking any opportunity to fight back againt the demon hordes.]],
+	level_range = {15, nil}, exp_worth = 0,
+	rarity = 5,
+	max_life = resolvers.rngavg(70,80),
+	resolvers.talents{
+		[Talents.T_MASTER_MARKSMAN]={base=1, every=10, max=5},
+		[Talents.T_FLARE]={base=1, every=10, max=5},
+		[Talents.T_STEADY_SHOT]={base=1, every=10, max=5},
+		[Talents.T_PIN_DOWN]={base=1, every=10, max=5},
+		[Talents.T_HEADSHOT]={base=1, every=10, max=5},
+		[Talents.T_SHOOT]=1,
+	},
+	ai_state = { talent_in=1, },
+
+	autolevel = "archer",
+	resolvers.inscriptions(1, "infusion"),
+	resolvers.equip{
+		{type="weapon", subtype="longbow", not_properties={"unique"}, autoreq=true},
+		{type="ammo", subtype="arrow", not_properties={"unique"}, autoreq=true},
+	},
+	resolvers.racial(),
+
+	make_escort = {
+		{name="thalore hunter", number=1, no_subescort=true},
+	},
+}
+
+newEntity{ base = "BASE_NPC_THALORE_HERO",
+	name = "thalore wilder", color=colors.GREEN,
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_thalore_thalore_wilder.png", display_h=2, display_y=-1}}},
+	desc = _t[[An elven refugee from Shatur, taking any opportunity to fight to save Eyal.]],
+	level_range = {1, nil}, exp_worth = 0,
+	rarity = 3,
+	max_life = resolvers.rngavg(50,60),
+	ai_state = { talent_in=1, },
+	autolevel = "wildcaster",
+	resolvers.talents{
+		[Talents.T_RIMEBARK]={base=1, every=5, max=10},
+		[Talents.T_WAR_HOUND]={base=1, every=5, max=10},
+	},
+	resolvers.inscriptions(3, "infusion"),
+	resolvers.racial(),
+	make_escort = {
+		{name="thalore hunter", number=1, no_subescort=true},
+		{name="treant", number=2, no_subescort=true},
+	},
+}
+
+-- civilians
 newEntity{ base = "BASE_NPC_LAST_HOPE",
 	name = "human citizen", color=colors.WHITE,
 	desc = _t[[A clean-looking Human resident of Last Hope.]],
 	level_range = {1, nil}, exp_worth = 0,
-	rarity = 1,
+	rarity = false,
 	max_life = resolvers.rngavg(30,40),
 	combat_armor = 2, combat_def = 0,
 }
@@ -82,7 +261,7 @@ newEntity{ base = "BASE_NPC_LAST_HOPE",
 	subtype = "halfling",
 	desc = _t[[A clean-looking Halfling resident of Last Hope.]],
 	level_range = {1, nil}, exp_worth = 0,
-	rarity = 1,
+	rarity = false,
 	max_life = resolvers.rngavg(30,40),
 }
 

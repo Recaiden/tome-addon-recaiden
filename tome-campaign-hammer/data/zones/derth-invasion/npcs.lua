@@ -11,7 +11,7 @@ load("/data/general/npcs/gwelgoroth.lua", rarityWithLoot(0))
 load("/data/general/npcs/xorn.lua", rarityWithLoot(2))
 load("/data/general/npcs/snow-giant.lua", rarityWithLoot(0))
 load("/data/general/npcs/storm-drake.lua", rarityWithLoot(1))
-
+load("/data-campaign-hammer/general/npcs/undead-electric.lua", rarityWithLoot(0))
 load("/data/general/npcs/all.lua", rarityWithLoot(4, 35))
 
 local Talents = require("engine.interface.ActorTalents")
