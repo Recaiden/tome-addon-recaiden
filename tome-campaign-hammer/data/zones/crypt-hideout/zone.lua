@@ -72,6 +72,33 @@ return {
 							}
 						}, nil, true)
 					if m then
+						m.crypt_hero = true
+						m.on_die = function(self)
+							local nb = 0
+							local nb_hero = 0
+							local melinda
+							for uid, e in pairs(game.level.entities) do
+								if e.define_as and e.define_as == "ACOLYTE" and not e.dead and not e.summoner then nb = nb + 1 end
+								if e.crypt_hero then nb_hero = nb_hero + 1 end
+								if e.define_as and e.define_as == "MELINDA" then melinda = e end
+							end
+							if nb == 0 and nb_hero == 0 then
+								if melinda then
+									local g = game.zone:makeEntityByName(game.level, "terrain", "ALTAR_BARE")
+									game.zone:addEntity(game.level, g, "terrain", melinda.x, melinda.y)
+									
+									melinda:removeEffect(melinda.EFF_TIME_PRISON)
+									melinda.display_w = nil
+									melinda.image = "npc/woman_redhair_naked.png"
+									melinda:removeAllMOs()
+									game.level.map:updateMap(melinda.x, melinda.y)
+									require("engine.ui.Dialog"):simpleLongPopup(_t"Melinda", _t"The woman seems to be freed from her bonds.\nShe stumbles on her feet, her naked body still dripping in blood. 'Please get me out of here!'", 400)
+									local Chat = require "engine.Chat"
+									local chat = Chat.new("campaign-hammer+melinda-rescue", {name=_t"Damsel in Distress"}, game.player)
+									chat:invoke()
+								end
+							end
+						end
 						game.zone:addEntity(game.level, m, "actor", spot.x, spot.y)
 
 						targets = {}

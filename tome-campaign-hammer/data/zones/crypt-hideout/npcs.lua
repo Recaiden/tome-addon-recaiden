@@ -97,8 +97,7 @@ newEntity{ define_as = "MELINDA",
 		self:setEffect(self.EFF_TIME_PRISON, 100, {})
 	end,
 
-	on_die = function(self)
-	end,
+	on_die = function(self)	end,
 }
 
 newEntity{ define_as = "ACOLYTE",
@@ -137,9 +136,11 @@ newEntity{ define_as = "ACOLYTE",
 		game.level.turn_counter = game.level.turn_counter + 6 * 10
 
 		local nb = 0
+		local nb_hero = 0
 		local melinda
 		for uid, e in pairs(game.level.entities) do
 			if e.define_as and e.define_as == "ACOLYTE" and not e.dead and not e.summoner then nb = nb + 1 end
+			if e.crypt_hero then nb_hero = nb_hero + 1 end
 			if e.define_as and e.define_as == "MELINDA" then melinda = e end
 		end
 		if nb == 0 then
@@ -149,7 +150,8 @@ newEntity{ define_as = "ACOLYTE",
 			local spot = game.level:pickSpot{type="locked-door", subtype="locked-door"}
 			local g = game.zone:makeEntityByName(game.level, "terrain", "FLOOR")
 			game.zone:addEntity(game.level, g, "terrain", spot.x, spot.y)
-
+		end
+		if nb == 0 and nb_hero == 0 then
 			if melinda then
 				local g = game.zone:makeEntityByName(game.level, "terrain", "ALTAR_BARE")
 				game.zone:addEntity(game.level, g, "terrain", melinda.x, melinda.y)
