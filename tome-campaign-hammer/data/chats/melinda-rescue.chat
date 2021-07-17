@@ -1,0 +1,94 @@
+{
+    "2": {
+        "id": 2,
+        "name": "chat",
+        "data": {
+            "chatid": "welcome",
+            "chat": "Seeing you alive and her captors dead, Melinda doesn't seem to recognize that you were helping the cult.\nYou could kill her yourself and put this whole debacle behind you.\nOr you could bring her with you, although the cultists would not be happy about losing their sacrifice.",
+            "answer1": "[Kill her]",
+            "answer2": "\"Follow me\""
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "3",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "4",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 522,
+        "pos_y": 361
+    },
+    "3": {
+        "id": 3,
+        "name": "lua-code",
+        "data": {
+            "code": "for uid, e in pairs(game.level.entities) do\n   if e.define_as and e.define_as == \"MELINDA\" then\n       e:die(game.player)\n       game.player:gainExp(750)\n    end\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "2",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1160.75,
+        "pos_y": 290
+    },
+    "4": {
+        "id": 4,
+        "name": "lua-code",
+        "data": {
+            "code": "for uid, e in pairs(game.level.entities) do\n   if e.define_as and e.define_as == \"MELINDA\" then\n       --nothing\n    elseif game.party and game.party:hasMember(e) then\n        --nothing\n    elseif e.faction and e.checkAngered then\n        e.faction = \"enemies\"\n        e:checkAngered(game.player, false, -200)\n    end\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "2",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1261.5,
+        "pos_y": 664
+    }
+}

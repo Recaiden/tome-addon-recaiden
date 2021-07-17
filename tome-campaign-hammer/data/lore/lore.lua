@@ -1,1 +1,1 @@
-load("/data-campaign-hammer/lore/test_lore.lua")
+load("/data-campaign-hammer/lore/crypt.lua")

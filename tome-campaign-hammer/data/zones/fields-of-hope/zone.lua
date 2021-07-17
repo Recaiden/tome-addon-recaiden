@@ -153,7 +153,8 @@ return {
 		if game and game.player and lev == 6 then
 			local happyWalrog = game.player:hasQuest("campaign-hammer+demon-allies") and game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-w") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("death-w")
 			local happyShassy = game.player:hasQuest("campaign-hammer+demon-allies") and game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-s") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("death-s") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("angry-s")
-			local happyKyrl = game.player:hasQuest("campaign-hammer+demon-allies") and game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-k") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("death-k")
+			local happyKryl = game.player:hasQuest("campaign-hammer+demon-allies") and game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-k") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("death-k")
+			local corruptMelinda = game.player:hasQuest("campaign-hammer+demon-allies") and game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("saved-melinda")
 			-- Walrog kills the random enemies that initially populate the room.
 			if happyWalrog then
 				require("engine.ui.Dialog"):simplePopup(_t"The Battle for Last Hope", _t"As you approach the center of the city, the river rises at Walrog's command.  The palace begins to flood.  Just before you enter the throne room, a torrent of water smashes through the doors and washes away the king's guards.")
@@ -168,17 +169,26 @@ return {
 				game.player:setEffect(game.player.EFF_HAMMER_CULTIST_REVIVE, 99, {})
 			end
 			-- Kryl'Feijan joins the fight like Aeryn
-			if happyKyrl then
-				local x, y = util.findFreeGrid(player.x, player.y, 5, true, {[engine.Map.ACTOR]=true})
+			if happyKryl then
+				local x, y = util.findFreeGrid(game.player.x, game.player.y, 5, true, {[engine.Map.ACTOR]=true})
 				local kryl = game.zone:makeEntityByName(game.level, "actor", "KRYL_FEIJAN_REBORN")
 				if kryl then
 					game.zone:addEntity(game.level, kryl, "actor", x, y)
-					game.logPlayer(player, "The air is split open by a burning portal, and Kryl'Feijan appears next to you!")
+					game.logPlayer(game.player, "The air is split open by a burning portal, and Kryl'Feijan appears next to you!")
 					for uid, e in pairs(game.level.entities) do
 						if e.define_as and (e.define_as == "TOLAK" or e.define_as == "MERENAS") then
 							e:setTarget(kryl)
 						end
 					end
+				end
+			end
+			-- Melinda is weaker that Kryl, and doesn't tank hits at the start, but may still help.
+			if corruptMelinda then
+				local x, y = util.findFreeGrid(game.player.x, game.player.y, 5, true, {[engine.Map.ACTOR]=true})
+				local mel = game.zone:makeEntityByName(game.level, "actor", "DOOMBRINGER_MELINDA")
+				if mel then
+					game.zone:addEntity(game.level, mel, "actor", x, y)
+					game.logPlayer(game.player, "The air is split open by a burning portal, and Melinda appears next to you, wreathed in the flames of the fearscape")
 				end
 			end
 		end

@@ -7,10 +7,13 @@ desc = function(self, who)
 		desc[#desc+1] = _t"#LIGHT_RED#Kryl-Feijan's resurrection failed, and without Shassy'Kaish, he has died his final death.#WHITE#"
 	elseif self:isCompleted("death-k") then
 		desc[#desc+1] = _t"#LIGHT_RED#Kryl-Feijan's resurrection failed.  There is still hope of reviving his seed, but he will not help you.#WHITE#"
+		if self:isCompleted("saved-melinda") then
+			desc[#desc+1] = _t"#LIGHT_GREEN#However, Melinda may still be of use.#WHITE#"
+		end
 	elseif self:isCompleted("help-k") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#Kryl-Feijan is reborn, and has pledged to aid you in taking revenge.#WHITE#"
 	else
-		desc[#desc+1] = _t"#RED#[UNIMPLEMENTED]#LIGHT_GREY#Seek out the wounded ancient Kryl-Feijan in his isolated crypt.#WHITE#"
+		desc[#desc+1] = _t"#LIGHT_GREY#Seek out the wounded ancient Kryl-Feijan in his isolated crypt.#WHITE#"
 	end
 	
 	if self:isCompleted("death-s") then
@@ -31,13 +34,13 @@ desc = function(self, who)
 		desc[#desc+1] = _t"#LIGHT_GREY#Seek out the ancient necromancer Walrog along the ocean shore.#WHITE#"
 	end
 	
-	if self:isCompleted("death-m") then
-		desc[#desc+1] = _t"#LIGHT_RED#After all these years, the Messenger is dead.#WHITE#"
-	elseif self:isCompleted("help-m") then
-		desc[#desc+1] = _t"#LIGHT_GREEN#The Messenger has agreed to help you.#WHITE#"
-	elseif (self:isCompleted("help-k") or self:isCompleted("help-s") or self:isCompleted("help-w")) then
-		desc[#desc+1] = _t"#RED#[UNIMPLEMENTED]#LIGHT_GREY#You have heard of a fourth old one, the Onyx who shut down the portal.  Find this Messenger.#WHITE#"
-	end
+	-- if self:isCompleted("death-m") then
+	-- 	desc[#desc+1] = _t"#LIGHT_RED#After all these years, the Messenger is dead.#WHITE#"
+	-- elseif self:isCompleted("help-m") then
+	-- 	desc[#desc+1] = _t"#LIGHT_GREEN#The Messenger has agreed to help you.#WHITE#"
+	-- elseif (self:isCompleted("help-k") or self:isCompleted("help-s") or self:isCompleted("help-w")) then
+	-- 	desc[#desc+1] = _t"#RED#[UNIMPLEMENTED]#LIGHT_GREY#You have heard of a fourth old one, the Onyx who shut down the portal.  Find this Messenger.#WHITE#"
+	-- end
 	
 	if self:isEnded() then
 		desc[#desc+1] = "#LIGHT_GREEN#* You have found each of the old ones.#WHITE#"
@@ -72,10 +75,6 @@ on_grant = function(self, who)
 				notice = true, image="terrain/grass.png",
 				add_displays={mod.class.Grid.new{image="terrain/dungeon_entrance01.png", z=4}},
 				change_level=1, glow=true, change_zone="campaign-hammer+crypt-hideout",
-				change_level_check = function()
-					game.log("This dungeon isn't playable yet.  There is no way in.")
-					return true
-				end,
 			}
 			c:resolve() c:resolve(nil, true)
 			spot = level:pickSpot{type="zone-pop", subtype="crypt-hideout"}
