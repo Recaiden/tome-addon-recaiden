@@ -21,6 +21,11 @@ endy = starty
 -- addSpot section
 addSpot({23, 3}, "spawn", "player")
 
+addSpot({23, 25}, "pop", "bonus-shop")
+addSpot({15, 22}, "pop", "bonus-shop")
+addSpot({21, 28}, "pop", "bonus-shop")
+addSpot({22, 29}, "pop", "bonus-shop")
+
 -- addZone section
 
 -- ASCII map section

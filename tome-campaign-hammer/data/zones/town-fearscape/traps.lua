@@ -4,13 +4,14 @@ newEntity{ base = "BASE_STORE", define_as = "ARMOR_STORE",
 	name="Armoury",
 	display='2', color=colors.UMBER,
 	resolvers.store("DEMON_ARMOR", "fearscape", "store/shop_door2.png", "store/shop_sign_armory.png"),
-	resolvers.chatfeature("last-hope-weapon-store", "fearscape"),
+	resolvers.chatfeature("campaign-hammer+demon-armor-store", "fearscape"),
 }
 
 newEntity{ base = "BASE_STORE", define_as = "WEAPON_STORE",
 	name="Forge",
 	display='3', color=colors.UMBER,
 	resolvers.store("DEMON_WEAPON", "fearscape", "store/shop_door2.png", "store/shop_sign_slash_dash.png"),
+	resolvers.chatfeature("campaign-hammer+demon-weapon-store", "fearscape"),
 }
 
 newEntity{ base = "BASE_STORE", define_as = "INSCRIPTION_STORE",

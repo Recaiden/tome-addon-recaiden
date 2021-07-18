@@ -110,6 +110,7 @@ newEntity{ define_as = "ACOLYTE",
 
 	infravision = 10,
 	move_others = true,
+	never_anger = true,
 
 	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, QUIVER=1 },
 	rank = 3,
@@ -130,7 +131,9 @@ newEntity{ define_as = "ACOLYTE",
 	resolvers.inscriptions(1, "rune"),
 	resolvers.inscriptions(1, {"manasurge rune"}),
 
-	on_die = function(self)
+	on_die = function(self, src)
+		if src and src.resolveSource then src = src:resolveSource() end
+		
 		if not game.level.turn_counter then return end
 		if self.summoner then return end
 		game.level.turn_counter = game.level.turn_counter + 6 * 10
@@ -139,7 +142,12 @@ newEntity{ define_as = "ACOLYTE",
 		local nb_hero = 0
 		local melinda
 		for uid, e in pairs(game.level.entities) do
-			if e.define_as and e.define_as == "ACOLYTE" and not e.dead and not e.summoner then nb = nb + 1 end
+			if e.define_as and e.define_as == "ACOLYTE" and not e.dead and not e.summoner then
+				nb = nb + 1
+				if src == game.player then
+					e.never_anger = nil
+				end
+			end
 			if e.crypt_hero then nb_hero = nb_hero + 1 end
 			if e.define_as and e.define_as == "MELINDA" then melinda = e end
 		end

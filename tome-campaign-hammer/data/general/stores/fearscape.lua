@@ -3,6 +3,7 @@ newEntity{
 	name = "armory",
 	display = '2', color=colors.UMBER,
 	store = {
+		nb_fill = 45,
 		purse = 25,
 		empty_before_restock = false,
 		filters = {
@@ -26,6 +27,7 @@ newEntity{
 	name = "forge",
 	display = '3', color=colors.UMBER,
 	store = {
+		nb_fill = 45,
 		purse = 25,
 		empty_before_restock = false,
 		filters = {

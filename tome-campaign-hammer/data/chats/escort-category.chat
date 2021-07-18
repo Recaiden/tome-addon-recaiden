@@ -17,14 +17,6 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "15",
-                        "input": "output_7"
-                    },
-                    {
-                        "node": "20",
-                        "input": "output_6"
-                    },
-                    {
                         "node": "25",
                         "input": "output_3"
                     },
@@ -39,6 +31,14 @@
                     {
                         "node": "49",
                         "input": "output_2"
+                    },
+                    {
+                        "node": "53",
+                        "input": "output_5"
+                    },
+                    {
+                        "node": "54",
+                        "input": "output_6"
                     }
                 ]
             }
@@ -80,173 +80,6 @@
         "pos_x": 39,
         "pos_y": 206
     },
-    "15": {
-        "id": 15,
-        "name": "chat",
-        "data": {
-            "chatid": "spells",
-            "chat": "Which spells were in your memory crystal?",
-            "answer1": "Stone Alchemy",
-            "answer2": "Chronomancy",
-            "answer3": "Chants",
-            "answer4": "Curses",
-            "answer5": "Staff Combat",
-            "answer6": "Divination",
-            "answer7": "Not spells..."
-        },
-        "class": "chat",
-        "html": "chat7",
-        "typenode": true,
-        "inputs": {
-            "input_1": {
-                "connections": [
-                    {
-                        "node": "26",
-                        "input": "output_1"
-                    }
-                ]
-            }
-        },
-        "outputs": {
-            "output_1": {
-                "connections": [
-                    {
-                        "node": "36",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_2": {
-                "connections": [
-                    {
-                        "node": "37",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_3": {
-                "connections": [
-                    {
-                        "node": "38",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_4": {
-                "connections": [
-                    {
-                        "node": "33",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_5": {
-                "connections": [
-                    {
-                        "node": "34",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_6": {
-                "connections": [
-                    {
-                        "node": "35",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_7": {
-                "connections": [
-                    {
-                        "node": "5",
-                        "output": "input_1"
-                    }
-                ]
-            }
-        },
-        "pos_x": 1777.5,
-        "pos_y": -463
-    },
-    "20": {
-        "id": 20,
-        "name": "chat",
-        "data": {
-            "chatid": "psi",
-            "chat": "What mental powers were in your memory crystal?",
-            "answer1": "Mindstar Mastery",
-            "answer2": "Call of the Wild",
-            "answer3": "Feedback",
-            "answer4": "Augmented Mobility",
-            "answer5": "Dreaming",
-            "answer6": "Not mind powers..."
-        },
-        "class": "chat",
-        "html": "chat6",
-        "typenode": true,
-        "inputs": {
-            "input_1": {
-                "connections": [
-                    {
-                        "node": "27",
-                        "input": "output_1"
-                    }
-                ]
-            }
-        },
-        "outputs": {
-            "output_1": {
-                "connections": [
-                    {
-                        "node": "41",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_2": {
-                "connections": [
-                    {
-                        "node": "42",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_3": {
-                "connections": [
-                    {
-                        "node": "44",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_4": {
-                "connections": [
-                    {
-                        "node": "43",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_5": {
-                "connections": [
-                    {
-                        "node": "45",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_6": {
-                "connections": [
-                    {
-                        "node": "5",
-                        "output": "input_1"
-                    }
-                ]
-            }
-        },
-        "pos_x": 1500,
-        "pos_y": 9.571428571428571
-    },
     "24": {
         "id": 24,
         "name": "chat",
@@ -275,7 +108,7 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "47",
+                        "node": "52",
                         "output": "input_1"
                     }
                 ]
@@ -283,7 +116,7 @@
             "output_2": {
                 "connections": [
                     {
-                        "node": "49",
+                        "node": "50",
                         "output": "input_1"
                     }
                 ]
@@ -305,8 +138,8 @@
                 ]
             }
         },
-        "pos_x": 935,
-        "pos_y": 799.4285714285714
+        "pos_x": 746.5714285714286,
+        "pos_y": 883
     },
     "25": {
         "id": 25,
@@ -387,7 +220,7 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "15",
+                        "node": "54",
                         "output": "input_1"
                     }
                 ]
@@ -423,7 +256,7 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "20",
+                        "node": "53",
                         "output": "input_1"
                     }
                 ]
@@ -547,7 +380,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "15",
+                        "node": "54",
                         "input": "output_4"
                     }
                 ]
@@ -560,33 +393,6 @@
         },
         "pos_x": 1822,
         "pos_y": -916.4285714285714
-    },
-    "34": {
-        "id": 34,
-        "name": "lua-code",
-        "data": {
-            "code": "if game.player:knowTalentType(\"spell/staff-combat\") then\n    game.player:setTalentTypeMastery(\"spell/staff-combat\", game.player:getTalentTypeMastery(\"spell/staff-combat\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"spell/staff-combat\", true)\nend"
-        },
-        "class": "lua-code",
-        "html": "lua-code",
-        "typenode": true,
-        "inputs": {
-            "input_1": {
-                "connections": [
-                    {
-                        "node": "15",
-                        "input": "output_5"
-                    }
-                ]
-            }
-        },
-        "outputs": {
-            "output_1": {
-                "connections": []
-            }
-        },
-        "pos_x": 2325,
-        "pos_y": -915.4285714285714
     },
     "35": {
         "id": 35,
@@ -601,8 +407,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "15",
-                        "input": "output_6"
+                        "node": "54",
+                        "input": "output_5"
                     }
                 ]
             }
@@ -628,7 +434,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "15",
+                        "node": "54",
                         "input": "output_1"
                     }
                 ]
@@ -655,7 +461,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "15",
+                        "node": "54",
                         "input": "output_2"
                     }
                 ]
@@ -682,7 +488,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "15",
+                        "node": "54",
                         "input": "output_3"
                     }
                 ]
@@ -720,8 +526,8 @@
                 "connections": []
             }
         },
-        "pos_x": 2134,
-        "pos_y": 1055.5714285714287
+        "pos_x": 2294,
+        "pos_y": 659.5714285714286
     },
     "40": {
         "id": 40,
@@ -747,35 +553,8 @@
                 "connections": []
             }
         },
-        "pos_x": 1595.5714285714287,
-        "pos_y": 1055
-    },
-    "41": {
-        "id": 41,
-        "name": "lua-code",
-        "data": {
-            "code": "if game.player:knowTalentType(\"wild-gift/mindstar-mastery\") then\n    game.player:setTalentTypeMastery(\"wild-gift/mindstar-mastery\", game.player:getTalentTypeMastery(\"wild-gift/mindstar-mastery\", true) + 0.2)\nelse\n    game.player:learnTalentType(\"wild-gift/mindstar-mastery\", true)\nend"
-        },
-        "class": "lua-code",
-        "html": "lua-code",
-        "typenode": true,
-        "inputs": {
-            "input_1": {
-                "connections": [
-                    {
-                        "node": "20",
-                        "input": "output_1"
-                    }
-                ]
-            }
-        },
-        "outputs": {
-            "output_1": {
-                "connections": []
-            }
-        },
-        "pos_x": 2130.6666666666665,
-        "pos_y": -125
+        "pos_x": 2291.4285714285716,
+        "pos_y": 944
     },
     "42": {
         "id": 42,
@@ -790,8 +569,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "20",
-                        "input": "output_2"
+                        "node": "53",
+                        "input": "output_1"
                     }
                 ]
             }
@@ -817,12 +596,12 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "20",
-                        "input": "output_4"
-                    },
-                    {
                         "node": "32",
                         "input": "output_2"
+                    },
+                    {
+                        "node": "53",
+                        "input": "output_3"
                     }
                 ]
             }
@@ -848,12 +627,12 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "20",
-                        "input": "output_3"
-                    },
-                    {
                         "node": "32",
                         "input": "output_1"
+                    },
+                    {
+                        "node": "53",
+                        "input": "output_2"
                     }
                 ]
             }
@@ -879,12 +658,12 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "20",
-                        "input": "output_5"
-                    },
-                    {
                         "node": "32",
                         "input": "output_3"
+                    },
+                    {
+                        "node": "53",
+                        "input": "output_4"
                     }
                 ]
             }
@@ -921,8 +700,8 @@
                 "connections": []
             }
         },
-        "pos_x": 1119.4285714285713,
-        "pos_y": 1308
+        "pos_x": 1452.4285714285713,
+        "pos_y": 1296
     },
     "47": {
         "id": 47,
@@ -937,7 +716,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "24",
+                        "node": "52",
                         "input": "output_1"
                     }
                 ]
@@ -948,8 +727,8 @@
                 "connections": []
             }
         },
-        "pos_x": 1482.4285714285713,
-        "pos_y": 1425
+        "pos_x": 2160,
+        "pos_y": 1269.5714285714287
     },
     "49": {
         "id": 49,
@@ -965,12 +744,7 @@
         "typenode": true,
         "inputs": {
             "input_1": {
-                "connections": [
-                    {
-                        "node": "24",
-                        "input": "output_2"
-                    }
-                ]
+                "connections": []
             }
         },
         "outputs": {
@@ -986,7 +760,249 @@
                 ]
             }
         },
-        "pos_x": 619.25,
-        "pos_y": 1136
+        "pos_x": -464,
+        "pos_y": 610
+    },
+    "50": {
+        "id": 50,
+        "name": "lua-cond",
+        "data": {
+            "not": false,
+            "code": "game:isAddonActive(\"orcs\")"
+        },
+        "class": "lua-cond",
+        "html": "lua-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "24",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "51",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1272.857142857143,
+        "pos_y": 1454
+    },
+    "51": {
+        "id": 51,
+        "name": "lua-code",
+        "data": {
+            "code": "game.player:learnTalentType(\"steamtech/physics\")\ngame.player:learnTalentType(\"steamtech/chemistry\")\ngame.player:learnTalent(game.player.T_SMITH, true)\ngame.player:learnTalent(game.player.T_THERAPEUTICS, true)\ngame.state.birth.merge_tinkers_data = true\n\nlocal ape = game.player:findInAllInventoriesBy(\"define_as\", \"APE\")\nif not ape then\nlocal base_list = require(\"mod.class.Object\"):loadList(\"/data-orcs/general/objects/quest-artifacts.lua\")\nbase_list.__real_type = \"object\"\nlocal o = game.zone:makeEntityByName(game.level, base_list, \"APE\", true)\nif o then\no.auto_hotkey = 1\ngame.player:addObject(game.player.INVEN_INVEN, o)\ngame.player:sortInven()\nend end"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "50",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1573.4285714285713,
+        "pos_y": 1423
+    },
+    "52": {
+        "id": 52,
+        "name": "lua-cond",
+        "data": {
+            "not": true,
+            "code": "game.player:attr(\"has_arcane_knowledge\") or game.player:attr(\"undead\")"
+        },
+        "class": "lua-cond",
+        "html": "lua-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "24",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "47",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1564.4285714285713,
+        "pos_y": 1110
+    },
+    "53": {
+        "id": 53,
+        "name": "chat",
+        "data": {
+            "chatid": "psi",
+            "chat": "What mental powers were in your memory crystal?",
+            "answer1": "Call of the Wild",
+            "answer2": "Feedback",
+            "answer3": "Augmented Mobility",
+            "answer4": "Dreaming",
+            "answer5": "Not mind powers..."
+        },
+        "class": "chat",
+        "html": "chat5",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "27",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "42",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "44",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "43",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_4": {
+                "connections": [
+                    {
+                        "node": "45",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_5": {
+                "connections": [
+                    {
+                        "node": "5",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1500,
+        "pos_y": 9.571428571428571
+    },
+    "54": {
+        "id": 54,
+        "name": "chat",
+        "data": {
+            "chatid": "spells",
+            "chat": "Which spells were in your memory crystal?",
+            "answer1": "Stone Alchemy",
+            "answer2": "Chronomancy",
+            "answer3": "Chants",
+            "answer4": "Curses",
+            "answer5": "Divination",
+            "answer6": "Not spells..."
+        },
+        "class": "chat",
+        "html": "chat6",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "26",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "36",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "37",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "38",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_4": {
+                "connections": [
+                    {
+                        "node": "33",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_5": {
+                "connections": [
+                    {
+                        "node": "35",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_6": {
+                "connections": [
+                    {
+                        "node": "5",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1777.5,
+        "pos_y": -463
     }
 }

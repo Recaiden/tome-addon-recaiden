@@ -104,6 +104,8 @@ return {
 	end,
 	
 	post_process = function(level)
+		game:placeRandomLoreObject("NOTE"..level.level)
+		
 		if core.renderer then
 			local Map = require "engine.Map"
 			level.background_particle = require("engine.Particles").new("starfield", 1, {width=Map.viewport.width, height=Map.viewport.height, speed=200000})
