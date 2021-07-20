@@ -14,7 +14,7 @@ newLore{
 Have you seen this demon?
 (below the text is an indistinct blob of black ink.)
 #{italic}#As you look at it, the words on the flyer shift and change#{normal}#
-YOU HAVE SEEN ME, AND I HAVE SEEN YOU.
+YES, YOU HAVE SEEN ME.
 DO NOT LET IT HAPPEN AGAIN]],
 }
 

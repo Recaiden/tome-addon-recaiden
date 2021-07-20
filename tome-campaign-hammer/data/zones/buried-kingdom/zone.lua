@@ -40,14 +40,16 @@ return {
 			nb_object = {0, 0},
 		},
 	},
-	levels =
-		{
-			[1] = {
-				generator = {
-					map = {
-						up = "SAND_LADDER_UP_WILDERNESS",
-					},
+	levels = {	
+		[1] = {
+			generator = {
+				map = {
+					up = "SAND_LADDER_UP_WILDERNESS",
 				},
 			},
 		},
+	},
+	post_process = function(level)
+		game:placeRandomLoreObject("NOTE"..level.level)	
+	end
 }
