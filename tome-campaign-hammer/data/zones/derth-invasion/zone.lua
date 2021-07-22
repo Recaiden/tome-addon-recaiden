@@ -108,8 +108,9 @@ return {
 	},
 
 	post_process = function(level)
-		-- Place a lore note on each level
-		game:placeRandomLoreObject("NOTE"..level.level)
+		if level < 3 then
+			game:placeRandomLoreObject("NOTE"..level.level)
+		end
 
 		if config.settings.tome.weather_effects then
 			local Map = require "engine.Map"

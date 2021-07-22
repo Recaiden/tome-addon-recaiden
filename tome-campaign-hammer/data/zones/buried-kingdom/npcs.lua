@@ -109,6 +109,7 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 			self:unlearnTalentFull(self.T_FEED_STRENGTHS, true, tlevel)
 			self.inc_damage.all = self.inc_damage.all + 24
 			self.rank = 10
+			self.female = true
 			self:doEmote(_t"Brother, can you not see that your changes are ruining the project!?", 100)
 			self.emote_random = {chance=3, _t"Finally, the king is silent.", _t"All of this will be undone!", _t"At last, I live again!"}
 		end
