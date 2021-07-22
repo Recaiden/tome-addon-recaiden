@@ -52,3 +52,42 @@ newEntity{ base="BOGWATER",
 	nice_tiler = { method="replace", base={"BOGWATER_MISC", 100, 1, 7}},
 }
 for i = 1, 7 do newEntity{ base="BOGWATER_MISC", define_as = "BOGWATER_MISC"..i, add_displays={class.new{image="terrain/misc_bog"..i..".png"}}} end
+
+
+local treesdef = {
+	{"small_dreamy_mushroom_01", {"trunk", {"head_%02d", 1, 2}}},
+	{"small_dreamy_mushroom_02", {"trunk", {"head_%02d", 1, 6}}},
+	{"small_dreamy_mushroom_03", {"trunk", {"head_%02d", 1, 5}}},
+	{"small_dreamy_mushroom_04", {"trunk", {"head_%02d", 1, 3}}},
+	-- {"dreamy_mushroom_01", {tall=-1, "trunk", {"head_%02d", 1, 2}}},
+	-- {"dreamy_mushroom_02", {tall=-1, "trunk", {"head_%02d", 1, 3}}},
+	-- {"dreamy_mushroom_03", {tall=-1, "trunk", {"head_%02d", 1, 3}}},
+	-- {"dreamy_mushroom_04", {tall=-1, "trunk", {"head_%02d", 1, 2}}},
+	-- {"dreamy_mushroom_05", {tall=-1, "trunk", {"head_%02d", 1, 2}}},
+	{"dreamy_mushroom_06", {tall=-1, "trunk", {"head_%02d", 1, 2}}},
+	{"dreamy_mushroom_07", {tall=-1, "trunk", {"head_%02d", 1, 4}}},
+	{"dreamy_mushroom_08", {tall=-1, "trunk", {"head_%02d", 1, 4}}},
+	{"dreamy_mushroom_09", {tall=-1, "trunk", {"head_%02d", 1, 2}}},
+	{"dreamy_mushroom_10", {tall=-1, "trunk", {"head_%02d", 1, 2}}},
+	{"dreamy_mushroom_11", {tall=-1, "trunk", {"head_%02d", 1, 2}}},
+}
+
+
+newEntity{
+	define_as = "EXO_TREE",
+	type = "wall", subtype = "rock",
+	name = "peculiar tree",
+	image = "terrain/tree.png",
+	display = '#', color=colors.WHITE, back_color=colors.LIGHT_UMBER,
+	always_remember = true,
+	can_pass = {pass_tree=1},
+	does_block_move = true,
+	block_sight = true,
+	nice_tiler = { method="replace", base={"EXO_TREE", 100, 1, 30}},
+	dig = "ROCKY_GROUND",
+}
+for i = 1, 30 do
+	--newEntity(class:makeNewTrees({base="EXO_TREE", define_as = "EXO_TREE"..i, image = "terrain/rocky_ground.png"}, treesdef, nil, "terrain/mushrooms/"))
+	newEntity(class:makeNewTrees({base="EXO_TREE", define_as = "EXO_TREE"..i, image = "terrain/snowy_grass.png", nice_tiler = false}, treesdef, nil, "terrain/mushrooms/"))
+	
+end

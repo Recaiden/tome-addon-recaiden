@@ -41,7 +41,7 @@ return {
 			nb_npc = {20, 30},
 			filters = { {max_ood=2}, },
 			nb_spots = 2, on_spot_chance = 35,
-			guardian = "MAGRIN",
+			guardian = "DREAMLOST",
 		},
 		object = {
 			class = "engine.generator.object.OnSpots",
@@ -97,7 +97,7 @@ return {
 					edge_entrances = {4,6},
 					rooms = {"forest_clearing"},
 					['.'] = "ROCKY_GROUND",
-					['#'] = {"ROCKY_SNOWY_TREE","ROCKY_SNOWY_TREE2","ROCKY_SNOWY_TREE3","ROCKY_SNOWY_TREE4","ROCKY_SNOWY_TREE5","ROCKY_SNOWY_TREE6","ROCKY_SNOWY_TREE7","ROCKY_SNOWY_TREE8","ROCKY_SNOWY_TREE9","ROCKY_SNOWY_TREE10","ROCKY_SNOWY_TREE11","ROCKY_SNOWY_TREE12","ROCKY_SNOWY_TREE13","ROCKY_SNOWY_TREE14","ROCKY_SNOWY_TREE15","ROCKY_SNOWY_TREE16","ROCKY_SNOWY_TREE17","ROCKY_SNOWY_TREE18","ROCKY_SNOWY_TREE19","ROCKY_SNOWY_TREE20",},
+					['#'] = {"EXO_TREE","ROCKY_SNOWY_TREE2","EXO_TREE3","ROCKY_SNOWY_TREE4","EXO_TREE5","ROCKY_SNOWY_TREE6","EXO_TREE7","ROCKY_SNOWY_TREE8","EXO_TREE9","ROCKY_SNOWY_TREE10","EXO_TREE11","ROCKY_SNOWY_TREE12","EXO_TREE13","ROCKY_SNOWY_TREE14","EXO_TREE15","ROCKY_SNOWY_TREE16","EXO_TREE17","ROCKY_SNOWY_TREE18","EXO_TREE19","ROCKY_SNOWY_TREE20",},
 					up = "ROCKY_UP6",
 					door = "ROCKY_GROUND",
 				},
@@ -124,9 +124,14 @@ return {
 		-- Place a lore note on each level
 		game:placeRandomLoreObject("NOTE"..level.level)
 
+		-- Rain in the trail, weirdness in the bell
 		if level.level == 2 and config.settings.tome.weather_effects then
 			local Map = require "engine.Map"
 			level.foreground_particle = require("engine.Particles").new("raindrops", 1, {width=Map.viewport.width, height=Map.viewport.height})
+		end
+		if level.level == 3 then
+			local Map = require "engine.Map"
+			level.foreground_particle = require("engine.Particles").new("fulldream", 1, {radius=(Map.viewport.mwidth + Map.viewport.mheight) / 2})
 		end
 
 		-- Some clouds floating happily

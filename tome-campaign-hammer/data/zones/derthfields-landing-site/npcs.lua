@@ -22,6 +22,58 @@ load("/data/general/npcs/all.lua", rarityWithLoot(4, 35))
 
 local Talents = require("engine.interface.ActorTalents")
 
+newEntity{ define_as = "DREAMLOST",
+	type = "horror", subtype = "eldritch",
+	display = "h",
+	unique = true,
+	name = "Dream of Winter", tint=colors.PURPLE,
+	color=colors.VIOLET, image = "npc/seed_of_dreams.png",
+	desc = _t[[This strange globe of light seems to be alive and asleep. Nothing about it moves, yet you can feel the crushing power of its will assaulting your mind.]],
+	killer_message = _t"and taken with them out of reality",
+	level_range = {7, nil}, exp_worth = 2,
+	max_life = 120, life_rating = 13, fixed_rating = true,
+	psi_rating = 10,
+	stats = { str=10, dex=10, cun=20, wil=25, con=10 },
+	rank = 4,
+	size_category = 4,
+	infravision = 10,
+	instakill_immune = 1,
+	never_move = 1,
+
+	combat = { dammod={wil=0.6, cun=0.4}, damtype=DamageType.MIND, dam=resolvers.levelup(8, 1, 0.9), atk=15, apr=3 },
+
+	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, TOOL=1 },
+	resolvers.equip{{type="tool", defined="EYE_OF_THE_DREAMING_ONE", random_art_replace={chance=75}}},
+	resolvers.drops{chance=100, nb=3, {tome_drops="boss"} },
+
+	resolvers.talents{
+		[Talents.T_SOLIPSISM]=6,
+		[Talents.T_DISMISSAL]=3,
+		[Talents.T_FORGE_SHIELD]={base=2, every=4, max=6},
+		[Talents.T_FORGE_BELLOWS]={base=2, every=4, max=6},
+		[Talents.T_DISTORTION_BOLT]={base=1, every=4, max=6},
+		[Talents.T_DREAM_WALK]={base=4, every=4, max=6},
+		[Talents.T_GLACIAL_VAPOUR]={base=1, every=6, max=6},
+	},
+	resolvers.sustains_at_birth(),
+
+	autolevel = "wildcaster",
+	ai = "tactical", ai_state = { talent_in=1 },
+
+	-- Override the recalculated AI tactics to avoid problematic kiting in the early game
+	low_level_tactics_override = {escape=0},
+
+	resolvers.auto_equip_filters("Solipsist"),
+	auto_classes={{class="Solipsist", start_level=15, level_rate=50}},
+
+	on_die = function(self, who)
+		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-landing", engine.Quest.COMPLETED, "landing")
+		local Chat = require "engine.Chat"
+		local chat = Chat.new("campaign-hammer+escort-category", {name=_t"Memory Crystals"}, game.player)
+		chat:invoke()
+	end,
+}
+
 newEntity{ base="BASE_NPC_BEAR", define_as = "MAGRIN",
 	allow_infinite_dungeon = true,
 	unique = true,
