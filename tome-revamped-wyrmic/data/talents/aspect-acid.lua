@@ -158,38 +158,38 @@ Mindpower: Improves damage]]):format(duration, damDesc(self, DamageType.ACID, da
    }
 
 newTalent{
-   name = "Scour Clean", short_name = "REK_WYRMIC_ACID_SCOUR",
-   type = {"wild-gift/wyrm-acid", 4},
-   require = gifts_req_high3,
-   points = 5,
-   mode = "passive",
-   getNumber = function(self, t) return 1 + math.floor(self:combatTalentScale(t, 1, 5)) end,
-   callbackOnActBase = function(self, t)
-      local max_nb = t.getNumber(self, t)
-      local dur = 1
-      local effs = {}
-      for eff_id, p in pairs(self.tmp) do
-	 local e = self.tempeffect_def[eff_id]
-	 if e.status == "detrimental" and e.type ~= "other" and not e.subtype["cross tier"] then
-	    effs[#effs+1] = eff_id
-	 end
-      end
-      
-      for i = 1, max_nb do
-	 if #effs == 0 then break end
-	 local eff = rng.tableRemove(effs)
-	 
-	 local e2 = self.tmp[eff]
-	 local odur = e2.dur
-	 e2.dur = e2.dur - 1
-	 if e2.dur <= 0 then self:removeEffect(eff) end
-      end
-   end,
-   
-   info = function(self, t)
-      local nb = t.getNumber(self, t)
-      return ([[Detrimental effects on you expire twice as fast.
-                This affects up to %d effects each turn.
-                This will not affect cross-tier effects (Off-Balance, Brainlock, Spellshock)]]):format(nb)
-   end,
+	name = "Scour Clean", short_name = "REK_WYRMIC_ACID_SCOUR",
+	type = {"wild-gift/wyrm-acid", 4},
+	require = gifts_req_high3,
+	points = 5,
+	mode = "passive",
+	getNumber = function(self, t) return 1 + math.floor(self:combatTalentScale(t, 1, 5)) end,
+	callbackOnActBase = function(self, t)
+		local max_nb = t.getNumber(self, t)
+		local dur = 1
+		local effs = {}
+		for eff_id, p in pairs(self.tmp) do
+			local e = self.tempeffect_def[eff_id]
+			if e.status == "detrimental" and e.type ~= "other" and not e.subtype["cross tier"] then
+				effs[#effs+1] = eff_id
+			end
+		end
+		
+		for i = 1, max_nb do
+			if #effs == 0 then break end
+			local eff = rng.tableRemove(effs)
+			
+			local e2 = self.tmp[eff]
+			local odur = e2.dur
+			e2.dur = e2.dur - 1
+			if e2.dur <= 0 then self:removeEffect(eff) end
+		end
+	end,
+	
+	info = function(self, t)
+		local nb = t.getNumber(self, t)
+		return ([[Detrimental effects on you expire twice as fast.
+This affects up to %d effects each turn.
+This will not affect cross-tier effects (Off-Balance, Brainlock, Spellshock)]]):format(nb)
+	end,
 }

@@ -233,74 +233,72 @@ newEffect{
 }
 
 newEffect{
-   name = "REK_WYRMIC_DISSOLVE", image = "talents/rek_wyrmic_acid_dissolve.png",
-   desc = "Dissolving",
-   long_desc = function(self, eff) return "The target is taking acid damage and losing one sustain per turn." end,
-   on_gain = function(self, err) return "#Target# is coated in disrupting acid!", "+Dissolve" end,
-   on_lose = function(self, err) return "#Target# has neutralized the acid.", "-Dissolve" end,
-   type = "Physical",
-   subtype = { acid=true },
-   status = "detrimental",
-   parameters = {power=1, apply_power=10},
-   on_timeout = function(self, eff)
-      if self:checkHit(eff.apply_power, self:combatMentalResist(), 0, 95, 5) then
-	 self:removeSustainsFilter(nil, 1)
-      end  
-      
-      DamageType:get(DamageType.ACID).projector(eff.src, self.x, self.y, DamageType.ACID, eff.power)
-
+	name = "REK_WYRMIC_DISSOLVE", image = "talents/rek_wyrmic_acid_dissolve.png",
+	desc = "Dissolving",
+	long_desc = function(self, eff) return "The target is taking acid damage and losing one sustain per turn." end,
+	on_gain = function(self, err) return "#Target# is coated in disrupting acid!", "+Dissolve" end,
+	on_lose = function(self, err) return "#Target# has neutralized the acid.", "-Dissolve" end,
+	type = "Physical",
+	subtype = { acid=true },
+	status = "detrimental",
+	parameters = {power=1, apply_power=10},
+	on_timeout = function(self, eff)
+		if self:checkHit(eff.apply_power, self:combatMentalResist(), 0, 95, 5) then
+			self:removeSustainsFilter(eff.src or self, nil, 1)
+		end  
+		DamageType:get(DamageType.ACID).projector(eff.src, self.x, self.y, DamageType.ACID, eff.power)
+	end,
+	activate = function(self, eff)
+		if core.shader.allow("adv") then
+			eff.particle1, eff.particle2 = self:addParticles3D("volumetric", {kind="fast_sphere", twist=2, base_rotation=90, radius=1.4, density=40,  scrollingSpeed=-0.0002, growSpeed=0.004, img="miasma_01_01"})
+		end
    end,
-   activate = function(self, eff)
-      if core.shader.allow("adv") then
-	 eff.particle1, eff.particle2 = self:addParticles3D("volumetric", {kind="fast_sphere", twist=2, base_rotation=90, radius=1.4, density=40,  scrollingSpeed=-0.0002, growSpeed=0.004, img="miasma_01_01"})
-      end
-   end,
-   deactivate = function(self, eff)
-      self:removeParticles(eff.particle1)
-      self:removeParticles(eff.particle2)
-   end,
+	deactivate = function(self, eff)
+		self:removeParticles(eff.particle1)
+		self:removeParticles(eff.particle2)
+	end,
 }
 
 newEffect{
-   name = "REK_WYRMIC_TREMORSENSE", image = "talents/track.png",
-   desc = "Sensing",
-   long_desc = function(self, eff) return "Improves senses, allowing the detection of unseen things." end,
-   type = "physical",
-   subtype = { sense=true },
-   status = "beneficial",
-   parameters = { range=10, actor=1, object=0, trap=0 },
-   activate = function(self, eff)
-      eff.rid = self:addTemporaryValue("detect_range", eff.range)
-      eff.aid = self:addTemporaryValue("detect_actor", eff.actor)
-      self.detect_function = eff.on_detect
-      game.level.map.changed = true
-
-      if self.hotkey and self.isHotkeyBound then
-	 local pos = self:isHotkeyBound("talent", self.T_REK_WYRMIC_SAND_TREMOR)
-	 if pos then
-	    self.hotkey[pos] = {"talent", self.T_REK_WYRMIC_SAND_TREMOR_CHARGE}
-	 end
-      end
-      
-      local ohk = self.hotkey
-      self.hotkey = nil -- Prevent assigning hotkey, we just did
-      self:learnTalent(self.T_REK_WYRMIC_SAND_TREMOR_CHARGE, true, eff.level, {no_unlearn=true})
-      self.hotkey = ohk
-      
-   end,
-   deactivate = function(self, eff)
-      self:removeTemporaryValue("detect_range", eff.rid)
-      self:removeTemporaryValue("detect_actor", eff.aid)
-      self.detect_function = nil
-
-      if self.hotkey and self.isHotkeyBound then
-	 local pos = self:isHotkeyBound("talent", self.T_REK_WYRMIC_SAND_TREMOR_CHARGE)
-	 if pos then
-	    self.hotkey[pos] = {"talent", self.T_REK_WYRMIC_SAND_TREMOR}
-	 end
-      end
-      
-      self:unlearnTalent(self.T_REK_WYRMIC_SAND_TREMOR_CHARGE, eff.level, nil, {no_unlearn=true})      
+	name = "REK_WYRMIC_TREMORSENSE", image = "talents/track.png",
+	desc = "Sensing",
+	long_desc = function(self, eff) return "Improves senses, allowing the detection of unseen things." end,
+	type = "physical",
+	subtype = { sense=true },
+	status = "beneficial",
+	parameters = { range=10, actor=1, object=0, trap=0 },
+	activate = function(self, eff)
+		eff.rid = self:addTemporaryValue("detect_range", eff.range)
+		eff.aid = self:addTemporaryValue("detect_actor", eff.actor)
+		self.detect_function = eff.on_detect
+		game.level.map.changed = true
+		
+		if self.hotkey and self.isHotkeyBound then
+			local pos = self:isHotkeyBound("talent", self.T_REK_WYRMIC_SAND_TREMOR)
+			if pos then
+				self.hotkey[pos] = {"talent", self.T_REK_WYRMIC_SAND_TREMOR_CHARGE}
+			end
+		end
+		
+		local ohk = self.hotkey
+		self.hotkey = nil -- Prevent assigning hotkey, we just did
+		self:learnTalent(self.T_REK_WYRMIC_SAND_TREMOR_CHARGE, true, eff.level, {no_unlearn=true})
+		self.hotkey = ohk
+		
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("detect_range", eff.rid)
+		self:removeTemporaryValue("detect_actor", eff.aid)
+		self.detect_function = nil
+		
+		if self.hotkey and self.isHotkeyBound then
+			local pos = self:isHotkeyBound("talent", self.T_REK_WYRMIC_SAND_TREMOR_CHARGE)
+			if pos then
+				self.hotkey[pos] = {"talent", self.T_REK_WYRMIC_SAND_TREMOR}
+			end
+		end
+		
+		self:unlearnTalent(self.T_REK_WYRMIC_SAND_TREMOR_CHARGE, eff.level, nil, {no_unlearn=true})      
    end,
 }
 
