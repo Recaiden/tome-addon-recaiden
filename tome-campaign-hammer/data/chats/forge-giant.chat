@@ -581,15 +581,15 @@
                 "connections": []
             }
         },
-        "pos_x": 3134,
-        "pos_y": 343
+        "pos_x": 3129,
+        "pos_y": 374.25
     },
     "54": {
         "id": 54,
         "name": "entry-selector",
         "data": {
             "chatid": "ego-select",
-            "code": "local o = chat_env.object_base\nlocal egos = o.egos and game.level:getEntitiesList(\"object/\"..o.egos..\":prefix\") or {}\ntable.append(egos, game.level:getEntitiesList(\"object/\"..o.egos..\":suffix\") or {})\ntable.append(egos, game.level:getEntitiesList(\"object/\"..o.egos..\":\") or {})\n\n--table of .e.name\nlocal list_egoName = {{_t\"A different item.\", jump = \"welcome\"}}\nlocal seen_egos = {}\nfor i, egotype in pairs(egos) do\n  if type(egotype) ~= \"number\" and egotype.e and egotype.e.name and seen_egos[egotype.e.name] == nil then\n    seen_egos[egotype.e.name] = true\n    print(\"[CHAT-EDITOR]\", \"|\", egotype.e.name, \"|\")\n    list_egoName[#list_egoName+1] = {egotype.e.name, action=function(npc, player)\n          chat_env.ego = egotype.e.name\n          return \"enchant\"\n        end}\n  end\nend\n\nnewChat{ id=\"ego-make\",\n\ttext = _t[[Which ego should the item have?]],\n\tanswers = list_egoName,\n}\nreturn \"jump\", \"ego-make\""
+            "code": "local o = chat_env.object_base\nlocal egos = o.egos and game.level:getEntitiesList(\"object/\"..o.egos..\":prefix\") or {}\ntable.append(egos, game.level:getEntitiesList(\"object/\"..o.egos..\":suffix\") or {})\ntable.append(egos, game.level:getEntitiesList(\"object/\"..o.egos..\":\") or {})\n\n--table of .e.name\nlocal list_egoName = {{_t\"A different item.\", jump = \"welcome\"}}\nlocal seen_egos = {}\nfor i, egotype in pairs(egos) do\n  if type(egotype) ~= \"number\" and egotype.e and egotype.e.name and seen_egos[egotype.e.name] == nil then\n    seen_egos[egotype.e.name] = true\n    print(\"[CHAT-EDITOR]\", \"|\", egotype.e.name, \"|\")\n    list_egoName[#list_egoName+1] = {egotype.e.name, action=function(npc, player)\n          chat_env.ego = egotype.e.name\n          chat_env.ego_obj = egotype.e\n          return \"ego-demo-shell\"\n        end}\n  end\nend\n\nnewChat{ id=\"ego-make\",\n\ttext = _t[[Which ego should the item have?]],\n\tanswers = list_egoName,\n}\nreturn \"jump\", \"ego-make\""
         },
         "class": "entry-selector",
         "html": "entry-selector2",
@@ -607,7 +607,33 @@
                 "connections": []
             }
         },
-        "pos_x": 3253.909090909091,
-        "pos_y": -385.90909090909093
+        "pos_x": 3226.181818181818,
+        "pos_y": -406.09090909090907
+    },
+    "55": {
+        "id": 55,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "ego-demo-shell",
+            "code": "function getEgoDesc(ego)\n\tlocal function convertResolvers(e)\n\t\tif type(e) == \"table\" then\n\t\t\tfor k,v in pairs(e) do\n\t\t\t\tif v and type(v) == \"table\" and v.__resolve_last then\n\t\t\t\t\te[k] = -999\n\t\t\t\telse\n\t\t\t\t\tconvertResolvers(v)\n\t\t\t\tend\n\t\t\tend\n\t\tend\n\tend\n\n\tego = ego:cloneFull()\n\tego.effective_ego_material_level = 5\n\tconvertResolvers(ego)\n\tego:resolve()\n\tego:resolve(nil, true)\n\tego.identified = true\n\n\tlocal desc = ego:getTextualDesc(nil, game.player)\n\n\tdesc = tostring(desc)\n\tdesc = desc:gsub(\"-999\", \"<variable>\")\n\tdesc = desc:toTString()\n\n\t-- Cleanup desc\n\tfor i, v in ipairs(desc) do\n\t\tlocal type_text = (\"Type: %s / %s\"):tformat(\"####\", \"\"):gsub(\"####.*\", \"\")\n\t\tif type(v) == \"string\" and v:find(\"^\"..type_text) then\n\t\t\tfor j = 1, i + 2 do table.remove(desc, 1) end\n\t\t\tbreak\n\t\tend\n\tend\n\tif #desc == 0 then error(\"empty desc\") end\n\n\tlocal power_str = tstring{}\n\tif ego.power_source then\n\t\tif ego.power_source.arcane then power_str:merge((_t\"Powered by #VIOLET#arcane forces#LAST#\\n\"):toTString()) end\n\t\tif ego.power_source.nature then power_str:merge((_t\"Infused by #OLIVE_DRAB#nature#LAST#\\n\"):toTString()) end\n\t\tif ego.power_source.antimagic then power_str:merge((_t\"Infused by #ORCHID#arcane disrupting forces#LAST#\\n\"):toTString()) end\n\t\tif ego.power_source.technique then power_str:merge((_t\"Crafted by #LIGHT_UMBER#a master#LAST#\\n\"):toTString()) end\n\t\tif ego.power_source.psionic then power_str:merge((_t\"Infused by #YELLOW#psionic forces#LAST#\\n\"):toTString()) end\n\t\tif ego.power_source.unknown then power_str:merge((_t\"Powered by #CRIMSON#unknown forces#LAST#\\n\"):toTString()) end\n\t\tego:triggerHook{\"Object:descPowerSource\", desc=power_str, object=ego}\n\tend\n\n\tdesc = power_str:merge(desc)\n\n\treturn desc\nend\n\nnewChat{ id=\"ego-demo\",\n              text = (\"Use this ego? (Actual numbers will vary)\\n--------------------\\n%s\"):tformat(tostring(getEgoDesc(chat_env.ego_obj))),\n              answers = {\n                {_t\"Yes.\", jump=\"enchant\"},\n                {_t\"Something else\", jump=\"ego-select\"},\n              },\n            }\n\nreturn \"jump\" ,\"ego-demo\""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": []
+            }
+        },
+        "pos_x": 3905.75,
+        "pos_y": -191
     }
 }
