@@ -198,6 +198,9 @@ But that doesn't mean he's giving up!]],
 	},
 
 	on_die = function(self, who)
+		if not game.player:resolveSource():hasQuest("campaign-hammer+demon-caravan") then
+			game.player:resolveSource():grantQuest("campaign-hammer+demon-caravan")
+		end
 		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-caravan", engine.Quest.COMPLETED)
 
 		local Chat = require "engine.Chat"

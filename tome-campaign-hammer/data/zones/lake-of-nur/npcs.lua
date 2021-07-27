@@ -71,8 +71,10 @@ newEntity{
 	low_level_tactics_override = {escape=0},
 	
 	on_die = function(self, who)
-		who:grantQuest("campaign-hammer+demon-caravan")
-		who:grantQuest("campaign-hammer+demon-allies")
+		if not game.player:resolveSource():hasQuest("campaign-hammer+demon-caravan") then
+			game.player:resolveSource():grantQuest("campaign-hammer+demon-caravan")
+		end
+		game.player:resolveSource():grantQuest("campaign-hammer+demon-allies")
 		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "waterimp")
 		local Chat = require "engine.Chat"
 		local chat = Chat.new("campaign-hammer+memory-crystals-tactics", {name=_t"Memory Crystals"}, game.player)
