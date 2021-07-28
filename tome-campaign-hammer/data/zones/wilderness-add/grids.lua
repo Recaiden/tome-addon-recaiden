@@ -1,4 +1,4 @@
---------------------------------------------------------------------------------
+ --------------------------------------------------------------------------------
 -- Zones
 --------------------------------------------------------------------------------
 
@@ -102,4 +102,36 @@ newEntity{
 	end,
 	change_zone="campaign-hammer+angolwen",
 	change_level=1, glow=true, display='>', color=colors.VIOLET, notice = true,
+}
+
+newEntity{
+	define_as = "INFINITE_SHORTCUT",
+	name = "way into the infinite dungeon", image = "terrain/maze_floor.png", add_mos={{image = "terrain/stair_down.png"}},
+	display = '>', color=colors.VIOLET, back_color=colors.DARK_GREY,
+	always_remember = true,
+	on_move = function(self, x, y, who)
+		if not who.player then return end
+		local p = game:getPlayer(true)
+		if p.winner then
+			require("engine.ui.Dialog"):yesnoLongPopup(
+				_t"Infinite Dungeon",
+				_t"The stairway to the infinite dungeon is a one-way trip. If you proceed, there is no way back. But there is a sher'tul down there, and someone, someday, is going to have to track him down and kill him.  Will it be you?", 400,
+				function(ret)
+					if ret then
+						game.player.max_level = nil
+						game.player.no_points_on_levelup = function(self)
+							self.unused_stats = self.unused_stats + 1
+							if self.level % 2 == 0 then
+								self.unused_talents = self.unused_talents + 1
+							elseif self.level % 3 == 0 then
+								self.unused_generics = self.unused_generics + 1
+							end
+						end,
+						game:changeLevel(math.ceil(game.player.level * 1.5), "infinite-dungeon")
+					end
+			end)
+		else
+			require("engine.ui.Dialog"):simplePopup(_t"Infinite Dungeon", _t"You should not go there. There is no way back. Ever. Maybe later when you have done all you must do.")
+		end
+	end,
 }
