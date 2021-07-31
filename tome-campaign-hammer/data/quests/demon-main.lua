@@ -65,6 +65,21 @@ on_status_change = function(self, who, status, sub)
 			self.use_ui = "quest-win"
 			who:setQuestStatus(self.id, engine.Quest.DONE)
 
+			game:playAndStopMusic("Lords of the Sky.ogg")
+			
+			local p = game:getPlayer(true)
+			p:inventoryApplyAll(function(inven, item, o) o:check("on_win") end)
+			self:triggerHook{"Winner", how=how, kind="sorcerers"}
+			
+			game:setAllowedBuild("adventurer", true)
+			if game.difficulty == game.DIFFICULTY_NIGHTMARE then game:setAllowedBuild("difficulty_insane", true) end
+			if game.difficulty == game.DIFFICULTY_INSANE then game:setAllowedBuild("difficulty_madness", true) end
+			
+			local p = game:getPlayer(true)
+			p.winner = "tolak"
+			
+			game:saveGame()
+
 			-- Remove all remaining hostiles
 			-- for i = #game.level.e_array, 1, -1 do
 			-- 	local e = game.level.e_array[i]

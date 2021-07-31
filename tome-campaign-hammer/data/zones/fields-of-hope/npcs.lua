@@ -271,7 +271,7 @@ newEntity{
 	name = "King Tolak the Fair",
 	display = "@", color=colors.BROWN,
 	faction = "allied-kingdoms",
-	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_human_argoniel.png", display_h=2, display_y=-1}}},
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_human_tolak.png", display_h=2, display_y=-1}}},
 
 	desc = _t[[This Higher man is the ruler of the Allied Kingdoms and a symbol of unity to the people of Maj'Eyal.  Though he ruled in a time of relative peace, he has decades of experience and the best equipment dwarves could forge.]],
 	level_range = {75, nil}, exp_worth = 15,
@@ -284,7 +284,7 @@ newEntity{
 
 	see_invisible = 100,
 	instakill_immune = 1,
-	stun_immune = 0.5,
+	
 	confusion_immune = 0.5,
 	blind_immune = 1,
 
@@ -303,7 +303,7 @@ newEntity{
 		{type="weapon", subtype="shield", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
 		{type="armor", subtype="massive", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
 		{type="armor", subtype="feet", name="pair of voratun boots", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
-		{type="armor", subtype="head", name="voratun helm", forbid_power_source={antimagic=true}, force_drop=true, tome_drops="boss", autoreq=true},
+		{type="armor", subtype="head", defined="CROWN_TOLAK", autoreq=true},
 		{type="armor", subtype="hands", name="voratun gauntlets", forbid_power_source={antimagic=true}, force_drop=true, tome_drops="boss", autoreq=true},
 	},
 	--resolvers.drops{chance=100, nb=1, {defined="PEARL_LIFE_DEATH"} },

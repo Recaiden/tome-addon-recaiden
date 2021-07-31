@@ -2,7 +2,7 @@ local Talents = require("engine.interface.ActorTalents")
 
 load("/data/general/npcs/losgoroth.lua", function(e)
 			 e.combat_def = 0; e.inc_damage = {all=-70}
-			 e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+			 e.bonus_loot = resolvers.drops{chance=66, nb=1, {}} -- less than normal because of the crossfire
 			 e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
 end)
 load("/data/general/npcs/demon-major.lua", rarity(20))
@@ -41,8 +41,8 @@ newEntity{ base = "BASE_NPC_PLATFORM",
 	rarity = 3,
 	max_life = resolvers.rngavg(70,80),
 	resolvers.equip{
-		{type="weapon", subtype="longsword", not_properties={"unique"}, autoreq=true},
-		{type="armor", subtype="shield", not_properties={"unique"}, autoreq=true},
+		{type="weapon", subtype="longsword", not_properties={"unique"}, autoreq=true, never_drop=true},
+		{type="armor", subtype="shield", not_properties={"unique"}, autoreq=true, never_drop=true},
 	},
 	combat_armor = 2, combat_def = 0,
 	resolvers.talents{ [Talents.T_RUSH]=1, [Talents.T_PERFECT_STRIKE]=1, [Talents.T_OSMOSIS_SHIELD]=1, [Talents.T_ARMOUR_TRAINING]=2, },
