@@ -108,7 +108,7 @@ return {
 	},
 
 	post_process = function(level)
-		if level < 3 then
+		if level and level.level < 3 then
 			game:placeRandomLoreObject("NOTE"..level.level)
 		end
 

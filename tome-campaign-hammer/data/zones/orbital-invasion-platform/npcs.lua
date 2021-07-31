@@ -46,7 +46,7 @@ newEntity{ base = "BASE_NPC_PLATFORM",
 	},
 	combat_armor = 2, combat_def = 0,
 	resolvers.talents{ [Talents.T_RUSH]=1, [Talents.T_PERFECT_STRIKE]=1, [Talents.T_OSMOSIS_SHIELD]=1, [Talents.T_ARMOUR_TRAINING]=2, },
-	resolvers.drops{chance=100, nb=3, {}},
+	resolvers.drops{chance=100, nb=1, {}},
 }
 
 newEntity{
