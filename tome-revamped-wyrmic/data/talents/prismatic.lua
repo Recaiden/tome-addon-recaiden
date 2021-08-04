@@ -27,6 +27,16 @@ newTalent{
         self:setEffect(self.EFF_REK_WYRMIC_PRISMATIC_SPEED, 5, {power=speed})
         game:playSoundNear(self, "talents/devouringflame")
       end
+			if self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY) and aspect ~= self.rek_wyrmic_dragon_damage then
+        local cdr = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY, "CDreduce")
+				if self.talents_cd["T_REK_WYRMIC_ELEMENT_BREATH"] then
+					self.talents_cd["T_REK_WYRMIC_ELEMENT_BREATH"] = math.max(0, self.talents_cd["T_REK_WYRMIC_ELEMENT_BREATH"] - cdr)
+				end
+				if self.talents_cd["T_REK_WYRMIC_COMBAT_DISSOLVE"] then
+					self.talents_cd["T_REK_WYRMIC_COMBAT_DISSOLVE"] = math.max(0, self.talents_cd["T_REK_WYRMIC_COMBAT_DISSOLVE"] - cdr)
+				end
+				game:playSoundNear(self, "talents/rek_wyrmic_roar")
+      end
       self.rek_wyrmic_dragon_damage = aspect
       self:updateTalentPassives(self.T_REK_WYRMIC_MULTICOLOR_BLOOD)
     end
@@ -48,9 +58,7 @@ Current Aspect: %s]]):format(name)
 -- Real talents
 newTalent{
   name = "Prismatic Blood", short_name = "REK_WYRMIC_MULTICOLOR_BLOOD",
-  type = {"wild-gift/prismatic-dragon", 1},
-  require = color_req_1,
-  points = 5,
+  type = {"wild-gift/prismatic-dragon", 1}, require = gifts_req_high1, points = 5,
   mode = "passive",
   -- 1 aspect per rank, plus one per weird dragon type unlocked
   getNumAspects = function(self, t)
@@ -175,10 +183,8 @@ newTalent{
 
 newTalent{
   name = "Prismatic Burst", short_name = "REK_WYRMIC_PRISMATIC_BURST",
-  type = {"wild-gift/prismatic-dragon", 2},
-  require = gifts_req_high2,
-  points = 5,
-  no_energy = true,
+  type = {"wild-gift/prismatic-dragon", 2}, require = gifts_req_high2, points = 5,
+  no_energy = true, never_fail = true,
   cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 6, 13, 8)) end,
   equilibrium = function(self, t) return math.floor(t.cooldown(self, t)/3) end,
   tactical = { ATTACK = { PHYSICAL = 1, COLD = 1, FIRE = 1, LIGHTNING = 1, ACID = 1, POISON = 1 } },
@@ -196,7 +202,8 @@ newTalent{
     local cost = t.getCost(self, t)
     return ([[You charge your body with raw, chaotic elemental damage. The next time you damage an enemy (within 2 turns), you will unleash a burst of one of your elements at random, dealing %0.2f damage in radius %d with a 100%% chance to inflict a detrimental effect.
 
-Mindpower: Improves damage.]]):format(burstdamage, radius)
+Mindpower: Improves damage.
+This talent will never fail due to high equilibrium.]]):format(burstdamage, radius)
   end,
 }
 

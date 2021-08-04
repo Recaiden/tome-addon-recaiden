@@ -66,29 +66,29 @@ newEffect{
 }
 
 newEffect{
-   name = "REK_WYRMIC_BREATH_RECOVERY", image = "talents/wyrmic_guile.png",
-   desc = "Deep Breath",
-   long_desc = function(self, eff) return ("You are quickly recovering your breath"):format(eff.power) end,
-   type = "other",
-   subtype = { miscellaneous=true },
-   status = "beneficial",
-   parameters = {},
-   activate = function(self, eff)
-   end,
-   deactivate = function(self, eff)
-   end,
-   on_timeout = function(self, eff)
-      if not self:attr("no_talents_cooldown") then
-	 for tid, _ in pairs(self.talents_cd) do
-	    if tid == self.T_REK_WYRMIC_ELEMENT_BREATH then
-	       local t = self:getTalentFromId(tid)
-	       if t and not t.fixed_cooldown then
-		  self.talents_cd[tid] = self.talents_cd[tid] - 1
-	       end
-	    end
-	 end
-      end
-   end,
+	name = "REK_WYRMIC_BREATH_RECOVERY", image = "talents/wyrmic_guile.png",
+	desc = "Deep Breath",
+	long_desc = function(self, eff) return ("You are quickly recovering your breath"):format(eff.power) end,
+	type = "other",
+	subtype = { miscellaneous=true },
+	status = "beneficial",
+	parameters = {},
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+	end,
+	on_timeout = function(self, eff)
+		if not self:attr("no_talents_cooldown") then
+			for tid, _ in pairs(self.talents_cd) do
+				if tid == self.T_REK_WYRMIC_ELEMENT_BREATH then
+					local t = self:getTalentFromId(tid)
+					if t and not t.fixed_cooldown then
+						self.talents_cd[tid] = self.talents_cd[tid] - 1
+					end
+				end
+			end
+		end
+	end,
 }
 
 newEffect{
@@ -396,14 +396,14 @@ newEffect{
 
 
 newEffect{
-   name = "REK_WYRMIC_VENOM", image = "talents/rek_wyrmic_venm.png",
-   desc = "Deadly Venom",
-   long_desc = function(self, eff)
-      local crippling = eff.crippling > 0 and (" %d%% chance to fail talents."):format(eff.crippling) or ""
-      return ("The target is poisoned, taking %0.2f nature damage per turn.%s"):format(eff.power, crippling) 
-   end,
-   charges = function(self, eff) return (math.floor(eff.power)) end,
-   type = "physical",
+	name = "REK_WYRMIC_VENOM", image = "talents/rek_wyrmic_venm.png",
+	desc = "Deadly Venom",
+	long_desc = function(self, eff)
+		local crippling = eff.crippling > 0 and (" %d%% chance to fail talents."):format(eff.crippling) or ""
+		return ("The target is poisoned, taking %0.2f nature damage per turn.%s"):format(eff.power, crippling) 
+	end,
+	charges = function(self, eff) return (math.floor(eff.power)) end,
+	type = "physical",
    subtype = { poison=true, nature=true }, no_ct_effect = true,
    status = "detrimental",
    parameters = {power=10, reduce=5, criptime=0},
@@ -411,58 +411,58 @@ newEffect{
    on_lose = function(self, err) return "#Target# is no longer poisoned.", "-Deadly Venom" end,
    -- Damage each turn
    on_timeout = function(self, eff)
-      if self:attr("purify_poison") then 
-	 self:heal(eff.power, eff.src)
-      elseif self.x and self.y then
-	 local dam = DamageType:get(DamageType.NATURE).projector(eff.src, self.x, self.y, DamageType.NATURE, eff.power)
-      end
-      -- Cripple duration is tracked within the effect so that 1 cleanse removes it all.
-      if eff.criptime > 0 then
-	 eff.criptime = eff.criptime - 1
-	 if eff.criptime <= 0 then
-	    self:removeTemporaryValue("talent_fail_chance", eff.cripid)
-	    eff.cripid = null
-	    eff.crippling = 0
-	    game.logSeen(self, "%s is free from the venom's crippling power!", self.name:capitalize())
-	 end
-      end
+		 if self:attr("purify_poison") then 
+			 self:heal(eff.power, eff.src)
+		 elseif self.x and self.y then
+			 local dam = DamageType:get(DamageType.NATURE).projector(eff.src, self.x, self.y, DamageType.NATURE, eff.power)
+		 end
+		 -- Cripple duration is tracked within the effect so that 1 cleanse removes it all.
+		 if eff.criptime > 0 then
+			 eff.criptime = eff.criptime - 1
+			 if eff.criptime <= 0 then
+				 self:removeTemporaryValue("talent_fail_chance", eff.cripid)
+				 eff.cripid = null
+				 eff.crippling = 0
+				 game.logSeen(self, "%s is free from the venom's crippling power!", self.name:capitalize())
+			 end
+		 end
    end,
    on_merge = function(self, old_eff, new_eff) --Note: on_merge called before activate
-      -- Merge the poison
-      local olddam = old_eff.power * old_eff.dur
-      local newdam = new_eff.power * new_eff.dur
-      local dur = math.ceil((old_eff.dur + new_eff.dur) / 2)
-      old_eff.dur = dur
-      old_eff.power = (olddam + newdam) / dur
-      -- by default, can stack up to 5x power
-      old_eff.max_power = math.max(old_eff.max_power or old_eff.power*5, new_eff.max_power or new_eff.power*5)
-      old_eff.power = math.min(old_eff.power, old_eff.max_power)
-      
-      if new_eff.crippling > 0 then
-	 old_eff.criptime = math.max(old_eff.criptime, new_eff.dur)
-      end
-      if old_eff.cripid and new_eff.crippling > old_eff.cripid then
-	 -- If a stronger cripple effect comes in, replace it.
-	 self:removeTemporaryValue("talent_fail_chance", old_eff.cripid) 
-	 old_eff.cripid = null
-	 old_eff.cripid = self:addTemporaryValue("talent_fail_chance", new_eff.crippling)
-      elseif not old_eff.cripid and new_eff.crippling > 0  then
-	 -- If a cripple is added to a non-crippling instance
-	 old_eff.cripid = self:addTemporaryValue("talent_fail_chance", new_eff.crippling)
-	 old_eff.crippling = new_eff.crippling
-	 game.logSeen(self, "%s is crippled by the venom!", self.name:capitalize())
-      end
-      return old_eff
+		 -- Merge the poison
+		 local olddam = old_eff.power * old_eff.dur
+		 local newdam = new_eff.power * new_eff.dur
+		 local dur = math.ceil((old_eff.dur + new_eff.dur) / 2)
+		 old_eff.dur = dur
+		 old_eff.power = (olddam + newdam) / dur
+		 -- by default, can stack up to 5x power
+		 old_eff.max_power = math.max(old_eff.max_power or old_eff.power*5, new_eff.max_power or new_eff.power*5)
+		 old_eff.power = math.min(old_eff.power, old_eff.max_power)
+		 
+		 if new_eff.crippling > 0 then
+			 old_eff.criptime = math.max(old_eff.criptime, new_eff.dur)
+		 end
+		 if old_eff.cripid and new_eff.crippling > old_eff.cripid then
+			 -- If a stronger cripple effect comes in, replace it.
+			 self:removeTemporaryValue("talent_fail_chance", old_eff.cripid) 
+			 old_eff.cripid = null
+			 old_eff.cripid = self:addTemporaryValue("talent_fail_chance", new_eff.crippling)
+		 elseif not old_eff.cripid and new_eff.crippling > 0  then
+			 -- If a cripple is added to a non-crippling instance
+			 old_eff.cripid = self:addTemporaryValue("talent_fail_chance", new_eff.crippling)
+			 old_eff.crippling = new_eff.crippling
+			 game.logSeen(self, "%s is crippled by the venom!", self.name:capitalize())
+		 end
+		 return old_eff
    end,
    activate = function(self, eff)
-      if eff.crippling > 0 then
-	 eff.cripid = self:addTemporaryValue("talent_fail_chance", eff.crippling)
-      else
-	 eff.cripid = nil
-      end
+		 if eff.crippling > 0 then
+			 eff.cripid = self:addTemporaryValue("talent_fail_chance", eff.crippling)
+		 else
+			 eff.cripid = nil
+		 end
    end,
    deactivate = function(self, eff)
-      if eff.cripid then self:removeTemporaryValue("talent_fail_chance", eff.cripid) end
+		 if eff.cripid then self:removeTemporaryValue("talent_fail_chance", eff.cripid) end
    end,
 }
 

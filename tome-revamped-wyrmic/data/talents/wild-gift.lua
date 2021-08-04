@@ -65,8 +65,8 @@ gifts_req_high5 = {
 }
 
 color_req_1 = {
-   stat = { wil=function(level) return 10 + (level-1) * 10 end },
-   level = function(level) return 0 + (level-1) * 6 end,
+   stat = { wil=function(level) return 20 + (level-1) * 10 end },
+   level = function(level) return 10 + (level-1) * 6 end,
 }
 
 numAspects = function(self)
@@ -151,31 +151,31 @@ function aspectByName(self, name)
 end
 
 function swapAspectByName(self, name)
-   if aspectIsActive(self, name) then
-      local aspect_new = aspectByName(self, name)
-
-      -- Do the breath cooldown
-      if ( self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_GUILE)
-	      and aspect_new ~= self.rek_wyrmic_dragon_damage
-	      and not self:hasEffect(self.EFF_REK_WYRMIC_BREATH_RECOVERY)
-      )
-      then
-	 local cd = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_GUILE, "CDreduce")
-	 if not self:attr("no_talents_cooldown") then
-	    for tid, _ in pairs(self.talents_cd) do
-	       if tid == self.T_REK_WYRMIC_ELEMENT_BREATH then
-		  local t = self:getTalentFromId(tid)
-		  if t and not t.fixed_cooldown then
-		     self.talents_cd[tid] = math.max(0, self.talents_cd[tid] - cd)
-		     self:setEffect(self.EFF_REK_WYRMIC_BREATH_RECOVERY, 13, {})
-		  end
-	       end
-	    end
-	 end
-      end
-      -- Finally swap
-      self.rek_wyrmic_dragon_damage = aspect_new
-   end
+	if aspectIsActive(self, name) then
+		local aspect_new = aspectByName(self, name)
+		
+		-- Do the breath cooldown
+		if ( self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY)
+				 and aspect_new ~= self.rek_wyrmic_dragon_damage
+				 and not self:hasEffect(self.EFF_REK_WYRMIC_BREATH_RECOVERY)
+		)
+		then
+			local cd = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY, "CDreduce")
+			if not self:attr("no_talents_cooldown") then
+				for tid, _ in pairs(self.talents_cd) do
+					if tid == self.T_REK_WYRMIC_ELEMENT_BREATH then
+						local t = self:getTalentFromId(tid)
+						if t and not t.fixed_cooldown then
+							self.talents_cd[tid] = math.max(0, self.talents_cd[tid] - cd)
+							self:setEffect(self.EFF_REK_WYRMIC_BREATH_RECOVERY, 13, {})
+						end
+					end
+				end
+			end
+		end
+		-- Finally swap
+		self.rek_wyrmic_dragon_damage = aspect_new
+	end
 end
 
 function hasHigherAbility(self)
@@ -247,37 +247,37 @@ if not Talents.talents_types_def["wild-gift/draconic-body"] then
 end
 
 if not Talents.talents_types_def["wild-gift/prismatic-dragon"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/prismatic-dragon", name = "Prismatic Aspect", min_lev = 10, description = "Take on the power of the mighty multi-hued wyrms." }
+   newTalentType{ allow_random=true, is_mind=true, is_nature=true, type="wild-gift/prismatic-dragon", name = "Prismatic Aspect", min_lev = 10, description = "Take on the power of the mighty multi-hued wyrms." }
    load("/data-revamped-wyrmic/talents/prismatic.lua")
 end
 
 if not Talents.talents_types_def["wild-gift/apex-predator"] then
-   newTalentType{ allow_random=false, generic=true, is_mind=true, is_nature=true, type="wild-gift/apex-predator", name = "Apex Predator", description = "The strongest creature in nature is ... you." }
+   newTalentType{ allow_random=true, generic=true, is_mind=true, is_nature=true, type="wild-gift/apex-predator", name = "Apex Predator", description = "The strongest creature in nature is ... you." }
    load("/data-revamped-wyrmic/talents/apex-predator.lua")
 end
 
 -- Talent categories for the six elements
 if not Talents.talents_types_def["wild-gift/wyrm-fire"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-fire", name = "Fire Wyrm", description = "The power of the fire dragons: fiery destruction and burning vigor." }
+   newTalentType{ allow_random=true, is_mind=true, is_nature=true, type="wild-gift/wyrm-fire", name = "Fire Wyrm", description = "The power of the fire dragons: fiery destruction and burning vigor." }
    load("/data-revamped-wyrmic/talents/aspect-fire.lua")
 end
 if not Talents.talents_types_def["wild-gift/wyrm-ice"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-ice", name = "Ice Wyrm", description = "The power of the ice dragons: layer upon layer of frozen defenses" }
+   newTalentType{ allow_random=true, is_mind=true, is_nature=true, type="wild-gift/wyrm-ice", name = "Ice Wyrm", description = "The power of the ice dragons: layer upon layer of frozen defenses" }
    load("/data-revamped-wyrmic/talents/aspect-ice.lua")
 end
 if not Talents.talents_types_def["wild-gift/wyrm-storm"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-storm", name = "Storm Wyrm", description = "The power of the storm dragons: shock and awe" }
+   newTalentType{ allow_random=true, is_mind=true, is_nature=true, type="wild-gift/wyrm-storm", name = "Storm Wyrm", description = "The power of the storm dragons: shock and awe" }
    load("/data-revamped-wyrmic/talents/aspect-storm.lua")
 end
 if not Talents.talents_types_def["wild-gift/wyrm-sand"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-sand", name = "Sand Wyrm", description = "The power of the sand dragons: eyeless sight and the crushing weight of the earth" }
+   newTalentType{ allow_random=true, is_mind=true, is_nature=true, type="wild-gift/wyrm-sand", name = "Sand Wyrm", description = "The power of the sand dragons: eyeless sight and the crushing weight of the earth" }
    load("/data-revamped-wyrmic/talents/aspect-sand.lua")
 end
 if not Talents.talents_types_def["wild-gift/wyrm-acid"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-acid", name = "Acid Wyrm", description = "The power of the acid dragons: melt away attributes, effects, and sustains" }
+   newTalentType{ allow_random=true, is_mind=true, is_nature=true, type="wild-gift/wyrm-acid", name = "Acid Wyrm", description = "The power of the acid dragons: melt away attributes, effects, and sustains" }
    load("/data-revamped-wyrmic/talents/aspect-acid.lua")
 end
 if not Talents.talents_types_def["wild-gift/wyrm-venom"] then
-   newTalentType{ allow_random=false, is_mind=true, is_nature=true, type="wild-gift/wyrm-venom", name = "Venom Wyrm", description = "The power of the venom dragons: poison and pain" }
+   newTalentType{ allow_random=true, is_mind=true, is_nature=true, type="wild-gift/wyrm-venom", name = "Venom Wyrm", description = "The power of the venom dragons: poison and pain" }
    load("/data-revamped-wyrmic/talents/aspect-venom.lua")
 end

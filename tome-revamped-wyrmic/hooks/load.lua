@@ -155,6 +155,73 @@ Magic: Increases damage]]):format(self:getTalentRadius(t), damDesc(self, DamageT
    end
 end
 
+local function insertMastery(obj,mastery)
+   if not obj.wielder then
+      obj.wielder = {}
+   end
+   if obj.wielder.talents_types_mastery then
+      for typ,amt in pairs(mastery) do
+         obj.wielder.talents_types_mastery[typ] = amt
+      end
+   else
+      obj.wielder.talents_types_mastery = mastery
+   end
+end
+local masteryList = {
+	["Eye of the Wyrm"] = {["wild-gift/wyrm-venom"]=0.3},
+	["Ureslak's Molted Scales"]  = {["wild-gift/prismatic-dragon"]=0.3},
+}
+local cooldownsList = {
+   ["Chromatic Harness"] = {
+      value = 1,
+      talents = {
+         "T_REK_WYRMIC_ELEMENT_BALL",
+         "T_REK_WYRMIC_ELEMENT_SPRAY",
+         "T_REK_WYRMIC_ELEMENT_BREATH"
+      }
+   }
+}
+-- Give mastery to anything with mastery of the current types
+local masteryEquivalents = {
+	["wild-gift/cold-drake"] = "wild-gift/wyrm-ice",
+	["wild-gift/fire-drake"] = "wild-gift/wyrm-fire",
+	["wild-gift/sand-drake"] = "wild-gift/wyrm-sand",
+	["wild-gift/storm-drake"] = "wild-gift/wyrm-storm",
+	["wild-gift/venom-drake"] = "wild-gift/wyrm-acid",
+	["wild-gift/higher-draconic-abilities"] = "wild-gift/prismatic-dragon",
+}
+class:bindHook(
+	"Entity:loadList",
+	function(self, data)
+		for _,obj in pairs(data.res) do
+			if type(obj) == "table" then
+				if masteryList[obj.name] then
+					insertMastery(obj, masteryList[obj.name])
+				end
+				if cooldownsList[obj.name] then
+					if obj.wielder then
+						local reductions = obj.wielder.talent_cd_reduction or {}
+						for _, tal in pairs(cooldownsList[obj.name]["talents"]) do
+							reductions[tal] = cooldownsList[obj.name].value
+						end
+						obj.wielder.talent_cd_reduction = reductions
+					end
+				end
+				if obj.wielder then
+					if obj.wielder.talents_types_mastery then
+						for t,m in pairs(obj.wielder.talents_types_mastery) do
+							if masteryEquivalents[t] then
+								obj.wielder.talents_types_mastery[masteryEquivalents[t]] = m
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+)
+
+
 class:bindHook(
 	"Entity:loadList",
 	function(self, data)
