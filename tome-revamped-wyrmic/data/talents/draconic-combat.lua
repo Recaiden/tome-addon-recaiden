@@ -180,7 +180,8 @@ newTalent{
 				end
 		end)
 		game:playSoundNear(self, "talents/breath")
-		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "rek_wyrmic_slash", {tx=x-self.x, ty=y-self.y})
+		local scalar = math.sqrt((((x-self.x)*(x-self.x))+((y-self.y)*(y-self.y))) / 9)
+		game.level.map:particleEmitter(self.x, self.y, math.min(3, math.max(math.abs(x-self.x), math.abs(y-self.y))), "rek_wyrmic_slash", {tx=(x-self.x)/scalar, ty=(y-self.y)/scalar})
 
 		return true
 	end,

@@ -157,7 +157,7 @@ newTalent{
 
 
 #YELLOW#Learning the advanced venom talents costs a category point.#LAST#]] or ""
-      return ([[Trigger a slow-acting paralytic within your venom.  Poisoned foes within range 5 are pinned for %d turns (#SLATEno save#LAST#) and have the remaining damage of their poisons increased by %d%%.
+      return ([[Trigger a slow-acting paralytic within your venom.  Poisoned foes within range 5 are pinned for %d turns (#SLATE#no save#LAST#) and have the remaining damage of their poisons increased by %d%%.
 Mindpower: Improves poison intensification%s]]):format(t.getDur(self, t), t.getIntensify(self, t)*100, notice)
    end,
 }
