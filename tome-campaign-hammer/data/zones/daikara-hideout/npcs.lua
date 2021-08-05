@@ -53,6 +53,11 @@ newEntity{ define_as = "SHASSY",
 	can_talk = "campaign-hammer+shassy",
 
 	inc_damage = {all=90},
+
+	on_die = function(self)
+		game.player:setQuestStatus("campaign-hammer+demon-allies", engine.Quest.COMPLETED, "death-s")
+		world:gainAchievement("ASHES_OLD_ONES", p, {name="Shasshhiy'Kaish")
+	end,
 }
 
 newEntity{

@@ -67,6 +67,7 @@ newEntity{ base="BASE_NPC_MAJOR_DEMON", define_as = "KRYL_FEIJAN",
 
 	on_die = function(self)
 		game.player:setQuestStatus("campaign-hammer+demon-allies", engine.Quest.COMPLETED, "death-k")
+		world:gainAchievement("ASHES_OLD_ONES", p, {name="Kryl-Feijan")
 	end,
 }
 
