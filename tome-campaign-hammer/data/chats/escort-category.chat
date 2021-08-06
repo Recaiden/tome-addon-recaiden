@@ -100,6 +100,14 @@
                     {
                         "node": "5",
                         "input": "output_4"
+                    },
+                    {
+                        "node": "66",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "68",
+                        "input": "output_2"
                     }
                 ]
             }
@@ -160,6 +168,14 @@
                     {
                         "node": "5",
                         "input": "output_3"
+                    },
+                    {
+                        "node": "70",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "72",
+                        "input": "output_2"
                     }
                 ]
             }
@@ -168,7 +184,7 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "40",
+                        "node": "72",
                         "output": "input_1"
                     }
                 ]
@@ -176,7 +192,7 @@
             "output_2": {
                 "connections": [
                     {
-                        "node": "39",
+                        "node": "70",
                         "output": "input_1"
                     }
                 ]
@@ -281,6 +297,22 @@
                     {
                         "node": "5",
                         "input": "output_2"
+                    },
+                    {
+                        "node": "74",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "76",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "78",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "80",
+                        "input": "output_2"
                     }
                 ]
             }
@@ -303,8 +335,8 @@
                 ]
             }
         },
-        "pos_x": 772,
-        "pos_y": 136.57142857142858
+        "pos_x": 774,
+        "pos_y": 143.33333333333334
     },
     "32": {
         "id": 32,
@@ -334,7 +366,7 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "44",
+                        "node": "76",
                         "output": "input_1"
                     }
                 ]
@@ -342,7 +374,7 @@
             "output_2": {
                 "connections": [
                     {
-                        "node": "43",
+                        "node": "78",
                         "output": "input_1"
                     }
                 ]
@@ -350,7 +382,7 @@
             "output_3": {
                 "connections": [
                     {
-                        "node": "45",
+                        "node": "80",
                         "output": "input_1"
                     }
                 ]
@@ -380,8 +412,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "54",
-                        "input": "output_4"
+                        "node": "56",
+                        "input": "output_1"
                     }
                 ]
             }
@@ -391,8 +423,8 @@
                 "connections": []
             }
         },
-        "pos_x": 1822,
-        "pos_y": -916.4285714285714
+        "pos_x": 2634,
+        "pos_y": -1138.5714285714287
     },
     "35": {
         "id": 35,
@@ -407,8 +439,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "54",
-                        "input": "output_5"
+                        "node": "64",
+                        "input": "output_1"
                     }
                 ]
             }
@@ -418,8 +450,8 @@
                 "connections": []
             }
         },
-        "pos_x": 2826,
-        "pos_y": -915.4285714285714
+        "pos_x": 2634,
+        "pos_y": -824.5714285714286
     },
     "36": {
         "id": 36,
@@ -434,7 +466,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "54",
+                        "node": "58",
                         "input": "output_1"
                     }
                 ]
@@ -445,8 +477,8 @@
                 "connections": []
             }
         },
-        "pos_x": 1821.5714285714287,
-        "pos_y": -1309
+        "pos_x": 2493,
+        "pos_y": -2093.5
     },
     "37": {
         "id": 37,
@@ -461,8 +493,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "54",
-                        "input": "output_2"
+                        "node": "60",
+                        "input": "output_1"
                     }
                 ]
             }
@@ -472,8 +504,8 @@
                 "connections": []
             }
         },
-        "pos_x": 2325,
-        "pos_y": -1313.5714285714287
+        "pos_x": 2515,
+        "pos_y": -1799.5714285714287
     },
     "38": {
         "id": 38,
@@ -488,8 +520,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "54",
-                        "input": "output_3"
+                        "node": "62",
+                        "input": "output_1"
                     }
                 ]
             }
@@ -499,8 +531,8 @@
                 "connections": []
             }
         },
-        "pos_x": 2823.4285714285716,
-        "pos_y": -1313
+        "pos_x": 2579.8571428571427,
+        "pos_y": -1442.5714285714287
     },
     "39": {
         "id": 39,
@@ -515,8 +547,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "25",
-                        "input": "output_2"
+                        "node": "70",
+                        "input": "output_1"
                     }
                 ]
             }
@@ -526,8 +558,8 @@
                 "connections": []
             }
         },
-        "pos_x": 2294,
-        "pos_y": 659.5714285714286
+        "pos_x": 2372.75,
+        "pos_y": 661
     },
     "40": {
         "id": 40,
@@ -542,7 +574,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "25",
+                        "node": "72",
                         "input": "output_1"
                     }
                 ]
@@ -569,7 +601,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "53",
+                        "node": "74",
                         "input": "output_1"
                     }
                 ]
@@ -580,8 +612,8 @@
                 "connections": []
             }
         },
-        "pos_x": 2252.6666666666665,
-        "pos_y": 147
+        "pos_x": 2419,
+        "pos_y": -409
     },
     "43": {
         "id": 43,
@@ -596,12 +628,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "32",
-                        "input": "output_2"
-                    },
-                    {
-                        "node": "53",
-                        "input": "output_3"
+                        "node": "78",
+                        "input": "output_1"
                     }
                 ]
             }
@@ -627,12 +655,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "32",
+                        "node": "76",
                         "input": "output_1"
-                    },
-                    {
-                        "node": "53",
-                        "input": "output_2"
                     }
                 ]
             }
@@ -642,8 +666,8 @@
                 "connections": []
             }
         },
-        "pos_x": 2756.3333333333335,
-        "pos_y": -129.66666666666666
+        "pos_x": 2826.6666666666665,
+        "pos_y": -134
     },
     "45": {
         "id": 45,
@@ -658,12 +682,8 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "32",
-                        "input": "output_3"
-                    },
-                    {
-                        "node": "53",
-                        "input": "output_4"
+                        "node": "80",
+                        "input": "output_1"
                     }
                 ]
             }
@@ -700,8 +720,8 @@
                 "connections": []
             }
         },
-        "pos_x": 1452.4285714285713,
-        "pos_y": 1296
+        "pos_x": 1576.6666666666667,
+        "pos_y": 1284
     },
     "47": {
         "id": 47,
@@ -716,7 +736,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "52",
+                        "node": "66",
                         "input": "output_1"
                     }
                 ]
@@ -727,8 +747,8 @@
                 "connections": []
             }
         },
-        "pos_x": 2160,
-        "pos_y": 1269.5714285714287
+        "pos_x": 2391.6666666666665,
+        "pos_y": 1276
     },
     "49": {
         "id": 49,
@@ -787,7 +807,7 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "51",
+                        "node": "68",
                         "output": "input_1"
                     }
                 ]
@@ -809,7 +829,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "50",
+                        "node": "68",
                         "input": "output_1"
                     }
                 ]
@@ -820,8 +840,8 @@
                 "connections": []
             }
         },
-        "pos_x": 1573.4285714285713,
-        "pos_y": 1423
+        "pos_x": 1833.3333333333333,
+        "pos_y": 1672.3333333333333
     },
     "52": {
         "id": 52,
@@ -847,7 +867,7 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "47",
+                        "node": "66",
                         "output": "input_1"
                     }
                 ]
@@ -885,7 +905,7 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "42",
+                        "node": "74",
                         "output": "input_1"
                     }
                 ]
@@ -893,7 +913,7 @@
             "output_2": {
                 "connections": [
                     {
-                        "node": "44",
+                        "node": "76",
                         "output": "input_1"
                     }
                 ]
@@ -901,7 +921,7 @@
             "output_3": {
                 "connections": [
                     {
-                        "node": "43",
+                        "node": "78",
                         "output": "input_1"
                     }
                 ]
@@ -909,7 +929,7 @@
             "output_4": {
                 "connections": [
                     {
-                        "node": "45",
+                        "node": "80",
                         "output": "input_1"
                     }
                 ]
@@ -923,8 +943,8 @@
                 ]
             }
         },
-        "pos_x": 1500,
-        "pos_y": 9.571428571428571
+        "pos_x": 1631,
+        "pos_y": 48.666666666666664
     },
     "54": {
         "id": 54,
@@ -948,6 +968,144 @@
                     {
                         "node": "26",
                         "input": "output_1"
+                    },
+                    {
+                        "node": "56",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "58",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "60",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "62",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "64",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "58",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "60",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "62",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_4": {
+                "connections": [
+                    {
+                        "node": "56",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_5": {
+                "connections": [
+                    {
+                        "node": "64",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_6": {
+                "connections": [
+                    {
+                        "node": "5",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1777.5,
+        "pos_y": -463
+    },
+    "56": {
+        "id": 56,
+        "name": "chat",
+        "data": {
+            "chatid": "chat3",
+            "chat": "Learn Curses?",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "54",
+                        "input": "output_4"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "33",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "54",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 2277.4285714285716,
+        "pos_y": -1096.142857142857
+    },
+    "58": {
+        "id": 58,
+        "name": "chat",
+        "data": {
+            "chatid": "chat4",
+            "chat": "Learn Stone Alchemy?",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "54",
+                        "input": "output_1"
                     }
                 ]
             }
@@ -964,12 +1122,82 @@
             "output_2": {
                 "connections": [
                     {
+                        "node": "54",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 2184,
+        "pos_y": -2052.4285714285716
+    },
+    "60": {
+        "id": 60,
+        "name": "chat",
+        "data": {
+            "chatid": "chat5",
+            "chat": "Learn Chronomancy?",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "54",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
                         "node": "37",
                         "output": "input_1"
                     }
                 ]
             },
-            "output_3": {
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "54",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 2215.4285714285716,
+        "pos_y": -1724
+    },
+    "62": {
+        "id": 62,
+        "name": "chat",
+        "data": {
+            "chatid": "chat6",
+            "chat": "Learn Chants?",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "54",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
                 "connections": [
                     {
                         "node": "38",
@@ -977,15 +1205,42 @@
                     }
                 ]
             },
-            "output_4": {
+            "output_2": {
                 "connections": [
                     {
-                        "node": "33",
+                        "node": "54",
                         "output": "input_1"
                     }
                 ]
-            },
-            "output_5": {
+            }
+        },
+        "pos_x": 2271,
+        "pos_y": -1394.5714285714287
+    },
+    "64": {
+        "id": 64,
+        "name": "chat",
+        "data": {
+            "chatid": "chat7",
+            "chat": "Learn Divination?",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "54",
+                        "input": "output_5"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
                 "connections": [
                     {
                         "node": "35",
@@ -993,16 +1248,372 @@
                     }
                 ]
             },
-            "output_6": {
+            "output_2": {
                 "connections": [
                     {
-                        "node": "5",
+                        "node": "54",
                         "output": "input_1"
                     }
                 ]
             }
         },
-        "pos_x": 1777.5,
-        "pos_y": -463
+        "pos_x": 2275,
+        "pos_y": -777.4285714285714
+    },
+    "66": {
+        "id": 66,
+        "name": "chat",
+        "data": {
+            "chatid": "chat8",
+            "chat": "Learn Antimagic?\nYou will be forever unable to use spells, runes, or arane items.",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "52",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "47",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "24",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 2042.3333333333333,
+        "pos_y": 1256
+    },
+    "68": {
+        "id": 68,
+        "name": "chat",
+        "data": {
+            "chatid": "chat9",
+            "chat": "Learn to Tinker>",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "50",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "51",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "24",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1580.3333333333333,
+        "pos_y": 1530
+    },
+    "70": {
+        "id": 70,
+        "name": "chat",
+        "data": {
+            "chatid": "chat10",
+            "chat": "Learn Scoundrel techniques?",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "39",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 2056.25,
+        "pos_y": 700.5
+    },
+    "72": {
+        "id": 72,
+        "name": "chat",
+        "data": {
+            "chatid": "chat11",
+            "chat": "Learn Conditioning techniques?",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "40",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1982.75,
+        "pos_y": 963
+    },
+    "74": {
+        "id": 74,
+        "name": "chat",
+        "data": {
+            "chatid": "chat12",
+            "chat": "Learn Call of the Wild?",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "53",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "42",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "28",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 2155.3333333333335,
+        "pos_y": -180
+    },
+    "76": {
+        "id": 76,
+        "name": "chat",
+        "data": {
+            "chatid": "chat13",
+            "chat": "Learn to use Feedback?",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "53",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "32",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "44",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "28",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 2438.5714285714284,
+        "pos_y": -14
+    },
+    "78": {
+        "id": 78,
+        "name": "chat",
+        "data": {
+            "chatid": "chat14",
+            "chat": "Learn Augmented Mobility?",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "32",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "53",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "43",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "28",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 2441.4285714285716,
+        "pos_y": 252.57142857142858
+    },
+    "80": {
+        "id": 80,
+        "name": "chat",
+        "data": {
+            "chatid": "chat15",
+            "chat": "Learn psionic Dreaming?",
+            "answer1": "Yes",
+            "answer2": "No"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "32",
+                        "input": "output_3"
+                    },
+                    {
+                        "node": "53",
+                        "input": "output_4"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "45",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "28",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 2509.5714285714284,
+        "pos_y": 472
     }
 }
