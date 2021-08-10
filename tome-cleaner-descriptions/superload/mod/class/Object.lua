@@ -703,8 +703,8 @@ function _M:getTextualDesc(compare_with, use_actor)
       compare_fields(w, compare_with, field, "psi_regen", "%+.2f", mod_align_stat( "Psi/turn") )
       compare_fields(w, compare_with, field, "equilibrium_regen", "%+.2f", mod_align_stat( "EQ/turn" ), nil, true, true)
       compare_fields(w, compare_with, field, "vim_regen", "%+.2f", mod_align_stat( "Vim/turn") )
-      compare_fields(w, compare_with, field, "positive_regen", "%+.2f", mod_align_stat( "(+)/turn") )
-      compare_fields(w, compare_with, field, "negative_regen", "%+.2f", mod_align_stat( "(-)/turn") )
+      compare_fields(w, compare_with, field, "positive_regen", "%+.2f", mod_align_stat( "Positive/turn") )
+      compare_fields(w, compare_with, field, "negative_regen", "%+.2f", mod_align_stat( "Negative/turn") )
 
       compare_fields(w, compare_with, field, "stamina_regen_when_hit", "%+.2f", mod_align_stat( "Stamina when Hit") )
       compare_fields(w, compare_with, field, "mana_regen_when_hit", "%+.2f", mod_align_stat( "Mana when Hit") )
@@ -736,9 +736,9 @@ function _M:getTextualDesc(compare_with, use_actor)
       compare_fields(w, compare_with, field, "max_hate", "%+.2f", mod_align_stat( "Max hate"))
       compare_fields(w, compare_with, field, "max_psi", "%+.2f", mod_align_stat( "Max psi"))
       compare_fields(w, compare_with, field, "max_vim", "%+.2f", mod_align_stat( "Max vim"))
-      compare_fields(w, compare_with, field, "max_positive", "%+.2f", mod_align_stat( "Max (+)"))
-      compare_fields(w, compare_with, field, "max_negative", "%+.2f", mod_align_stat( "Max (-)"))
-      compare_fields(w, compare_with, field, "max_air", "%+.2f", mod_align_stat( "Max Air"))
+      compare_fields(w, compare_with, field, "max_positive", "%+.2f", mod_align_stat( "Max positive"))
+      compare_fields(w, compare_with, field, "max_negative", "%+.2f", mod_align_stat( "Max negative"))
+      compare_fields(w, compare_with, field, "max_air", "%+.2f", mod_align_stat( "Max air"))
       
       compare_fields(w, compare_with, field, "spell_cooldown_reduction", "%d%%", mod_align_stat( "Spell cooldown"), 100)
       
@@ -974,17 +974,17 @@ function _M:getTextualDesc(compare_with, use_actor)
          desc[#desc-1] = ""
       end
       
-      if w.undead then desc:add({"color", "FF4500"},"The wearer is treated as an undead.",{"color", "LAST"}, true) end
-      if w.demon then desc:add({"color", "FF4500"},"The wearer is treated as a demon.",{"color", "LAST"},true) end
-      if w.blind then desc:add({"color", "FF4500"},"The wearer is blinded.",{"color", "LAST"}, true) end
-      if w.sleep then desc:add({"color", "FF4500"},"The wearer is asleep.",{"color", "LAST"}, true) end
+      if w.undead and w.undead > 0 then desc:add({"color", "FF4500"},"The wearer is treated as an undead.",{"color", "LAST"}, true) end
+      if w.demon and w.demon > 0 then desc:add({"color", "FF4500"},"The wearer is treated as a demon.",{"color", "LAST"},true) end
+      if w.blind and w.blind > 0 then desc:add({"color", "FF4500"},"The wearer is blinded.",{"color", "LAST"}, true) end
+      if w.sleep and w.sleep > 0 then desc:add({"color", "FF4500"},"The wearer is asleep.",{"color", "LAST"}, true) end
 
-      if w.blind_fight then desc:add({"color", mod_PASS_PWR_COLOR}, "Blind-Fight: No penalty when attacking invisible/stealthed", {"color", "LAST"},  true) end
-      if w.lucid_dreamer then desc:add({"color", mod_PASS_PWR_COLOR}, "Lucid Dreamer: ", "May act while sleeping", {"color", "LAST"},  true) end
-      if w.no_breath then desc:add({"color", mod_PASS_PWR_COLOR},"The wearer no longer has to breathe.",{"color", "LAST"}, true) end
-      if w.quick_weapon_swap then desc:add({"color", mod_PASS_PWR_COLOR}, "Instant Weapon Swap", {"color", "LAST"}, true) end
-      if w.avoid_pressure_traps then desc:add({"color", mod_PASS_PWR_COLOR}, "Avoid Pressure Traps", {"color", "LAST"}, true) end
-      if w.speaks_shertul then desc:add({"color", mod_PASS_PWR_COLOR},"May understand old Sher'Tul language.", {"color", "LAST"}, true) end
+      if w.blind_fight and w.blind_fight > 0 then desc:add({"color", mod_PASS_PWR_COLOR}, "Blind-Fight: No penalty when attacking invisible/stealthed", {"color", "LAST"},  true) end
+      if w.lucid_dreamer and w.lucid_dreamer > 0 then desc:add({"color", mod_PASS_PWR_COLOR}, "Lucid Dreamer: ", "May act while sleeping", {"color", "LAST"},  true) end
+      if w.no_breath and w.no_breath > 0 then desc:add({"color", mod_PASS_PWR_COLOR},"The wearer no longer has to breathe.",{"color", "LAST"}, true) end
+      if w.quick_weapon_swap and w.quick_weapon_swap > 0 then desc:add({"color", mod_PASS_PWR_COLOR}, "Instant Weapon Swap", {"color", "LAST"}, true) end
+      if w.avoid_pressure_traps and w.avoid_pressure_traps > 0 then desc:add({"color", mod_PASS_PWR_COLOR}, "Avoid Pressure Traps", {"color", "LAST"}, true) end
+      if w.speaks_shertul and w.speaks_shertul > 0 then desc:add({"color", mod_PASS_PWR_COLOR},"May understand old Sher'Tul language.", {"color", "LAST"}, true) end
       
       -- Do not show "general effect" if nothing to show
       --		if desc[#desc-2] == "General effects: " then table.remove(desc) table.remove(desc) table.remove(desc) table.remove(desc) end
