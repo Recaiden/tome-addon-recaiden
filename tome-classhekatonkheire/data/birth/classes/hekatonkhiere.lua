@@ -13,7 +13,7 @@ newBirthDescriptor{
 		"#LIGHT_BLUE# * +3 Magic, -1 Willpower, +0 Cunning",
 		"#GOLD#Life Rating:#LIGHT_BLUE# +2",
 	},
-	power_source = {arcance=true, technique=true},
+	power_source = {arcane=true, technique=true},
 	stats = { str=2, dex=5, mag=3, wil=-1 },
 	not_on_random_boss = true,
 	talents_types = {

@@ -537,3 +537,18 @@ newEffect{
 	end,
 }
 
+newEffect{
+	name = "REK_HEKA_LASHING_POWER", image = "talents/rek_heka_veiled_lashing.png",
+	desc = "Thoroughly Lashing",
+	long_desc = function(self, eff) return ("Better critical hits"):format() end,
+	type = "physical",
+	subtype = { hands=true, arcane = true },
+	status = "beneficial",
+	parameters = { chance = 5, power = 10},
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "combat_spellcrit", eff.chance)
+		self:effectTemporaryValue(eff, "combat_critical_power", eff.power)
+	end,
+	deactivate = function(self, eff)
+	end,
+}

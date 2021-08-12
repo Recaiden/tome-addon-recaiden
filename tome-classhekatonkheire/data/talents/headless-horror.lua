@@ -461,7 +461,6 @@ You cannot hurt or be hurt by your own eyes.]]):tformat(maxEyes)
 	end,
 }
 
-
 newTalent{
 	name = "Ocular Phylactery", short_name="REK_HEKA_HEADLESS_SHIELD",
 	type = {"spell/headless-horror", 2}, require = mag_req2, points = 5,

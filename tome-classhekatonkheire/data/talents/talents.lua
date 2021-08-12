@@ -131,24 +131,10 @@ newTalent{
 	end,
 }
 
-if not Talents.talents_types_def["spell/shambler"] then
-   newTalentType{ allow_random=true, is_spell=true, type="spell/shambler", name = "Shambler", description = "Walk steadily forward.  Don't worry; they will come to you.  These are spells, but can be used while silenced." }
-   load("/data-classhekatonkheire/talents/shambler.lua")
-end
-
-if not Talents.talents_types_def["technique/titanic-blows"] then
-   newTalentType{ allow_random=true, type="technique/titanic-blows", name = "Titanic Blows", description = "Crush your enemies with slow heavy hits." }
-   load("/data-classhekatonkheire/talents/titanic.lua")
-end
-
+-- shared
 if not Talents.talents_types_def["technique/helping-hands"] then
    newTalentType{ allow_random=true, type="technique/helping-hands", name = "Helping Hands", description = "Many hands make light work." }
    load("/data-classhekatonkheire/talents/helping-hands.lua")
-end
-
-if not Talents.talents_types_def["technique/harming-hands"] then
-   newTalentType{ allow_random=true, type="technique/harming-hands", name = "Harming Hands", description = "Grab, choke, and smash." }
-   load("/data-classhekatonkheire/talents/harming-hands.lua")
 end
 
 if not Talents.talents_types_def["spell/headless-horror"] then
@@ -161,17 +147,59 @@ if not Talents.talents_types_def["spell/otherness"] then
    load("/data-classhekatonkheire/talents/otherness.lua")
 end
 
-if not Talents.talents_types_def["technique/splintered-lord"] then
-   newTalentType{ allow_random=true, is_spell=true, type="technique/splintered-lord", name = "Splintered Lord", min_lev = 10, description = "Separate yourself into ever more pieces and fully attend to the battle." }
-   load("/data-classhekatonkheire/talents/splintered-lord.lua")
-end
-
 if not Talents.talents_types_def["spell/eyesight"] then
    newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/eyesight", name = "Eyesight", min_lev = 10, description = "If you look hard enough, that alone is enough to kill." }
    load("/data-classhekatonkheire/talents/eyesight.lua")
+end
+
+-- hekatonkhiere
+if not Talents.talents_types_def["spell/shambler"] then
+   newTalentType{ allow_random=true, is_spell=true, type="spell/shambler", name = "Shambler", description = "Walk steadily forward.  Don't worry; they will come to you.  These are spells, but can be used while silenced." }
+   load("/data-classhekatonkheire/talents/shambler.lua")
+end
+
+if not Talents.talents_types_def["technique/titanic-blows"] then
+   newTalentType{ allow_random=true, type="technique/titanic-blows", name = "Titanic Blows", description = "Crush your enemies with slow heavy hits." }
+   load("/data-classhekatonkheire/talents/titanic.lua")
+end
+
+if not Talents.talents_types_def["technique/harming-hands"] then
+   newTalentType{ allow_random=true, type="technique/harming-hands", name = "Harming Hands", description = "Grab, choke, and smash." }
+   load("/data-classhekatonkheire/talents/harming-hands.lua")
+end
+
+if not Talents.talents_types_def["technique/splintered-lord"] then
+   newTalentType{ allow_random=true, is_spell=true, type="technique/splintered-lord", name = "Splintered Lord", min_lev = 10, description = "Separate yourself into ever more pieces and fully attend to the battle." }
+   load("/data-classhekatonkheire/talents/splintered-lord.lua")
 end
 
 if not Talents.talents_types_def["spell/mountainshaper"] then
    newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/mountainshaper", name = "Mountainshaper", description = "With his every step, the earth trembles.  With his every word, the land awakes." }
    load("/data-classhekatonkheire/talents/mountainshaper.lua")
 end
+
+--argosine
+if not Talents.talents_types_def["spell/sybarite"] then
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/sybarite", name = "Sybarite", description = "At her passage, the people kneel, and with her word, they rise to dance." }
+   load("/data-classhekatonkheire/talents/argosine-sybarite.lua")
+end
+
+-- if not Talents.talents_types_def["spell/watcher"] then
+--    newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/watcher", name = "Watcher", description = "You've got to keep an eye on your eyes if you want them to succeed." }
+--    load("/data-classhekatonkheire/talents/argosine-watcher.lua")
+-- end
+
+if not Talents.talents_types_def["spell/veiled-shepherd"] then
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/veiled-shepherd", name = "Veiled Shepherd", description = "You stand between this place and the other place, controlling the flow of eyes." }
+   load("/data-classhekatonkheire/talents/argosine-veiled.lua")
+end
+
+-- if not Talents.talents_types_def["spell/oubliette"] then
+--    newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/oubliette", name = "Oubliette", description = "Is it not a terrible thing, to die alone and forgotten?" }
+--    load("/data-classhekatonkheire/talents/argosine-oubliette.lua")
+-- end
+
+-- if not Talents.talents_types_def["spell/eyebite"] then
+--    newTalentType{ allow_random=true, is_spell=true, type="spell/eyebite", name = "Eyebite", min_lev = 10, description = "Your stare alone can reduce foes to dust." }
+--    load("/data-classhekatonkheire/talents/argosine-eyebite.lua")
+-- end
