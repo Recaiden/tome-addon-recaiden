@@ -43,7 +43,10 @@ newTalent{
 	type = {"spell/sybarite", 1}, require = mag_req1, points = 5,
 	mode = "passive",
 	no_unlearn_last = true,
-
+	getPassiveSpeed = function(self, t) return self:combatTalentScale(t, 0.08, 0.4, 0.7) end,
+	passives = function(self, t, p)
+		self:talentTemporaryValue(p, "movement_speed", t.getPassiveSpeed(self, t))
+	end,
 	makeHole = function(self, t, x, y)
 		if not game.level.map:isBound(x, y) then return end
 		local oe = game.level.map(x, y, Map.TERRAIN)
@@ -58,6 +61,7 @@ newTalent{
 			show_tooltip = true,
 			block_sight = false,
 			temporary = true,
+			timeout = 3,
 			x = x, y = y,
 			canAct = false,
 			add_displays = oe.add_displays,
@@ -66,23 +70,26 @@ newTalent{
 			act = function(self)
 				local Map = require "engine.Map"
 				self:useEnergy()
-				if core.fov.distance(self.x, self.y, self.summoner.x, self.summoner.y) > 2 then 
-					if self.particles then game.level.map:removeParticleEmitter(self.particles) end
-					game.level.map(self.x, self.y, engine.Map.TERRAIN, self.old_feat)
-					game.level:removeEntity(self)
-					
-					--move actors on the collapsing tile away
-					local actor = game.level.map(self.x, self.y, Map.ACTOR)
-					if actor then
-						if not actor.turn_procs.road_displaced then
-							actor.turn_procs.road_displaced = true
-							game.logSeen(actor, "%s is displaced out of the collapsing wall!", actor.name)
+				if core.fov.distance(self.x, self.y, self.summoner.x, self.summoner.y) > 2 then
+					self.timeout = self.timeout - 1
+					if self.timeout <= 0 then
+						if self.particles then game.level.map:removeParticleEmitter(self.particles) end
+						game.level.map(self.x, self.y, engine.Map.TERRAIN, self.old_feat)
+						game.level:removeEntity(self)
+						
+						--move actors on the collapsing tile away
+						local actor = game.level.map(self.x, self.y, Map.ACTOR)
+						if actor then
+							if not actor.turn_procs.road_displaced then
+								actor.turn_procs.road_displaced = true
+								game.logSeen(actor, "%s is displaced out of the collapsing wall!", actor.name)
+							end
+							self.displace(actor, 100)
 						end
-						self.displace(actor, 100)
+						
+						game.level.map:updateMap(self.x, self.y)
+						game.nicer_tiles:updateAround(game.level, self.x, self.y)
 					end
-					
-					game.level.map:updateMap(self.x, self.y)
-					game.nicer_tiles:updateAround(game.level, self.x, self.y)
 				end
 			end,
 			summoner_gain_exp = true,
@@ -112,7 +119,8 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[Walls within 2 spaces of you become flat ground.  Creatures that would be left in a wall when you leave are shunted to the closest open space.]]):tformat()
+		return ([[Walls within 2 spaces of you become flat ground, and remain passable for 3 turns after you leave.  Creatures that would be left in a wall when you leave are shunted to the closest open space.
+Levels in this talent increase your movement speed by %d%%]]):tformat(t.getPassiveSpeed(self, t)*100)
 	end
 }
 
@@ -142,30 +150,35 @@ newTalent{
 newTalent{
 	name = "On Parade", short_name = "REK_HEKA_SYBARITE_PARADE",
 	type = {"spell/sybarite", 4}, require = mag_req4, points = 5,
-	hands = 40,
-	tactical = { DISABLE = 5 },
-	cooldown = 50,
-	no_npc_use=true,
-	range = 5,
-	getSightBonus = function(self, t) return math.floor(self:combatTalentLimit(t, 4, 1, 3)) end,
-	passives = function(self, t, p)
-		self:talentTemporaryValue(p, "sight", t.getSightBonus(self, t))
-	end,
-	getDuration = function(self, t) return self:combatTalentScale(t, 2, 4.5)	end,
-	requires_target = true,
-	action = function(self, t)
-		local tg = {type="hit", range=self:getTalentRange(t)}
-		local x, y, target = self:getTarget(tg)
-		if not x or not y or not target then return nil end
-		if core.fov.distance(target.x, target.y, x, y) > 5 then return nil end
-		if not target:hasProc("heka_panopticon_ready") then return nil end
-		target:setEffect(target.EFF_REK_HEKA_PANOPTICON, t.getDuration(self, t), {})
-		game.level.map:particleEmitter(self.x, self.y, 1, "circle", {oversize=1.7, a=170, limit_life=12, shader=true, appear=12, speed=0, base_rot=180, img="oculatus", radius=0})
-		return true
+	mode = "passive",
+	getDamageChange = function(self, t) return self:combatTalentLimit(t, 75, 20, 66) end,
+	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, tmp, no_martyr)
+		local countFoes = 0
+		local grids = core.fov.circle_grids(self.x, self.y, 10, true)
+		for x, yy in pairs(grids) do
+			for y, _ in pairs(grids[x]) do
+				local a = game.level.map(x, y, Map.ACTOR)
+				if a and self:reactionToward(a) < 0 and not a.summoner and not a.temporary then
+					countFoes = countFoes + 1
+				end
+			end
+		end
+		if countFoes > 1 then
+			local views = countFoes - 1
+			local potential = dam * t.getDamageChance(self, t)/100
+			local absorbed = 0
+			for i=1, views do
+				absorbed = absorbed + potential / 3
+				potential = potential - potential / 3
+			end
+			game:delayedLogDamage(src, self, 0, ("#WHITE#(%d to parade)#LAST#"):format(absorbed), false)
+			dam = dam - absorbed
+		end
+		return {dam=dam}
 	end,
 	info = function(self, t)
-		return ([[Paralyze a target wth the weight of your gaze.  A target who has been seen by at least two Evil Eyes is rendered unable to act for %d turns (#SLATE#No save or immunity#LAST#).
+		return ([[If you can see more than one non-summoned enemy, you gain a barrier that blocks %d%% of incoming damage.  Each additional enemy adds another barrier that is 2/3 as strong as the previous one.
 
-Passively increases the sight range of your eyes by %d.]]):tformat(t.getDuration(self, t), t.getSightBonus(self, t))
+#{italic}#No army could defeat you.  Only a lone champion has a chance of victory.#{normal}#]]):tformat(t.getDamageChange(self, t)/3)
 	end,
 }
