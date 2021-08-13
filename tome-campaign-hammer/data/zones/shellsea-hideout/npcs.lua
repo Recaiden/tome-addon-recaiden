@@ -67,6 +67,6 @@ newEntity{ base = "BASE_NPC_AQUATIC_DEMON", define_as = "WALROG_HAMMER",
 	
 	on_die = function(self, who)
 		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-allies", engine.Quest.COMPLETED, "death-w")
-		world:gainAchievement("ASHES_OLD_ONES", p, {name="Walrog")
+		world:gainAchievement("ASHES_OLD_ONES", p, {name="Walrog"})
 	end,
 }
