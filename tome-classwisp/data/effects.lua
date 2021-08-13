@@ -44,7 +44,7 @@ newEffect{
 newEffect{
 	name = "REK_GLR_DELIRIOUS", image = "talents/rek_glr_idol_terrific.png",
 	desc = _t"Delirious",
-	long_desc = function(self, eff) return ("The target can't think straight, causing their actions to fail 33% of the time."):tformat() end,
+	long_desc = function(self, eff) return ("The target can't think straight, causing their actions to fail 33%% of the time."):tformat() end,
 	type = "mental",
 	subtype = { concussion=true },
 	status = "detrimental",
