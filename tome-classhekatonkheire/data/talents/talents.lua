@@ -184,10 +184,10 @@ if not Talents.talents_types_def["spell/sybarite"] then
    load("/data-classhekatonkheire/talents/argosine-sybarite.lua")
 end
 
--- if not Talents.talents_types_def["spell/watcher"] then
---    newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/watcher", name = "Watcher", description = "You've got to keep an eye on your eyes if you want them to succeed." }
---    load("/data-classhekatonkheire/talents/argosine-watcher.lua")
--- end
+if not Talents.talents_types_def["spell/watcher"] then
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/watcher", name = "Watcher", description = "You've got to keep an eye on your eyes if you want them to succeed." }
+   load("/data-classhekatonkheire/talents/argosine-watcher.lua")
+end
 
 if not Talents.talents_types_def["spell/veiled-shepherd"] then
    newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/veiled-shepherd", name = "Veiled Shepherd", description = "You stand between this place and the other place, controlling the flow of eyes." }
