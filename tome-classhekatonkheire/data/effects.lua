@@ -552,3 +552,15 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+newEffect{
+	name = "REK_HEKA_EYELIGHT", image = "talents/rek_heka_veiled_highlight.png",
+	desc = _t"Eyelighted",
+	long_desc = function(self, eff) return ("The target is weakened, all damage it does is reduced by %d%%."):tformat(eff.reduce) end,
+	type = "magical",
+	subtype = { hands=true,},
+	status = "detrimental",
+	parameters = {power=10},
+	activate = function(self, eff) eff.tmpid = self:addTemporaryValue("numbed", eff.power) end,
+	deactivate = function(self, eff) self:removeTemporaryValue("numbed", eff.tmpid) end,
+}

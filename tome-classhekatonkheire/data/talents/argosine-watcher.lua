@@ -136,6 +136,18 @@ newTalent{
 
 
 newTalent{
+	name = "Eye Hatchery", short_name = "REK_HEKA_WATCHER_HATCHERY",
+	type = {"spell/watcher", 4}, require = eye_req_slow4, points = 5,
+	mode = "passive",
+	getBonusEyes = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 0.5, 2.95)) end,
+	getInherit = function(self, t) return self:combatTalentScale(t, 20, 60) end,
+	info = function(self, t)
+		return ([[Your maximum number of wandering eyes is increased by %d.
+In addition, your eyes inherit %d%% of your spellpower, damage increases (applied to all elements), and damage penetration (applied to all elements).]]):tformat(t.getBonusEyes(self, t), t.getInherit(self, t))
+	end,
+}
+
+newTalent{
 	name = "Panopticon", short_name = "REK_HEKA_WATCHER_PANOPTICON",
 	type = {"spell/watcher", 4}, require = mag_req4, points = 5,
 	hands = 40,

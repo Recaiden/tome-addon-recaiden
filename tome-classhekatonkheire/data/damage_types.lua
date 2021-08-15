@@ -79,3 +79,21 @@ newDamageType{
 		end
 	end,
 }
+
+-- physical damage with variable-length disarm
+newDamageType{
+	name = _t"lens", type = "REK_HEKA_LENS",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local dur = 1
+		if _G.type(dam) == "table" then dam, dur = dam.dam, dam.dur end
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			if target:canBe("disarm") then
+				target:setEffect(target.EFF_DISARMED, dur, {src=src, apply_power=src:combatSpellpower()})
+			end
+			DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam, state)
+		end
+	end,
+}

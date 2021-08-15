@@ -54,55 +54,114 @@ newTalent{
 }
 
 newTalent{
-	name = "Oversight", short_name = "REK_HEKA_VEILED_OVERWATCH",
+	name = "Blade-breaking Lens", short_name = "REK_HEKA_VEILED_DISARM",
 	type = {"spell/veiled-shepherd", 2},	require = mag_req2, points = 5,
-	mode = "passive",
-	getOverwatch = function(self, t) return self:combatTalentScale(t, 1, 5) end,
-	--used in an effect applied in the eye's stare down talent via the STARE damage type
-	info = function(self, t)
-		return ([[Rest easy knowing that someone is watching your back, even if that someone is you.  When you are in the area of an Evil Eye, your health regeneration is increased by %d and your saves by %d.]]):tformat(t.getOverwatch(self, t), t.getOverwatch(self, t)*8)
-	end,
-}
-
-newTalent{
-	name = "Inescapable Gaze", short_name = "REK_HEKA_VEILED_INESCAPABLE",
-	type = {"spell/veiled-shepherd", 3}, require = mag_req3, points = 5,
-	mode = "passive",
-	getMultiplier = function(self, t) return math.max(1, self:combatTalentLimit(t, 5, 1.5, 2.25)) end,
-	-- handled in the STARE damage type
-	info = function(self, t)
-		return ([[If an enemy is affected by multiple Evil Eyes in one turn, the damage will be increased by %d%% and the slow by %d%%.]]):tformat(t.getMultiplier(self, t)*200-100, t.getMultiplier(self, t)*100)
-	end,
-}
-
-
-newTalent{
-	name = "Panopticon", short_name = "REK_HEKA_VEILED_PANOPTICON",
-	type = {"spell/veiled-shepherd", 4}, require = mag_req4, points = 5,
-	hands = 40,
-	tactical = { DISABLE = 5 },
-	cooldown = 50,
-	no_npc_use=true,
-	range = 5,
-	getSightBonus = function(self, t) return math.floor(self:combatTalentLimit(t, 4, 1, 3)) end,
-	passives = function(self, t, p)
-		self:talentTemporaryValue(p, "sight", t.getSightBonus(self, t))
-	end,
-	getDuration = function(self, t) return self:combatTalentScale(t, 2, 4.5)	end,
-	requires_target = true,
+	range = 9,
+	cooldown = 12,
+	hands = 25,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 250) end,
+	getDuration = function(self, t) return meth.ceil(self:combatTalentScale(t, 1, 5)) end,
 	action = function(self, t)
-		local tg = {type="hit", range=self:getTalentRange(t)}
-		local x, y, target = self:getTarget(tg)
-		if not x or not y or not target then return nil end
-		if core.fov.distance(target.x, target.y, x, y) > 5 then return nil end
-		if not target:hasProc("heka_panopticon_ready") then return nil end
-		target:setEffect(target.EFF_REK_HEKA_PANOPTICON, t.getDuration(self, t), {})
-		game.level.map:particleEmitter(self.x, self.y, 1, "circle", {oversize=1.7, a=170, limit_life=12, shader=true, appear=12, speed=0, base_rot=180, img="oculatus", radius=0})
+		game.logPlayer(self, "Select an eye...")
+		local tg_eye = {default_target=self, type="hit", friendlyblock = false, nowarning=true, range=self:getTalentRange(t), first_target = "friend"}
+		tx, ty = self:getTarget(tg_eye)
+		if not tx or not ty then return nil end
+		if tx then
+			_, _, _, tx, ty = self:canProject(tg_eye, tx, ty)
+			if not tx then return nil end
+			target = game.level.map(tx, ty, Map.ACTOR)
+			if not target then return nil end
+			if not target.is_wandering_eye then return nil end
+			if not target.summoner or target.summoner ~= self then return nil end
+		end
+
+		local tg_hit = {type="ball", range=0, radius=1, no_restrict=true, friendlyfire=false, x=target.x, y=target.y}
+
+		target:project(tg_hit, target.x, target.y, DamageType.REK_HEKA_LENS, {dam=self:spellCrit(t.getDamage(self, t)), dur=t.getDuration(self, t)})
+		
 		return true
 	end,
 	info = function(self, t)
-		return ([[Paralyze a target wth the weight of your gaze.  A target who has been seen by at least two Evil Eyes is rendered unable to act for %d turns (#SLATE#No save or immunity#LAST#).
-
-Passively increases the sight range of your eyes by %d.]]):tformat(t.getDuration(self, t), t.getSightBonus(self, t))
+		return ([[Direct one of your eyes to whirl aronud in a frenzy, snapping and smashing.  All adjacent enemies will be hit for %0.1f physical damage and may be disarmed (#SLATE# Eye's spellpower vs Physical#LAST#) for %d turns.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), t:_getDuration(self))
 	end,
+}
+
+newTalent{
+	name = "Eyes Open", short_name = "REK_HEKA_VEILED_FRENZY",
+	type = {"spell/veiled-shepherd", 3}, require = mag_req3, points = 5,
+	mode = "passive",
+	getHands = function(self, t) return 15 end,
+	getHeal = function(self, t) return self:combatTalentScale(t, 10, 100) end,
+	recover = function(self, t)
+		local healed = self:spellCrit(t:_getHeal(self))
+		self:incHands(t:_getHands(self))
+		for _, e in pairs(game.level.entities) do
+			if (e == self) or (e.summoner and e.summoner == self and e.is_wandering_eye) then
+				e:attr("allow_on_heal", 1)
+				e:heal(healed, self)
+				e:attr("allow_on_heal", -1)
+			end
+		end
+	end,
+	callbackOnKill = function(self, t) t.recover(self, t)	end,
+	callbackOnSummonKill = function(self, t) t.recover(self, t)	end,
+	callbackOnSummonDeath = function(self, t) t.recover(self, t) end,
+	info = function(self, t)
+		return ([[Whenever you or your summons kill an enemy, or when one of your summons dies, you receive a burst of life and power, regaining %d hands and providing %d healing to you and your eyes.
+
+#{italic}#Most victims are just more flesh for you to use.#{normal}#]]):tformat(t:_getHands(self), t:_getHeal(self))
+	end,
+}
+
+newTalent{
+	name = "Eyelight", short_name="REK_HEKA_VEILED_HIGHLIGHT",
+	type = {"spell/veiled-shepherd", 4}, require = mag_req4, points = 5,
+	cooldown = 8,
+	hands = 30,
+	range = 10,
+	requires_target = true,
+	tactical = { ATTACK = 2, DISABLE = 1 },
+	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nowarning=true} end,
+	on_pre_use = function(self, t, silent)
+		if not self:isTalentActive(self.T_REK_HEKA_HEADLESS_EYES) then
+			if not silent then game.logPlayer(self, "You have no eyes to see!") end
+			return false
+		end
+		if self:callTalent(self.T_REK_HEKA_HEADLESS_EYES, "nbEyesUp") == 0 then
+			if not silent then game.logPlayer(self, "You have no eyes to see!") end
+			return false
+		end
+		return true
+	end,
+	getNumb = function(self, t) return self:combatTalentLimit(t, 50, 12, 25) end,
+	getDuration = function(self, t) return 3 end,
+	action = function(self, t)
+		local target = self:getTalentTarget(t)
+		local x, y, target = self:getTargetLimited(target)
+		if not target then return nil end
+
+		target:setEffect(target.EFF_REK_HEKA_EYELIGHT, t:_getDuration(self), {src=self, power=t:_getNumb(self), apply_power=self:combatSpellpower()})
+		
+		for _, e in pairs(game.level.entities) do
+			if e.summoner and e.summoner == self and e.is_wandering_eye then
+				-- reset target and set to focus
+				e.ai_target.x = nil
+				e.ai_target.y = nil
+				e.ai_target.actor = target
+				e.ai_target.focus_on_target = true
+				e.energy.value = e.energy.value + game.energy_to_act
+			end
+		end
+
+		-- invest cost
+		game:onTickEnd(function() 
+				self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self),
+											 {investitures={{power=util.getval(t.hands, self, t)}}, src=self})
+		end)
+		return true
+	end,
+	info = function(self, t)
+		return ([[Focus your entire gaze on an enemy.  All of your eyes will target them and gain an exra turn.  The weight of attention will numb the target (#SLATE#Spell save#LAST#), reducing all damage they deal by %d%% for %d turns.
+This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(t.getNumb(self, t), t.getDuration(self, t))
+	end
 }
