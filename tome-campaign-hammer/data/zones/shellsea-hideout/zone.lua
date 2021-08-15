@@ -83,7 +83,7 @@ return {
 					min_floor = 1200,
 					floor = "DEEP_WATER",
 					wall = {"CORAL1", "CORAL2", "CORAL3"},
-					up = "WATER_UP",
+					up = "DEEP_WATER_UP",
 					down = "CORAL1",
 					door = "CORAL2",
 				},

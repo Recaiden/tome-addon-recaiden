@@ -21,7 +21,7 @@ desc = function(self, who)
 	if self:isCompleted("derth") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#* One way or another, Derth lies in ruins.#WHITE#"
 	else
-		desc[#desc+1] = _t"#SLATE#* You must destroy the town of Derth, a focal point of allied Agriculture and trade.#WHITE#"
+		desc[#desc+1] = _t"#SLATE#* You must destroy the town of Derth, a focal point of Allied agriculture and trade.#WHITE#"
 	end
 	if self:isCompleted("crystals-2") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#* The unbound crystal beings have laid waste to Elvala.  It will be easy to round up the survivors.#WHITE#"
@@ -59,26 +59,47 @@ desc = function(self, who)
 	return table.concat(desc, "\n")
 end
 
+function onWin(self, who)
+	local desc = {}
+
+	desc[#desc+1] = _t"#GOLD#Well done! You have won the Tales of Maj'Eyal: The Hammer of Urh'Rok#WHITE#"
+	desc[#desc+1] = _t""
+	desc[#desc+1] = _t"The King is dead, and the Allied Kingdoms lie in ruins, thanks to your efforts."
+	desc[#desc+1] = _t""
+	desc[#desc+1] = _t"Maj'Eyal will fall into the demons' hands. Eventually, all trace of the sher'tul will be wiped out."
+	desc[#desc+1] = _t""
+	desc[#desc+1] = _t"You have done your duty."
+
+	desc[#desc+1] = _t""
+	desc[#desc+1] = _t"You may continue playing and enjoy the rest of the world."
+	
+	return 0, desc
+end
+
+
+function win(self, how)
+	game:playAndStopMusic("Lords of the Sky.ogg")
+	
+	local p = game:getPlayer(true)
+	p:inventoryApplyAll(function(inven, item, o) o:check("on_win") end)
+	self:triggerHook{"Winner", how=how, kind="tolak"}
+	
+	game:setAllowedBuild("adventurer", true)
+	if game.difficulty == game.DIFFICULTY_NIGHTMARE then game:setAllowedBuild("difficulty_insane", true) end
+	if game.difficulty == game.DIFFICULTY_INSANE then game:setAllowedBuild("difficulty_madness", true) end
+	
+	local p = game:getPlayer(true)
+	p.winner = "tolak"
+	game:registerDialog(require("engine.dialogs.ShowText").new(_t"Winner", "win", {playername=p.name, how=how}, game.w * 0.6))
+	
+	if not config.settings.cheat then game:saveGame() end
+end
+
 on_status_change = function(self, who, status, sub)
 	if sub then
 		if self:isCompleted("last-hope") and not who:isQuestStatus("demon-main", engine.Quest.DONE) then
 			self.use_ui = "quest-win"
 			who:setQuestStatus(self.id, engine.Quest.DONE)
-
-			game:playAndStopMusic("Lords of the Sky.ogg")
-			
-			local p = game:getPlayer(true)
-			p:inventoryApplyAll(function(inven, item, o) o:check("on_win") end)
-			self:triggerHook{"Winner", how=how, kind="sorcerers"}
-			
-			game:setAllowedBuild("adventurer", true)
-			if game.difficulty == game.DIFFICULTY_NIGHTMARE then game:setAllowedBuild("difficulty_insane", true) end
-			if game.difficulty == game.DIFFICULTY_INSANE then game:setAllowedBuild("difficulty_madness", true) end
-			
-			local p = game:getPlayer(true)
-			p.winner = "tolak"
-			
-			game:saveGame()
 
 			-- Remove all remaining hostiles
 			-- for i = #game.level.e_array, 1, -1 do

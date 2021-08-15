@@ -23,7 +23,7 @@ newLore{
 	lore = function(is_lore_popup)
 		if is_lore_popup then
 			return _t[[#{italic}#You find a tattered page scrap. Perhaps this is part of a diary entry.#{normal}#
-"...Norgos is dead, and the madness has left this glade.  Snakes that were trying to choke me a moment before sltihered away, and the unnatural ice storm came to a sudden end.  But I still feel that, well, something is wrong..."]]
+"...Norgos is dead, and the madness has left this glade.  Snakes that were trying to choke me a moment before slithered away, and the unnatural ice storm came to a sudden end.  But I still feel that, well, something is wrong..."]]
 		else
 			return _t[[
 "...site really is the best, though.  No Sparklers, no Geegees, and it's so delicately balanced on account of the .... Got to remind them not to overload the bell...Had another problem with an exo terminal today.  There was a living disruption in the ether attached to all the native terminals, and a couple folks got locked in, on opposite sides of ...  One of the exos found a great new pattern today. The basis is a central column, anchor-mouths at one end, collectors at the other.  They put a neat spin on the collectors though.  We'll have to try it in other bells."]]

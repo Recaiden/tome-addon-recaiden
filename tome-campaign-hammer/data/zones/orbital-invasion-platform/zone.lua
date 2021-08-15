@@ -92,8 +92,8 @@ return {
 			[1] = {
 				generator = {
 					map = {
-						up = "MALROK_FLOOR",
-						['<'] = "MALROK_FLOOR",
+						up = "FLOATING_ROCKS",
+						['<'] = "FLOATING_ROCKS",
 					},
 				},
 			},

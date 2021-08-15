@@ -14,7 +14,7 @@ newEntity{ base = "DEEP_WATER",
 	does_block_move = true,
 	block_sight = false,
 	z = 3,
-	air_level = -20,
+	air_level = -20, air_condition="water",
 }
 
 newEntity{ base = "SAND",
@@ -22,11 +22,7 @@ newEntity{ base = "SAND",
 	type = "floor", subtype = "sand",
 	name = "sandy ocean floor", 
 	display = 's', color=colors.BROWN, back_color=colors.BLACK,
-	can_pass = {pass_deep_water=1},
-	does_block_move = true,
-	block_sight = false,
-	z = 3,
-	air_level = -5,
+	air_level = -5, air_condition="water",
 }
 
 newEntity{
@@ -38,8 +34,9 @@ newEntity{
 	can_pass = {pass_wall=1},
 	does_block_move = true,
 	block_sight = true,
-	air_level = -20,
+	air_level = -20, air_condition="water",
 	dig = "WATER_DEEP_DEEP",
+	shader = "water",
 }
 
 newEntity{
@@ -51,8 +48,9 @@ newEntity{
 	can_pass = {pass_wall=1},
 	does_block_move = true,
 	block_sight = true,
-	air_level = -20,
+	air_level = -20, air_condition="water",
 	dig = "WATER_DEEP_DEEP",
+	shader = "water",
 }
 newEntity{
 	define_as = "CORAL3",
@@ -63,8 +61,9 @@ newEntity{
 	can_pass = {pass_wall=1},
 	does_block_move = true,
 	block_sight = true,
-	air_level = -20,
+	air_level = -20, air_condition="water",
 	dig = "WATER_DEEP_DEEP",
+	shader = "water",
 }
 
 newEntity{
@@ -100,10 +99,39 @@ newEntity{
 for i = 1, 6 do newEntity{ base="HARDUNDERSEA_CLIFFS", define_as = "HARDUNDERSEA_CLIFFS"..i, image = "terrain/mountain5_"..i..".png"} end
 
 newEntity{
-		define_as = "ABYSSAL_CAVES",
-		name = "way to the caves",
-		display = '>', color_r=255, color_g=255, color_b=0, image = "terrain/water_grass_5_1.png", add_displays = {class.new{image = "terrain/underwater/subsea_cave_entrance_01.png"}},
-		notice = true,
-		always_remember = true,
-		change_level = 1,
+	define_as = "ABYSSAL_CAVES",
+	name = "way to the caves",
+	display = '>', color_r=255, color_g=255, color_b=0, image = "terrain/water_grass_5_1.png", add_displays = {class.new{image = "terrain/underwater/subsea_cave_entrance_01.png"}},
+	notice = true,
+	always_remember = true,
+	change_level = 1,
+	air_level = -5, air_condition="water",
+	
+	shader = "water",
+}
+
+newEntity{
+	define_as = "DEEP_WATER_UP",
+	type = "floor", subtype = "water",
+	image = "terrain/water_grass_5_1.png", add_displays = {class.new{image = "terrain/underwater/subsea_cave_entrance_01.png"}},
+	name = "previous level",
+	display = '<', color_r=255, color_g=255, color_b=0,
+	notice = true,
+	always_remember = true,
+	change_level = -1,
+	air_level = -5, air_condition="water",
+	shader = "water",
+}
+
+newEntity{
+	define_as = "DEEP_WATER_DOWN",
+	type = "floor", subtype = "water",
+	image = "terrain/water_grass_5_1.png", add_displays = {class.new{image = "terrain/underwater/subsea_cave_entrance_01.png"}},
+	name = "next level",
+	display = '>', color_r=255, color_g=255, color_b=0,
+	notice = true,
+	always_remember = true,
+	change_level = 1,
+	air_level = -5, air_condition="water",
+	shader = "water",
 }

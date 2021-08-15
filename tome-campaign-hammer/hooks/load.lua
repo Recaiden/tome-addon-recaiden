@@ -75,3 +75,33 @@ class:bindHook(
 	end
 )
 
+-- Add zone events
+local statue_zones = {
+	["campaign-hammer+orbital-invasion-platfomr"] = {percent = 50},
+	["campaign-hammer+scintillating-caverns"] = {percent = 80, forbid={1,2,3,4}},
+	["campaign-hammer+fields-of-hope"] = {percent = 50, forbid={5,6}},
+}
+local tentacle_zones = {
+	["campaign-hammer+derth-invasion"] = {percent = 25, forbid={3}},
+	["campaign-hammer+beachhead-siege"] = {percent = 50, forbid={1}},
+	["campaign-hammer+fields-of-hope"] = {percent = 30, forbid={5,6}},
+}
+class:bindHook(
+	"Zone:loadEvents",
+	function(self, data)
+		if game:isAddonActive("cults") then
+			if tentacle_zones[data.zone] then
+				local d = tentacle_zones[data.zone]
+				if type(d) ~= "table" then d = {percent=d} end
+				data.events[#data.events+1] = {name="cults+tentacle-tree", minor=true, percent=d.percent, forbid=d.forbid}
+			end
+		end
+		if game:isAddonActive("ashes-urhrok") then --redundant, but you can never have too many sanity checks
+			if statue_zones[data.zone] then
+				local d = statue_zones[data.zone]
+				if type(d) ~= "table" then d = {percent=d} end
+				data.events[#data.events+1] = {name="ashes-urhrok+demon-statue", minor=true, percent=d.percent, forbid=d.forbid}
+			end
+		end
+	end
+)
