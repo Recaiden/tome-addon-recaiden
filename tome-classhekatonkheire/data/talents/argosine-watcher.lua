@@ -124,16 +124,14 @@ newTalent{
 }
 
 newTalent{
-	name = "Inescapable Gaze", short_name = "REK_HEKA_WATCHER_INESCAPABLE",
+	name = "Eyelemental", short_name = "REK_HEKA_WATCHER_ELEMENT",
 	type = {"spell/watcher", 3}, require = mag_req3, points = 5,
 	mode = "passive",
-	getMultiplier = function(self, t) return math.max(1, self:combatTalentLimit(t, 5, 1.5, 2.25)) end,
-	-- handled in the STARE damage type
+	getResists = function(self, t) return self:combatTalentLimit(t, 70, 15, 35) end,
 	info = function(self, t)
-		return ([[If an enemy is affected by multiple Evil Eyes in one turn, the damage will be increased by %d%% and the slow by %d%%.]]):tformat(t.getMultiplier(self, t)*200-100, t.getMultiplier(self, t)*100)
+		return ([[When an eye enters combat, it attunes to a random element, transforming its Eye Lash talent and gaining %d%% resistance to that element.  You gain half the resistance bonus for as long as the eye is alive.]]):tformat(t.getResists(self, t))
 	end,
 }
-
 
 newTalent{
 	name = "Eye Hatchery", short_name = "REK_HEKA_WATCHER_HATCHERY",
@@ -141,39 +139,9 @@ newTalent{
 	mode = "passive",
 	getBonusEyes = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 0.5, 2.95)) end,
 	getInherit = function(self, t) return self:combatTalentScale(t, 20, 60) end,
+	-- implemented in headless-horror/REK_HEKA_HEADLESS_EYES
 	info = function(self, t)
 		return ([[Your maximum number of wandering eyes is increased by %d.
-In addition, your eyes inherit %d%% of your spellpower, damage increases (applied to all elements), and damage penetration (applied to all elements).]]):tformat(t.getBonusEyes(self, t), t.getInherit(self, t))
-	end,
-}
-
-newTalent{
-	name = "Panopticon", short_name = "REK_HEKA_WATCHER_PANOPTICON",
-	type = {"spell/watcher", 4}, require = mag_req4, points = 5,
-	hands = 40,
-	tactical = { DISABLE = 5 },
-	cooldown = 50,
-	no_npc_use=true,
-	range = 5,
-	getSightBonus = function(self, t) return math.floor(self:combatTalentLimit(t, 4, 1, 3)) end,
-	passives = function(self, t, p)
-		self:talentTemporaryValue(p, "sight", t.getSightBonus(self, t))
-	end,
-	getDuration = function(self, t) return self:combatTalentScale(t, 2, 4.5)	end,
-	requires_target = true,
-	action = function(self, t)
-		local tg = {type="hit", range=self:getTalentRange(t)}
-		local x, y, target = self:getTarget(tg)
-		if not x or not y or not target then return nil end
-		if core.fov.distance(target.x, target.y, x, y) > 5 then return nil end
-		if not target:hasProc("heka_panopticon_ready") then return nil end
-		target:setEffect(target.EFF_REK_HEKA_PANOPTICON, t.getDuration(self, t), {})
-		game.level.map:particleEmitter(self.x, self.y, 1, "circle", {oversize=1.7, a=170, limit_life=12, shader=true, appear=12, speed=0, base_rot=180, img="oculatus", radius=0})
-		return true
-	end,
-	info = function(self, t)
-		return ([[Paralyze a target wth the weight of your gaze.  A target who has been seen by at least two Evil Eyes is rendered unable to act for %d turns (#SLATE#No save or immunity#LAST#).
-
-Passively increases the sight range of your eyes by %d.]]):tformat(t.getDuration(self, t), t.getSightBonus(self, t))
+In addition, your eyes inherit %d%% of your spellpower and gain a bonus to damage and resist penetration equal to %d%% of your best bonuses.]]):tformat(t.getBonusEyes(self, t), t.getInherit(self, t))
 	end,
 }

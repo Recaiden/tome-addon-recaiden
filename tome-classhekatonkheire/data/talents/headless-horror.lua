@@ -343,7 +343,11 @@ newTalent{
 	tactical = { BUFF = 5 },
 	getLevel = function(self, t) return self.level end,
 	getMaxEyes = function(self, t)
-		return math.min(3, math.max(1, math.floor(self:getTalentLevel(t) * 0.55)))
+		local bonus = self:attr("heka_bonus_eyes") or 0
+		if self:knowTalent(self.T_REK_HEKA_WATCHER_HATCHERY) then
+			bonus = bonus + self:callTalent(self.T_REK_HEKA_WATCHER_HATCHERY, "getBonusEyes")
+		end
+		return bonus + math.min(3, math.max(1, math.floor(self:getTalentLevel(t) * 0.55)))
 	end,
 	getPhaseDoorLevel = function(self, t) return self:getTalentLevelRaw(t) end,
 	getLashLevel = function(self, t) return self:getTalentLevelRaw(t) end,

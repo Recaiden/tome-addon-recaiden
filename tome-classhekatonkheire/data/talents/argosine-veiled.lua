@@ -82,7 +82,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Direct one of your eyes to whirl aronud in a frenzy, snapping and smashing.  All adjacent enemies will be hit for %0.1f physical damage and may be disarmed (#SLATE# Eye's spellpower vs Physical#LAST#) for %d turns.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), t:_getDuration(self))
+		return ([[Direct one of your eyes to whirl around in a frenzy, snapping and smashing.  All adjacent enemies will be hit for %0.1f physical damage and may be disarmed (#SLATE# Eye's spellpower vs Physical#LAST#) for %d turns.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), t:_getDuration(self))
 	end,
 }
 
@@ -161,7 +161,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Focus your entire gaze on an enemy.  All of your eyes will target them and gain an exra turn.  The weight of attention will numb the target (#SLATE#Spell save#LAST#), reducing all damage they deal by %d%% for %d turns.
+		return ([[Focus your entire gaze on an enemy, crushing them beneath the weight of your attention.  All of your eyes will gain an exra turn and prioritize attacking the target, while the target will be numbed (#SLATE#Spell save#LAST#), reducing all damage they deal by %d%% for %d turns.
 This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(t.getNumb(self, t), t.getDuration(self, t))
 	end
 }
