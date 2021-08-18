@@ -448,6 +448,15 @@ newTalent{
 		if game.zone.wilderness then return false end
 		
 		self.eyes.remainingCooldown = self.eyes.remainingCooldown - 1
+		local stock = self:hasEffect(self.EFF_REK_HEKA_EYE_STOCK)
+		if stock then
+			local cost = math.min(self.eyes.remainingCooldown, stock.stacks)
+			self.eyes.remainingCooldown = self.eyes.remainingCooldown - cost
+			stock.stacks = stock.stacks - cost
+			if stock.stacks <= 0 then
+				self:removeEffect(self.EFF_REK_HEKA_EYE_STOCK)
+			end
+		end
 		if self.eyes.remainingCooldown > 0 then return false end
 		self.eyes.remainingCooldown = 10
 		

@@ -113,13 +113,28 @@ This talent invests hands; your maximum hands will be reduced by its cost until 
 }
 
 newTalent{
-	name = "Oversight", short_name = "REK_HEKA_WATCHER_OVERWATCH",
+	name = "Eye Stock", short_name = "REK_HEKA_WATCHER_RESPAWN",
 	type = {"spell/watcher", 2},	require = mag_req2, points = 5,
-	mode = "passive",
-	getOverwatch = function(self, t) return self:combatTalentScale(t, 1, 5) end,
-	--used in an effect applied in the eye's stare down talent via the STARE damage type
+	cooldown = 5,
+	hands = 35,
+	getTurns = function(self, t) return math.floor(self:combatTalentScale(t, 1, 5)) end,
+	getMaxTurns = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 3, 9.8)) end,
+	callbackOnTalentPost = function(self, t, ab, ret, silent)
+		if not self.in_combat then return end
+		if util.getval(t.hands, self, t) > 0 then
+			self:setEffect(self.T_REK_HEKA_EYE_STOCK, 10, {src=self, max_stacks=t:_getMaxTurns(self)})
+		end
+	end,
+	action = function(self, t)
+		if not self.in_combat then return nil end
+		self:setEffect(self.T_REK_HEKA_EYE_STOCK, 10, {src=self, stacks = t.getTurns(self, t), max_stacks=t:_getMaxTurns(self)})
+		return true
+	end,
 	info = function(self, t)
-		return ([[Rest easy knowing that someone is watching your back, even if that someone is you.  When you are in the area of an Evil Eye, your health regeneration is increased by %d and your saves by %d.]]):tformat(t.getOverwatch(self, t), t.getOverwatch(self, t)*8)
+		return ([[When you spend hands in combat, reduce the time needed to respawn a wandering eye by one turn.  If you already have your maximum number of eyes, up to %d turns can be readied 'in advance'.
+
+Activate this talent to recover an eye %d turns sooner.
+]]):tformat(t:_getMaxTurns(self), t:_getTurns(self))
 	end,
 }
 

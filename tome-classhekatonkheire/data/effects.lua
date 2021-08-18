@@ -564,3 +564,22 @@ newEffect{
 	activate = function(self, eff) eff.tmpid = self:addTemporaryValue("numbed", eff.power) end,
 	deactivate = function(self, eff) self:removeTemporaryValue("numbed", eff.tmpid) end,
 }
+
+newEffect{
+	name = "REK_HEKA_EYE_STOCK", image = "talents/rek_heka_watcher_respawn.png",
+	desc = _t"Eye Stock",
+	long_desc = function(self, eff) return ("This creature's eyes are pressing into this reality, ready to appear %d turns sooner."):tformat(eff.stacks) end,
+	charges = function(self, eff) return eff.stacks end,
+	type = "magical",
+	subtype = { hands=true },
+	status = "beneficial",
+	parameters = { stacks=1, max_stacks=3 },
+	on_merge = function(self, old_eff, new_eff, e)
+		new_eff.stacks = util.bound(old_eff.stacks + new_eff.stacks, 1, new_eff.max_stacks)
+		return new_eff
+	end,
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+	end,
+}
