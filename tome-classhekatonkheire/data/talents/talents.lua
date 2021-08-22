@@ -136,6 +136,31 @@ newTalent{
 	end,
 }
 
+isMyEye = function(self, eye) return eye.summoner and eye.summoner == self and eye.is_wandering_eye end
+
+on_pre_use_Eyes = function(self, t, silent)
+	if not self:isTalentActive(self.T_REK_HEKA_HEADLESS_EYES) then
+		if not silent then game.logPlayer(self, "You have no wandering eyes!") end
+		return false
+	end
+	if self:callTalent(self.T_REK_HEKA_HEADLESS_EYES, "nbEyesUp") == 0 then
+		if not silent then game.logPlayer(self, "You have no wandering eyes!") end
+		return false
+	end
+	return true
+end
+
+countEyes = function(self)
+	local eyes = 0
+	if not game.level then return 0 end
+	for _, e in pairs(game.level.entities) do
+		if isMyEye(self, e) then 
+			eyes = eyes + 1 
+		end
+	end
+	return eyes
+end
+
 -- shared
 if not Talents.talents_types_def["technique/helping-hands"] then
    newTalentType{ allow_random=true, type="technique/helping-hands", name = "Helping Hands", description = "Many hands make light work." }

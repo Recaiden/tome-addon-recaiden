@@ -13,6 +13,7 @@ newTalent{
 	name = "Thorough Lashing", short_name = "REK_HEKA_VEILED_LASHING",
 	type = {"spell/veiled-shepherd", 1}, require = mag_req1, points = 5,
 	cooldown = 3,
+	hands = 10,
 	range = 10,
 	requires_target = true,
 	tactical = { ATTACK = 2 },
