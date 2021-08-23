@@ -90,8 +90,8 @@ function win(self, how)
 	if kryl and not kryl.dead then world:gainAchievement("HAMMER_WIN_KRYL", p) end
 	local mel = game.level:findEntity{define_as="DOOMBRINGER_MELINDA"}
 	if mel and not mel.dead then world:gainAchievement("HAMMER_WIN_MELINDA", p) end
-	local broughtKryl = who:hasQuest("campaign-hammer+demon-allies") and who:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-k")
-	local broughtMel = who:hasQuest("campaign-hammer+demon-allies") and who:hasQuest("campaign-hammer+demon-allies"):isCompleted("saved-melinda")
+	local broughtKryl = p:hasQuest("campaign-hammer+demon-allies") and p:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-k")
+	local broughtMel = p:hasQuest("campaign-hammer+demon-allies") and p:hasQuest("campaign-hammer+demon-allies"):isCompleted("saved-melinda")
 	if not broguhtKryl and not broughtMel then world:gainAchievement("HAMMER_WIN_ALONE", p) end
 	
 	-- unlocks
@@ -116,7 +116,7 @@ on_status_change = function(self, who, status, sub)
 			-- 	local e = game.level.e_array[i]
 			-- 	if game.player:reactionToward(e) < 0 then game.level:removeEntity(e) end
 			-- end
-			game:setAllowedBuild("hammer_race_demon", true)
+			--game:setAllowedBuild("hammer_race_demon", true)
 			
 			local Chat = require"engine.Chat"
 			local chat = Chat.new("campaign-hammer+doombringer-end", {name=_t"Endgame", image="portrait/win.png"}, game:getPlayer(true))

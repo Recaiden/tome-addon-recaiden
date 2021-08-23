@@ -7,10 +7,23 @@ rarityWithLoot = function(add, mult)
 	end
 end
 
+alter = function(add, mult)
+	add = add or 0
+	mult = mult or 1
+	return function(e)
+		if e.rarity then
+			e.rarity = math.ceil(e.rarity * mult + add)
+			e.faction = "allied-kingdoms"
+			e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+			e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		end
+	end
+end
+
 load("/data/general/npcs/demon-major.lua", rarity(1))
 load("/data/general/npcs/demon-minor.lua", rarity(0))
-load("/data/general/npcs/plant.lua", rarity(50))
-load("/data/general/npcs/all.lua", rarity(20, 50))
+load("/data/general/npcs/plant.lua", alter(50))
+load("/data/general/npcs/all.lua", alter(20, 50))
 
 local Talents = require("engine.interface.ActorTalents")
 

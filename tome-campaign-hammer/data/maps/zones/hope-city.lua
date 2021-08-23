@@ -4,7 +4,7 @@ quickEntity('Y', {show_tooltip=true, name=_t"Statue of Queen Mirvenia the Inspir
 quickEntity('X', {show_tooltip=true, name=_t"Declaration of the Unification of the Allied Kingdoms", display='@', image="terrain/grass.png", add_displays = {mod.class.Grid.new{image="terrain/statues/monument_allied_kingdoms.png", z=18, display_y=-1, display_h=2}}, color=colors.LIGHT_BLUE, block_move=function(self, x, y, e, act, couldpass) if e and e.player and act then game.party:learnLore("last-hope-allied-kingdoms-foundation") end return true end})
 
 -- defineTile section
-defineTile("<", "GRASS_UP8")
+defineTile("<", "GRASS_ROAD_STONE")
 defineTile(">", "GRASS_DOWN8")
 
 defineTile("#", "HARDWALL")
