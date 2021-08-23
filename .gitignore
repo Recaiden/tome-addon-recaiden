@@ -1,5 +1,4 @@
 # image files
-*.png
 *.svg
 *.pdn
 
@@ -19,6 +18,7 @@ tome-Infinite100
 tome-classwitchdoctor
 boot-cosmetic-ui-frogge
 tome-cosmetic-ui-frogge
+tome-campaign-hammer-characters
 
 # ToME files
 *.teaa
