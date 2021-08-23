@@ -13,5 +13,6 @@ on_status_change = function(self, who, status, sub)
 	if self:isCompleted("victory") then
 		who:setQuestStatus(self.id, engine.Quest.DONE)
 		who:grantQuest("campaign-hammer+demon-ruins")
+		world:gainAchievement("HAMMER_THALOREN", who)
 	end
 end

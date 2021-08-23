@@ -350,7 +350,7 @@
         "data": {
             "chatid": "chat5",
             "chat": "It is done.\nOnce again you can only see what *is*.\nBut you remember.  You are different now.",
-            "answer1": ""
+            "answer1": "*Leave, but do not forget*"
         },
         "class": "chat",
         "html": "chat1",
@@ -429,7 +429,7 @@
                 "connections": []
             }
         },
-        "pos_x": 49,
-        "pos_y": 375
+        "pos_x": 39,
+        "pos_y": 275
     }
 }

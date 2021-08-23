@@ -78,6 +78,12 @@ newEntity{
 			end
 		end, {from=game.zone.short_name})
 
+		if player.hammer_killed_dolleg then
+			player.hammer_killed_dolleg = nil
+		else
+			world:gainAchievement("HAMMER_SAVE_DOLLEG", player)
+		end
+		
 		require("engine.ui.Dialog"):simplePopup(_t"Onward!", _t"You made it to Eyal! Now you must clear this area, which will be the beachhead for the demon invasion.  Kill everything you find.")
 		return true
 	end,

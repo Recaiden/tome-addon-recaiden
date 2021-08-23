@@ -356,8 +356,11 @@ newEntity{
 
 	resolvers.auto_equip_filters("Bulwark"),
 	auto_classes={
-		{class="Bulwark", start_level=77, level_rate=100},
+		{class="Bulwark", start_level=77, level_rate=50},
+		{class="Sun Paladin", start_level=77, level_rate=50},
 	},
+
+	inc_damage = {all=50},
 
 	autolevel = "warriormage",
 	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", sense_radius=25, ai_target="target_simple_or_player_radius" },

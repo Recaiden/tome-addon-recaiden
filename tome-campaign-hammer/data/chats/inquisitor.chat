@@ -79,7 +79,7 @@
         "data": {
             "chatid": "chat3",
             "chat": "You bring in some ruby magi, and with painstaking work, they infuse the crystals' power into the Rhaloren, making them formidable enough to confront the rest of the Shaloren directly.\n",
-            "answer1": ""
+            "answer1": "Onwards!"
         },
         "class": "chat",
         "html": "chat1",

@@ -7,6 +7,7 @@ local default_hammer_descriptors = function(add)
 	}
 
 	-- TODO move Whitehoof into undead
+	-- TODO remove duplicates (from other addons)
 	-- 	local base = {
 
 	-- 	race =
@@ -135,7 +136,7 @@ newBirthDescriptor{
 			-- give rares/randbosses extra loot
 			local lev = act.level
 			if act.rank == 3.2 and not act.no_inventory_access then
-				for i = 1, 3 do
+				for i = 1, rng.table({1,2,3,3}) do
 					local bonus = 1.5 + lev / 25
 					local fil = {lev=lev, egos=1, greater_egos_bias = 0, power_points_factor = bonus, nb_themes_add = 1, nb_powers_add = 2, forbid_power_source=act.not_power_source,
 											 base_filter = {no_tome_drops=true, ego_filter={keep_egos=true, ego_chance=-1000}, 

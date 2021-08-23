@@ -62,12 +62,17 @@ return {
 		[1] = {
 			generator = {
 				map = {
-					up = "BURNT_UP_WILDERNESS",
+					up = "BURNT_GROUND",
 				},
 			},
 		},
 		[2] = {
 			width = 25, height = 25,
+			generator = {
+				map = {
+					up = "BURNT_GROUND",
+				},
+			},
 			actor = {
 				nb_npc = {15, 25},
 			},
@@ -77,7 +82,7 @@ return {
 				map = {
 					floor = {"GRASS", "BURNT_GROUND", "BURNT_GROUND"},
 					wall = {"TREE", "BURNT_TREE"},
-					up = "BURNT_UP4",
+					up = "BURNT_GROUND",
 					down = "GRASS_DOWN6",
 					do_ponds =  {
 						nb = {0, 2},
@@ -92,7 +97,7 @@ return {
 				map = {
 					floor = "GRASS",
 					wall = "TREE",
-					up = "GRASS_UP4",
+					up = "GRASS",
 					down = "GRASS_DOWN6",
 					do_ponds =  {
 						nb = {0, 2},
@@ -148,7 +153,7 @@ return {
 	on_enter = function(lev)
 		if game and game.player and lev == 1 and not game.level.data.hammer_visited_hope then
 			game.level.data.hammer_visited_hope = true
-			require("engine.ui.Dialog"):simplePopup(_t"The Battle for Last Hope", _t"Meteors and catapult-stones rain down, sling-stones and fireballs fill the air.  Champions of Urh'rok wade through the fray as wretchlings die in droves.  In the confusion of battle, you could slip through to the city...")
+			require("engine.ui.Dialog"):simplePopup(_t"The Battle for Last Hope", _t"Meteors and catapult-stones rain down, sling-stones and fireballs fill the air.  Champions of Urh'rok wade through the fray as wretchlings die in droves.  In the confusion of battle, you could slip through to the city. You will only have one chance.  There can be no retreat here!")
 		end
 		if game and game.player and lev == 6 then
 			local happyWalrog = game.player:hasQuest("campaign-hammer+demon-allies") and game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-w") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("death-w")

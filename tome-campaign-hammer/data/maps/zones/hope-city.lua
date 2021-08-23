@@ -15,6 +15,7 @@ defineTile("-", "GRASS_ROAD_STONE")
 defineTile(".", "GRASS")
 defineTile("t", "TREE")
 defineTile(" ", "FLOOR")
+defineTile("D", "HARDWALL", nil, nil, "BARRED_DOOR")
 
 defineTile("g", "FLOOR", nil, {entity_mod=function(e) e.make_escort = nil return e end, random_filter={type='humanoid', faction="allied-kingdoms"}})
 defineTile("G", "FLOOR", nil, {random_filter={type='humanoid', faction="allied-kingdoms", random_boss={nb_classes=1, loot_quality="store", loot_quantity=3, ai_move="move_complex", rank=3.5,}}})
@@ -51,7 +52,7 @@ t~~~##      ## __~##t---&-&---t##~__ ##      ##~~~
 t~~~#      ### _~~#tt-&&&-&&&-tt#~~_ ###      #~~~
 t~~~#      ##  _~##t--&&---&&--t##~_  ##      #~~~
 t~~~#  ######  _~#tt-&&-###-&&-tt#~_  ######  #~~~
-t~~~#  #####   _~#tt-&&-###-&&-tt#~_   #####  #~~~
+t~~~#  #####   _~#tt-&&-#D#-&&-tt#~_   #####  #~~~
 t~~~#  ######  _~#tt-&&-->--&&-tt#~_  ######  #~~~
 t~~~#      ##  _~##t--&&---&&--t##~_  ##      #~~~
 t~~~#      ### _~~#tt-&&&&&&&-tt#~~_ ###      #~~~

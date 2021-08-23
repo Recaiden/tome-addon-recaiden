@@ -55,8 +55,8 @@ newEntity{
 				game.logPlayer(game.player, "The item vault cannot reach into your universe.")
 				return true
 			end
-			if game.player.level < 15 then
-				game.logPlayer(game.player, "The item vault isn't powered up yet.  Come back later (level 15+).")
+			if game.player.level < 20 then
+				game.logPlayer(game.player, "The item vault isn't powered up yet.  Come back later (level 20+).")
 				return true
 			end
 			if profile:isDonator() and (not profile.connected or not profile.auth) then
@@ -71,3 +71,11 @@ newEntity{
 		return true
 	end,
 }
+
+load("/data/zones/shertul-fortress/grids.lua", function(e)
+	if e.define_as == "TRAINING_ORB" then
+		e.image = "terrain/red_floating_rocks05_01.png"
+	elseif e.define_as == "MONITOR_ORB1" or e.define_as == "MONITOR_ORB2" then
+		e.image = "terrain/red_floating_rocks05_01.png"
+	end
+end)

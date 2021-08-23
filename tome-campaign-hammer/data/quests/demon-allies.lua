@@ -105,9 +105,10 @@ on_status_change = function(self, who, status, sub)
 	elseif ((self:isCompleted("death-k") or self:isCompleted("help-k"))
 		and (self:isCompleted("death-s") or self:isCompleted("help-s") or self:isCompleted("angry-s"))
 		and (self:isCompleted("death-w") or self:isCompleted("help-w"))
-		and (self:isCompleted("death-m") or self:isCompleted("help-m"))
+		--and (self:isCompleted("death-m") or self:isCompleted("help-m"))
 	) then
 		who:setQuestStatus(self.id, engine.Quest.DONE)
+		world:gainAchievement("HAMMER_OLD_ONES", who)
 	end
 end
 

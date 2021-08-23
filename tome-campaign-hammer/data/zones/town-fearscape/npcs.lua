@@ -166,3 +166,36 @@ newEntity{ base = "BASE_NPC_MAJOR_DEMON", define_as = "SMITH",
 
 	can_talk = "campaign-hammer+forge-giant",
 }
+
+newEntity{ define_as="TRAINING_DUMMY",
+	type = "training", subtype = "dummy",
+	name = "Training Dummy", color=colors.GREY,
+	desc = _t"Training dummy.", image = "npc/lure.png",
+	level_range = {1, 1}, exp_worth = 0,
+	rank = 3,
+	max_life = 300000, life_rating = 0,
+	life_regen = 300000,
+	immune_possession = 1,
+	never_move = 1,
+	knockback_immune = 1,
+	training_dummy = 1,
+	on_takehit = function(self, value, src, infos)
+		local data = game.zone.training_dummies
+		if not data then return value end
+
+		if not data.start_turn then data.start_turn = game.turn end
+
+		data.total = data.total + value
+		if infos and infos.damtype then
+			data.damtypes.changed = true
+			data.damtypes[infos.damtype] = (data.damtypes[infos.damtype] or 0) + value
+		end
+		data.changed = true
+
+		if data.total > 1000000 then
+			world:gainAchievement("TRAINING_DUMMY_1000000", game.player)
+		end
+
+		return value
+	end,
+}

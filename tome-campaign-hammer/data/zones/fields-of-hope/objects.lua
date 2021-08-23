@@ -1,5 +1,6 @@
 load("/data/general/objects/objects-maj-eyal.lua")
-load("/data/general/objects/objects-far-east.lua")
+loadIfNot("/data/general/objects/world-artifacts-far-east.lua")
+loadIfNot("/data/general/objects/boss-artifacts-far-east.lua")
 
 newEntity{
 	base = "BASE_HELM", define_as="CROWN_TOLAK",
@@ -10,6 +11,7 @@ newEntity{
 	desc = _t[[The crown of Nargol was lost long ago, so at the beginning of the Age of Ascendancy, a new crown was forged to represent the Allied Kingdoms.]],
 	color = colors.BLUE, image = "object/artifact/twofold_crown.png",
 	moddable_tile = "special/crown_of_command",
+	plot = true,
 	level_range = {50, 50},
 	rarity = nil,
 	cost = 1000,

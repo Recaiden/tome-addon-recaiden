@@ -71,6 +71,13 @@ newEntity{
 	low_level_tactics_override = {escape=0},
 	
 	on_die = function(self, who)
+		local p = game.player
+		if p and p.hasEffect and p:hasEffect(p.EFF_HAMMER_DEMONIC_WATERBREATHING) then
+			world:gainAchievement("HAMMER_AIR_YES", p)
+		elseif p and p.air < p.max_air then
+			world:gainAchievement("HAMMER_AIR_NO", p)
+		end
+		
 		if not game.player:resolveSource():hasQuest("campaign-hammer+demon-caravan") then
 			game.player:resolveSource():grantQuest("campaign-hammer+demon-caravan")
 		end

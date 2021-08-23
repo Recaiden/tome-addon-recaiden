@@ -1,11 +1,12 @@
 load("/data/general/objects/objects-maj-eyal.lua")
-load("/data/general/objects/objects-far-east.lua")
+loadIfNot("/data/general/objects/world-artifacts-far-east.lua")
+loadIfNot("/data/general/objects/boss-artifacts-far-east.lua")
 
 newEntity{
 	base = "BASE_ROD", define_as = "WAND_WALROG_QUEST",
 	power_source = {unknown=true},
 	unided_name = _t"coral rod",
-	name = "Walrog's Draining Wand", color=colors.LIGHT_RED, unique=true, image = "object/artifact/wand_gwais_burninator.png",
+	name = "Walrog's Draining Wand", color=colors.LIGHT_RED, unique=true, image = "object/artifact/wand_walrog.png",
 	desc = _t[[This wand can extract the vim of a creature close to death, stealing their life energy to revitalise another.  It is attuned to Walrog, and cannot be used to heal anyone else.]],
 	cost = 300,
 	encumber = 0,
@@ -31,7 +32,7 @@ newEntity{
 				game.logPlayer(who, "#CRIMSON#That creature is already dead!")
 				return nil
 			end
-			if target.type ~= "aquatic" then
+			if (target.type ~= "aquatic" and target.subtype ~= "naga" and target.subtype ~= "yaech") then
 				game.logPlayer(who, "#CRIMSON#That creature is not one of your targets!")
 				return nil
 			end

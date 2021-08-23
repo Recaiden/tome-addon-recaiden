@@ -164,4 +164,7 @@ newEntity{
 	},
 
 	resolvers.drops{chance=100, nb=2, {}},
+	on_die = function(self, who)
+		if who == game.player then game.player.hammer_killed_dolleg = true end
+	end,
 }

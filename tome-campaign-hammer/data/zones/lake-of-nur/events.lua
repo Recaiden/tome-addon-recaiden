@@ -1,6 +1,7 @@
-local events = { one_per_level=true,
+local events = {
+	one_per_level=true,
 	{name="font-life", minor=true, percent=40},
-	{name="antimagic-bush", minor=true, percent=40},
+	{name="glowing-chest", minor=true, percent=60, forbid={3}},
 }
 
 return events
