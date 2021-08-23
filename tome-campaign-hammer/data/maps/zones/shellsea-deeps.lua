@@ -4,8 +4,8 @@ endx = 18
 endy = 7
 
 -- defineTile section
-defineTile('<', "WATER_UP")
-defineTile('>', "WATER_DOWN")
+defineTile('<', "DEEP_WATER_UP")
+defineTile('>', "DEEP_WATER_DOWN")
 defineTile('_', "WATER_FLOOR")
 defineTile('.', "WATER_FLOOR")
 defineTile('+', "WATER_DOOR")

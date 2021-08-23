@@ -17,8 +17,8 @@ return {
 	effects = {"EFF_ZONE_AURA_FEARSCAPE"},
 	allow_respec = "limited",
 
-	min_material_level = 3,
-	max_material_level = 3,
+	min_material_level = 2,
+	max_material_level = 4,
 	store_levels_by_restock = { 15, 30, 45 },
 	nicer_tiler_overlay = "DungeonWallsGrass",
 

@@ -152,4 +152,11 @@ return {
 	end,
 
 	on_enter = function(lev, old_lev, newzone) end,
+
+	on_leave = function(lev, old_lev, newzone)
+		if not newzone then return end
+		if not game.player:resolveSource():hasQuest("campaign-hammer+demon-main") then
+			game.player:resolveSource():grantQuest("campaign-hammer+demon-main")
+		end
+	end,
 }

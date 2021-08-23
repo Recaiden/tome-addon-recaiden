@@ -365,8 +365,12 @@ newEntity{
 	resolvers.inscriptions(5, {"healing infusion", "stormshield rune", "heroism infusion", "movement infusion", "wild infusion"}),
 
 	on_die = function(self, who)
+		if not game.player:resolveSource():hasQuest("campaign-hammer+demon-main") then
+			game.player:resolveSource():grantQuest("campaign-hammer+demon-main")
+		end
 		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "last-hope")
 		game.level.data.no_worldport = nil
+		game.player:hasQuest("campaign-hammer+demon-main"):win("tolak")
 	end,
 }
 
