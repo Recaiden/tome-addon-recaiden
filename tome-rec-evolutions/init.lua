@@ -1,8 +1,8 @@
 long_name = "Recaiden's Evolution Prodigies"
 short_name = "rec-evolutions"
 for_module = "tome"
-version = {1,6,0}
-addon_version = {1, 3, 0}
+version = {1,7,0}
+addon_version = {1, 4, 0}
 weight = 27801
 author = { 'Recaiden' }
 description = [[Dreadmaster not included]]

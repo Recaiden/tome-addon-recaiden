@@ -72,3 +72,5 @@ if not Talents.talents_types_def["spell/lightning-archery"] then
 	load("/data-rec-evolutions/talents/zephyr-storm-archery.lua")
 	load("/data-rec-evolutions/talents/zephyr.lua")
 end
+
+load("/data-rec-evolutions/talents/warp.lua")
