@@ -36,28 +36,28 @@ return {
 			nb_trap = {0, 0},
 		},
 	},
-	levels =
-	{
-			[1] = {
-				generator = {
-					map = {
-						['<'] = "COBBLESTONE_UP_WILDERNESS",
-					},
+	levels = {
+		[1] = {
+			generator = {
+				map = {
+					['<'] = "COBBLESTONE_UP_WILDERNESS",
 				},
 			},
-			[3] = {
-				width=28, height=80,
-				generator = {
-					map = {
-						force_last_stair = true,
-						['<'] = "COBBLESTONE_UP8",
-						['>'] = "COBBLESTONE_UP_WILDERNESS",
-					},
+		},
+		[3] = {
+			width=28, height=80,
+			generator = {
+				map = {
+					force_last_stair = true,
+					['<'] = "COBBLESTONE_UP8",
+					['>'] = "COBBLESTONE_UP_WILDERNESS",
 				},
 			},
+		},
 	},
-
+	
   post_process = function(level)
+		game:placeRandomLoreObject("NOTE"..level.level)
 	end,
 
 	on_enter = function(lev, old_lev, newzone)
@@ -66,6 +66,18 @@ return {
 	on_leave = function(lev, old_lev, newzone)
 		if not newzone then return end
 		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "dwarves")
-		--game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "north")
+
+		game:onLevelLoad(
+			"wilderness-1",
+			function(zone, level, data)
+				-- destroy the caravan only if the boss is dead
+				local caravanDestroyed = game.player:hasQuest("campaign-hammer+demon-caravan") and game.player:isQuestStatus("campaign-hammer+demon-caravan", engine.Quest.DONE)
+				for uid, e in pairs(game.level.entities) do
+					if caravanDestroyed then
+						if e.on_encounter and e.subtype == "caravan" then e:die() end
+					end
+				end
+			end)
+
 	end,
 }

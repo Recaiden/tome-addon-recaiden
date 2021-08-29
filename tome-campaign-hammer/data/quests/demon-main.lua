@@ -92,7 +92,7 @@ function win(self, how)
 	if mel and not mel.dead then world:gainAchievement("HAMMER_WIN_MELINDA", p) end
 	local broughtKryl = p:hasQuest("campaign-hammer+demon-allies") and p:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-k")
 	local broughtMel = p:hasQuest("campaign-hammer+demon-allies") and p:hasQuest("campaign-hammer+demon-allies"):isCompleted("saved-melinda")
-	if not broguhtKryl and not broughtMel then world:gainAchievement("HAMMER_WIN_ALONE", p) end
+	if not broughtKryl and not broughtMel then world:gainAchievement("HAMMER_WIN_ALONE", p) end
 	
 	-- unlocks
 	game:setAllowedBuild("adventurer", true)

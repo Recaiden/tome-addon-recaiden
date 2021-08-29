@@ -13,7 +13,12 @@ alter = function(add, mult)
 	return function(e)
 		if e.rarity then
 			e.rarity = math.ceil(e.rarity * mult + add)
-			e.faction = "allied-kingdoms"
+			if e.faction ~= "fearscape" then
+				if e.faction ~= "allied-kingdoms" then
+					e.desc = (e.desc or "").._t[[ This creature has put aside its normal concerns in the face of demonic invasion.]]
+				end
+				e.faction = "allied-kingdoms"
+			end
 			e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
 			e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
 		end

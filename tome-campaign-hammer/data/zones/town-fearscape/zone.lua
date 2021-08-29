@@ -18,7 +18,7 @@ return {
 	allow_respec = "limited",
 
 	min_material_level = 2,
-	max_material_level = 4,
+	max_material_level = 3,
 	store_levels_by_restock = { 15, 30, 45 },
 	nicer_tiler_overlay = "DungeonWallsGrass",
 

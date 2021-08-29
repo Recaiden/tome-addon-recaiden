@@ -163,7 +163,7 @@ newEntity{
 	make_escort = {
 		{name="thalore hunter", number=2, no_subescort=true},
 		{name="thalore wilder", number=1, no_subescort=true},
-		{name="treant", number=4, no_subescort=true},
+		{name="treant", number=5, no_subescort=true},
 	},
 
 	on_die = function(self, who)
