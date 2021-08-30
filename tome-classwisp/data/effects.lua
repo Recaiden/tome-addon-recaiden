@@ -9,7 +9,7 @@ local Level = require "engine.Level"
 newEffect{
 	name = "REK_GLR_DAZE", image = "talents/rek_glr_idol_fascinating.png",
 	desc = "Fascinated",
-	long_desc = function(self, eff) return ("The target is dazed with fascination."):format() end,
+	long_desc = function(self, eff) return ("The target is dazed, rendering it unable to move, halving all damage done, defense, saves, accuracy, spell, mind and physical power. Any damage will remove the daze."):format() end,
 	type = "mental",
 	subtype = { psionic=true, stun=true },
 	status = "detrimental",

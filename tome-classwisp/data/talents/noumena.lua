@@ -3,7 +3,7 @@ newTalent{
 	type = {"psionic/noumena", 1},
 	require = wil_req1,
 	points = 5,
-	cooldown = function(self, t) return math.ceil(self:combatTalentScale(t, 24, 12)) end,
+	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 5, 24, 10)) end,
 	mode = "passive",
 	getResist = function(self, t) return self:combatTalentMindDamage(t, 20, 50) end,
 	getArmor = function(self, t) return self:combatTalentMindDamage(t, 5, 45) end,
