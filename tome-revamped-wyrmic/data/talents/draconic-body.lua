@@ -1,8 +1,6 @@
 newTalent{
 	name = "Racing Wings", short_name = "REK_WYRMIC_BODY_WINGS",
-	type = {"wild-gift/draconic-body", 1},
-	require = gifts_req1,
-	points = 5,
+	type = {"wild-gift/draconic-body", 1}, require = gifts_req1, points = 5,
 	equilibrium = 10,
 	cooldown = 8,
 	range = 0,
@@ -73,10 +71,8 @@ Mindpower: improves healing factor.]]):format(t.getHealing(self, t) / 2, t.getHe
 
 newTalent{
 	name = "Scaled Skin", short_name = "REK_WYRMIC_COMBAT_SCALES",
-	type = {"wild-gift/draconic-body", 2},
-	require = techs_req2,
+	type = {"wild-gift/draconic-body", 2}, require = gifts_req2, points = 5,
 	mode = "passive",
-	points = 5,
 	getArmor = function(self, t) return self:combatTalentMindDamage(t, 5, 25) end,
 	getLightArmorHardiness = function(self, t) return 15 end,
 	passives = function(self, t, p)
@@ -101,9 +97,7 @@ Mindpower: improves Armour bonus.
 
 newTalent{
 	name = "Drakeheart", short_name = "REK_WYRMIC_BODY_CLEANSE",
-	type = {"wild-gift/draconic-body", 3},
-	require = gifts_req3,
-	points = 5,
+	type = {"wild-gift/draconic-body", 3}, require = gifts_req3, points = 5,
 	equilibrium = 5,
 	cooldown = 16,
 	no_energy = true,
@@ -179,10 +173,8 @@ Passively improves all saves by %d.
 
 newTalent{
 	name = "Lashing Tail", short_name = "REK_WYRMIC_BODY_TAIL",
-	type = {"wild-gift/draconic-body", 4},
-	require = gifts_req4,
+	type = {"wild-gift/draconic-body", 4}, require = gifts_req4, points = 5,
 	mode = "sustained",
-	points = 5,
 	cooldown = 10,
 	sustain_equilibrium = 8,
 	tactical = { DISABLE = 1 },

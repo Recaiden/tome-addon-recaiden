@@ -238,7 +238,7 @@ newEffect{
 	long_desc = function(self, eff) return "The target is taking acid damage and losing one sustain per turn." end,
 	on_gain = function(self, err) return "#Target# is coated in disrupting acid!", "+Dissolve" end,
 	on_lose = function(self, err) return "#Target# has neutralized the acid.", "-Dissolve" end,
-	type = "Physical",
+	type = "physical",
 	subtype = { acid=true },
 	status = "detrimental",
 	parameters = {power=1, apply_power=10},
