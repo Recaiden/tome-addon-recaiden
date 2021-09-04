@@ -86,7 +86,7 @@ newTalent{
 						old_feat = oe,
 						name = "stone pillar", image = oe.image,--image = "terrain/shaped_pillar.png",
 						display = '#', color_r=255, color_g=255, color_b=255, back_color=colors.GREY,
-						desc = "a slowly sinking wall of stone, raised by the footsteps of the beast",
+						desc = _t"a slowly sinking wall of stone, raised by the footsteps of the beast",
 						type = "wall", --subtype = "floor",
 						always_remember = true,
 						can_pass = {pass_wall=1},

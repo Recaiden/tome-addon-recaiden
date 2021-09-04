@@ -185,8 +185,8 @@ newEffect{
 
 newEffect{
 	name = "REK_HEKA_SUDDEN_INSIGHT", image = "talents/rek_heka_otherness_sudden_insight.png",
-	desc = "Sudden Insight",
-	long_desc = function(self, eff) return ("Increased critical chance by %d and power by %d%%"):format(eff.chance, eff.power) end,
+	desc = _t"Sudden Insight",
+	long_desc = function(self, eff) return ("Increased critical chance by %d and power by %d%%"):tformat(eff.chance, eff.power) end,
 	type = "magical",
 	subtype = { arcane=true },
 	status = "beneficial",
@@ -203,13 +203,13 @@ newEffect{
 
 newEffect{
 	name = "REK_HEKA_INVESTED", image = "talents/rek_heka_otherness_sudden_insight.png",
-	desc = "Invested Hands",
+	desc = _t"Invested Hands",
 	long_desc = function(self, eff)
 		local total = 0
 		for i, instance in pairs(eff.investitures) do
 			total = total + instance.power
 		end
-		return ("%d of your hands are busy elsewhere"):format(total)
+		return ("%d of your hands are busy elsewhere"):tformat(total)
 	end,
 	type = "other",
 	subtype = { hands=true },
@@ -284,8 +284,8 @@ newEffect{
 
 newEffect{
 	name = "REK_HEKA_PULLED", image = "talents/rek_heka_harming_inexorable_pull.png",
-	desc = "Inexorable Pull",
-	long_desc = function(self, eff) return ("Pinned by disembodied hands, sliding towards the hekatonkheire"):format() end,
+	desc = _t"Inexorable Pull",
+	long_desc = function(self, eff) return ("Pinned by disembodied hands, sliding towards the hekatonkheire"):tformat() end,
 	type = "other",
 	subtype = { grapple=true },
 	status = "detrimental",
@@ -305,8 +305,8 @@ newEffect{
 
 newEffect{
 	name = "REK_HEKA_GRASPED", image = "talents/rek_heka_harming_titans_grasp.png",
-	desc = "Titan's Grasp",
-	long_desc = function(self, eff) return ("Pinned by disembodied hands, taking %d damage per turn.  Can break free by dealing %d damage to other targets."):format(eff.power, eff.health*10) end,
+	desc = _t"Titan's Grasp",
+	long_desc = function(self, eff) return ("Pinned by disembodied hands, taking %d damage per turn.  Can break free by dealing %d damage to other targets."):tformat(eff.power, eff.health*10) end,
 	type = "physical",
 	subtype = { grapple=true, pin=true, silence=true },
 	status = "detrimental",
@@ -347,7 +347,7 @@ class:bindHook("DamageProjector:final", function(self, hd)
 		local eff = src:hasEffect(src.EFF_REK_HEKA_GRASPED)
 		if eff then
 			local absorbed = dam * 0.1
-			game:delayedLogDamage(src, hd.target, 0, ("#c68642#(%d to grasping hands)#LAST#"):format(absorbed), false)
+			game:delayedLogDamage(src, hd.target, 0, ("#c68642#(%d to grasping hands)#LAST#"):tformat(absorbed), false)
 			--eff.health = eff.health - absorbed
 			hd.dam = dam - absorbed
 		end
@@ -358,8 +358,8 @@ end)
 
 newEffect{
 	name = "REK_HEKA_CHOKE_READY", image = "talents/rek_heka_harming_chokehold.png",
-	desc = "Chokehold Prepared",
-	long_desc = function(self, eff) return ("Next use of Titan's Grasp will also silence the target"):format() end,
+	desc = _t"Chokehold Prepared",
+	long_desc = function(self, eff) return ("Next use of Titan's Grasp will also silence the target"):tformat() end,
 	type = "physical",
 	subtype = { hands=true },
 	status = "beneficial",

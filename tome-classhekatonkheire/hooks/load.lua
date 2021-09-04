@@ -11,9 +11,6 @@ local Map = require "engine.Map"
 ActorResource:defineResource ("Hands", "hands", "T_HANDS_POOL", "hands_regen", "Hands represents your ability to reach into the world from the other place.  It recovers at a fixed fast rate, based on your global speed.", 0, 100, {
 	color = "#cccccc#", --"#c68642#", 
 	wait_on_rest = true,
-	--status_text = function(act)
-	--	return ("%d/%d %s %d"):format(act:getHands(), act:getMaxHands(), (act.hands_regen >= 0) and "+" or "-", (act.hands_regen >= 0) and act.hands_regen or -act.hands_regen)
-	--end,
 	
 	Minimalist = { --parameters for the Minimalist uiset
 		images = {front = "resources/front_hands.png", front_dark = "resources/front_hands_dark.png"},
