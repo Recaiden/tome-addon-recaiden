@@ -86,7 +86,7 @@ newTalent{
 		return ([[Your arrows serve as a conduit for your electrical magic. Your raw Spellpower is increased by %d%% of your raw Physical Power.
 When you consume a Mark, you instantly cast Chain Lightning at the target.
 When you hit with Steady Shot, you instantly cast Lightning at the target.
-These instant spells only trigger if you know the spell, ignore cooldown, but still cost mana.]]):format(t.getPowerConversion(self, t)*100)
+These instant spells only trigger if you know the spell, ignore cooldown, but still cost mana.]]):tformat(t.getPowerConversion(self, t)*100)
 	end,
 }
 
@@ -102,7 +102,7 @@ newTalent{
 		self:setEffect(self.EFF_REK_ZEPHYR_ELECTRIC_STAMINA, 3, {power=t:_getPen(self), src=self})
 	end,
 	info = function(self, t)
-		return ([[Your archery attacks now increase your mana by %0.1f on hit, and give you a %d%% bonus to lightning resistance penetration that stacks up to 5 times.]]):format(t.getMana(self, t), t.getPen(self, t))
+		return ([[Your archery attacks now increase your mana by %0.1f on hit, and give you a %d%% bonus to lightning resistance penetration that stacks up to 5 times.]]):tformat(t.getMana(self, t), t.getPen(self, t))
 	end,
 }
 
@@ -121,7 +121,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Infuse your arrows with the essence of lightning for %d turns, turning them into piercing beams that deal %d additional lightning damage with a 25%% chance to daze.
-Spellpower: increases damage]]):format(t:_getDuration(self), damDesc(self, DamageType.LIGHTNING,t:_getDamage(self)))
+Spellpower: increases damage]]):tformat(t:_getDuration(self), damDesc(self, DamageType.LIGHTNING,t:_getDamage(self)))
 	end,
 }
 
@@ -173,6 +173,6 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Transport yourself along a bolt of lightning to an empty space. Creatures in your path are struck for %0.2f to %0.2f lightning damage and marked for 2 turns, with a 50%% chance to be dazed.
-Spellpower: increases damage]]):format(damDesc(self,DamageType.LIGHTNING,t.getDamage(self,t)/3), damDesc(self,DamageType.LIGHTNING,t.getDamage(self,t)))
+Spellpower: increases damage]]):tformat(damDesc(self,DamageType.LIGHTNING,t.getDamage(self,t)/3), damDesc(self,DamageType.LIGHTNING,t.getDamage(self,t)))
 	end,
 }

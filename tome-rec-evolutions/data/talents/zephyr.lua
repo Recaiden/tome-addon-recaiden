@@ -44,6 +44,6 @@ In addition you get access to the unique Lightning Archery generic category:
 	- Regain mana and make your foes vulnerable with each shot.
 	- Transform your arrows into piercing lines of lightning.
 	- Teleport through enemies and mark them with dazing bolts.
-]]):format(t:_getPassiveSpeed(self)*100, t:_getManaRegen(self))
+]]):tformat(t:_getPassiveSpeed(self)*100, t:_getManaRegen(self))
 	end,
 }

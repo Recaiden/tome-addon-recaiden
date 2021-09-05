@@ -35,8 +35,8 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Reorganize your interior and forget a talent you've learned using Gourmand.
-Activating this will reset the cooldown of your Gourmand talent.]]):format()
+		return ([[Reorganize your body and forget a talent you've learned using Gourmand.
+Activating this will reset the cooldown of your Gourmand talent.]]):tformat()
 	end,
 }
 
@@ -100,6 +100,6 @@ newTalent{
 You can have 3 talents preserved this way at a time.  
 Activating this will reset the cooldown of your Digest talent.
 
-#{italic}#As the saying goes, "You are what you eat".#{normal}#]]):format()
+#{italic}#As the saying goes, "You are what you eat".#{normal}#]]):tformat()
 	end,
 }

@@ -8,8 +8,8 @@ local Level = require "engine.Level"
 
 newEffect{
 	name = "HOLLOW_BLINDSIDE_BONUS", image = "talents/rek_hollow_shadow_blindside.png",
-	desc = "Shadow of Speed",
-	long_desc = function(self, eff) return ("The target has appeared out of nowhere! It takes %d less damage from each hit."):format(eff.power) end,
+	desc = _t"Shadow of Speed",
+	long_desc = function(self, eff) return ("The target has appeared out of nowhere! It takes %d less damage from each hit."):tformat(eff.power) end,
 	type = "physical",
 	subtype = { evade=true },
 	status = "beneficial",
@@ -23,8 +23,8 @@ newEffect{
 
 newEffect{
 	name = "HOLLOW_DOMINATED", image = "talents/rek_hollow_shadow_dominate.png",
-	desc = "Dominated",
-	long_desc = function(self, eff) return ("The target has been dominated.  It is unable to move and has lost %d armor, %d defense, %d mental save, and 10%% resistance."):format(-eff.armorChange, -eff.defenseChange,  -eff.defenseChange) end,
+	desc = _t"Dominated",
+	long_desc = function(self, eff) return ("The target has been dominated.  It is unable to move and has lost %d armor, %d defense, %d mental save, and 10%% resistance."):tformat(-eff.armorChange, -eff.defenseChange,  -eff.defenseChange) end,
 	type = "mental",
 	subtype = { dominate=true },
 	status = "detrimental",
@@ -48,8 +48,8 @@ newEffect{
 
 newEffect{
 	name = "REK_ZEPHYR_ELECTRIC_STAMINA", image = "talents/rek_zephyr_electric_stamina.png",
-	desc = "Electric Stamina",
-	long_desc = function(self, eff) return ("Has %d%% increased lightning penetration."):format(eff.power*eff.stacks) end,
+	desc = _t"Electric Stamina",
+	long_desc = function(self, eff) return ("Has %d%% increased lightning penetration."):tformat(eff.power*eff.stacks) end,
 	charges = function(self, eff) return eff.stacks end,
 	type = "magical",
 	subtype = { lightning=true },
@@ -73,8 +73,8 @@ newEffect{
 
 newEffect{
 	name = "REK_ZEPHYR_STORM_BOLTS", image = "talents/rek_zephyr_storm_bolts.png",
-	desc = "Storm Bolts",
-	long_desc = function(self, eff) return ("The target's arrows become piercing lightning bolts."):format(eff.power) end,
+	desc = _t"Storm Bolts",
+	long_desc = function(self, eff) return ("The target's arrows become piercing lightning bolts."):tformat(eff.power) end,
 	type = "magical",
 	subtype = { lightning=true },
 	status = "beneficial",

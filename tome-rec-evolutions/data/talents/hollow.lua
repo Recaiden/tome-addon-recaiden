@@ -117,6 +117,6 @@ newTalent{
 You can no longer use infusions, you shrink by one size category, and your maximum life will be reduced by 5 life rating (this is retroactive).  You lose access to Force of Will and Punishments, and all points you spent there will be refunded.
 
 In exchange, you can use shadow magic for elemental attacks, healing, and teleportation. You can be anywhere your shadows are, and will only die if all your shadows are killed. You cannot trigger pressure traps, and are immune to petrification, fear, hostile teleports, blindness, and suffocation.
-]]):format()
+]]):tformat()
 	end,
 }

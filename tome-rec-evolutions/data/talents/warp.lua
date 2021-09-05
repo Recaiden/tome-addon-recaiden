@@ -161,6 +161,6 @@ newTalent{
 You forget Bow Threading, and become unable to learn Threaded Combat.
 Blade Threading talents have their cooldowns greatly reduced, and you can trigger Weapon Manifold more often.
 All melee attacks have a %d%% chance to trigger your alternate selves to fire an arrow into this timeline.
-]]):format(t:_getChance(self))
+]]):tformat(t:_getChance(self))
 	end,
 }
