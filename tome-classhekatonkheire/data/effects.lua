@@ -537,3 +537,49 @@ newEffect{
 	end,
 }
 
+newEffect{
+	name = "REK_HEKA_LASHING_POWER", image = "talents/rek_heka_veiled_lashing.png",
+	desc = "Thoroughly Lashing",
+	long_desc = function(self, eff) return ("Better critical hits"):format() end,
+	type = "physical",
+	subtype = { hands=true, arcane = true },
+	status = "beneficial",
+	parameters = { chance = 5, power = 10},
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "combat_spellcrit", eff.chance)
+		self:effectTemporaryValue(eff, "combat_critical_power", eff.power)
+	end,
+	deactivate = function(self, eff)
+	end,
+}
+
+newEffect{
+	name = "REK_HEKA_EYELIGHT", image = "talents/rek_heka_veiled_highlight.png",
+	desc = _t"Eyelighted",
+	long_desc = function(self, eff) return ("The target is weakened, all damage it does is reduced by %d%%."):tformat(eff.reduce) end,
+	type = "magical",
+	subtype = { hands=true,},
+	status = "detrimental",
+	parameters = {power=10},
+	activate = function(self, eff) eff.tmpid = self:addTemporaryValue("numbed", eff.power) end,
+	deactivate = function(self, eff) self:removeTemporaryValue("numbed", eff.tmpid) end,
+}
+
+newEffect{
+	name = "REK_HEKA_EYE_STOCK", image = "talents/rek_heka_watcher_respawn.png",
+	desc = _t"Eye Stock",
+	long_desc = function(self, eff) return ("This creature's eyes are pressing into this reality, ready to appear %d turns sooner."):tformat(eff.stacks) end,
+	charges = function(self, eff) return eff.stacks end,
+	type = "magical",
+	subtype = { hands=true },
+	status = "beneficial",
+	parameters = { stacks=1, max_stacks=3 },
+	on_merge = function(self, old_eff, new_eff, e)
+		new_eff.stacks = util.bound(old_eff.stacks + new_eff.stacks, 1, new_eff.max_stacks)
+		return new_eff
+	end,
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+	end,
+}

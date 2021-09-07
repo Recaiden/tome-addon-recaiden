@@ -343,7 +343,11 @@ newTalent{
 	tactical = { BUFF = 5 },
 	getLevel = function(self, t) return self.level end,
 	getMaxEyes = function(self, t)
-		return math.min(3, math.max(1, math.floor(self:getTalentLevel(t) * 0.55)))
+		local bonus = self:attr("heka_bonus_eyes") or 0
+		if self:knowTalent(self.T_REK_HEKA_WATCHER_HATCHERY) then
+			bonus = bonus + self:callTalent(self.T_REK_HEKA_WATCHER_HATCHERY, "getBonusEyes")
+		end
+		return bonus + math.min(3, math.max(1, math.floor(self:getTalentLevel(t) * 0.55)))
 	end,
 	getPhaseDoorLevel = function(self, t) return self:getTalentLevelRaw(t) end,
 	getLashLevel = function(self, t) return self:getTalentLevelRaw(t) end,
@@ -444,6 +448,15 @@ newTalent{
 		if game.zone.wilderness then return false end
 		
 		self.eyes.remainingCooldown = self.eyes.remainingCooldown - 1
+		local stock = self:hasEffect(self.EFF_REK_HEKA_EYE_STOCK)
+		if stock then
+			local cost = math.min(self.eyes.remainingCooldown, stock.stacks)
+			self.eyes.remainingCooldown = self.eyes.remainingCooldown - cost
+			stock.stacks = stock.stacks - cost
+			if stock.stacks <= 0 then
+				self:removeEffect(self.EFF_REK_HEKA_EYE_STOCK)
+			end
+		end
 		if self.eyes.remainingCooldown > 0 then return false end
 		self.eyes.remainingCooldown = 10
 		
@@ -460,7 +473,6 @@ Your sight radius permanently becomes 1, but you cannot be blinded and can see t
 You cannot hurt or be hurt by your own eyes.]]):tformat(maxEyes)
 	end,
 }
-
 
 newTalent{
 	name = "Ocular Phylactery", short_name="REK_HEKA_HEADLESS_SHIELD",

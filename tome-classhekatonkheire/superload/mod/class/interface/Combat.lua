@@ -42,4 +42,39 @@ function _M:attackTargetWith(target, weapon, damtype, mult, force_dam)
 	end
 	return base_attackTargetWith(self, target, weapon, damtype, mult, force_dam)
 end
+
+local base_combatGetResistPen = _M.combatGetResistPen
+function _M:combatGetResistPen(type, straight)
+	local pen = base_combatGetResistPen(self, type, straight)
+	if self.summoner and self.summoner.knowTalent and self.summoner:knowTalent(self.summoner.T_REK_HEKA_WATCHER_HATCHERY) then
+		local highest = self.summoner.resists_pen.all or 0
+		for kind, v in pairs(self.summoner.resists_pen) do
+			if kind ~= "all" then
+				local inc = self.summoner:combatGetResistPen(kind, true)
+				highest = math.max(highest, inc)
+			end
+		end
+		local mult = self.summoner:callTalent(self.summoner.T_REK_HEKA_WATCHR_HATCHERY,"getInherit") / 100
+		pen = math.min(70, pen + highest*mult)
+	end
+	return pen
+end
+
+local base_combatGetDamageIncrease = _M.combatGetResistPen
+function _M:combatGetDamageIncrease(type, straight)
+	local amp = base_combatGetResistPen(self, type, straight)
+	if self.summoner and self.summoner.knowTalent and self.summoner:knowTalent(self.summoner.T_REK_HEKA_WATCHER_HATCHERY) then
+		local highest = self.summoner.resists_pen.all or 0
+		for kind, v in pairs(self.summoner.resists_pen) do
+			if kind ~= "all" then
+				local inc = self.summoner:combatGetDamageIncrease(kind, true)
+				highest = math.max(highest, inc)
+			end
+		end
+		local mult = self.summoner:callTalent(self.summoner.T_REK_HEKA_WATCHR_HATCHERY,"getInherit") / 100
+		amp = amp + highest*mult
+	end
+	return amp
+end
+
 return _M
