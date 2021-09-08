@@ -61,7 +61,7 @@ newTalent{
 	cooldown = 12,
 	hands = 25,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 250) end,
-	getDuration = function(self, t) return meth.ceil(self:combatTalentScale(t, 1, 5)) end,
+	getDuration = function(self, t) return math.ceil(self:combatTalentScale(t, 1, 5)) end,
 	action = function(self, t)
 		game.logPlayer(self, "Select an eye...")
 		local tg_eye = {default_target=self, type="hit", friendlyblock = false, nowarning=true, range=self:getTalentRange(t), first_target = "friend"}

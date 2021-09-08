@@ -17,10 +17,14 @@ newTalent{
       self:removeAllMOs()
       game.level.map:updateMap(self.x, self.y)
 		end
+
+		local eyelement = self.eyelement or DamageType.ARCANE
+		if self.eyelement == DamageType.ARCANE or true then
+			self:project(tg, x, y, DamageType.ARCANE, self:spellCrit(t.getDamage(self, t)))
+			local _ _, x, y = self:canProject(tg, x, y)
+			game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "arcane_drill_beam", {tx=x-self.x, ty=y-self.y})
+		end
 		
-		self:project(tg, x, y, DamageType.ARCANE, self:spellCrit(t.getDamage(self, t)))
-		local _ _, x, y = self:canProject(tg, x, y)
-		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "arcane_drill_beam", {tx=x-self.x, ty=y-self.y})
 		game:playSoundNear(self, "talents/flame")
 		return true
 	end,
@@ -30,6 +34,18 @@ newTalent{
 Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.ARCANE, damage))
 	end,
 }
+--		[Talents.T_BURNING_HEX]=3,
+--		[Talents.T_ICE_SHARDS]=3,
+--		[Talents.T_STRIKE]=3,
+--		[Talents.T_MANATHRUST]=3,
+--		[Talents.T_HYDRA]=3,
+--		[Talents.T_CURSE_OF_DEATH]=3,
+--		[Talents.T_SEARING_LIGHT]=3,
+--		[Talents.T_LIGHTNING]=3,
+--		[Talents.T_VIRULENT_DISEASE]=3,
+--		[Talents.T_DRAIN]=3,
+--		[Talents.T_SPIT_POISON]=3,
+--		[Talents.T_MIND_DISRUPTION]=3,
 
 newTalent{
 	name = "Stare Down", short_name = "REK_HEKA_EYE_STAREDOWN",
@@ -311,6 +327,12 @@ local function createEye(self, level, tCallEyes, tPhylactery, tBlink, tStagger, 
 				   self.ai_state.feed_temp1 = self:addTemporaryValue("combat_atk", tEyeWarriors.getCombatAtk(self.summoner, tEyeWarriors))
 					 self.ai_state.feed_temp2 = self:addTemporaryValue("inc_damage", {all=tEyeWarriors.getIncDamage(self.summoner, tEyeWarriors)})
 				end
+				-- Argosine elements
+				if self.summoner:knowTalent(self.summoner.T_REK_HEKA_WATCHER_ELEMENT) then
+					local tElement = self.summoner:getTalentFromId(self.summoner.T_REK_HEKA_WATCHER_ELEMENT)
+					self.eyelemental = tElement.getResists(self.summoner, tElement)
+					self.eyelement = nil
+				end
       end,
       onTakeHit = function(self, value, src)
 				if src == self.summoner and self.avoid_master_damage then
@@ -325,9 +347,9 @@ local function createEye(self, level, tCallEyes, tPhylactery, tBlink, tStagger, 
             self:die(self)
          end
       end
-                                           }
-   self:attr("summoned_times", 1)
-   return npc
+	}
+	self:attr("summoned_times", 1)
+	return npc
 end
 
 newTalent{
@@ -375,27 +397,16 @@ newTalent{
 	deactivate = function(self, t, p)
 		-- unsummon the eyes
 		for _, e in pairs(game.level.entities) do
-			if e.summoner and e.summoner == self and e.is_wandering_eye then
+			if isMyEye(self, e) then
 				e.summon_time = 0
 			end
 		end
 		return true
 	end,
 	
-	nbEyesUp = function(self, t)
-		if not game.level then return 0 end
-		local eyeCount = 0
-		for _, e in pairs(game.level.entities) do
-			if e.summoner and e.summoner == self and e.is_wandering_eye then eyeCount = eyeCount + 1 end
-		end
-		return eyeCount
-	end,
+	nbEyesUp = function(self, t) return countEyes(self) end,
 	summonEye = function(self, t)
-		local eyeCount = 0
-		for _, e in pairs(game.level.entities) do
-			if e.summoner and e.summoner == self and e.is_wandering_eye then eyeCount = eyeCount + 1 end
-		end
-		
+		local eyeCount = t.nbEyesUp(self, t)
 		if eyeCount >= t.getMaxEyes(self, t) then
 			return false
 		end
@@ -486,7 +497,7 @@ newTalent{
 		local sent = 0
 		local factor = (100-t.getReinforcement(self, t))/100
 		for _, e in pairs(game.level.entities) do
-			if e.summoner and e.summoner == self and e.is_wandering_eye then
+			if isMyEye(self, e) then
 				if e.life > (e.max_life * t.getRedirectThreshold(self, t) / 100) then
 					local blocked = math.min(e.life/factor, split)
 					remaining = math.max(0, remaining - blocked)
@@ -544,7 +555,7 @@ newTalent{
 		if not target then return nil end
 		
 		for _, e in pairs(game.level.entities) do
-			if e.summoner and e.summoner == self and e.is_wandering_eye then
+			if isMyEye(self, e) then
 				-- reset target and set to focus
 				e.ai_target.x = nil
 				e.ai_target.y = nil

@@ -165,7 +165,7 @@ newTalent{
 		end
 		if countFoes > 1 then
 			local views = countFoes - 1
-			local potential = dam * t.getDamageChance(self, t)/100
+			local potential = dam * t.getDamageChange(self, t)/100
 			local absorbed = 0
 			for i=1, views do
 				absorbed = absorbed + potential / 3

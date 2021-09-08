@@ -200,7 +200,6 @@ newEffect{
 	deactivate = function(self, eff) self:removeParticles(eff.particle) end,
 }
 
-
 newEffect{
 	name = "REK_HEKA_INVESTED", image = "talents/rek_heka_otherness_sudden_insight.png",
 	desc = _t"Invested Hands",
@@ -583,3 +582,29 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+newEffect{
+	name = "REK_HEKA_EYELEMENT_EYE", image = "talents/rek_heka_watcher_element.png",
+	desc = _t"Eyelemental",
+	long_desc = function(self, eff)
+		return ("Increases resistance to %d by +%d%%"):tformat(eff.element, eff.resist)
+	end,
+	type = "other",
+	subtype = { eyes=true },
+	status = "beneficial",
+	decrease = 0,
+	parameters = { element=DamageType.ARCANE, resist=10 },
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("resists", {[eff.element] = eff.resist})
+		if self.summoner then
+			eff.summonerid = self:addTemporaryValue("resists", {[eff.element] = eff.resist})
+		end
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("resists", eff.tmpid)
+		if eff.summonerid and self.summoner then
+			self.summoner:removeTemporaryValue("resists", eff.summonerid)
+		end
+	end,
+}
+

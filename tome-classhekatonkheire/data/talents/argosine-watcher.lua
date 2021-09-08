@@ -10,7 +10,7 @@ countEyes = function(self)
 end
 
 newTalent{
-	name = "See No Evil", short_name = "REK_HEKA_WATCHER_LASHING",
+	name = "See No Evil", short_name = "REK_HEKA_WATCHER_SKIP",
 	type = {"spell/watcher", 1}, require = mag_req1, points = 5,
 	points = 5,
 	cooldown = 6,
@@ -106,7 +106,7 @@ newTalent{
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
 		local duration = t.getDuration(self, t)
-		return ([[Turn your attention away from a target and let them fall into the other place.  This inflicts %0.1f mind damage and freezes the target in time for %d turns.
+		return ([[Turn your attention away from a target and let them fall into the other place.  This inflicts %0.1f mind damage and freezes the target in time for %d turns.  While frozen in time, a creature cannot affect or be affected by anything.
 The damage will scale with your Spellpower.
 This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(damDesc(self, DamageType.MIND, damage), duration)
 	end,
@@ -133,8 +133,7 @@ newTalent{
 	info = function(self, t)
 		return ([[When you spend hands in combat, reduce the time needed to respawn a wandering eye by one turn.  If you already have your maximum number of eyes, up to %d turns can be readied 'in advance'.
 
-Activate this talent to recover an eye %d turns sooner.
-]]):tformat(t:_getMaxTurns(self), t:_getTurns(self))
+Activate this talent to recover an eye %d turns sooner.]]):tformat(t:_getMaxTurns(self), t:_getTurns(self))
 	end,
 }
 
@@ -154,9 +153,13 @@ newTalent{
 	mode = "passive",
 	getBonusEyes = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 0.5, 2.95)) end,
 	getInherit = function(self, t) return self:combatTalentScale(t, 20, 60) end,
+	passives = function(self, t, p)
+		self:talentTemporaryValue(p, "talent_cd_reduction", {[self.T_REK_HEKA_HEADLESS_EYES] = 5})
+	end,
 	-- implemented in headless-horror/REK_HEKA_HEADLESS_EYES
 	info = function(self, t)
 		return ([[Your maximum number of wandering eyes is increased by %d.
-In addition, your eyes inherit %d%% of your spellpower and gain a bonus to damage and resist penetration equal to %d%% of your best bonuses.]]):tformat(t.getBonusEyes(self, t), t.getInherit(self, t))
+If your Wandering Eyes talent is deactivated, you can reactivate it 5 turns sooner.
+In addition, your eyes inherit %d%% of your spellpower and gain a bonus to damage and resist penetration equal to %d%% of your best bonuses.]]):tformat(t.getBonusEyes(self, t), t.getInherit(self, t), t.getInherit(self, t))
 	end,
 }

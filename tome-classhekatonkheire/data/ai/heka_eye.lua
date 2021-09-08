@@ -222,6 +222,19 @@ newAI("heka_eye", function(self)
 		clearTarget(self)
 	end
 
+	if self.eyelement and not self.in_combat then
+		self:removeEffect(self.REK_HEKA_EYELEMENT_EYE)
+		self.eyelement = nil
+	end
+	if self.in_combat and self.eyelemental and not self.eyelement then
+		self.eyelement = rng.table({DamageType.PHYSICAL, DamageType.MIND,
+																DamageType.FIRE, DamageType.LIGHT, DamageType.COLD, DamageType.DARKNESS,
+																DamageType.ACID, DamageType.NATURE, DamageType.BLIGHT,
+																DamageType.ARCANE, DamageType.TEMPORAL,
+																DamageType.LIGHTNING})
+		self:setEffect(self.REK_HEKA_EYELEMENT_EYE, 10, {element=self.eyelement, resist=self.eyelemental, src=self})
+	end
+
 	-- emergency heal
 	if self.life < self.max_life * 0.3 then
 		self.ai_state.stare_down = nil
