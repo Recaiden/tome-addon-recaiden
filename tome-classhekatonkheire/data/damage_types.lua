@@ -97,3 +97,18 @@ newDamageType{
 		end
 	end,
 }
+
+-- arcane damage with slow
+newDamageType{
+	name = _t("gaze of the otherside", "damage type"), type = "REK_HEKA_ARCANE_SLOW", text_color = "#WHITE#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		if _G.type(dam) == "number" then dam = {dam=dam, power=0.15} end
+		DamageType:get(DamageType.ARCANE).projector(src, x, y, DamageType.ARCANE, dam.dam, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			target:setEffect(target.EFF_SLOW, 3, {power=dam.power, no_ct_effect=true})
+		end
+	end,
+}

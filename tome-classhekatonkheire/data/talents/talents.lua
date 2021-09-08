@@ -229,7 +229,7 @@ end
 --    load("/data-classhekatonkheire/talents/argosine-oubliette.lua")
 -- end
 
--- if not Talents.talents_types_def["spell/eyebite"] then
---    newTalentType{ allow_random=true, is_spell=true, type="spell/eyebite", name = _t("Eyebite", "talent type"), min_lev = 10, description = _t"Your stare alone can reduce foes to dust." }
---    load("/data-classhekatonkheire/talents/argosine-eyebite.lua")
--- end
+if not Talents.talents_types_def["spell/eyebite"] then
+   newTalentType{ allow_random=true, is_spell=true, type="spell/eyebite", name = _t("Eyebite", "talent type"), min_lev = 10, description = _t"Your stare alone can reduce foes to dust." }
+   load("/data-classhekatonkheire/talents/argosine-eyebite.lua")
+end

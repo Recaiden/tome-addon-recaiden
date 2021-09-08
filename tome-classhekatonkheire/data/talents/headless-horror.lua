@@ -405,9 +405,9 @@ newTalent{
 	end,
 	
 	nbEyesUp = function(self, t) return countEyes(self) end,
-	summonEye = function(self, t)
+	summonEye = function(self, t, force)
 		local eyeCount = t.nbEyesUp(self, t)
-		if eyeCount >= t.getMaxEyes(self, t) then
+		if not force and eyeCount >= t.getMaxEyes(self, t) then
 			return false
 		end
 		
@@ -448,6 +448,7 @@ newTalent{
 		end
 		
 		game:playSoundNear(self, "talents/spell_generic")
+		return eye
 	end,
 	callbackOnActBase = function(self, t)
 		if not self.eyes then

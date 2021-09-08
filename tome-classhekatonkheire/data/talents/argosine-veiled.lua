@@ -72,8 +72,7 @@ newTalent{
 			if not tx then return nil end
 			target = game.level.map(tx, ty, Map.ACTOR)
 			if not target then return nil end
-			if not target.is_wandering_eye then return nil end
-			if not target.summoner or target.summoner ~= self then return nil end
+			if not isMyEye(self, target) then return nil end
 		end
 
 		local tg_hit = {type="ball", range=0, radius=1, no_restrict=true, friendlyfire=false, x=target.x, y=target.y}

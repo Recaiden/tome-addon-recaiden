@@ -32,24 +32,83 @@ newTalent{
 }
 
 newTalent{
-	name = "Eyessimilation", short_name = "REK_HEKA_EYEBITE_OVERWATCH",
+	name = "Eyessimilation", short_name = "REK_HEKA_EYEBITE_SUMMON",
 	type = {"spell/eyebite", 2},	require = eye_req_high2, points = 5,
-	mode = "passive",
-	getOverwatch = function(self, t) return self:combatTalentScale(t, 1, 5) end,
-	--used in an effect applied in the eye's stare down talent via the STARE damage type
+	hands = 30,
+	cooldown = 10,
+	getDuration = function(self, t) return math.min(10, math.floor(self:combatTalentScale(t, 5, 10))) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 0, 250) end,
+	range = 10,
+	requires_target = true,
+	tactical = { ATTACK = 2 },
+	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nowarning=true} end,
+	on_pre_use = on_pre_use_Eyes,
+	action = function(self, t)
+		local target = self:getTalentTarget(t)
+		local x, y, target = self:getTargetLimited(target)
+		if not target then return nil end
+
+		if not target:canBe("blind") then return true end
+		
+		target:setEffect(target.EFF_BLIND, t:_getDuration(self), {src=self, apply_power=self:combatSpellpower()})
+
+		-- summon
+		local eye = self:callTalent(self.T_REK_HEKA_HEADLESS_EYES, "summonEye", true)
+		if eye then
+			eye.summon_time = t:_getduration(self)
+			eye.temporary = true
+		end
+		
+		-- invest cost
+		game:onTickEnd(function() 
+				self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self),
+											 {investitures={{power=util.getval(t.hands, self, t)}}, src=self})
+		end)
+		return true
+	end,
 	info = function(self, t)
-		return ([[Rest easy knowing that someone is watching your back, even if that someone is you.  When you are in the area of an Evil Eye, your health regeneration is increased by %d and your saves by %d.]]):tformat(t.getOverwatch(self, t), t.getOverwatch(self, t)*8)
+		return ([Choose an enemy and attempt (#SLATE#checks blindness immunity#LAST#) to make it a temporary anchor, dealing %d physical damage and granting you an axtra wandering eye for %d turns, durign which the target may be blinded (#SLATE#Spellpower vs Physical#LAST#).
+
+This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), t:_getDuration(self))
 	end,
 }
 
 newTalent{
 	name = "Ocular Rift", short_name = "REK_HEKA_EYEBITE_RIFT",
 	type = {"spell/eyebite", 3}, require = eye_req_high3, points = 5,
-	mode = "passive",
-	getMultiplier = function(self, t) return math.max(1, self:combatTalentLimit(t, 5, 1.5, 2.25)) end,
-	-- handled in the STARE damage type
+	hands = 20,
+	cooldown = 12,
+	radius = function(self, t) return 2 end,
+	range = 8,
+	getSlow = function(self, t) return self:combatTalentScale(t, 10, 40) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 0, 50) end,
+	getDuration = function(self, t) return math.ceil(self:combatTalentScale(t, 1, 5)) end,
+	action = function(self, t)
+		game.logPlayer(self, "Select an eye...")
+		local tg_eye = {default_target=self, type="ball", friendlyblock = false, nowarning=true, range=self:getTalentRange(t), radius=self:getTalentRadius(t), first_target = "friend"}
+		tx, ty = self:getTarget(tg_eye)
+		if not tx or not ty then return nil end
+		if tx then
+			_, _, _, tx, ty = self:canProject(tg_eye, tx, ty)
+			if not tx then return nil end
+			target = game.level.map(tx, ty, Map.ACTOR)
+			if not target then return nil end
+			if not isMyEye(self, target) then return nil end
+		end
+		target:die()
+		game.level.map:addEffect(self,
+														 x, y, t:_getDuration(self),
+														 DamageType.LIGHT, {dam=self:spellCrit(t:_getDamage(self), power=t:getSlow(self)/100},
+														 self:gatTalentRadius(t),
+														 5, nil,
+														 {type="time_prison"},
+														 nil, false, false
+		)
+		
+		return true
 	info = function(self, t)
-		return ([[If an enemy is affected by multiple Evil Eyes in one turn, the damage will be increased by %d%% and the slow by %d%%.]]):tformat(t.getMultiplier(self, t)*200-100, t.getMultiplier(self, t)*100)
+		return ([[Violently return an eye to the other place, 'killing' it and leaving a radius %d hole in reality for %d turns that slows enemies by %d%% and deals %0.1f arcane damage per turn.
+]]):tformat(self:getTalentRadius(t), t:_getDuration(self), t:_getSlow(self), damDesc(self, DamageType.ARCANE, t:_getDamage(self)))
 	end,
 }
 

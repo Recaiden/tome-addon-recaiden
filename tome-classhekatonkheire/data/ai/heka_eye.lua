@@ -215,7 +215,11 @@ newAI("heka_eye", function(self)
 		--game.logPlayer(self.summoner, "#PINK#%s vanishes.", self.name:capitalize())
 		self:die()
 	end
-	self.summon_time = math.min(999, self.summon_time + 1)
+	if self.temporary then
+		self.summon_time = self.summon_time - 1
+	else
+		self.summon_time = math.min(999, self.summon_time + 1)
+	end
 
 	-- make sure no one has turned us against our summoner
 	if self.isMySummoner and self:isMySummoner(self.ai_target.actor) then

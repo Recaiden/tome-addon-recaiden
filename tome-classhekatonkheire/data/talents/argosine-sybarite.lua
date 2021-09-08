@@ -43,6 +43,7 @@ newTalent{
 	type = {"spell/sybarite", 1}, require = mag_req1, points = 5,
 	mode = "passive",
 	no_unlearn_last = true,
+	range = 2,
 	getPassiveSpeed = function(self, t) return self:combatTalentScale(t, 0.08, 0.4, 0.7) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "movement_speed", t.getPassiveSpeed(self, t))
@@ -105,13 +106,20 @@ newTalent{
 		game.level.map:addParticleEmitter(e.particles)
 	end,
 	carveHoles = function(self, t)
-		for i = -2, 2 do
-		for j = -2, 2 do
-			if i ~= 0 or j ~= 0 and ((i ~= 2 and i ~= -2) or (j ~= 2 and j ~= -2)) then
-				t.makeHole(self, t, self.x + i, self.y + j)
+		local target = {type="ball", range=0, radius=self:getTalentRange(t), talent=t}
+		local grids = self:project(
+			tg, self.x, self.y,
+			function(tx, ty)
+				t.makeHole(self, t, tx, ty)
 			end
-		end
-		end
+		)
+		-- for i = -2, 2 do
+		-- 	for j = -2, 2 do
+		-- 		if i ~= 0 or j ~= 0 and ((i ~= 2 and i ~= -2) or (j ~= 2 and j ~= -2)) then
+		-- 			t.makeHole(self, t, self.x + i, self.y + j)
+		-- 		end
+		-- 	end
+		-- end
 	end,
 	callbackOnMove = function(self, t, moved, forced, ox, oy, x, y)
 		if not forced and self.x ~= ox or self.y ~= oy then
@@ -131,21 +139,37 @@ newTalent{
 	getOverwatch = function(self, t) return self:combatTalentScale(t, 1, 5) end,
 	--used in an effect applied in the eye's stare down talent via the STARE damage type
 	info = function(self, t)
-		return ([[Rest easy knowing that someone is watching your back, even if that someone is you.  When you are in the area of an Evil Eye, your health regeneration is increased by %d and your saves by %d.]]):tformat(t.getOverwatch(self, t), t.getOverwatch(self, t)*8)
+		return ([[%d --- %d.]]):tformat(t.getOverwatch(self, t), t.getOverwatch(self, t)*8)
 	end,
 }
 
 newTalent{
 	name = "BE KNELT", short_name = "REK_HEKA_SYBARITE_KNEEL",
 	type = {"spell/sybarite", 3}, require = mag_req3, points = 5,
-	mode = "passive",
-	getMultiplier = function(self, t) return math.max(1, self:combatTalentLimit(t, 5, 1.5, 2.25)) end,
-	-- handled in the STARE damage type
+	cooldown = 15,
+	fixed_cooldown = true,
+	hands = 30,
+	tactical = {DISABLE = 4},
+	range = 2,
+	target = function(self, t)
+		return {type="ball", range=0, radius=self:getTalentRange(t), talent=t}
+	end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		self:project(
+			tg, self.x, self.y,
+			function(tx, ty)
+				local target = game.level.map(px, py, Map.ACTOR)
+				if target and self:reactionToward(target) <= 0 then
+					target.energy.value = target.energy.value - game.energy_to_act
+				end
+			end
+		)
+	end,
 	info = function(self, t)
-		return ([[If an enemy is affected by multiple Evil Eyes in one turn, the damage will be increased by %d%% and the slow by %d%%.]]):tformat(t.getMultiplier(self, t)*200-100, t.getMultiplier(self, t)*100)
+		return ([[Briefly unveil your full presence, and enemies within range %d are forced to their knees (or simply cast down), losing a turn(#SLATE#no save#LAST#).]]):tformat(self:getTalentRange(t))
 	end,
 }
-
 
 newTalent{
 	name = "On Parade", short_name = "REK_HEKA_SYBARITE_PARADE",
