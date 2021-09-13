@@ -29,5 +29,5 @@ newLore{
 	name = _t"discarded journal entry",
 	lore = _t[[-has asked for extra security for this trip.  The captain's brought on some new hands, supposed to have handled some bandit problem out west.  Can't hurt to have more help around here.
 
-1 day in, no trouble so far.  Just a few trolls that had wandered close to the road.  Only thing is, the dogs don't like the new guys so much.]],
+1 day in, no trouble so far.  Just a few trolls that had wandered close to the road.  Only thing is, the dogs don't like the new guys so much.  They'll get used to them, I hope.]],
 }

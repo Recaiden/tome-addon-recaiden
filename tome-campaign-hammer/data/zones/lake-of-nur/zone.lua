@@ -94,6 +94,9 @@ return {
 		},
 	},
 	post_process = function(level)
+		if level then
+			game:placeRandomLoreObject("NOTE"..level.level)
+		end
 		if level.level == 1 then
 			game.state:makeWeather(level, 6, {max_nb=3, chance=1, dir=110, speed={0.1, 0.6}, alpha={0.4, 0.6}, particle_name="weather/dark_cloud_%02d"})
 		end
