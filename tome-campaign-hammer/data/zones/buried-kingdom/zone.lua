@@ -9,7 +9,6 @@ return {
 	ambient_music = "Bazaar of Tal-Mashad.ogg",
 	persistent = "zone",
 	max_material_level = 5,
-	no_random_lore = true,
 	generator =  {
 		map = {
 			class = "engine.generator.map.Roomer",
@@ -26,14 +25,14 @@ return {
 		},
 		actor = {
 			class = "mod.class.generator.actor.Random",
-			nb_npc = {15, 26},
+			nb_npc = {9, 16},
 			filters = { {max_ood=2}, },
 			randelite = 0,
 			guardian = "BURIED_FORGOTTEN",
 		},
 		object = {
 			class = "engine.generator.object.Random",
-			nb_object = {6, 9},
+			nb_object = {4, 6},
 		},
 		trap = {
 			class = "engine.generator.trap.Random",
