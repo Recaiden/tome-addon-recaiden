@@ -3,15 +3,15 @@ local Talents = require("engine.interface.ActorTalents")
 rarityWithLoot = function(add, mult)
 	add = add or 0; mult = mult or 1;
 	return function(e)
-		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
-		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		e.bonus_loot = resolvers.drops{chance=45, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=1, nb=1, {tome_drops="boss"}}
 		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
 	end
 end
 
 load("/data/general/npcs/aquatic_critter.lua", function(e)
-			 e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
-			 e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+			 e.bonus_loot = resolvers.drops{chance=45, nb=1, {}}
+			 e.bonus_arts = resolvers.drops{chance=1, nb=1, {tome_drops="boss"}}
 			 if e.rarity then e.water_rarity, e.rarity = e.rarity, nil end
 end)
 load(
@@ -26,8 +26,8 @@ load(
 	end
 )
 load("/data/general/npcs/horror_aquatic.lua", function(e)
-			 			 e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
-						 e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+			 			 e.bonus_loot = resolvers.drops{chance=45, nb=1, {}}
+						 e.bonus_arts = resolvers.drops{chance=1, nb=1, {tome_drops="boss"}}
 						 if e.rarity then e.horror_water_rarity, e.rarity = e.rarity, nil end
 end)
 load("/data/general/npcs/horror.lua", rarityWithLoot(0))

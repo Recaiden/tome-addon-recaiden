@@ -1,8 +1,8 @@
 rarityWithLoot = function(add, mult)
 	add = add or 0; mult = mult or 1;
 	return function(e)
-		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
-		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		e.bonus_loot = resolvers.drops{chance=45, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=1, nb=1, {tome_drops="boss"}}
 		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
 	end
 end
@@ -35,14 +35,14 @@ newEntity{
 
 	open_door = true,
 
-	resolvers.racial(),
+	--resolvers.racial(),
 	resolvers.inscriptions(1, "rune"),
 
 	autolevel = "warrior",
 	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=3, },
 	stats = { str=12, dex=8, mag=6, con=10 },
 
-	resolvers.drops{chance=85, nb=1, {}}
+	resolvers.drops{chance=45, nb=1, {}}
 }
 
 newEntity{ base = "BASE_NPC_THALORE_SOLDIER",
@@ -63,7 +63,7 @@ newEntity{ base = "BASE_NPC_THALORE_SOLDIER",
 		{type="weapon", subtype="longbow", not_properties={"unique"}, autoreq=true},
 		{type="ammo", subtype="arrow", not_properties={"unique"}, autoreq=true},
 	},
-	resolvers.racial(),
+	--resolvers.racial(),
 
 	make_escort = {
 		{name="thalore hunter", number=1, no_subescort=true},
@@ -84,7 +84,7 @@ newEntity{ base = "BASE_NPC_THALORE_SOLDIER",
 		[Talents.T_WAR_HOUND]={base=1, every=5, max=10},
 	},
 	resolvers.inscriptions(3, "infusion"),
-	resolvers.racial(),
+	--resolvers.racial(),
 	make_escort = {
 		{name="thalore hunter", number=1, no_subescort=true},
 		{name="treant", number=2, no_subescort=true},

@@ -153,8 +153,41 @@ return {
 	on_enter = function(lev)
 		if game and game.player and lev == 1 and not game.level.data.hammer_visited_hope then
 			game.level.data.hammer_visited_hope = true
-			require("engine.ui.Dialog"):simplePopup(_t"The Battle for Last Hope", _t"Meteors and catapult-stones rain down, sling-stones and fireballs fill the air.  Champions of Urh'rok wade through the fray as wretchlings die in droves.  In the confusion of battle, you could slip through to the city. You will only have one chance.  There can be no retreat here!")
+			if game.player:isQuestStatus("campaign-hammer+demon-ruins", engine.Quest.DONE) then
+				require("engine.ui.Dialog"):simplePopup(_t"The Battle for Last Hope", _t"Meteors and catapult-stones rain down, sling-stones and fireballs fill the air.  Champions of Urh'rok wade through the fray as wretchlings die in droves.  In the confusion of battle, you could slip through to the city. You will only have one chance.  There can be no retreat here!")
+			else
+				require("engine.ui.Dialog"):simplePopup(_t"The Battle for Last Hope", _t"The outlying land has been burnt by demon raids, but you stand here alone.  No meteor support, no champions of Urh'rok behind you, no plan.  Only you, and all the warriors of the allied kingdoms.  It's too late to retreat; you must win against all odds!")
+			end
 		end
+
+		-- If you haven't taken the time to beat buried kingdom, fight 5/6/7/8/9 extra randbosses.
+		if game and lev < 6 then
+			if not game.player:isQuestStatus("campaign-hammer+demon-ruins", engine.Quest.DONE) then
+				-- remove any demons that showed up
+				for uid, e in pairs(game.level.entities) do
+					if e.faction == "fearscape" and not game.party:hasMember(e) then
+						e:die()
+					end
+				end
+				
+				for i = 1, 4 + game.level.level do
+					local f = nil
+					local m = game.zone:makeEntity(game.level, "actor", {type='humanoid', faction="allied-kingdoms", random_boss={nb_classes=2, ai_move="move_complex", rank=3.5}}, nil, true)
+					if m then
+						local x, y = rng.range(0, game.level.map.w-1), rng.range(0, game.level.map.h-1)
+						local tries = 0
+						while (not m:canMove(x, y) or (game.level.map.room_map[x][y] and game.level.map.room_map[x][y].special)) and tries < 100 do
+							x, y = rng.range(0, game.level.map.w-1), rng.range(0, game.level.map.h-1)
+							tries = tries + 1
+						end
+						if tries < 100 then
+							game.zone:addEntity(game.level, m, "actor", x, y)
+						end
+					end
+				end
+			end
+		end
+		
 		if game and game.player and lev == 6 then
 			local happyWalrog = game.player:hasQuest("campaign-hammer+demon-allies") and game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-w") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("death-w")
 			local happyShassy = game.player:hasQuest("campaign-hammer+demon-allies") and game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("help-s") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("death-s") and not game.player:hasQuest("campaign-hammer+demon-allies"):isCompleted("angry-s")
@@ -187,7 +220,7 @@ return {
 					end
 				end
 			end
-			-- Melinda is weaker that Kryl, and doesn't tank hits at the start, but may still help.
+			-- Melinda is weaker than Kryl, and doesn't tank hits at the start, but may still help.
 			if corruptMelinda then
 				local x, y = util.findFreeGrid(game.player.x, game.player.y, 5, true, {[engine.Map.ACTOR]=true})
 				local mel = game.zone:makeEntityByName(game.level, "actor", "DOOMBRINGER_MELINDA")

@@ -1,8 +1,8 @@
 rarityWithLoot = function(add, mult)
 	add = add or 0; mult = mult or 1;
 	return function(e)
-		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
-		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		e.bonus_loot = resolvers.drops{chance=45, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=1, nb=1, {tome_drops="boss"}}
 		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
 	end
 end
@@ -150,4 +150,150 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 		local chat = Chat.new("campaign-hammer+horror-power", {name=_t"Power Behind the Throne"}, game.player)
 		chat:invoke()
 	end,
+}
+
+-- uniques
+newEntity{ base = "BASE_NPC_HORROR_TEMPORAL",
+	subtype = "temporal",
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/horror_temporal_temporal_stalker.png", display_h=2, display_y=-1}}},
+	name = "Shredder of Days", color=colors.STEEL_BLUE, unique=true,
+	desc = _t"A slender metallic monstrosity with long claws in place of its fourteen fingers, and many needle-sharp teeth.",
+	level_range = {45, nil}, exp_worth = 2,
+	rarity = 25,
+	rank = 3.5,
+	size_category = 3,
+	max_life = resolvers.rngavg(100,180),
+	life_rating = 18,
+	global_speed_base = 1.6,
+	autolevel = "rogue",
+	ai = "tactical", ai_state = { ai_move="move_complex", talent_in=1, },
+	combat_armor = 10, combat_def = 10,
+	combat = { dam=resolvers.levelup(resolvers.rngavg(25,100), 1, 1.2), atk=resolvers.rngavg(25,100), apr=25, dammod={dex=1.1} },
+	combat_critical_power = 30,
+	resists = {all = 20, [DamageType.TEMPORAL] = 50},
+
+	resolvers.talents{
+		[Talents.T_FATEWEAVER]={base=5, every=7, max=8},
+		[Talents.T_SPIN_FATE]={base=5, every=7, max=8},
+		[Talents.T_WEAPON_FOLDING]={base=5, every=7, max=8},
+		[Talents.T_WEAPON_MANIFOLD]={base=5, every=7, max=8},
+		
+		[Talents.T_STEALTH]={base=3, every=7, max=5},
+		[Talents.T_SHADOWSTRIKE]={base=3, every=7, max=5},
+		[Talents.T_LETHALITY]={base=1, every=6, max=5},
+		[Talents.T_WEAPON_COMBAT]={base=0, every=6, max=6},
+		[Talents.T_SHADOWSTEP]={base=2, every=6, max=6},
+		
+		[Talents.T_SHADOW_VEIL]={last=20, base=0, every=6, max=6},
+	},
+
+	resolvers.inscriptions(1, "rune"),
+	resolvers.inscriptions(1, "infusion"),
+
+	resolvers.sustains_at_birth(),
+}
+
+newEntity{ base = "BASE_NPC_HORROR_TEMPORAL",
+	subtype = "temporal",
+	name = "Record of Reunion", color=colors.GREY, unique=true,
+	desc = _t"It looks like a hole into the night sky, through which you see things moving, but you get the impression it's somehow more than that.",
+	level_range = {45, nil}, exp_worth = 2,
+	rarity = 25,
+	rank = 3.5,
+	size_category = 2,
+	max_life = resolvers.rngavg(80, 120),
+	life_rating = 15,
+	autolevel = "summoner",
+	ai = "dumb_talented_simple", ai_state = { talent_in=1, ai_move="move_snake" },
+	combat_armor = 1, combat_def = 10,
+	combat = { dam=resolvers.levelup(resolvers.mbonus(40, 15), 1, 1.2), atk=15, apr=15, dammod={wil=0.8}, damtype=DamageType.VOID },
+	on_melee_hit = { [DamageType.VOID] = resolvers.mbonus(20, 10), },
+
+	stun_immune = 1,
+	confusion_immune = 1,
+	silence_immune = 1,
+	negative_status_effect_immune = 1,
+
+	resists = {all = 35, [DamageType.TEMPORAL] = 50, [DamageType.DARKNESS] = 50},
+
+	combat_spellpower = resolvers.levelup(30, 1, 2),
+	combat_mindpower = resolvers.levelup(30, 1, 2),
+
+	resolvers.talents{
+		[Talents.T_ENERGY_ABSORPTION]={base=3, every=7, max=5},
+		[Talents.T_ENERGY_DECOMPOSITION]={base=3, every=7, max=5},
+		[Talents.T_ENTROPY]={base=3, every=7, max=5},
+		[Talents.T_ECHOES_FROM_THE_VOID]={base=3, every=7, max=5},
+		[Talents.T_VOID_SHARDS]={base=2, every=7, max=5},
+
+		[Talents.T_NIGHTMARE]={base=5, every=8, max=10},
+		[Talents.T_WAKING_NIGHTMARE]={base=3, every=8, max=10},
+		[Talents.T_INNER_DEMONS]={base=3, every=8, max=10},
+
+		[Talents.T_ABYSSAL_SHROUD]={base=3, every=8, max=8},
+	},
+
+	can_pass = {pass_wall=20},
+
+	resolvers.inscriptions(1, {"shielding rune"}),
+	
+	-- Random Anomaly on Death
+	on_die = function(self, who)
+		local ts = {}
+		for id, t in pairs(self.talents_def) do
+			if t.type[1] == "chronomancy/anomalies" then ts[#ts+1] = id end
+		end
+		self:forceUseTalent(rng.table(ts), {ignore_energy=true})
+		game.logSeen(self, "%s has collapsed in upon itself.", self:getName():capitalize())
+	end,
+
+	resolvers.sustains_at_birth(),
+}
+
+newEntity{ base = "BASE_NPC_HORROR",
+	name = "Thy Brother's Keeper", color=colors.GOLD, unique = true,
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/horror_eldritch_brothers_keeper.png", display_h=2, display_y=-1}}},
+	desc =_t"A lanky tentacled shape composed of bright golden light.  It's so bright it's hard to look at, and you can feel heat alternately radiating outward from it and pouring in towards it.",
+	level_range = {45, nil}, exp_worth = 2,
+	rarity = 25,
+	rank = 3.5,
+	autolevel = "caster",
+	max_life = resolvers.rngavg(220,250),
+	life_rating = 19,
+	combat_armor = 1, combat_def = 10,
+	combat = { dam=20, atk=30, apr=40, dammod={mag=1}, damtype=DamageType.LIGHT},
+	ai = "tactical", ai_state = { ai_move="move_complex", talent_in=1, },
+	lite = 5,
+
+	resists = {all = 40, [DamageType.DARKNESS] = 100, [DamageType.LIGHT] = 100, [DamageType.FIRE] = 100, [DamageType.COLD] = 100},
+	damage_affinity = { [DamageType.LIGHT] = 50,  [DamageType.FIRE] = 50, [DamageType.DARKNESS] = 50,  [DamageType.COLD] = 50,},
+
+	all_damage_convert = DamageType.DARKNESS,
+	all_damage_convert_percent = 100,
+
+	blind_immune = 1,
+	see_invisible = 20,
+
+	resolvers.talents{
+		[Talents.T_CHANT_OF_FORTITUDE]={base=10, every=15},
+		[Talents.T_CIRCLE_OF_BLAZING_LIGHT]={base=10, every=15},
+		[Talents.T_SEARING_LIGHT]={base=10, every=15},
+		[Talents.T_FIREBEAM]={base=10, every=15},
+		[Talents.T_SUNBURST]={base=10, every=15},
+		[Talents.T_SUN_FLARE]={base=10, every=15},
+		[Talents.T_PROVIDENCE]={base=10, every=15},
+		[Talents.T_HEALING_LIGHT]={base=10, every=15},
+		[Talents.T_BARRIER]={base=10, every=15},
+
+		[Talents.T_INVOKE_DARKNESS]={base=10, every=15},
+		[Talents.T_SHADOW_BLAST]={base=10, every=15},
+		[Talents.T_STARFALL]={base=10, every=15},
+	},
+
+	resolvers.sustains_at_birth(),
+	power_source = {arcane=true},
+
+	make_escort = {
+		{type="horror", subtype="eldritch", name="luminous horror", number=2, no_subescort=true},
+	},
 }

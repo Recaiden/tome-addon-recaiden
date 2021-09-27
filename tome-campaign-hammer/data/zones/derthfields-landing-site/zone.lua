@@ -1,5 +1,5 @@
 return {
-	name = _t"Derthfields Landing Site",
+	name = _t"Landing Site",
 	level_range = {5, 15},
 	level_scheme = "player",
 	max_level = 3,

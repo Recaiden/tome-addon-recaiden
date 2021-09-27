@@ -2,8 +2,8 @@ local Talents = require("engine.interface.ActorTalents")
 
 load("/data/general/npcs/losgoroth.lua", function(e)
 			 e.combat_def = 0; e.inc_damage = {all=-70}
-			 e.bonus_loot = resolvers.drops{chance=66, nb=1, {}} -- less than normal because of the crossfire
-			 e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+			 e.bonus_loot = resolvers.drops{chance=33, nb=1, {}} -- less than normal because of the crossfire
+			 e.bonus_arts = resolvers.drops{chance=1, nb=1, {tome_drops="boss"}}
 end)
 load("/data/general/npcs/demon-major.lua", rarity(20))
 load("/data/general/npcs/demon-minor.lua", rarity(10))
@@ -163,7 +163,7 @@ newEntity{
 		[Talents.T_SLIME_SPIT]={base=2, every=5, max=8},
 	},
 
-	resolvers.drops{chance=100, nb=2, {}},
+	resolvers.drops{chance=100, nb=1, {}},
 	on_die = function(self, who)
 		if who == game.player then game.player.hammer_killed_dolleg = true end
 	end,

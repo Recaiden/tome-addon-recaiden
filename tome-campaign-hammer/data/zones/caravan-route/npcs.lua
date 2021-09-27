@@ -1,8 +1,8 @@
 rarityWithLoot = function(add, mult)
 	add = add or 0; mult = mult or 1;
 	return function(e)
-		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
-		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		e.bonus_loot = resolvers.drops{chance=45, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=1, nb=1, {tome_drops="boss"}}
 		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
 	end
 end
@@ -35,7 +35,7 @@ newEntity{
 	resolvers.racial(),
 	resolvers.talents{ [Talents.T_ARMOUR_TRAINING]=2, [Talents.T_WEAPON_COMBAT]={base=1, every=10, max=5}, [Talents.T_WEAPONS_MASTERY]={base=1, every=10, max=5} },
 
-	resolvers.drops{chance=25, nb=4, {}},
+	resolvers.drops{chance=25, nb=2, {}},
 
 	autolevel = "warrior",
 	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=3, },

@@ -10,8 +10,8 @@ alter = function(add, mult)
 				type="immovable", subtype="crystal", number=2, no_subescort=true
 			}
 			e.faction = "rhalore"
-			e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
-			e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+			e.bonus_loot = resolvers.drops{chance=45, nb=1, {}}
+			e.bonus_arts = resolvers.drops{chance=1, nb=1, {tome_drops="boss"}}
 		end
 	end
 end
@@ -24,8 +24,7 @@ alterCrystals = function(add, mult)
 			e.rarity = math.ceil(e.rarity * mult + add)
 			e.faction = "rhalore"
 		end
-		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
-		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		e.bonus_loot = resolvers.drops{chance=5, nb=1, {}}
 	end
 end
 

@@ -1,9 +1,25 @@
 newLore{
-	id = "buried-kingdom-note-3",
+	id = "buried-kingdom-note-5",
 	category = "age-of-allure",
 	name = _t"stone slate",
 	lore = _t[[#{italic}#An ancient stone carving, you can only make out a few words here and there.#{normal}#
 We have never..........................left you...................................although our ties have............................been torn.............................by history....................we will be......................there again.  All....................four..................of.......................us...................]],
+}
+
+newLore{
+	id = "buried-kingdom-note-4",
+	category = "age-of-allure",
+	name = _t"stone slate",
+	lore = _t[[#{italic}#An ancient stone carving, you can only make out a few words here and there.#{normal}#
+By order of King T..........................full co.................shaloren forces..................in order to............................swift conclusion .............................orcish t....................hardship that......................safer......................]],
+}
+
+newLore{
+	id = "buried-kingdom-note-1",
+	category = "age-of-allure",
+	name = _t"stone slate",
+	lore = _t[[#{italic}#An ancient stone carving, you can only make out a few words here and there.#{normal}#
+.................Welcome..........................Jewel of the North...................................within the city............................none will be.............................peace and focus....................ever-clear skies......................three.]],
 }
 
 newLore{
@@ -15,7 +31,7 @@ Worried about the ................not only be here to handle the orcs, but......
 }
 
 newLore{
-	id = "buried-kingdom-note-1",
+	id = "buried-kingdom-note-3",
 	category = "age-of-allure",
 	name = _t"stone slate",
 	lore = _t[[#{italic}#A carved stone catches your gaze.  Where the others are weathered by age, this one seems brand new.#{normal}#

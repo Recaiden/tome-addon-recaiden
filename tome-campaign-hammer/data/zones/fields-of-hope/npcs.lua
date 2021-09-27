@@ -1,8 +1,8 @@
 rarityWithLoot = function(add, mult)
 	add = add or 0; mult = mult or 1;
 	return function(e)
-		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
-		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
+		e.bonus_loot = resolvers.drops{chance=45, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=1, nb=1, {tome_drops="boss"}}
 		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
 	end
 end
@@ -295,7 +295,8 @@ newEntity{
 	level_range = {75, nil}, exp_worth = 15,
 	max_life = 1000, life_rating = 42, fixed_rating = true,
 	max_stamina = 1000,
-	stamina_regen = 10,
+	stamina_regen = 15,
+	vim_regen = 15,
 	rank = 5,
 	size_category = 3,
 	stats = { str=60, dex=45, con=50, cun=30, mag=30, wil=40 },
@@ -360,6 +361,10 @@ newEntity{
 		[Talents.T_UNSTOPPABLE]={base=5, every=6},
 		[Talents.T_MORTAL_TERROR]={base=3, every=6, max=6},
 		[Talents.T_BLOODBATH]={base=5, every=6},
+
+		[Talents.T_DEMON_BLADE]={base=5, every=6},
+		[Talents.T_SHATTERED_MIND]={base=5, every=6},
+		[Talents.T_BLIGHTED_SHIELD]={base=5, every=6},
 		
 		[Talents.T_ETERNAL_GUARD]=1,
 		[Talents.T_UNBREAKABLE_WILL]=1,
@@ -368,6 +373,7 @@ newEntity{
 	resolvers.sustains_at_birth(),
 
 	talent_cd_reduction = {
+		[Talents.T_DEMON_BLADE]=5,
 		[Talents.T_JUGGERNAUT]=20,
 		[Talents.T_UNBREAKABLE_WILL]=2,
 	},
@@ -401,8 +407,8 @@ newEntity{
 	faction = "angolwen", resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_human_meranas__herald_of_angolwen.png"}}},
 	desc = _t[[The herald of Angolwen, a mage sent here to aid the Kingdom in its fight for survival.]],
 	level_range = {75, nil}, exp_worth = 15,
-	max_life = 500, life_rating = 31, fixed_rating = true,
-	max_mana = 1500,
+	max_life = 1000, life_rating = 36, fixed_rating = true,
+	max_mana = 5000,
 	mana_regen = 10,
 	rank = 4,
 	size_category = 3,

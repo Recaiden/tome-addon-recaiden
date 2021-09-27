@@ -45,6 +45,14 @@ newEntity{ base="ZONE_PLAINS", define_as = "FIELDS_OF_HOPE",
 		if p:hasQuest("campaign-hammer+demon-ruins") and p:isQuestStatus("campaign-hammer+demon-ruins", engine.Quest.DONE) then
 			return false
 		else
+			require("engine.ui.Dialog"):yesnoLongPopup(
+				_t"The Final Battle",
+				_t"Honestly, you are not prepared to get through the patrols, guards, and walls of the kingdom's capital.  But you could try.", 400,
+				function(ret)
+					if ret then
+						game:changeLevel(1, "campaign-hammer+fields-of-hope")
+					end
+			end)
 			game.log("There is no way you could get through the patrols, guards, and walls of the kingdom's capital.")
 			return true
 		end

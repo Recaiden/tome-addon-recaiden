@@ -37,7 +37,7 @@ newBirthDescriptor{
 	desc =
 		{
 			"Centuries ago, the Spellblaze plunged the world into an age of darkness.",
-			"The people of Eyal were the lucky ones; Mal'rok was blasted apart, the broken peices of the world transformed to ever-burning hellscapes.",
+			"The people of Eyal were the lucky ones; Mal'rok was blasted apart, the broken pieces of the world transformed to ever-burning hellscapes.",
 			"Amidst the flames, the survivors remade themselves into demons, bent on revenge.",
 			"They spent centuries traversing the void, preparing themselves for war.",
 			"Now, Goedalath has arrived in high orbit.  A linked Orb of Many Ways allows passage through the planetary shield.  Khulmanar's armies are ready.  It is time to unleash the fury of hell!",
@@ -59,7 +59,7 @@ newBirthDescriptor{
 		end,
 	},
 	game_state = {
-		exp_multiplier = 4.6,
+		exp_multiplier = 4.4,
 		campaign_name = "hammer",
 		ignore_prodigies_special_reqs = true,
 		stores_restock_by_level = 1,
@@ -136,7 +136,7 @@ newBirthDescriptor{
 			-- give rares/randbosses extra loot
 			local lev = act.level
 			if act.rank == 3.2 and not act.no_inventory_access then
-				for i = 1, rng.table({1,2,3,3}) do
+				for i = 1, rng.table({0,1,2}) do
 					local bonus = 1.5 + lev / 25
 					local fil = {lev=lev, egos=1, greater_egos_bias = 0, power_points_factor = bonus, nb_themes_add = 1, nb_powers_add = 2, forbid_power_source=act.not_power_source,
 											 base_filter = {no_tome_drops=true, ego_filter={keep_egos=true, ego_chance=-1000}, 
