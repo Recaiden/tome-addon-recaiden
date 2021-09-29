@@ -6,7 +6,7 @@
             "not": false,
             "who": "player",
             "attr": "money",
-            "value": "2000",
+            "value": "1500",
             "test": ">="
         },
         "class": "attr-get",
@@ -41,7 +41,7 @@
         "data": {
             "chatid": "welcome",
             "chat": "The forge-giant is hard at work forging weapons and gear for the armies of the fearscape.",
-            "answer1": "Requesition equipment.",
+            "answer1": "Requisition equipment.",
             "answer2": "Leave it alone."
         },
         "class": "chat",
@@ -108,7 +108,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat3",
-            "chat": "You've proven yourself useful and productive enough to requisition custom-made gear from the forge giants.  Each piece will cost 2000 gold and produce an artifact with one of its egos chosen by you.",
+            "chat": "You've proven yourself useful and productive enough to requisition custom-made gear from the forge giants.  Each piece will cost 1500 gold and produce an artifact with one of its egos chosen by you.",
             "answer1": "Accept",
             "answer2": "No thanks"
         },
@@ -181,7 +181,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat5",
-            "chat": "You haven't contributed enough material to the war effort.\n(Requires 2000 gold).",
+            "chat": "You haven't contributed enough material to the war effort.\n(Requires 1500 gold).",
             "answer1": "Leave"
         },
         "class": "chat",
@@ -360,7 +360,7 @@
         "name": "lua-cond",
         "data": {
             "not": false,
-            "code": "game.player.money and game.player.money < 2000"
+            "code": "game.player.money and game.player.money < 1500"
         },
         "class": "lua-cond",
         "html": "lua-cond",
@@ -563,7 +563,7 @@
         "name": "entry-selector",
         "data": {
             "chatid": "enchant",
-            "code": "local o = chat_env.object_base\n\nlocal art, ok\nlocal nb = 0\nlocal force_egos = {}\nif chat_env.ego then force_egos[1] = chat_env.ego end\nrepeat\n  --------------------------------------------\n  --attempt to make it happen-----------------\n  --------------------------------------------\n  art = game.state:generateRandart{base=o, lev=50, egos=3, force_themes=chat_env.force_themes, force_egos=force_egos, forbid_power_source=not_ps}\n  if art then ok = true end\n  if art and not game.state:checkPowers(player, art, nil, \"antimagic_only\") then\n    ok = false\n  end\n  nb = nb + 1\n  if nb == 40 then break end\nuntil ok\nif art and nb < 40 then\n  art:identify(true)\n  player:addObject(player.INVEN_INVEN, art)\n  player:incMoney(-2000)\n  -- clear chrono worlds and their various effects\n  game:chronoCancel(_t\"#CRIMSON#Your timetravel has no effect on pre-determined outcomes such as this.\")\n  if not config.settings.cheat then game:saveGame() end\n  chat_env.art = art\n  return \"jump\", \"pre-naming\"\nelse\n  return \"jump\", \"oups\"\nend"
+            "code": "local o = chat_env.object_base\n\nlocal art, ok\nlocal nb = 0\nlocal force_egos = {}\nif chat_env.ego then force_egos[1] = chat_env.ego end\nrepeat\n  --------------------------------------------\n  --attempt to make it happen-----------------\n  --------------------------------------------\n  art = game.state:generateRandart{base=o, lev=50, egos=3, force_themes=chat_env.force_themes, force_egos=force_egos, forbid_power_source=not_ps}\n  if art then ok = true end\n  if art and not game.state:checkPowers(player, art, nil, \"antimagic_only\") then\n    ok = false\n  end\n  nb = nb + 1\n  if nb == 40 then break end\nuntil ok\nif art and nb < 40 then\n  art:identify(true)\n  player:addObject(player.INVEN_INVEN, art)\n  player:incMoney(-1500)\n  -- clear chrono worlds and their various effects\n  game:chronoCancel(_t\"#CRIMSON#Your timetravel has no effect on pre-determined outcomes such as this.\")\n  if not config.settings.cheat then game:saveGame() end\n  chat_env.art = art\n  return \"jump\", \"pre-naming\"\nelse\n  return \"jump\", \"oups\"\nend"
         },
         "class": "entry-selector",
         "html": "entry-selector2",

@@ -426,10 +426,42 @@
                 ]
             },
             "output_4": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "26",
+                        "output": "input_1"
+                    }
+                ]
             }
         },
         "pos_x": 39,
         "pos_y": 275
+    },
+    "26": {
+        "id": 26,
+        "name": "lua-code",
+        "data": {
+            "code": "game.logPlayer(game.player, \"#STEEL_BLUE#You've moved to another time thread.\")\ngame.player.stats[7] = game.player.stats[7] + 20\ngame.logPlayer(game.player, \"You feel luckier.\")"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "23",
+                        "input": "output_4"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1191,
+        "pos_y": 1017.75
     }
 }

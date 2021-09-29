@@ -46,7 +46,7 @@ newEntity{ base = "BASE_NPC_PLATFORM",
 	},
 	combat_armor = 2, combat_def = 0,
 	resolvers.talents{ [Talents.T_RUSH]=1, [Talents.T_PERFECT_STRIKE]=1, [Talents.T_OSMOSIS_SHIELD]=1, [Talents.T_ARMOUR_TRAINING]=2, },
-	resolvers.drops{chance=100, nb=1, {}},
+	resolvers.drops{chance=50, nb=1, {}},
 }
 
 newEntity{
@@ -163,7 +163,7 @@ newEntity{
 		[Talents.T_SLIME_SPIT]={base=2, every=5, max=8},
 	},
 
-	resolvers.drops{chance=100, nb=1, {}},
+	resolvers.drops{chance=33, nb=1, {}},
 	on_die = function(self, who)
 		if who == game.player then game.player.hammer_killed_dolleg = true end
 	end,

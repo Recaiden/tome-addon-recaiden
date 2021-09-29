@@ -9,7 +9,7 @@ newLore{
 	id = "caravan-note-2-sc",
 	category = "caravan",
 	name = _t"discarded journal entry",
-	lore = _t[[4 days in, One of the porters disappeared this morning.  Went to feed the animals, never came back.  His tracks get lost a little ways into the hills, and the dogs refuse to follow the trail.  We searched ourselves, but the dwarves are pretty serious about late deliveries, so the caravan master called us off before we found anything except- #{italic}# the last section of the journal has been repeatedly scratched out and rewritten, but you can make out something about a 'sweetness in the air'.#{normal}#]],
+	lore = _t[[4 days in, one of the porters disappeared in the morning.  Went to feed the animals, never came back.  His tracks get lost a little ways into the hills, and the dogs refuse to follow the trail.  We searched ourselves, but the dwarves are pretty serious about late deliveries, so the caravan master called us off before we found anything except- #{italic}# the last section of the journal has been repeatedly scratched out and rewritten, but you can make out something about a 'sweetness in the air'.#{normal}#]],
 }
 
 newLore{
@@ -20,7 +20,7 @@ newLore{
 
 1 day in, no trouble so far.  Just a few trolls that had wandered close to the road.
 
-2 days in, something's spooking the dogs.  They keep looking off to the southeast, sniffing at the air, but when we check there's nothing there.]],
+2 days in, something's spooking the dogs.  They keep looking off to the southeast, sniffing the air, but when we check there's nothing there.]],
 }
 
 newLore{
