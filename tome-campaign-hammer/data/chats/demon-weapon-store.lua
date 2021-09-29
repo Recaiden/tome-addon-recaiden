@@ -6,10 +6,12 @@ newChat{ id="welcome",
 			npc.store:interact(player)
 		end},
 		{_t"I am looking for staff training.", jump="training-staff", cond=function(npc, player)
-			 if player:knowTalentType("spell/staff-combat") and player:getTalentTypeMastery("spell/staff-combat") < 1.2 then return true end
+			 if player:knowTalentType("spell/staff-combat") and player:getTalentTypeMastery("spell/staff-combat") >= 1.2 then return false end
+			  return true
 		end},
 		{_t"I am looking for mindstar training.", jump="training-mindstar", cond=function(npc, player)
-			 if player:knowTalentType("wild-gift/mindtstar-mastery") and player:getTalentTypeMastery("wild-gift/mindtstar-mastery") < 1.2 then return true end
+			 if player:knowTalentType("wild-gift/mindtstar-mastery") and player:getTalentTypeMastery("wild-gift/mindtstar-mastery") >= 1.2 then return false end
+			 return true
 		end},
 		{_t"I am looking for archery training", action=function(npc, player)
 			game.logPlayer(player, "The weaponmaster spends some time with you, teaching you the basics of bows and slings.")

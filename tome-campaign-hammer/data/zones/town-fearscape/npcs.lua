@@ -1,3 +1,11 @@
+rarityWithoutXP = function(add, mult)
+	add = add or 0; mult = mult or 1;
+	return function(e)
+		e.exp_worth = 0
+		e.no_drops = true
+	end
+end
+
 load("/data/general/npcs/major-demon.lua")
 load("/data/general/npcs/minor-demon.lua")
 
@@ -24,7 +32,8 @@ newEntity{
 	no_breath = 1,
 	demon = 1,
 	random_name_def = "demon",
-	resolvers.drops{chance=100, nb=2, {type="money"} },
+	exp_worth = 0,
+	no_drops = true,
 }
 
 newEntity{ base = "BASE_NPC_FEARSCAPE_TOWN",
@@ -123,7 +132,7 @@ newEntity{ base = "BASE_NPC_MAJOR_DEMON", define_as = "SMITH",
 	name = "Forge-Giant Smith", color=colors.WHITE,
 	desc = _t[[A burning biomechanical giant wielding a forge hammer of Urh-Rok in each hand.  Disturb them at your peril.]],
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/demon_major_forge_giant_talkative.png", display_h=2, display_y=-1}}},
-	level_range = {47, nil}, exp_worth = 1,
+	level_range = {47, nil}, exp_worth = 0,	no_drops = true,
 	rarity = 8,
 	rank = 3,
 	global_speed_base = 1,
