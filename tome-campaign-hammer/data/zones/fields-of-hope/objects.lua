@@ -13,7 +13,7 @@ newEntity{
 	moddable_tile = "special/crown_of_command",
 	plot = true,
 	level_range = {50, 50},
-	rarity = nil,
+	rarity = false,
 	cost = 1000,
 	material_level = 5,
 	wielder = {

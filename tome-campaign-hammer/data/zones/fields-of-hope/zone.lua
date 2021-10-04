@@ -176,7 +176,7 @@ return {
 					if m then
 						local x, y = rng.range(0, game.level.map.w-1), rng.range(0, game.level.map.h-1)
 						local tries = 0
-						while (not m:canMove(x, y) or (game.level.map.room_map[x][y] and game.level.map.room_map[x][y].special)) and tries < 100 do
+						while (not m:canMove(x, y)) and tries < 100 do
 							x, y = rng.range(0, game.level.map.w-1), rng.range(0, game.level.map.h-1)
 							tries = tries + 1
 						end
