@@ -236,7 +236,7 @@ newAI("heka_eye", function(self)
 																DamageType.ACID, DamageType.NATURE, DamageType.BLIGHT,
 																DamageType.ARCANE, DamageType.TEMPORAL,
 																DamageType.LIGHTNING})
-		self:setEffect(self.REK_HEKA_EYELEMENT_EYE, 10, {element=self.eyelement, resist=self.eyelemental, src=self})
+		self:setEffect(self.EFF_REK_HEKA_EYELEMENT_EYE, 10, {element=self.eyelement, resist=self.eyelemental, src=self})
 	end
 
 	-- emergency heal

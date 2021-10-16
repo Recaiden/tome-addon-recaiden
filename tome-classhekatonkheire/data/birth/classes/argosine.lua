@@ -11,7 +11,7 @@ newBirthDescriptor{
 		"#GOLD#Stat modifiers:",
 		"#LIGHT_BLUE# * +0 Strength, +3 Dexterity, +0 Constitution",
 		"#LIGHT_BLUE# * +5 Magic, +1 Willpower, +0 Cunning",
-		"#GOLD#Life Rating:#LIGHT_BLUE# +0",
+		"#GOLD#Life Rating:#LIGHT_BLUE# -2",
 	},
 	power_source = { arcane=true },
 	stats = { dex=3, mag=5, wil=1 },
@@ -50,6 +50,8 @@ newBirthDescriptor{
 	copy = {
 		class_start_check = start_zone,
 		max_life = 100,
+		mana_regen = 0.5,
+		mana_rating = 5,
 		mage_equip_filters,
 		resolvers.equipbirth{
 			id=true,
@@ -58,7 +60,7 @@ newBirthDescriptor{
 		},
 	},
 	copy_add = {
-		life_rating = 0,
+		life_rating = -2,
 	},
 }
 

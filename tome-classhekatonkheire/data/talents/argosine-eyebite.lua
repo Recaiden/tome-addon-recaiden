@@ -27,7 +27,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Command your eyes to distract the target. A random eye will bite the enemy and taunt them, forcing the enemy to target them.]]):tformat()
+		return ([[Command your eyes to distract the target. A random eye will bite the enemy and inflict taunt, forcing the enemy to target that eye.]]):tformat()
 	end
 }
 
@@ -44,20 +44,25 @@ newTalent{
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nowarning=true} end,
 	on_pre_use = on_pre_use_Eyes,
 	action = function(self, t)
-		local target = self:getTalentTarget(t)
-		local x, y, target = self:getTargetLimited(target)
+		local tg = self:getTalentTarget(t)
+		local x, y, target = self:getTargetLimited(tg)
 		if not target then return nil end
 
 		if not target:canBe("blind") then return true end
 		
-		target:setEffect(target.EFF_BLIND, t:_getDuration(self), {src=self, apply_power=self:combatSpellpower()})
+		target:setEffect(target.EFF_BLINDED, t:_getDuration(self), {src=self, apply_power=self:combatSpellpower()})
 
 		-- summon
 		local eye = self:callTalent(self.T_REK_HEKA_HEADLESS_EYES, "summonEye", true)
 		if eye then
-			eye.summon_time = t:_getduration(self)
+			eye.summon_time = t:_getDuration(self)
 			eye.temporary = true
+			eye.ai_target.actor = target
+			eye.ai_target.focus_on_target = true
 		end
+
+		-- damage
+		self:project(tg, target.x, target.y, DamageType.PHYSICAL, self:spellCrit(t.getDamage(self, t)))
 		
 		-- invest cost
 		game:onTickEnd(function() 
@@ -67,7 +72,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([Choose an enemy and attempt (#SLATE#checks blindness immunity#LAST#) to make it a temporary anchor, dealing %d physical damage and granting you an axtra wandering eye for %d turns, durign which the target may be blinded (#SLATE#Spellpower vs Physical#LAST#).
+		return ([[Choose an enemy and attempt (#SLATE#checks blindness immunity#LAST#) to make it a temporary anchor, dealing %d physical damage and granting you an axtra wandering eye for %d turns, during which the target may be blinded (#SLATE#Spellpower vs Physical#LAST#).
 
 This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), t:_getDuration(self))
 	end,
@@ -97,15 +102,16 @@ newTalent{
 		end
 		target:die()
 		game.level.map:addEffect(self,
-														 x, y, t:_getDuration(self),
-														 DamageType.LIGHT, {dam=self:spellCrit(t:_getDamage(self), power=t:getSlow(self)/100},
-														 self:gatTalentRadius(t),
+														 tx, ty, t:_getDuration(self),
+														 DamageType.REK_HEKA_ARCANE_SLOW, {dam=self:spellCrit(t:_getDamage(self)), power=t:_getSlow(self)/100},
+														 self:getTalentRadius(t),
 														 5, nil,
-														 {type="time_prison"},
+														 {type="light_zone"},
 														 nil, false, false
 		)
 		
 		return true
+	end,
 	info = function(self, t)
 		return ([[Violently return an eye to the other place, 'killing' it and leaving a radius %d hole in reality for %d turns that slows enemies by %d%% and deals %0.1f arcane damage per turn.
 ]]):tformat(self:getTalentRadius(t), t:_getDuration(self), t:_getSlow(self), damDesc(self, DamageType.ARCANE, t:_getDamage(self)))
@@ -138,7 +144,7 @@ newTalent{
 	action = function(self, t)
 		game.logPlayer(self, "Select an eye...")
 		local tg_eye = {default_target=self, type="hit", friendlyblock = false, nowarning=true, range=self:getTalentRange(t), first_target = "friend"}
-		tx, ty = self:getTarget(tg_eye)
+		local tx, ty = self:getTarget(tg_eye)
 		if not tx or not ty then return nil end
 		if tx then
 			_, _, _, tx, ty = self:canProject(tg_eye, tx, ty)
@@ -149,37 +155,35 @@ newTalent{
 			if not target.summoner or target.summoner ~= self then return nil end
 		end
 		
-		local tg = {multiple=true}
 		local eye = target
 		if not eye then return false end
 		
-		tg[#tg+1] = {type="beam", range=5, start_x=target.x, start_y=target.y, selffire=false, nolock=true, talent=t}
-		-- Pick a target
-		local x, y = self:getTarget(tg)
-		if not x or not y then return nil end
-		
-		-- Switch our targeting type back
-		local tg = self:getTalentTarget(t)
-		
-		tg.start_x, tg.start_y = eye.x, eye.y
-		
+		game.logPlayer(self, "Target the beam...")
+
+		local tgEnd = {type="beam", start_x=tx, start_y=ty, nolock=true, range=5, no_start_scan=true}
+		dx, dy = self:getTarget(tgEnd)
+		if not dx or not dy then
+			game.logPlayer(self, "Invalid end point")
+			return
+		end
 		eye:project(
-			tg, x, y,
-			function(px, py)
-				local target = game.level.map(tx, ty, Map.ACTOR)
+			tgEnd, dx, dy,
+			function(px, py, tgEnd, self)
+				local target = game.level.map(px, py, Map.ACTOR)
 				if not target then return end
 				
 				if target:canBe("stun") and target:canBe("stone") and target:canBe("instakill") then
 					target:setEffect(target.EFF_STONED, t.getDuration(self, t), {apply_power=self:combatSpellpower()})
-					game.level.map:particleEmitter(tx, ty, 1, "archery")
+					game.level.map:particleEmitter(px, py, 1, "archery")
 				end
-				)	
-	end
+			end
+		)
+		-- todo visible beam
 		game:playSoundNear(self, "talents/earth")
 		
 		return true
 	end,
 	info = function(self, t)
-		return ([[Choose a wandering eye, and fire from it a beam that turns enemies to stone (#SLATE#Spell save#LAST#) for %d turns.  Stoned creatures are unable to act or regenerate life, and if they are hit by an attack that deals more than 30% of their life they will shatter and be destroyed. Stoned creatures are highly resistant to fire and lightning, and somewhat resistant to physical attacks.]]):tformat(t.getDuration(self, t), t.getSightBonus(self, t))
+		return ([[Choose a wandering eye, and fire from it a beam that turns enemies to stone (#SLATE#Spell save#LAST#) for %d turns.  Stoned creatures are unable to act or regenerate life, and if they are hit by an attack that deals more than 30%% of their life they will shatter and be destroyed. Stoned creatures are highly resistant to fire and lightning, and somewhat resistant to physical attacks.]]):tformat(t.getDuration(self, t))
 	end,
 }

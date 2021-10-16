@@ -597,7 +597,7 @@ newEffect{
 	activate = function(self, eff)
 		eff.tmpid = self:addTemporaryValue("resists", {[eff.element] = eff.resist})
 		if self.summoner then
-			eff.summonerid = self:addTemporaryValue("resists", {[eff.element] = eff.resist})
+			eff.summonerid = self.summoner:addTemporaryValue("resists", {[eff.element] = eff.resist/2})
 		end
 	end,
 	deactivate = function(self, eff)
@@ -608,3 +608,21 @@ newEffect{
 	end,
 }
 
+newEffect{
+	name = "REK_HEKA_ARENA", image = "talents/rek_heka_sybarite_revel.png",
+	desc = _t"Queen of the Arena",
+	long_desc = function(self, eff) return ("The target's damage has been increased by %d%% and its resistances by %d%%."):tformat(eff.damage, eff.resist) end,
+	type = "magical",
+	subtype = { arcane=true },
+	status = "beneficial",
+	parameters = { damage=10, resist=10, damageMax=10, resistMax=10, walls=1 },
+	activate = function(self, eff)
+		local proportion = math.max(1, math.log(eff.walls)) / math.log(180) -- don't require them to be in the center of a huge circle of walls to best use it
+		eff.damage = eff.damageMax * proportion
+		eff.resist = eff.resistMax * proportion
+		self:effectTemporaryValue(eff, "resists", {all = eff.resist})
+		self:effectTemporaryValue(eff, "inc_damage", {all = eff.damage})
+	end,
+	deactivate = function(self, eff)
+	end,
+}

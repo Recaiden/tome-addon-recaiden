@@ -162,9 +162,8 @@ newTalent{
 		for i = start, start + 8 do
 			local x = target.x + (i % 3) - 1
 			local y = target.y + math.floor((i % 9) / 3) - 1
-			if game.level.map:isBound(x, y)
-				and self:canMove(x, y)
-				and not game.level.map.attrs(x, y, "no_teleport") then
+			if game.level.map:isBound(x, y) and self:canMove(x, y) then
+					--and not game.level.map.attrs(x, y, "no_teleport") then
 			game.level.map:particleEmitter(self.x, self.y, 1, "teleport_out")
 			self:move(x, y, true)
 			game.level.map:particleEmitter(self.x, self.y, 1, "arcane_teleport_stream", { dx = ox - self.x, dy = oy - self.y, dir_c=0, color_r=160, color_g=50, color_b=200})
@@ -520,7 +519,7 @@ newTalent{
    end,
 		info = function(self, t)
 		local threshold = t.getRedirectThreshold(self, t)
-		return ([[Your body is just an anchor; it is able to endure any hardship as long as your attention holds.  Each wandering eye absorbs 1/3 of the damage you take as long as the its life is above %d%% of its maximum.  This absorbed damage is further reduced by %0.1f%%, based on level.
+		return ([[Your body is just an anchor; it is able to endure any hardship as long as your attention holds.  Each wandering eye absorbs up to 1/3 of the damage you take as long as the its life is above %d%% of its maximum.  This absorbed damage is further reduced by %0.1f%%, based on level.
 Each level in this talent also increases your the life regeneration of your eyes.]]):tformat(threshold, t.getReinforcement(self, t))
 		end,
 }

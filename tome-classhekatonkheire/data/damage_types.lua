@@ -100,7 +100,7 @@ newDamageType{
 
 -- arcane damage with slow
 newDamageType{
-	name = _t("gaze of the otherside", "damage type"), type = "REK_HEKA_ARCANE_SLOW", text_color = "#WHITE#",
+	name = _t("rift", "damage type"), type = "REK_HEKA_ARCANE_SLOW", text_color = "#WHITE#",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
 		useImplicitCrit(src, state)

@@ -122,18 +122,18 @@ newTalent{
 	callbackOnTalentPost = function(self, t, ab, ret, silent)
 		if not self.in_combat then return end
 		if util.getval(t.hands, self, t) > 0 then
-			self:setEffect(self.T_REK_HEKA_EYE_STOCK, 10, {src=self, max_stacks=t:_getMaxTurns(self)})
+			self:setEffect(self.EFF_REK_HEKA_EYE_STOCK, 10, {src=self, max_stacks=t:_getMaxTurns(self)})
 		end
 	end,
 	action = function(self, t)
 		if not self.in_combat then return nil end
-		self:setEffect(self.T_REK_HEKA_EYE_STOCK, 10, {src=self, stacks = t.getTurns(self, t), max_stacks=t:_getMaxTurns(self)})
+		self:setEffect(self.EFF_REK_HEKA_EYE_STOCK, 10, {src=self, stacks = t.getTurns(self, t), max_stacks=t:_getMaxTurns(self)})
 		return true
 	end,
 	info = function(self, t)
-		return ([[When you spend hands in combat, reduce the time needed to respawn a wandering eye by one turn.  If you already have your maximum number of eyes, up to %d turns can be readied 'in advance'.
+		return ([[When you spend hands in combat, reduce the time needed to respawn a wandering eye by one turn.  If you already have your maximum number of eyes, up to %d turns can be reduced 'in advance'.
 
-Activate this talent to recover an eye %d turns sooner.]]):tformat(t:_getMaxTurns(self), t:_getTurns(self))
+Activate this talent to reduce the time until an eye respawns by %d turns.]]):tformat(t:_getMaxTurns(self), t:_getTurns(self))
 	end,
 }
 

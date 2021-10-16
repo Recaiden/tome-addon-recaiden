@@ -96,9 +96,14 @@ newTalent{
 		local healed = self:spellCrit(t:_getHeal(self))
 		self:incHands(t:_getHands(self))
 		for _, e in pairs(game.level.entities) do
-			if (e == self) or (e.summoner and e.summoner == self and e.is_wandering_eye) then
+			if (e == self) then
 				e:attr("allow_on_heal", 1)
 				e:heal(healed, self)
+				e:attr("allow_on_heal", -1)
+			end
+			if isMyEye(self, e) then
+				e:attr("allow_on_heal", 1)
+				e:heal(healed / 3, self)
 				e:attr("allow_on_heal", -1)
 			end
 		end
@@ -107,7 +112,8 @@ newTalent{
 	callbackOnSummonKill = function(self, t) t.recover(self, t)	end,
 	callbackOnSummonDeath = function(self, t) t.recover(self, t) end,
 	info = function(self, t)
-		return ([[Whenever you or your summons kill an enemy, or when one of your summons dies, you receive a burst of life and power, regaining %d hands and providing %d healing to you and your eyes.
+		return ([[Whenever you or your summons kill an enemy, or when one of your summons dies, you receive a burst of life and power, regaining %d hands and providing %d healing to you and 
+1/3 as much healing your eyes.
 
 #{italic}#Most victims are just more flesh for you to use.#{normal}#]]):tformat(t:_getHands(self), t:_getHeal(self))
 	end,

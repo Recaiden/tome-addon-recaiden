@@ -83,7 +83,7 @@ newTalent{
 						if actor then
 							if not actor.turn_procs.road_displaced then
 								actor.turn_procs.road_displaced = true
-								game.logSeen(actor, "%s is displaced out of the collapsing wall!", actor.name)
+								game.logSeen(actor, "%s is displaced out of the reforming wall!", actor.name)
 							end
 							self.displace(actor, 100)
 						end
@@ -106,7 +106,7 @@ newTalent{
 		game.level.map:addParticleEmitter(e.particles)
 	end,
 	carveHoles = function(self, t)
-		local target = {type="ball", range=0, radius=self:getTalentRange(t), talent=t}
+		local tg = {type="ball", range=0, radius=self:getTalentRange(t), talent=t}
 		local grids = self:project(
 			tg, self.x, self.y,
 			function(tx, ty)
@@ -133,18 +133,98 @@ Levels in this talent increase your movement speed by %d%%]]):tformat(t.getPassi
 }
 
 newTalent{
-	name = "Revel", short_name = "REK_HEKA_SYBARITE_REVEL",
+	name = "Enter The Arena", short_name = "REK_HEKA_SYBARITE_REVEL",
 	type = {"spell/sybarite", 2},	require = mag_req2, points = 5,
-	mode = "passive",
-	getOverwatch = function(self, t) return self:combatTalentScale(t, 1, 5) end,
-	--used in an effect applied in the eye's stare down talent via the STARE damage type
+	cooldown = 20,
+	fixed_cooldown = true,
+	hands = 5,
+	tactical = {BUFF = 1},
+	range = 8,
+	getDuration = function(self, t) return 8 end,
+	getDamage = function(self, t) return self:combatTalentScale(t, 25, 100) end,									getResist = function(self, t) return self:combatTalentLimit(t, 35, 10, 25) end,
+	makeHole = function(self, t, x, y)
+		local duration = t.getDuration(self, t)
+		local oe = game.level.map(x, y, Map.TERRAIN)
+		local e = Object.new{
+			old_feat = oe,
+			name = oe.name, image = oe.image,
+			desc = oe.desc,
+			type = oe.type,
+			display = oe.display, color=colors.WHITE, back_color=colors.BLACK,
+			show_tooltip = true,
+			block_sight = false,
+			temporary = true,
+			timeout = duration,
+			x = x, y = y,
+			canAct = false,
+			add_displays = oe.add_displays,
+			add_mos = oe.add_mos,
+			displace = road_displaceActor,
+			act = function(self)
+				local Map = require "engine.Map"
+				self:useEnergy()
+				if core.fov.distance(self.x, self.y, self.summoner.x, self.summoner.y) > 2 then
+					self.timeout = self.timeout - 1
+					if self.timeout <= 0 then
+						if self.particles then game.level.map:removeParticleEmitter(self.particles) end
+						game.level.map(self.x, self.y, engine.Map.TERRAIN, self.old_feat)
+						game.level:removeEntity(self)
+						
+						--move actors on the collapsing tile away
+						local actor = game.level.map(self.x, self.y, Map.ACTOR)
+						if actor then
+							if not actor.turn_procs.road_displaced then
+								actor.turn_procs.road_displaced = true
+								game.logSeen(actor, "%s is displaced out of the reforming wall!", actor.name)
+							end
+							self.displace(actor, 100)
+						end
+						
+						game.level.map:updateMap(self.x, self.y)
+						game.nicer_tiles:updateAround(game.level, self.x, self.y)
+					end
+				end
+			end,
+			summoner_gain_exp = true,
+			summoner = self,
+		}
+		e.tooltip = mod.class.Grid.tooltip
+		game.level:addEntity(e)
+		game.level.map(x, y, Map.TERRAIN, e)
+		--game.level.map:updateMap(x, y)
+		e.particles = Particles.new("royal_road", 1, {})
+		e.particles.x = x
+		e.particles.y = y
+		game.level.map:addParticleEmitter(e.particles)
+	end,
+	action = function(self, t)
+		local tg = {type="ball", range=0, radius=self:getTalentRange(t), talent=t}
+		local countWalls = 0
+		local grids = self:project(
+			tg, self.x, self.y,
+			function(tx, ty)
+				if not game.level.map:isBound(tx, ty) then return end
+				local oe = game.level.map(tx, ty, Map.TERRAIN)
+				if not oe or oe.special then return end
+				if not oe or oe:attr("temporary") or not oe.dig or not game.level.map:checkEntity(tx, ty, engine.Map.TERRAIN, "block_move") then return end
+				countWalls = countWalls + 1
+				t.makeHole(self, t, tx, ty)
+			end
+		)
+		self:setEffect(self.EFF_REK_HEKA_ARENA, t.getDuration(self, t), {damageMax=t.getDamage(self, t), resistMax=t.getResist(self, t), walls=countWalls, src=self})
+		--todo sound
+		--todo visual
+		return true
+	end,
 	info = function(self, t)
-		return ([[%d --- %d.]]):tformat(t.getOverwatch(self, t), t.getOverwatch(self, t)*8)
+		return ([[Extend the royal road outward, making walls within range %d passable for %d turns.  During this time you gain up to +%d%% damage and +%d%% resistance, based on the number of walls flattened.
+
+#{italic}#No lures, tunnels, nor ambushes.  Fight your enemy in glorious open combat!#{normal}#]]):tformat(self:getTalentRange(t), t:_getDuration(self), t:_getDamage(self), t:_getResist(self))
 	end,
 }
 
 newTalent{
-	name = "BE KNELT", short_name = "REK_HEKA_SYBARITE_KNEEL",
+	name = "Be Knelt", short_name = "REK_HEKA_SYBARITE_KNEEL",
 	type = {"spell/sybarite", 3}, require = mag_req3, points = 5,
 	cooldown = 15,
 	fixed_cooldown = true,
@@ -154,6 +234,7 @@ newTalent{
 	target = function(self, t)
 		return {type="ball", range=0, radius=self:getTalentRange(t), talent=t}
 	end,
+	getLoss = function(self, t) return self:combatTalentLimit(t, 2.0, 0.4, 1.5) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		self:project(
@@ -161,13 +242,13 @@ newTalent{
 			function(tx, ty)
 				local target = game.level.map(px, py, Map.ACTOR)
 				if target and self:reactionToward(target) <= 0 then
-					target.energy.value = target.energy.value - game.energy_to_act
+					target.energy.value = target.energy.value - game.energy_to_act * t:_getLoss(self)
 				end
 			end
 		)
 	end,
 	info = function(self, t)
-		return ([[Briefly unveil your full presence, and enemies within range %d are forced to their knees (or simply cast down), losing a turn(#SLATE#no save#LAST#).]]):tformat(self:getTalentRange(t))
+		return ([[Briefly unveil your full presence, and enemies within range %d are forced to their knees (or simply cast down), losing %d%% of a turn(#SLATE#no save#LAST#).]]):tformat(self:getTalentRange(t), t:_getLoss(self)*100)
 	end,
 }
 
@@ -175,7 +256,7 @@ newTalent{
 	name = "On Parade", short_name = "REK_HEKA_SYBARITE_PARADE",
 	type = {"spell/sybarite", 4}, require = mag_req4, points = 5,
 	mode = "passive",
-	getDamageChange = function(self, t) return self:combatTalentLimit(t, 75, 20, 66) end,
+	getDamageChange = function(self, t) return self:combatTalentLimit(t, 75, 28, 66) end,
 	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, tmp, no_martyr)
 		local countFoes = 0
 		local grids = core.fov.circle_grids(self.x, self.y, 10, true)
