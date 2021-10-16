@@ -41,7 +41,7 @@ newEntity{
 		if p:hasQuest("campaign-hammer+demon-allies") and p:isQuestStatus("campaign-hammer+demon-allies", engine.Quest.COMPLETED, "daikara-gate-open") then
 			return false
 		else
-			game.log("Heading towards the stairs, your see yourself coming the other direction. You decide to turn around, and at the top of the stairs, the other you does the same.")
+			game.log("Heading towards the stairs, you see yourself coming the other direction. You decide to turn around, and at the top of the stairs, the other you does the same.")
 			return true
 		end
 		return false
