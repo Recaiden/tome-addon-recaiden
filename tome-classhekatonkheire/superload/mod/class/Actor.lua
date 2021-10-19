@@ -45,4 +45,14 @@ function _M:recomputeGlobalSpeed()
 	return ret
 end
 
+local base_takeHit = _M.takeHit
+function _M:takeHit(value, src, death_note)
+	local dead, val = base_takeHit(self, value, src, death_note)
+	if src and src.summoner and src.summoner.knowTalent and src.summoner:knowTalent(src.summoner.T_REK_HEKA_TENTACLE_EXECUTE) then
+		src.summoner:callTalent(src.summoner.T_REK_HEKA_TENTACLE_EXECUTE, "kill", self)
+	end
+
+	return dead, val
+end
+
 return _M
