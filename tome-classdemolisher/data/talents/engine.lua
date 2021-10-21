@@ -1,6 +1,6 @@
 newTalent{
 	name = "Blazing Trail", short_name = "REK_DEML_ENGINE_BLAZING_TRAIL",
-	type = {"steamtech/engine", 1},
+	type = {"steamtech/demo-engine", 1},
 	require = steam_req1,
 	points = 5,
 	drain_steam = 5,
@@ -32,7 +32,7 @@ Passively improve your vehicle's engine output.  While riding, you gain %d%% mov
 
 newTalent{
 	name = "Drift Nozzles", short_name = "REK_DEML_ENGINE_DRIFT_NOZZLES",
-	type = {"steamtech/engine", 2},
+	type = {"steamtech/demo-engine", 2},
 	require = steam_req2,
 	points = 5,
 	cooldown = 12,
@@ -70,7 +70,7 @@ Passively improve your vehicle's evasive movements. While riding, you have %d ex
 
 newTalent{
 	name = "Ramming Speed", short_name = "REK_DEML_ENGINE_RAMMING_SPEED",
-	type = {"steamtech/engine", 3},
+	type = {"steamtech/demo-engine", 3},
 	require = steam_req3,
 	points = 5,
 	steam = 30,
@@ -154,7 +154,7 @@ You must launch from at least 2 tiles away.]]):tformat(damDesc(self, DamageType.
 
 newTalent{
 	name = "Full Throttle", short_name = "REK_DEML_ENGINE_FULL_THROTTLE",
-	type = {"steamtech/engine", 4},
+	type = {"steamtech/demo-engine", 4},
 	require = steam_req4,
 	points = 5,
 	drain_steam = 10,

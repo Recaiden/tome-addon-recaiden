@@ -8,11 +8,11 @@ newBirthDescriptor{
 		_t"Steamtech drones handle weapons, crowd control, and defense, so the demolisher can concentrate on placing explosives and piloting their steam buggy.",
 		_t"Their most important stat is Cunning.",
 		_t"#GOLD#Stat modifiers:",
-		_t"#LIGHT_BLUE# * +3 Dexterity, +5 Cunning",
+		_t"#LIGHT_BLUE# * +4 Dexterity, +5 Cunning",
 		_t"#GOLD#Life rating:#LIGHT_BLUE# -5 (special)",
 	},
 	power_source = {steam=true, technique=true, technique_ranged=true},
-	stats = { dex=3, cun=5 },
+	stats = { dex=4, cun=5 },
 	talents_types = {
       --Class
       --new base talents
@@ -20,7 +20,7 @@ newBirthDescriptor{
       ["steamtech/explosives"]={true, 0.3},
 			["steamtech/drones"]={true, 0.3},
       ["steamtech/pilot"]={true, 0.3},
-      ["steamtech/engine"]={true, 0.3},
+      ["steamtech/demo-engine"]={true, 0.3},
       
       --advanced talents
       ["steamtech/automation"]={false, 0.3},

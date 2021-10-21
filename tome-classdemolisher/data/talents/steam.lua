@@ -71,8 +71,8 @@ if not Talents.talents_types_def["steamtech/pilot"] then
 	load("/data-classdemolisher/talents/pilot.lua")
 end
 
-if not Talents.talents_types_def["steamtech/engine"] then
-	newTalentType{ allow_random=true, is_steam=true, type="steamtech/engine", name = _t"Engine", description = _t"There's no point in any machine that does not go fast." }
+if not Talents.talents_types_def["steamtech/demo-engine"] then
+	newTalentType{ allow_random=true, is_steam=true, type="steamtech/demo-engine", name = _t"Engine", description = _t"There's no point in any machine that does not go fast." }
 	load("/data-classdemolisher/talents/engine.lua")
 end
 
