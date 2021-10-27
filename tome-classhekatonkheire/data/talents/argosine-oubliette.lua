@@ -19,7 +19,7 @@ newTalent{
 	end,
 	well = function(self, t, x, y)
 		-- Add a lasting map effect
-		game.logSeen(self, "A #DARK_BLUE#wave of emptiness#LAST# erupts from the ground!")
+		game.logSeen(self, 0"A #DARK_BLUE#wave of emptiness#LAST# erupts from the ground!")
 		self:callTalent(self.T_ENERGY_ALTERATION, "forceActivate", DamageType.COLD)
 		game.level.map:addEffect(self,
 			x, y, t.getDuration(self, t),
@@ -50,14 +50,32 @@ Whenever one of your minions dies, the same well is cast from their position aut
 }
 
 newTalent{
-	name = "???", short_name = "REK_HEKA_TENTACLE_UNCERTAIN",
+	name = "Rivers Run Dry", short_name = "REK_HEKA_TENTACLE_HARASS",
 	type = {"spell/oubliette", 2},	require = mag_req2, points = 5,
 	mode = "passive",
-	range = 1,
-	getDamage = function(self, t) return self:combatTalentScale(t, 10, 45) end,
-	-- implemented in Earthdrum
+	radius = 10,
+	getChance = function(self, t) return self:combatTalentLimit(t, 60, 25, 50) end,
+	callbackOnActBase = function(self, t)
+		local tg = {type="ball", range=0, radius=t.getRadius(self, t), friendlyfire=false, talent=t}
+		local chance = t.getChance(self, t)
+		self:project(tg, self.x, self.y, function(px, py)
+			local target = game.level.map(px, py, engine.Map.ACTOR)
+			if target then
+				if target:checkHit(self:combatSpellpower(), target:combatSpellResist()) then
+					for tid, _ in pairs(target.talents_cd) do
+						local t = target:getTalentFromId(tid)
+						if t and not t.fixed_cooldown and rng.percent(chance) then
+							target.talents_cd[tid] = target.talents_cd[tid] + 1
+						end
+					end
+				end
+			end
+		end)
+	end,
 	info = function(self, t)
-		return ([[When a pillar rises, it does so with great force, dealing %0.1f physical damage and knocking enemies 2 spaces towards you.]]):tformat(damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)))
+		return ([[At the start of each round, visible enemies may (#SLATE# spell save#LAST#) have their talent cooldowns increase, with a %d%% chance for each talent.
+
+#{italic}#Your presence spills out onto the battlefield, strangling any normal thought.#{normal}#]]):tformat(t.getChance(self, t))
 	end,
 }
 
@@ -65,27 +83,51 @@ newTalent{
 	name = "Spite's Sake", short_name = "REK_HEKA_TENTACLE_DEBUFF",
 	type = {"spell/oubliette", 3}, require = mag_req3, points = 5,
 	hands = 20,
-	tactical = { DISABLE = 3 },
 	cooldown = 16,
+	tactical = {
+		DISABLE = function(self, t, target)
+			local nb = 0
+			for eff_id, p in pairs(self.tmp) do
+				local e = self.tempeffect_def[eff_id]
+				if e.status == "detrimental" and e.type ~= "other" then nb = nb + 1 end
+			end
+			return nb
+		end
+	},
+	requires_target = true,
 	range = 5,
 	getEffectCount = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6)) end,
 	getDurationMult = function(self, t) return self:combatTalentLimit(t, 2.0, 1.1, 1.35) end,
-	getNumb = function(self, t) return self:combatTalentLimit(t, 0.5, 0.05, 0.13) end,
+	getNumb = function(self, t) return self:combatTalentLimit(t, 50, 5, 13) end,
 	target = function(self, t) return {type="ball", range=0, radius=self:getTalentRange(t), nolock=true, nowarning=true, talent=t} end,
 	action = function(self, t)
-		local tg = self:getTalentTarget(t)
-		local x, y, _ = self:getTarget(tg)
-		if not self:canProject(tg, x, y) then return nil end
-		local target = game.level.map(x, y, Map.TERRAIN)
-		if not target.is_pillar then return nil end
+		-- Pick valid targets for transfer attempt
+		local tgts = {}
+		self:project(self:getTalentTarget(t), self.x, self.y, function(px, py)
+			local act = game.level.map(px, py, Map.ACTOR)
+			if not act or self:reactionToward(act) >= 0 then return end
+			tgts[#tgts+1] = act
+		end)
 
-		target.temporary = 0
-		target:act()
-
+		for tgt, i in pairs(tgts) do
+			if tgt:checkHit(self:combatSpellpower(), tgt:combatSpellResist()) then
+				local count = 0
+				local numDur = 0
+				for eff_id, p in pairs(self.tmp) do
+					if eff.status == "detrimental" and eff.type ~= "other" and count < t.getEffectCount(self, t) then
+						self:cloneEffect(eff_id, tgt)
+						count = count + 1
+						numDur = math.max(numDur, p.dur)
+					end
+				end
+				tgt:setEffect(tgt.EFF_REK_HEKA_EYELIGHT, numDur, {src=self, power=t.getNumb(self, t)})
+			end
+		end
+		
 		return true
 	end,
 	info = function(self, t)
-		return ([[Up to %d detrimental effects will be copied to nearby enemies, with their durations increased by %d%% (rounded up). Each enemy affected also deals %d%% less damage for as long as the longest effect copied to them. You still suffer from the effects.]]):tformat(t.getEffectCount(self, t), (t.getDurationMult(self, t)-1)*100, t.getNumb(self,t)*100)
+		return ([[Up to %d detrimental effects may (#SLATE#spell save#LAST#) be copied to nearby enemies. Each enemy affected also deals %d%% less damage for as long as the longest effect copied to them. You still suffer from the effects.]]):tformat(t.getEffectCount(self, t), t.getNumb(self,t))
 	end,
 }
 
@@ -94,7 +136,7 @@ newTalent{
 	type = {"spell/oubliette", 4}, require = mag_req4, points = 5,
 	mode = "passive"
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 50) end,
-	getPowerBonus = function(self, t) return self:combatTalentScale(t, 5, 30) end,
+	getPowerBonus = function(self, t) return self:combatTalentScale(t, 5, 30, 1.0) end,
 	kill = function(self, t, target)
 		if target.turn_procs and target.turn_procs.rek_heka_tentacle then return end
 		if target.life > target.max_life * 0.1 then return end
