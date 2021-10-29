@@ -52,53 +52,59 @@ return {
 		if game:isAddonActive("orcs") and not game.level.data.hammer_tinker_shop and game.state.birth.merge_tinkers_data then
 			game.level.data.hammer_tinker_shop = true
 
+			local count = 0
 			local spot = game.level:pickSpot{type="pop", subtype="bonus-shop"}
-			
-			local m = mod.class.NPC.new{
-				define_as = "BASE_STEAM_DRONE",
-				type = "construct", subtype = "mechanical",
-				display = "A", color=colors.UMBER, image = "npc/construct_mechanical_ancient_automated_archive.png",
-				name = ("Ancient Automated Archive (%s)"):tformat(_t"tinkers"),
-				desc = _t[[An ancient archive of knowledge! You've heard tales of those triangular store devices, holding items and restoring them. For a price.]],
-				level_range = {50, nil}, exp_worth = 1,
-				faction = "unaligned",
-				repairable = 1,
-				never_anger = true,
-				
-				combat = { dam=1, atk=1, apr=1 },
-				
-				life_rating = 0, max_life = 1500,
-				rank = 3,
+			if not spot and count < 5 then
+				spot = game.level:pickSpot{type="pop", subtype="bonus-shop"}
+			end
+
+			if spot then
+				local m = mod.class.NPC.new{
+					define_as = "BASE_STEAM_DRONE",
+					type = "construct", subtype = "mechanical",
+					display = "A", color=colors.UMBER, image = "npc/construct_mechanical_ancient_automated_archive.png",
+					name = ("Ancient Automated Archive (%s)"):tformat(_t"tinkers"),
+					desc = _t[[An ancient archive of knowledge! You've heard tales of those triangular store devices, holding items and restoring them. For a price.]],
+					level_range = {50, nil}, exp_worth = 1,
+					faction = "unaligned",
+					repairable = 1,
+					never_anger = true,
+					
+					combat = { dam=1, atk=1, apr=1 },
+					
+					life_rating = 0, max_life = 1500,
+					rank = 3,
 				size_category = 3,
 				power_source = {steamtech=true},
 				can_talk = "orcs+aaa",
-			}
-			m:resolve()
-			m:resolve(nil, true)
-			
-			m.store = game:getStore("ORC_AAA_TINKER")
-			m.store.faction = m.faction
-			m.store.store.sell_percent = rng.range(100, 220)
-			m.store.onBuy_real = m.store.onBuy
-			m.store.onBuy = function(self, ...)
-				world:gainAchievement("ORCS_AAA_BUY", game.player)
-				local inven = self:getInven("INVEN")
-				if #inven == 0 then
-					world:gainAchievement("ORCS_AAA_BUY_ALL", game.player)
-				end
-				return self:onBuy_real(...)
-			end
-
-			game.zone:addEntity(game.level, m, "actor", spot.x, spot.y)
-			
-			-- Grab items
-			for i = game.level.map:getObjectTotal(x, y), 1, -1 do
-				local o = game.level.map:getObject(x, y, i)
-				game.level.map:removeObject(x, y, i)
+				}
+				m:resolve()
+				m:resolve(nil, true)
 				
-				o:identify(true)
-				m.store:addObject(m.store.INVEN_INVEN, o)
-			end	
+				m.store = game:getStore("ORC_AAA_TINKER")
+				m.store.faction = m.faction
+				m.store.store.sell_percent = rng.range(100, 220)
+				m.store.onBuy_real = m.store.onBuy
+				m.store.onBuy = function(self, ...)
+					world:gainAchievement("ORCS_AAA_BUY", game.player)
+					local inven = self:getInven("INVEN")
+					if #inven == 0 then
+						world:gainAchievement("ORCS_AAA_BUY_ALL", game.player)
+					end
+					return self:onBuy_real(...)
+				end
+				
+				game.zone:addEntity(game.level, m, "actor", spot.x, spot.y)
+			
+				-- Grab items
+				for i = game.level.map:getObjectTotal(x, y), 1, -1 do
+					local o = game.level.map:getObject(x, y, i)
+					game.level.map:removeObject(x, y, i)
+					
+					o:identify(true)
+					m.store:addObject(m.store.INVEN_INVEN, o)
+				end
+			end
 		end
 	end,
 	

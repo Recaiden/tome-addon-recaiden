@@ -1,8 +1,8 @@
 return {
 	name = "Lake of Nur",
 	display_name = function(x, y)
-		if game.level.level == 1 then return "Lake of Nur" end
-		if game.level.level == 2 then return "Lake of Nur" end
+		if game.level.level == 1 then return "Lake of Nur (1)" end
+		if game.level.level == 2 then return "Lake of Nur (2)" end
 		return "Yiilkgur Excavation Site"
 	end,
 	level_range = {10, 20},

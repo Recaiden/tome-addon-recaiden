@@ -1,40 +1,4 @@
 {
-    "3": {
-        "id": 3,
-        "name": "attr-get",
-        "data": {
-            "not": false,
-            "who": "player",
-            "attr": "money",
-            "value": "1500",
-            "test": ">="
-        },
-        "class": "attr-get",
-        "html": "attr-get",
-        "typenode": true,
-        "inputs": {
-            "input_1": {
-                "connections": [
-                    {
-                        "node": "34",
-                        "input": "output_1"
-                    }
-                ]
-            }
-        },
-        "outputs": {
-            "output_1": {
-                "connections": [
-                    {
-                        "node": "8",
-                        "output": "input_1"
-                    }
-                ]
-            }
-        },
-        "pos_x": 1757,
-        "pos_y": -106.88888888888889
-    },
     "5": {
         "id": 5,
         "name": "chat",
@@ -65,8 +29,8 @@
                 "connections": []
             }
         },
-        "pos_x": 383.42857142857144,
-        "pos_y": -62.42857142857143
+        "pos_x": 186.71428571428572,
+        "pos_y": -30
     },
     "6": {
         "id": 6,
@@ -103,44 +67,6 @@
         "pos_x": 1307.5,
         "pos_y": -115.5
     },
-    "8": {
-        "id": 8,
-        "name": "chat",
-        "data": {
-            "chatid": "chat3",
-            "chat": "You've proven yourself useful and productive enough to requisition custom-made gear from the forge giants.  Each piece will cost 1500 gold and produce an artifact with one of its egos chosen by you.",
-            "answer1": "Accept",
-            "answer2": "No thanks"
-        },
-        "class": "chat",
-        "html": "chat2",
-        "typenode": true,
-        "inputs": {
-            "input_1": {
-                "connections": [
-                    {
-                        "node": "3",
-                        "input": "output_1"
-                    }
-                ]
-            }
-        },
-        "outputs": {
-            "output_1": {
-                "connections": [
-                    {
-                        "node": "29",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_2": {
-                "connections": []
-            }
-        },
-        "pos_x": 1981.111111111111,
-        "pos_y": -167.88888888888889
-    },
     "12": {
         "id": 12,
         "name": "quest-cond",
@@ -176,35 +102,6 @@
         "pos_x": 1307.75,
         "pos_y": 118
     },
-    "14": {
-        "id": 14,
-        "name": "chat",
-        "data": {
-            "chatid": "chat5",
-            "chat": "You haven't contributed enough material to the war effort.\n(Requires 1500 gold).",
-            "answer1": "Leave"
-        },
-        "class": "chat",
-        "html": "chat1",
-        "typenode": true,
-        "inputs": {
-            "input_1": {
-                "connections": [
-                    {
-                        "node": "35",
-                        "input": "output_1"
-                    }
-                ]
-            }
-        },
-        "outputs": {
-            "output_1": {
-                "connections": []
-            }
-        },
-        "pos_x": 1649,
-        "pos_y": 442.42857142857144
-    },
     "15": {
         "id": 15,
         "name": "chat",
@@ -239,7 +136,7 @@
         "name": "entry-selector",
         "data": {
             "chatid": "build-list",
-            "code": "chat_env.mainbases = {\n    armours = {\n      \"elven-silk robe\",\n      \"drakeskin leather armour\",\n      \"voratun mail armour\",\n      \"voratun plate armour\",\n      \"elven-silk cloak\",\n      \"drakeskin leather gloves\",\n      \"voratun gauntlets\",\n      \"elven-silk wizard hat\",\n      \"drakeskin leather cap\",\n      \"voratun helm\",\n      \"pair of drakeskin leather boots\",\n      \"pair of voratun boots\",\n      \"drakeskin leather belt\",\n      \"voratun shield\",\n    },\n    weapons = {\n      \"voratun battleaxe\",\n      \"voratun greatmaul\",\n      \"voratun greatsword\",\n      \"voratun waraxe\",\n      \"voratun mace\",\n      \"voratun longsword\",\n      \"voratun dagger\",\n      \"living mindstar\",\n      \"quiver of dragonbone arrows\",\n      \"dragonbone longbow\",\n      \"drakeskin leather sling\",\n      \"dragonbone staff\",\n      \"pouch of voratun shots\",\n    },\n    misc = {\n      \"voratun ring\",\n      \"voratun amulet\",\n      \"dwarven lantern\",\n      \"voratun pickaxe\",\n      {\"dragonbone wand\", _t\"dragonbone wand\"},\n      {\"dragonbone totem\", _t\"dragonbone totem\"},\n      {\"voratun torque\", _t\"voratun torque\"},\n    },\n  }\n\nreturn \"jump\", \"build-chat\"\n"
+            "code": "local weapons = {\n      \"voratun battleaxe\",\n      \"voratun greatmaul\",\n      \"voratun greatsword\",\n      \"voratun waraxe\",\n      \"voratun mace\",\n      \"voratun longsword\",\n      \"voratun dagger\",\n      \"living mindstar\",\n      \"quiver of dragonbone arrows\",\n      \"dragonbone longbow\",\n      \"drakeskin leather sling\",\n      \"dragonbone staff\",\n      \"pouch of voratun shots\",\n    }\n\n\nchat_env.mainbases = {\n    armours = {\n      \"elven-silk robe\",\n      \"drakeskin leather armour\",\n      \"voratun mail armour\",\n      \"voratun plate armour\",\n      \"elven-silk cloak\",\n      \"drakeskin leather gloves\",\n      \"voratun gauntlets\",\n      \"elven-silk wizard hat\",\n      \"drakeskin leather cap\",\n      \"voratun helm\",\n      \"pair of drakeskin leather boots\",\n      \"pair of voratun boots\",\n      \"drakeskin leather belt\",\n      \"voratun shield\",\n    },\n    weapons = weapons,\n    misc = {\n      \"voratun ring\",\n      \"voratun amulet\",\n      \"dwarven lantern\",\n      \"voratun pickaxe\",\n      {\"dragonbone wand\", _t\"dragonbone wand\"},\n      {\"dragonbone totem\", _t\"dragonbone totem\"},\n      {\"voratun torque\", _t\"voratun torque\"},\n    },\n  }\n\n\nlocal steamtech = {\n  \"voratun steamsaw\",\n  \"voratun steamgun\",\n}\n\nif game:isAddonActive(\"orcs\") and game.state.birth.merge_tinkers_data then\n    chat_env.mainbases[\"steamtech\"] = steamtech\nend\nreturn \"jump\", \"build-chat\""
         },
         "class": "entry-selector",
         "html": "entry-selector2",
@@ -249,10 +146,6 @@
                 "connections": [
                     {
                         "node": "48",
-                        "input": "output_1"
-                    },
-                    {
-                        "node": "8",
                         "input": "output_1"
                     }
                 ]
@@ -266,8 +159,8 @@
                 "connections": []
             }
         },
-        "pos_x": 1914,
-        "pos_y": -1886.5
+        "pos_x": 1909.090909090909,
+        "pos_y": -1887
     },
     "30": {
         "id": 30,
@@ -346,21 +239,21 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "3",
+                        "node": "57",
                         "output": "input_1"
                     }
                 ]
             }
         },
-        "pos_x": 1535.111111111111,
-        "pos_y": -192
+        "pos_x": 1625,
+        "pos_y": -362.42857142857144
     },
     "35": {
         "id": 35,
         "name": "lua-cond",
         "data": {
             "not": false,
-            "code": "game.player.money and game.player.money < 1500"
+            "code": "game.player.money and game.player.money < chat_env.cost"
         },
         "class": "lua-cond",
         "html": "lua-cond",
@@ -379,7 +272,7 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "14",
+                        "node": "58",
                         "output": "input_1"
                     }
                 ]
@@ -393,7 +286,7 @@
         "name": "entry-selector",
         "data": {
             "chatid": "chat4",
-            "code": ""
+            "code": "chat_env.cost = 750 * (game.player.__game_difficulty or 2)"
         },
         "class": "entry-selector",
         "html": "entry-selector3",
@@ -434,8 +327,8 @@
                 ]
             }
         },
-        "pos_x": 1009,
-        "pos_y": -34.42857142857143
+        "pos_x": 756.4285714285714,
+        "pos_y": -24
     },
     "37": {
         "id": 37,
@@ -563,7 +456,7 @@
         "name": "entry-selector",
         "data": {
             "chatid": "enchant",
-            "code": "local o = chat_env.object_base\n\nlocal art, ok\nlocal nb = 0\nlocal force_egos = {}\nif chat_env.ego then force_egos[1] = chat_env.ego end\nrepeat\n  --------------------------------------------\n  --attempt to make it happen-----------------\n  --------------------------------------------\n  art = game.state:generateRandart{base=o, lev=50, egos=3, force_themes=chat_env.force_themes, force_egos=force_egos, forbid_power_source=not_ps}\n  if art then ok = true end\n  if art and not game.state:checkPowers(player, art, nil, \"antimagic_only\") then\n    ok = false\n  end\n  nb = nb + 1\n  if nb == 40 then break end\nuntil ok\nif art and nb < 40 then\n  art:identify(true)\n  player:addObject(player.INVEN_INVEN, art)\n  player:incMoney(-1500)\n  -- clear chrono worlds and their various effects\n  game:chronoCancel(_t\"#CRIMSON#Your timetravel has no effect on pre-determined outcomes such as this.\")\n  if not config.settings.cheat then game:saveGame() end\n  chat_env.art = art\n  return \"jump\", \"pre-naming\"\nelse\n  return \"jump\", \"oups\"\nend"
+            "code": "local o = chat_env.object_base\n\nlocal art, ok\nlocal nb = 0\nlocal force_egos = {}\nif chat_env.ego then force_egos[1] = chat_env.ego end\nrepeat\n  --------------------------------------------\n  --attempt to make it happen-----------------\n  --------------------------------------------\n  art = game.state:generateRandart{base=o, lev=50, egos=3, force_themes=chat_env.force_themes, force_egos=force_egos, forbid_power_source=not_ps}\n  if art then ok = true end\n  if art and not game.state:checkPowers(player, art, nil, \"antimagic_only\") then\n    ok = false\n  end\n  nb = nb + 1\n  if nb == 40 then break end\nuntil ok\nif art and nb < 40 then\n  art:identify(true)\n  player:addObject(player.INVEN_INVEN, art)\n  player:incMoney(-1*chat_env.cost)\n  -- clear chrono worlds and their various effects\n  game:chronoCancel(_t\"#CRIMSON#Your timetravel has no effect on pre-determined outcomes such as this.\")\n  if not config.settings.cheat then game:saveGame() end\n  chat_env.art = art\n  return \"jump\", \"pre-naming\"\nelse\n  return \"jump\", \"oups\"\nend"
         },
         "class": "entry-selector",
         "html": "entry-selector2",
@@ -635,5 +528,100 @@
         },
         "pos_x": 3905.75,
         "pos_y": -191
+    },
+    "57": {
+        "id": 57,
+        "name": "lua-cond",
+        "data": {
+            "not": false,
+            "code": "game.player.money and  game.player.money >= chat_env.cost"
+        },
+        "class": "lua-cond",
+        "html": "lua-cond",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "34",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "59",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1624.4285714285713,
+        "pos_y": -95
+    },
+    "58": {
+        "id": 58,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "chat8",
+            "code": "newChat{ id=\"not_enough\",\n              text = (\"You haven't contributed enough material to the war effort.\\n(Requires %d gold, based on difficulty)\"):tformat(tostring(chat_env.cost)),\n              answers = {\n                {_t\"Leave\", action=function() end},\n              },\n            }\n\nreturn \"jump\", \"not_enough\""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "35",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": []
+            }
+        },
+        "pos_x": 1621.1666666666667,
+        "pos_y": 417
+    },
+    "59": {
+        "id": 59,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "chat9",
+            "code": "newChat{ id=\"enough\",\n              text = (\"You've proven yourself useful and productive enough to requisition custom-made gear from the forge giants.  Each piece will cost %d gold and produce an artifact with one of its egos chosen by you.\"):tformat(tostring(chat_env.cost)),\n              answers = {\n                {_t\"Accept\", jump=\"build-list\"},\n                {_t\"No thanks\"},\n              },\n            }\n\nreturn \"jump\", \"enough\""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "57",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": []
+            }
+        },
+        "pos_x": 2057.4285714285716,
+        "pos_y": -241.14285714285714
     }
 }

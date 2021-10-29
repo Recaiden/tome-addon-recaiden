@@ -1265,7 +1265,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat8",
-            "chat": "Learn Antimagic?\nYou will be forever unable to use spells, runes, or arane items.",
+            "chat": "Learn Antimagic?\nYou will be forever unable to use spells, runes, or arcane items.",
             "answer1": "Yes",
             "answer2": "No"
         },
@@ -1308,7 +1308,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat9",
-            "chat": "Learn to Tinker>",
+            "chat": "Learn to Tinker?",
             "answer1": "Yes",
             "answer2": "No"
         },
