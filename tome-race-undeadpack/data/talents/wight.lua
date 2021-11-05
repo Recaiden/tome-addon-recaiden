@@ -69,7 +69,7 @@ newTalent{
 	points = 5,
 	mode = "passive",
 	on_learn = function(self, t)
-		if self.faction == 'free-whitehooves' then return end
+		if not game:isCampaign("Maj'Eyal") then return end
 		local level = self:getTalentLevelRaw(self.T_REK_WIGHT_DRAIN)
 		if level == 1 then
 			self.old_faction_cloak = self.faction
@@ -80,7 +80,7 @@ newTalent{
 		end
 	end,
 	on_unlearn = function(self, t)
-		if self.faction == 'free-whitehooves' then return end
+		if not game:isCampaign("Maj'Eyal") then return end
 		local level = self:getTalentLevelRaw(self.T_REK_WIGHT_DRAIN)
 		if level == 0 then
 			if self.permanent_undead_cloak then return end

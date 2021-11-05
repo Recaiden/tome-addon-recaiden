@@ -52,7 +52,6 @@ uberTalent{
       self:learnTalentType("undead/dreadmaster", true)
       self:learnTalent(self.T_REK_DREAD_STEALTH, true, 1)
       self:learnTalent(self.T_REK_DREAD_SUMMON_DREAD, true, 1)
-      game.log("#RED#DEBUG: talents_granted.")
 
       self:forceUseTalent(self.T_REK_DREAD_STEALTH, {ignore_energy=true})
       
