@@ -26,7 +26,7 @@ newTalent{
       self:talentTemporaryValue(p, "resists",{[DamageType.FIRE]=t.getFResist(self, t)})
    end,
    info = function(self, t)
-      return ([[Improves your mummified body and undying will, increasing Strength and Willpower by %d.  Modern embalming techniques mitigate your fire vulnerability, increasing fire resistance by %d%%]]):format(t.statBonus(self, t), t.getFResist(self, t))
+      return ([[Improves your mummified body and undying will, increasing Strength and Willpower by %d.  Modern embalming techniques mitigate your fire vulnerability, increasing fire resistance by %d%%]]):tformat(t.statBonus(self, t), t.getFResist(self, t))
    end,
 }
 
@@ -55,7 +55,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[You animate part of your bindings and wrap them around a foe.
-		The mummy wraps will constrict the target, slowing it by %d%% for 5 turns.]]):format(100*t.speedPenalty(self,t))
+		The mummy wraps will constrict the target, slowing it by %d%% for 5 turns.]]):tformat(100*t.speedPenalty(self,t))
    end,
 }
 
@@ -99,15 +99,11 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      local ret = [[Draw upon your stomach, preserved in a canopic jar, and remember what it is to hunger.  The memories fill your mind, removing 1 detrimental mental effect.]]
-      if not self:knowTalent(self.T_MUMMY_JAR) then
-         ret = ret..[[
-
-
-Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]
-      end
-
-      return ret
+		 local lockout = not self:knowTalent(self.T_MUMMY_JAR) and ([[
+                        
+Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]):tformat() or ""
+		 return ([[Draw upon your stomach, preserved in a canopic jar, and remember what it is to hunger.  The memories fill your mind, removing 1 detrimental mental effect.
+%s]]):tformat(lockout)
    end,
 }
 
@@ -151,15 +147,11 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      local ret = [[Draw upon your intestines, preserved in a canopic jar, to remember living weighted by flesh and blood. This grounds you in the physical and real, removing 1 detrimental magical effect.]]
-      if not self:knowTalent(self.T_MUMMY_JAR) then
-         ret = ret..[[
-
-
-Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]
-      end
-
-      return ret 
+		 local lockout = not self:knowTalent(self.T_MUMMY_JAR) and ([[
+                        
+Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]):tformat() or ""
+		 return([[Draw upon your intestines, preserved in a canopic jar, to remember living weighted by flesh and blood. This grounds you in the physical and real, removing 1 detrimental magical effect.
+%s]]):tformat(lockout)
    end,
 }
 
@@ -203,71 +195,65 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      local ret = [[Draw upon your liver, sealed in a canopic jar, and remember being whole and hale.  The memories purify your body, removing 1 detrimental physical effect.]]
-      if not self:knowTalent(self.T_MUMMY_JAR) then
-         ret = ret..[[
-
-											 
-Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]
-      end
-      return ret
+		 local lockout = not self:knowTalent(self.T_MUMMY_JAR) and ([[
+                        
+Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]):tformat() or ""
+		 return ([[Draw upon your liver, sealed in a canopic jar, and remember being whole and hale.  The memories purify your body, removing 1 detrimental physical effect.
+%s]]):tformat(lockout)
    end,
 }
 
 newTalent{
-   short_name = "JAR_LUNG", 
-   name = "Canopic Jar: Breath",
-   type = {"undead/mummified", 1},
-   require = mummy_req4,
-   points = 1,
-   cooldown = 21,
-   no_energy = true,
-   is_heal = true,
-   tactical = { HEAL = 2, MANA = 2, VIM = 2, EQUILIBRIUM = 2, STAMINA = 2, POSITIVE = 2, NEGATIVE = 2, PSI = 2, HATE = 2 },
-   getConversion = function(self, t) return math.max(self:getWil(), self:getCon()) * 0.9 end,
-   getData = function(self, t)
-      local base = t.getConversion(self, t)
-      return {
-	 heal = base * 5.5,
-	 stamina = base,
-	 mana = base * 1.8,
-	 positive = base / 2,
-	 negative = base / 2,
-	 psi = base * 0.7,
-	 hate = base / 4,
-      }
-   end,
-   action = function(self, t)
-      local data = t.getData(self, t)
-      for name, v in pairs(data) do
-	 local inc = "inc"..name:capitalize()
-	 if name == "heal" then
-	    self:attr("allow_on_heal", 1)
-	    self:heal(v, t)
-	    self:attr("allow_on_heal", -1)
-	 elseif
-	 self[inc] then self[inc](self, v) 
-	 end
-      end
-      game.level.map:particleEmitter(self.x, self.y, 1, "generic_charge", {rm=255, rM=255, gm=180, gM=255, bm=0, bM=0, am=35, aM=90})
-      game:playSoundNear(self, "talents/heal")
-      activate_jar(self, t.id)
-      return true
-   end,
-   info = function(self, t)
-      local data = t.getData(self, t)
-
-      local ret = ([[Call upon your lungs, preserved in a canopic jar, and remember what it is like to breathe. The memories fill you with energy, healing you for %d life, and restoring %d stamina, %d mana, %d positive and negative energies, %d psi energy, and %d hate.
-This effect cannot be a critical hit.
-Willpower or Constitution: improves heal and resource gain.]]):format(data.heal, data.stamina, data.mana, data.positive, data.psi, data.hate)
-      if not self:knowTalent(self.T_MUMMY_JAR) then
-         ret = ret..[[
+	short_name = "JAR_LUNG", 
+	name = "Canopic Jar: Breath",
+	type = {"undead/mummified", 1},
+	require = mummy_req4,
+	points = 1,
+	cooldown = 21,
+	no_energy = true,
+	is_heal = true,
+	tactical = { HEAL = 2, MANA = 2, VIM = 2, EQUILIBRIUM = 2, STAMINA = 2, POSITIVE = 2, NEGATIVE = 2, PSI = 2, HATE = 2 },
+	getConversion = function(self, t) return math.max(self:getWil(), self:getCon()) * 0.9 end,
+	getData = function(self, t)
+		local base = t.getConversion(self, t)
+		return {
+			heal = base * 5.5,
+			stamina = base,
+			mana = base * 1.8,
+			positive = base / 2,
+			negative = base / 2,
+			psi = base * 0.7,
+			hate = base / 4,
+		}
+	end,
+	action = function(self, t)
+		local data = t.getData(self, t)
+		for name, v in pairs(data) do
+			local inc = "inc"..name:capitalize()
+			if name == "heal" then
+				self:attr("allow_on_heal", 1)
+				self:heal(v, t)
+				self:attr("allow_on_heal", -1)
+			elseif
+				self[inc] then self[inc](self, v) 
+			end
+		end
+		game.level.map:particleEmitter(self.x, self.y, 1, "generic_charge", {rm=255, rM=255, gm=180, gM=255, bm=0, bM=0, am=35, aM=90})
+		game:playSoundNear(self, "talents/heal")
+		activate_jar(self, t.id)
+		return true
+	end,
+	info = function(self, t)
+		local data = t.getData(self, t)
+		local lockout = not self:knowTalent(self.T_MUMMY_JAR) and ([[
                         
-Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]
-      end
-      
-      return ret
-end,
+Activating a jar is instant but places other jar talents on cooldown for 3 turns.]]):tformat() or ""
+		
+		return ([[Call upon your lungs, preserved in a canopic jar, and remember what it is like to breathe. The memories fill you with energy, healing you for %d life, and restoring %d stamina, %d mana, %d positive and negative energies, %d psi energy, and %d hate.
+This effect cannot be a critical hit.
+Willpower or Constitution: improves heal and resource gain.
+%s]]):tformat(data.heal, data.stamina, data.mana, data.positive, data.psi, data.hate, lockout)
+	end,
 }
 
 newTalent{
@@ -306,7 +292,7 @@ newTalent{
       local resistance = t.getResistanceMax(self, t)
       return ([[Your triumph is inevitable; you overcame death and all lesser foes will eventually crumble before you.  
 Each turn when you damage an opponent, you curse them, reducing their resistance to all damage by 3%%, up to a maximum of %d%%.
-Each turn where you take damage, you resolve yourself to outlast this harm, increasing your resistance to damage by 3%% for 3 turns, stacking up to %d%%]]):format(reduction, resistance)
+Each turn where you take damage, you resolve yourself to outlast this harm, increasing your resistance to damage by 3%% for 3 turns, stacking up to %d%%]]):tformat(reduction, resistance)
    end,
 }
 
@@ -324,6 +310,6 @@ newTalent{
 				{[Talents.T_JAR_STOMACH]=cdr, [Talents.T_JAR_INTESTINE]=cdr, [Talents.T_JAR_LUNG]=cdr,[Talents.T_JAR_LIVER]=cdr})
    end,
    info = function(self, t)
-      return ([[Though separated, your preserved body acts as one.  This talent reduces the cooldown of your canopic jar talents by %d turns and prevents them from putting the others on cooldown.]]):format(t.CDreduce(self,t))
+      return ([[Though separated, your preserved body acts as one.  This talent reduces the cooldown of your canopic jar talents by %d turns and prevents them from putting the others on cooldown.]]):tformat(t.CDreduce(self,t))
    end,
 }

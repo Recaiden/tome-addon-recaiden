@@ -1,4 +1,4 @@
-return [[Welcome #LIGHT_GREEN#@name@#WHITE#.
+return _t[[Welcome #LIGHT_GREEN#@name@#WHITE#.
 
 You died long ago, but that did not stop you. To escape true death, you transformed into an undead mummy.
 

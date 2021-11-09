@@ -78,6 +78,6 @@ uberTalent{
  - Black Gate: Disappear into the darkness or pop up behind your enemies.
  - Phantasmal Step: Pass through walls after using your abilities.
 
-		They also gain a class talent tree that allows them to summon lesser Dreads.]]):format()
+		They also gain a class talent tree that allows them to summon lesser Dreads.]]):tformat()
 end,
 }

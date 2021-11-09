@@ -1,4 +1,4 @@
-return [[Welcome #LIGHT_GREEN#@name@#WHITE#.
+return _t[[Welcome #LIGHT_GREEN#@name@#WHITE#.
 
 The minotaurs were not the only ones corrupted by the horrors of mana caves.  Though once human, you have joined the Krimbul clan, and like them, been transformed necromantically in order to preserve your sanity.
 

@@ -73,7 +73,7 @@ The defense will increase with your Magic or Cunning (whichever is higher).
 
 Anyone who manages to glimpse your terrible form suffers %d mind damage (uses mental critical rate).
 
-#{italic}#Your appearance flickers, black and twisted. The very universe tries to banish you...but it lacks the strength.#{normal}#]]):format(t.getDefense(self, t), t.getStealth(self, t), damDesc(self, DamageType.MIND, t.getDamage(self, t)))
+#{italic}#Your appearance flickers, black and twisted. The very universe tries to banish you...but it lacks the strength.#{normal}#]]):tformat(t.getDefense(self, t), t.getStealth(self, t), damDesc(self, DamageType.MIND, t.getDamage(self, t)))
    end,
 }
 
@@ -143,7 +143,7 @@ newTalent{
    info = function(self, t)
       return ([[Reach out to an adjacent enemy, removing up to %d positive effects or sustains.
 
-#{italic}#At your touch, rock crumbles, flesh withers, and magic fails.#{normal}#]]):format(t.getRemoveCount(self, t))
+#{italic}#At your touch, rock crumbles, flesh withers, and magic fails.#{normal}#]]):tformat(t.getRemoveCount(self, t))
    end,
 }
 
@@ -218,7 +218,7 @@ newTalent{
       local range = self:getTalentRange(t)
       return ([[Teleports you randomly within a range of up to %d.  You arrive right next to a targeted creature, or within %d grids of a targeted space.
 If the target area is not in line of sight, there is a chance you will instead teleport randomly.
-If Walking Blasphemy is sustained, all enemies will lose track of you.]]):format(range, radius)
+If Walking Blasphemy is sustained, all enemies will lose track of you.]]):tformat(range, radius)
    end,
          }
 
@@ -238,7 +238,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[Physical barriers are no obstacle to a spirit.  After using this or any other talent in this tree, you'll be able to walk through walls for the next %d turns.  If you are inside a wall when the effect ends, you will move to the nearest open space.]])
-:format(t.getDuration(self, t))
+:tformat(t.getDuration(self, t))
    end,
 }
 
@@ -467,7 +467,7 @@ newTalent{
    info = function(self, t)
       return ([[Summon a Dread of level %d that will annoyingly blink around, attacking your foes.
 Dreads last until destroyed, and you can maintain up to %d dreads at a time.
-You always know where your dreads are.]]):format(math.max(1, self.level + t.getLevel(self, t)), t.getMaxSummons(self, t))
+You always know where your dreads are.]]):tformat(math.max(1, self.level + t.getLevel(self, t)), t.getMaxSummons(self, t))
    end,
          }
 
@@ -497,7 +497,7 @@ newTalent{
 Level 1: Burning Hex
 Level 3: Empathic Hex
 Level 5: Pacification Hex
-Level 7: Curse of Impotence]]):format(self:getTalentLevel(t), t.getSP(self, t))
+Level 7: Curse of Impotence]]):tformat(self:getTalentLevel(t), t.getSP(self, t))
    end,
 }
 
@@ -556,7 +556,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[You and your minions feed on death and destruction.  Any time you or your minions kill something (or you do a large chunk of damage to a rare or stronger enemy), your dreads absorb a fragment of its soul to feed on.
-Each time they feed, each dread heals for %d and reduces the remaining cooldown of their spells by %d.  This also applies to you and your dread abilities.]]):format(t.getHeal(self, t), t.getCD(self, t))
+Each time they feed, each dread heals for %d and reduces the remaining cooldown of their spells by %d.  This also applies to you and your dread abilities.]]):tformat(t.getHeal(self, t), t.getCD(self, t))
    end,
 }
 
@@ -593,6 +593,6 @@ newTalent{
       return true
    end,
    info = function(self, t)
-      return ([[Focus a shell of darkness and scorn around your dreads, rendering them fully invincible for %d turns.]]):format(t.getTurns(self, t))
+      return ([[Focus a shell of darkness and scorn around your dreads, rendering them fully invincible for %d turns.]]):tformat(t.getTurns(self, t))
    end,
 }

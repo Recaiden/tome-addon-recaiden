@@ -25,23 +25,23 @@ local initState = DamageType.initState
 
 -- Handles immunity check for banshee wail effects
 newDamageType{
-   name = "banshee wail", type = "REK_BANSHEE_WAIL",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      local target = game.level.map(x, y, Map.ACTOR)
-      if target then
-	 local power = math.max(src:combatSpellpower(), src:combatMindpower(), src:combatPhysicalpower())
-	 if target:canBe("confusion") then
-	    target:setEffect(target.EFF_CONFUSED, dam.dur, {power=dam.dam or 30, apply_power=power})
-	 else
-	    game.logSeen(target, "%s resists the confusion!", target.name:capitalize())
-	 end
-	 -- Extra stack of curse
-	 if src:knowTalent(src.T_REK_BANSHEE_CURSE) then
-	    local t2 = src:getTalentFromId(src.T_REK_BANSHEE_CURSE)
-	    target:setEffect(target.EFF_REK_BANSHEE_CURSE, 5, {max_stacks = t2.maxStacks(src, t2)}, true)
-	 end
-      end
-   end,
+	name = _t("banshee wail", "damage type"), type = "REK_BANSHEE_WAIL",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			local power = math.max(src:combatSpellpower(), src:combatMindpower(), src:combatPhysicalpower())
+			if target:canBe("confusion") then
+				target:setEffect(target.EFF_CONFUSED, dam.dur, {power=dam.dam or 30, apply_power=power})
+			else
+				game.logSeen(target, "%s resists the confusion!", target.name:capitalize())
+			end
+			-- Extra stack of curse
+			if src:knowTalent(src.T_REK_BANSHEE_CURSE) then
+				local t2 = src:getTalentFromId(src.T_REK_BANSHEE_CURSE)
+				target:setEffect(target.EFF_REK_BANSHEE_CURSE, 5, {max_stacks = t2.maxStacks(src, t2)}, true)
+			end
+		end
+	end,
 }

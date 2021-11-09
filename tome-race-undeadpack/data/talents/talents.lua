@@ -151,7 +151,7 @@ if Talents.talents_def["T_RAKSHOR_CUNNING"] then
 	Talents.talents_def["T_RAKSHOR_CUNNING"].info = function(self, t)
 		return ([[%s
 
-You can also choose to become a Banshee or Wight.]]):format(base_info(self, t))
+You can also choose to become a Banshee or Wight.]]):tformat(base_info(self, t))
 	end
 	
 end

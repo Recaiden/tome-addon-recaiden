@@ -8,8 +8,8 @@ local Level = require "engine.Level"
 
 newEffect{
    name = "REK_BANSHEE_GHOSTLY", image = "talents/rek_banshee_ghost.png",
-   desc = "Ghostly Form",
-   long_desc = function(self, eff) return ("The target is able to walk through walls, and gains %d%% movement speed"):format(eff.power) end,
+   desc = _t"Ghostly Form",
+   long_desc = function(self, eff) return ("The target is able to walk through walls, and gains %d%% movement speed"):tformat(eff.power) end,
    type = "magical",
    subtype = { darkness=true },
    status = "beneficial",
@@ -60,8 +60,8 @@ newEffect{
 
 newEffect{
    name = "REK_BANSHEE_CURSE", image = "talents/rek_banshee_curse.png",
-   desc = "Banshee's Doom",
-   long_desc = function(self, eff) return ("The target is doomed to die, reducing their healing factor by %d%%."):format(10 * eff.stacks) end,
+   desc = _t"Banshee's Doom",
+   long_desc = function(self, eff) return ("The target is doomed to die, reducing their healing factor by %d%%."):tformat(10 * eff.stacks) end,
    type = "magical",
    subtype = { arcane=true },
    status = "detrimental",
@@ -86,12 +86,12 @@ newEffect{
 
 newEffect{
    name = "REK_WIGHT_FURY", image = "talents/rek_wight_fury.png",
-   desc = "Fury of the Wild",
+   desc = _t"Fury of the Wild",
    type = "magical",
    subtype = { darkness=true },
    status = "beneficial",
    parameters = { power = 100 },
-   long_desc = function(self, eff) return ("The target is wreathed in elemental energy, dealing %d damage on-hit."):format(eff.power) end,
+   long_desc = function(self, eff) return ("The target is wreathed in elemental energy, dealing %d damage on-hit."):tformat(eff.power) end,
    callbackOnDealDamage = function(self, eff, val, target, dead, death_note)
       if dead then return end
       if target == self then return end
@@ -123,8 +123,8 @@ newEffect{
 
 newEffect{
    name = "REK_WIGHT_GHOSTLY", image = "talents/rek_wight_ghost_vision.png",
-   desc = "Haunting Form",
-   long_desc = function(self, eff) return ("The target is able to walk through walls and see enemies in range %d."):format(eff.power) end,
+   desc = _t"Haunting Form",
+   long_desc = function(self, eff) return ("The target is able to walk through walls and see enemies in range %d."):tformat(eff.power) end,
    type = "magical",
    subtype = { undead=true },
    status = "beneficial",
@@ -166,8 +166,8 @@ newEffect{
 
 newEffect{
    name = "REK_WIGHT_DESPAIR", image = "talents/rek_wight_drain.png",
-   desc = "Despair",
-   long_desc = function(self, eff) return ("The target is in despair, reducing their armour, defence, and saves resist by %d."):format(-eff.statChange) end,
+   desc = _t"Despair",
+   long_desc = function(self, eff) return ("The target is in despair, reducing their armour, defence, and saves resist by %d."):tformat(-eff.statChange) end,
    charges = function(self, eff) return math.floor(-eff.statChange) end,	
    type = "mental",
    subtype = { fear=true }, -- but bypasses fear resistance
@@ -193,7 +193,7 @@ newEffect{
 
 newEffect{
    name = "REK_WIGHT_FEARLESS", image = "talents/rek_wight_drain_fearless.png",
-   desc = "Immune to Draining Presence",
+   desc = _t"Immune to Draining Presence",
    long_desc = function(self, eff) return "You refused to give in to fear and can ignore the draining presence of wights...for now." end,
    type = "mental",
    subtype = { fear=true },
@@ -209,8 +209,8 @@ newEffect{
 
 newEffect{
    name = "ENTANGLE", image = "talents/thorn_grab.png",
-   desc = "Mummy's Entangle",
-   long_desc = function(self, eff) return ("The target is constricted in mummy bindings, reducing its speed by %d%%."):format(eff.dam, eff.speed*100) end,
+   desc = _t"Mummy's Entangle",
+   long_desc = function(self, eff) return ("The target is constricted in mummy bindings, reducing its speed by %d%%."):tformat(eff.dam, eff.speed*100) end,
    type = "physical",
    subtype = { slow=true },
    status = "detrimental",
@@ -227,8 +227,8 @@ newEffect{
 
 newEffect{
    name = "MUMMY_WEAKNESS", image = "talents/mummy_curse.png",
-   desc = "Mummy's Curse",
-   long_desc = function(self, eff) return ("The target's damage resistance has been reduced by %d%%."):format(eff.cur_inc) end,
+   desc = _t"Mummy's Curse",
+   long_desc = function(self, eff) return ("The target's damage resistance has been reduced by %d%%."):tformat(eff.cur_inc) end,
    type = "magical",
    subtype = { sunder=true },
    status = "detrimental",
@@ -252,8 +252,8 @@ newEffect{
 
 newEffect{
    name = "MUMMY_STRENGTH", image = "talents/mummy_crown.png",
-   desc = "Strengthened Defenses",
-   long_desc = function(self, eff) return ("The target's determination increases their damage resistance by %d%%."):format(eff.cur_inc) end,
+   desc = _t"Strengthened Defenses",
+   long_desc = function(self, eff) return ("The target's determination increases their damage resistance by %d%%."):tformat(eff.cur_inc) end,
    type = "magical",
    subtype = { sense=true },
    status = "beneficial",
@@ -278,8 +278,8 @@ newEffect{
 
 newEffect{
    name = "REK_DREAD_MALEDICTION", image = "talents/rek_dread_silence.png",
-   desc = "Dread Malediction",
-   long_desc = function(self, eff) return ("The target's supernatural forces have been disrupted, giving them a %d%% to fail to use many talents."):format(eff.power) end,
+   desc = _t"Dread Malediction",
+   long_desc = function(self, eff) return ("The target's supernatural forces have been disrupted, giving them a %d%% to fail to use many talents."):tformat(eff.power) end,
    type = "magical",
    subtype = { nature=true, mind=true, blight=true },
    status = "detrimental",
@@ -296,8 +296,8 @@ newEffect{
 
 newEffect{
    name = "REK_DREAD_GHOSTLY", image = "talents/rek_dread_step.png",
-   desc = "Phantasmal Step",
-   long_desc = function(self, eff) return ("The target is able to walk through walls"):format(eff.power) end,
+   desc = _t"Phantasmal Step",
+   long_desc = function(self, eff) return ("The target is able to walk through walls"):tformat(eff.power) end,
    type = "magical",
    subtype = { darkness=true },
    status = "beneficial",
@@ -321,8 +321,8 @@ newEffect{
 
 newEffect{
    name = "REK_DREAD_NEVERENDING_PERIL", image = "talents/rek_dread_neverending_peril.png",
-   desc = "Neverending Peril",
-   long_desc = function(self, eff) return "Invulnerable." end,
+   desc = _t"Neverending Peril",
+   long_desc = function(self, eff) return _t"Invulnerable." end,
    type = "magical",
    subtype = { necrotic=true, invulnerable=true },
    status = "beneficial",

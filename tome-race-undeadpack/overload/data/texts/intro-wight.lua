@@ -1,4 +1,4 @@
-return [[Welcome #LIGHT_GREEN#@name@#WHITE#.
+return _t[[Welcome #LIGHT_GREEN#@name@#WHITE#.
 
 You are a warrior of the Conclave, the greatest nation of humanity ever to exist. For years, you have been fighting the legions of the Nargol Empire, and finally victory is at hand.  At the conclusion of this campaign, the Allure Wars will be finished.
 

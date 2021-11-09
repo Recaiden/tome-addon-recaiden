@@ -34,7 +34,7 @@ newTalent{
       return ([[Let out a maddening shriek, which attempts (#SLATE#Highest Power vs. Mental#LAST#) to confuse (%d%% confuse power) the target creature for 5 turns.
 The confusion improves with your willpower.
 
-Passively improves your undead body and vengeful spirit, increasing Dexterity and Willpower by %d.]]):format(t.getConfuse(self, t), t.statBonus(self, t))
+Passively improves your undead body and vengeful spirit, increasing Dexterity and Willpower by %d.]]):tformat(t.getConfuse(self, t), t.statBonus(self, t))
    end,
 }
 
@@ -62,7 +62,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[The journey into death and back has hardened you against many mortal frailties, providing %d%% resistance to cold, darkness, and blight damage, and increasing your maximum resistance to those elements by %d%%.  
-]]):format(t.getResist(self, t), t.getCap(self, t))
+]]):tformat(t.getResist(self, t), t.getCap(self, t))
    end,
 }
 
@@ -90,7 +90,7 @@ newTalent{
    info = function(self, t)
       return ([[Your presence cuts into the spirit of your enemies, sapping their life force.
 Each time you damage an opponent (once per turn per target) or affect them with your Deathly Wail, you curse them for 5 turns, reducing their healing factor by %d%%.
-This stacks up to %d times.]]):format(t.cut(self, t), t.maxStacks(self, t))
+This stacks up to %d times.]]):tformat(t.cut(self, t), t.maxStacks(self, t))
    end,
 }
 
@@ -112,6 +112,6 @@ newTalent{
    info = function(self, t)
       return ([[Disperse yourself into a ghostly, insubstantial form for 3 turns.  While in this ghostly form, you can walk through walls and do not need to breathe. 
 During your first three steps, you will move %d%% faster.  The speed boost will improve with your Dexterity.
-If you are inside a wall when the effect ends, you will move to the nearest open space.]]):format(t.speedBoost(self,t))
+If you are inside a wall when the effect ends, you will move to the nearest open space.]]):tformat(t.speedBoost(self, t))
    end,
 }

@@ -24,7 +24,7 @@ newTalent{
       
       local str = DamageType:get(damtype).name
       return ([[Rotate the type of damage you do with Fury of the Wilds between Fire, Lightning, and Cold.  Currently: %s
-]]):format(str)
+]]):tformat(str)
    end,
 }
 
@@ -57,7 +57,7 @@ newTalent{
       return ([[For the next 5 turns, whenever you damage an enemy, you will unleash a radius 1 burst of %d elemental damage (once per enemy per turn).
 The damage improves with the stronger of your magic or willpower.
 
-#{italic}#Death and destruction, we must admit, are part of nature...#{normal}#]]):format(t.getDamage(self, t))
+#{italic}#Death and destruction, we must admit, are part of nature...#{normal}#]]):tformat(t.getDamage(self, t))
    end,
 }
 
@@ -112,16 +112,16 @@ newTalent{
 			end)
 	end,
 	info = function(self, t)
-		local disguise_str = self.faction == 'free-whitehooves' and "" or [[
+		local disguise_str = game:isCampaign("Maj'Eyal") and ([[
 																																				 
 Learning this talent gives you enough control over your ghostly form to pass as a human.
-]]
+]]):tformat() or ""
 		return ([[Each round, enemies within range 5 may (#SLATE#Highest power vs. Mental#LAST#) despair of surviving, reducing their saves, defense, and armor by %d.  If they successfully resist, they are immune to your draining presence for %d turns.
 
 The depth of their despair improves with the stronger of your magic or willpower.
 %s
 #{italic}#Merely being close to these figments of death causes one's life force to sputter and fade...#{normal}# 
-]]):format(t.getFearPower(self, t), t.getFearlessDuration(self, t), disguise_str)
+]]):tformat(t.getFearPower(self, t), t.getFearlessDuration(self, t), disguise_str)
    end,
 }
 
@@ -143,7 +143,7 @@ newTalent{
 
 Learning this talent regrows a fragment of your connection to nature, allowing you to use a single Infusion.
 
-#{italic}#Blows that should have been telling seem to slip right through them...#{normal}#]]):format(t.getEvasion(self, t))
+#{italic}#Blows that should have been telling seem to slip right through them...#{normal}#]]):tformat(t.getEvasion(self, t))
    end,
 }
 
@@ -168,6 +168,6 @@ newTalent{
 
 If you are inside a wall when the effect ends, you will move to the nearest open space.
 
-#{italic}#...faded and incorporeal at their edges, while strange lights dance where their eyes should remain....#{normal}#]]):format(t.getRange(self, t))
+#{italic}#...faded and incorporeal at their edges, while strange lights dance where their eyes should remain....#{normal}#]]):tformat(t.getRange(self, t))
    end,
 }
