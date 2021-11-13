@@ -22,7 +22,7 @@ newBirthDescriptor{
 		["spell/watcher"]={true, 0.3},
 		["spell/veiled-shepherd"]={true, 0.3},
 		["spell/headless-horror"]={true, 0.3},
-		["technique/helping-hands"]={true, 0.3},
+		["spell/hale-hands"]={true, 0.3},
 		["spell/oubliette"]={false, 0.3},
 
 		--advanced talents

@@ -32,16 +32,31 @@ newTalent{
 	getCritChance = function(self, t) return math.floor(math.sqrt(self:getTalentLevel(t)) * 10) end,
 	getCritDamage = function(self, t) return self:combatTalentScale(t, 25, 50) end,
 	action = function(self, t)
-		local target = self:getTalentTarget(t)
-		local x, y, target = self:getTargetLimited(target)
-		if not target then return nil end
+		--local target = self:getTalentTarget(t)
+		--local x, y, target = self:getTargetLimited(target)
+		--if not target then return nil end
+
+		local tg = {multiple=true}
+		for _, e in pairs(game.level.entities) do
+			if isMyEye(self, e) then
+				tg[#tg+1] = {type="beam", range=e:getTalentRange(e:getTalentFromId(e.T_REK_HEKA_EYE_EYE_LASH)), friendlyfire=false, source_actor=e, selffire=false, nolock=true, talent=t}
+				--start_x=e.x, start_y=e.y
+			end
+		end
+			
+		-- Pick a target
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+		
+		-- Switch our targeting type back
+		local tg = self:getTalentTarget(t)
 
 		local chance = t:_getCritChance(self)
 		local power = t:_getCritDamage(self)
 		for _, e in pairs(game.level.entities) do
-			if e.summoner and e.summoner == self and e.is_wandering_eye then
+			if isMyEye(self, e) then
 				e:setEffect(e.EFF_REK_HEKA_LASHING_POWER, 1, {src=self, chance=chance, power=power})
-				e:forceUseTalent(e.T_REK_HEKA_EYE_EYE_LASH, {ignore_cd=true, ignore_energy=true, force_target=target, ignore_ressources=true, silent=true})
+				e:forceUseTalent(e.T_REK_HEKA_EYE_EYE_LASH, {ignore_cd=true, ignore_energy=true, force_target={x=x,y=y}, ignore_ressources=true, silent=true})
 				if e then
 					if e:hasEffect(e.EFF_REK_HEKA_LASHING_POWER) then e:removeEffect(e.EFF_REK_HEKA_LASHING_POWER) end
 				end
@@ -82,7 +97,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Direct one of your eyes to whirl around in a frenzy, snapping and smashing.  All adjacent enemies will be hit for %0.1f physical damage and may be disarmed (#SLATE# Eye's spellpower vs Physical#LAST#) for %d turns.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), t:_getDuration(self))
+		return ([[Direct one of your eyes to whirl around in a frenzy, snapping and smashing.  All adjacent enemies will be hit for %0.1f physical damage and may be disarmed (#SLATE#Eye's spellpower vs Physical#LAST#) for %d turns.]]):tformat(damDesc(self, DamageType.PHYSICAL, t:_getDamage(self)), t:_getDuration(self))
 	end,
 }
 

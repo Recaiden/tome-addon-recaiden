@@ -125,7 +125,8 @@ newTalent{
 		if self.ai_target.x and self.ai_target.y then
 			x, y, range = self.ai_target.x, self.ai_target.y, 1
 		else
-			x, y, range = self.summoner.x, self.summoner.y, self.ai_state.location_range
+			local leash = self.ai_state.tactic_leash_anchor or self.summoner
+			x, y, range = leash.x, leash.y, self.ai_state.location_range
 		end
 		
 		game.level.map:particleEmitter(self.x, self.y, 1, "teleport_out")
@@ -289,7 +290,7 @@ local function createEye(self, level, tCallEyes, tPhylactery, tBlink, tStagger, 
 
       ai = "heka_eye",
       ai_state = {
-         summoner_range = 5,
+         tactic_leash = 5,
          actor_range = 8,
          location_range = 4,
          target_time = 0,
@@ -443,11 +444,18 @@ newTalent{
 		eye.no_points_on_levelup = true
 		if game.party:hasMember(self) then
 			eye.remove_from_party_on_death = true
-			game.party:addMember(eye, { control="no", type="summon", title="Summon"})
+			game.party:addMember(eye, {
+														 control="order", type="summon", title="Summon",
+														 orders = {anchor=true, leash=true},
+			})
 		end
 		
 		game:playSoundNear(self, "talents/spell_generic")
 		return eye
+	end,
+	callbackOnRest = function(self, t, mode)
+		if mode ~= "check" then return end
+		if t.nbEyesUp(self, t) < t.getMaxEyes(self, t) then return true end
 	end,
 	callbackOnActBase = function(self, t)
 		if not self.eyes then

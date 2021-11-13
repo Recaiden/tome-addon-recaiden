@@ -209,6 +209,11 @@ if not Talents.talents_types_def["spell/mountainshaper"] then
 end
 
 --argosine
+if not Talents.talents_types_def["spell/hale-hands"] then
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/hale-hands", name = _t("Hale Hands", "talent type"), description = _t"Many hands make light work." }
+   load("/data-classhekatonkheire/talents/argosine-hale-hands.lua")
+end
+
 if not Talents.talents_types_def["spell/sybarite"] then
 	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/sybarite", name = _t("Sybarite", "talent type"), description = _t"At her passage, the people kneel, and with her word, they rise to dance." }
    load("/data-classhekatonkheire/talents/argosine-sybarite.lua")

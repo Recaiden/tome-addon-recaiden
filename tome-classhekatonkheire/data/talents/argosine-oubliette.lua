@@ -19,20 +19,17 @@ newTalent{
 	end,
 	well = function(self, t, x, y)
 		-- Add a lasting map effect
-		game.logSeen(self, 0"A #DARK_BLUE#wave of emptiness#LAST# erupts from the ground!")
-		self:callTalent(self.T_ENERGY_ALTERATION, "forceActivate", DamageType.COLD)
 		game.level.map:addEffect(self,
-			x, y, t.getDuration(self, t),
-			DamageType.VOID, {dam=t.getDamage(self, t), x=self.x, y=self.y, apply_wet=5},
-			1,
-			5, nil,
-			MapEffect.new{color_br=30, color_bg=60, color_bb=200, effect_shader="shader_images/water_effect1.png"},
---			MapEffect.new{color_br=30, color_bg=60, color_bb=200, effect_shader={"shader_images/water_effect1.png","shader_images/water_effect2.png", max=6}},
-			function(e, update_shape_only)
-				if not update_shape_only then e.radius = e.radius + 0.5 end
-				return true
-			end,
-			false -- no selffire
+														 x, y, t.getDuration(self, t),
+														 DamageType.VOID, {dam=t.getDamage(self, t), x=self.x, y=self.y, apply_wet=5},
+														 1,
+														 5, nil,
+														 MapEffect.new{color_br=30, color_bg=60, color_bb=100, effect_shader="shader_images/water_effect1.png"},
+														 function(e, update_shape_only)
+															 if not update_shape_only then e.radius = e.radius + 0.5 end
+															 return true
+														 end,
+														 false -- no selffire
 		)
 		game:playSoundNear(self, "talents/tidalwave")
 	end,
@@ -41,7 +38,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[A well of draining emptiness seeps out from the caster with an initial radius of 1, increasing by 1 per turn to a maximum radius of %d, doing %0.2f darkness damage and %0.2f arcane damage to all inside.
+		return ([[A well of draining emptiness moves out from the caster with an initial radius of 1, increasing by 1 per turn to a maximum radius of %d, doing %0.2f darkness damage and %0.2f arcane damage to all inside.
 The well lasts for %d turns.
 Spellpower: increases damage and duration.
 
@@ -73,7 +70,7 @@ newTalent{
 		end)
 	end,
 	info = function(self, t)
-		return ([[At the start of each round, visible enemies may (#SLATE# spell save#LAST#) have their talent cooldowns increase, with a %d%% chance for each talent.
+		return ([[At the start of each round, visible enemies may (#SLATE#spell save#LAST#) have their talent cooldowns increase, with a %d%% chance for each talent.
 
 #{italic}#Your presence spills out onto the battlefield, strangling any normal thought.#{normal}#]]):tformat(t.getChance(self, t))
 	end,
@@ -134,7 +131,7 @@ newTalent{
 newTalent{
 	name = "Void of Meaning", short_name = "REK_HEKA_TENTACLE_EXECUTE",
 	type = {"spell/oubliette", 4}, require = mag_req4, points = 5,
-	mode = "passive"
+	mode = "passive",
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 50) end,
 	getPowerBonus = function(self, t) return self:combatTalentScale(t, 5, 30, 1.0) end,
 	kill = function(self, t, target)
@@ -158,7 +155,7 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[When you or your summons reduce a creature to less than 10%% life, it may die instantly (#SLATE#mental save vs spellpower + %d#LAST#).  Creatures immune to instant death instead take %0.1f mind damage and may be brainlocked.  This can only affect a given creature once every 3 turns.
+		return ([[When you or your summons reduce a creature to less than 10%% life, it may die instantly (#SLATE# mental save vs spellpower + %d #LAST#).  Creatures immune to instant death instead take %0.1f mind damage and may be brainlocked.  This can only affect a given creature once every 3 turns.
 Spellpower: increases damage.]]):tformat(t.getPowerBonus(self, t), damDesc(self, DamageType.MIND, t.getDamage(self, t)))
 	end,
 }

@@ -24,11 +24,10 @@ local function clearTarget(self)
 end
 
 local function eyeChooseActorTarget(self)
-
 	-- taken from "target_simple" but selects a target the summoner can see within the eye's max range from the summoner
 	local arr = self.summoner.fov.actors_dist
 	local act
-	local sqsense = self.ai_state.actor_range
+	local sqsense = (self.summoner.sight - 3) or self.ai_state.actor_range
 	sqsense = sqsense * sqsense
 	local actors = {}
 	for i = 1, #arr do
@@ -282,7 +281,8 @@ newAI("heka_eye", function(self)
 	end
 
 	-- out of summoner range?
-	if core.fov.distance(self.x, self.y, self.summoner.x, self.summoner.y) > self.ai_state.summoner_range then
+	local leash = self.ai_state.tactic_leash_anchor or self.summoner
+	if core.fov.distance(self.x, self.y, leash.x, leash.y) > self.ai_state.tactic_leash then
 		--game.logPlayer(self.summoner, "#PINK#%s is out of range.", self.name:capitalize())
 
 		clearTarget(self)

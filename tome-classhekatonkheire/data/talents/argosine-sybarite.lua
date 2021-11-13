@@ -133,7 +133,7 @@ Levels in this talent increase your movement speed by %d%%]]):tformat(t.getPassi
 }
 
 newTalent{
-	name = "Enter The Arena", short_name = "REK_HEKA_SYBARITE_REVEL",
+	name = "The Arena", short_name = "REK_HEKA_SYBARITE_REVEL",
 	type = {"spell/sybarite", 2},	require = mag_req2, points = 5,
 	cooldown = 20,
 	fixed_cooldown = true,
@@ -248,7 +248,7 @@ newTalent{
 		)
 	end,
 	info = function(self, t)
-		return ([[Briefly unveil your full presence, and enemies within range %d are forced to their knees (or simply cast down), losing %d%% of a turn(#SLATE#no save#LAST#).]]):tformat(self:getTalentRange(t), t:_getLoss(self)*100)
+		return ([[Briefly unveil your full presence, and enemies within range %d are cast down, losing %d%% of a turn (#SLATE#no save#LAST#).]]):tformat(self:getTalentRange(t), t:_getLoss(self)*100)
 	end,
 }
 
@@ -284,6 +284,14 @@ newTalent{
 	info = function(self, t)
 		return ([[If you can see more than one non-summoned enemy, you gain a barrier that blocks %d%% of incoming damage.  Each additional enemy adds another barrier that is 2/3 as strong as the previous one.
 
-#{italic}#No army could defeat you.  Only a lone champion has a chance of victory.#{normal}#]]):tformat(t.getDamageChange(self, t)/3)
+1 Enemy: Nothing
+2 Enemies: %d%%
+3 Enemies: %d%%
+4 Enemies: %d%%
+5 Enemies: %d%%
+6 Enemies: %d%%
+etc.
+
+#{italic}#No army could defeat you.  Only a lone champion has a chance of victory.#{normal}#]]):tformat(t.getDamageChange(self, t)/3, t.getDamageChange(self, t)/3, t.getDamageChange(self, t)*5/9, t.getDamageChange(self, t)*19/27, t.getDamageChange(self, t)*65/81, t.getDamageChange(self, t)*211/244)
 	end,
 }

@@ -33,7 +33,7 @@ newTalent{
 		-- Project our damage
 		self:project(tg, x, y, DamageType.MIND, self:spellCrit(t.getDamage(self, t)))
 		
-		game.level.map:particleEmitter(x, y, 1, "temporal_thrust")
+		game.level.map:particleEmitter(x, y, 1, "otherside_teleport_gate_in", nil, nil, 15)
 		game:playSoundNear(self, "talents/arcane")
 		
 		-- If they're dead don't remove them from time
@@ -131,7 +131,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[When you spend hands in combat, reduce the time needed to respawn a wandering eye by one turn.  If you already have your maximum number of eyes, up to %d turns can be reduced 'in advance'.
+		return ([[When you spend hands (not sustain or invest them) in combat, reduce the time needed to respawn a wandering eye by one turn.  If you already have your maximum number of eyes, up to %d turns can be reduced 'in advance'.
 
 Activate this talent to reduce the time until an eye respawns by %d turns.]]):tformat(t:_getMaxTurns(self), t:_getTurns(self))
 	end,
