@@ -53,7 +53,7 @@ newTalent{
 	radius = 10,
 	getChance = function(self, t) return self:combatTalentLimit(t, 60, 25, 50) end,
 	callbackOnActBase = function(self, t)
-		local tg = {type="ball", range=0, radius=t.getRadius(self, t), friendlyfire=false, talent=t}
+		local tg = {type="ball", range=0, radius=self:getTalentRadius(t), friendlyfire=false, talent=t}
 		local chance = t.getChance(self, t)
 		self:project(tg, self.x, self.y, function(px, py)
 			local target = game.level.map(px, py, engine.Map.ACTOR)
@@ -137,7 +137,7 @@ newTalent{
 	kill = function(self, t, target)
 		if target.turn_procs and target.turn_procs.rek_heka_tentacle then return end
 		if target.life > target.max_life * 0.1 then return end
-		if not target:checkHit(src:combatSpellpower(1, t.getPowerBonus(self, t)), target:combatMentalResist()) then return end
+		if not target:checkHit(self:combatSpellpower(1, t.getPowerBonus(self, t)), target:combatMentalResist()) then return end
 		target:setProc("rek_heka_tentacle", 3)
 		if target:canBe("instakill") then
 			target:die()
