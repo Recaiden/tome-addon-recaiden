@@ -95,7 +95,7 @@ newEffect{
 	on_timeout = function(self, eff)
 		eff.timer = eff.timer - 1
 		if not eff.x or not eff.y then return end
-		if eff.timer <= 0 then
+		if eff.timer <= 0 and self:hasLOS(eff.x, eff.y) then
 			-- do attacks
 			local ox, oy = self.x, self.y
 			local power, stacks, dur = nil, nil, nil

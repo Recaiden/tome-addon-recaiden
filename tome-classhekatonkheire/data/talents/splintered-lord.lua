@@ -88,7 +88,7 @@ newTalent{
 		local dur = t.getDuration(self, t)
 		local timer = math.ceil(dur / t.getAttacks(self, t))
 		return ([[Your body parts no longer need to stay together; send a few arms out to attack distant enemies.
-Every %d turns for the next %d turns, all enemies in the targeted area will be attacked for %d%% damage.
+Every %d turns for the next %d turns, all enemies in the targeted area will be attacked for %d%% damage.  You must maintain line-of-sight to the center of the effect to perform the attacks.
 
 The Flow bonus also applies to Defense.]]):tformat(timer, dur, t.getDamage(self, t)*100)
 	end,

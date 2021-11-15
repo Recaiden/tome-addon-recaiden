@@ -95,6 +95,7 @@ newTalent{
 				if eff[1] == "effect" then
 					game.logSeen(self, "#CRIMSON#%s shatters %s shield!", self:getName():capitalize(), target:getName())
 					target:removeEffect(eff[2])
+					break
 				end
 			end
 		end
@@ -107,7 +108,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[If you have Towering Wrath active, you shatter any temporary damage shield protecting the target.
+		return ([[If you have Towering Wrath active, you shatter one temporary damage shield protecting the target.
 Then, smash your weapon down, dealing %d%% damage and wounding them, lowering their resistances by %d%% for 5 turns (#SLATE#No save#LAST#).]]):tformat(t.getDamage(self, t)*100, t.getResistPenalty(self, t))
 	end,
 }

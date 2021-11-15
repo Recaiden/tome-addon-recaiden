@@ -19,33 +19,127 @@ newTalent{
 		end
 
 		local eyelement = self.eyelement or DamageType.ARCANE
-		if self.eyelement == DamageType.ARCANE or true then
-			self:project(tg, x, y, DamageType.ARCANE, self:spellCrit(t.getDamage(self, t)))
+		local dam = self:spellCrit(t.getDamage(self, t))
+		if self.eyelement == DamageType.FIRE then
+			self:project(tg, x, y, DamageType.FIREBURN, dam*1.3)
+			local _ _, x, y = self:canProject(tg, x, y)
+			game.level.map:particleEmitter(self.x, self.y, tg.radius, "flamebeam", {tx=x-self.x, ty=y-self.y})
+			game:playSoundNear(self, "talents/flame")
+		elseif self.eyelement == DamateType.PHYSICAL then
+			self:project(tg, x, y, DamageType.PHYSICAL, dam)
+			self:project(tg, x, y, function(px, py, tg, self)
+										 local target = game.level.map(px, py, Map.ACTOR)
+										 game:onTickEnd(function() 
+												 if target:checkHit(self:combatSpellpower(), target:combatPhysicalResist(), 0, 95, 15) and target:canBe("knockback") then
+													 target:knockback(self.x, self.y, 3)
+													 target:crossTierEffect(target.EFF_OFFBALANCE, self:combatSpellpower())
+													 game.logSeen(target, "%s is knocked back!", target:getName():capitalize())
+												 end
+										 end)
+			end)
+		elseif self.eyelement == DamageType.NATURE then
+			self:project(tg, x, y, DamageType.POISON, dam*2)
+			local _ _, x, y = self:canProject(tg, x, y)
+			game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "acidbeam", {tx=x-self.x, ty=y-self.y})
+			game:playSoundNear(self, "talents/slime")
+		elseif self.eyelement == DamageType.ACID then
+			self:project(tg, x, y, DamageType.ACID, dam)
+			local _ _, x, y = self:canProject(tg, x, y)
+			game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "acidbeam", {tx=x-self.x, ty=y-self.y})
+			game:playSoundNear(self, "talents/cloud")
+		elseif self.eyelement == DamageType.MIND then
+			local baseradius = math.ceil(core.fov.distance(self.x, self.y, x, y) * 2.5)
+			self:project(tg, x, y, function(px, py)
+										 DamageType:get(DamageType.MIND).projector(self, px, py, DamageType.MIND, dam*1.5)
+										 local target = game.level.map(px, py, Map.ACTOR)
+										 if target and target:canBe("confusion") then
+											 target:setEffect(target.EFF_CONFUSED, 1, {power=30, apply_power=(self:combatSpellpower())})
+										 end
+										 game.level.map:particleEmitter(px, py, 1, "mindsear", {baseradius=baseradius * 0.66})
+										 baseradius = baseradius - 10
+			end)
+			game:playSoundNear(self, "talents/spell_generic")
+		elseif self.eyelement == DamageType.COLD then
+			self:project(tg, x, y, DamageType.ICE, {chance=25, do_wet=true, dam=dam})
+			game.level.map:particleEmitter(self.x, self.y, 0.5, "ice_beam_wide", {tx=x-self.x, ty=y-self.y})
+		elseif self.eyelement == DamageType.DARKNESS then
+			self:project(tg, x, y, function(tx, ty)
+										 local target = game.level.map(tx, ty, Map.ACTOR)
+										 if not target then return end
+										 target:setEffect(target.EFF_CURSE_DEATH, 5, {src=self, dam=dam/3, apply_power=self:combatSpellpower()})
+										 game.level.map:particleEmitter(tx, ty, 1, "circle", {base_rot=0, oversize=0.7, a=130, limit_life=8, appear=8, speed=0, img="curse_gfx_03", radius=0})
+			end)
+		elseif self.eyelement == DamageType.LIGHT then
+			local grids = self:project(tg, x, y, DamageType.LIGHT, dam * 0.66)
+			game.level.map:addEffect(self,
+															 x, y, 4,
+															 DamageType.LIGHT, dam * 0.33,
+															 0,
+															 5, grids,
+															 {type="light_zone"},
+															 nil, false, false
+			)
+		elseif self.eyelement == DamageType.LIGHTNING then
+			self:project(tg, x, y, DamageType.LIGHTNING_DAZE, {dam=rng.avg(dam / 2, dam * 2, 3), daze=self:attr("lightning_daze_tempest") or 0})
+			game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "lightning_beam", {tx=x-self.x, ty=y-self.y}, core.shader.active() and {type="lightning"} or nil)
+			game:playSoundNear(self, "talents/lightning")
+		elseif self.eyelement == DamageType.BLIGHT then
+			self:project(tg, x, y, function(px, py)
+										 DamageType:get(DamageType.BLIGHT).projector(self, px, py, DamageType.BLIGHT, dam*0.5)
+										 local target = game.level.map(px, py, Map.ACTOR)
+										 local diseases = {{self.EFF_WEAKNESS_DISEASE, "str"}, {self.EFF_ROTTING_DISEASE, "con"}, {self.EFF_DECREPITUDE_DISEASE, "dex"}}
+										 local disease = rng.table(diseases)
+										 
+										 if target:canBe("disease") then
+											 local str, dex, con = not target:hasEffect(self.EFF_WEAKNESS_DISEASE) and target:getStr() or 0, not target:hasEffect(self.EFF_DECREPITUDE_DISEASE) and target:getDex() or 0, not target:hasEffect(self.EFF_ROTTING_DISEASE) and target:getCon() or 0
+											 if str >= dex and str >= con then
+												 disease = {self.EFF_WEAKNESS_DISEASE, "str"}
+											 elseif dex >= str and dex >= con then
+												 disease = {self.EFF_DECREPITUDE_DISEASE, "dex"}
+											 elseif con > 0 then
+												 disease = {self.EFF_ROTTING_DISEASE, "con"}
+											 end
+											 target:setEffect(disease[1], 6, {src=self, dam=dam*0.1, [disease[2]]=self:combatTalentSpellDamage(t, 5, 35), apply_power=self:combatSpellpower()})
+											 game.level.map:particleEmitter(target.x, target.y, 1, "circle", {oversize=0.7, a=200, limit_life=8, appear=8, speed=-2, img="disease_circle", radius=0})
+										 end
+			end)
+			game:playSoundNear(self, "talents/slime")
+		elseif self.eyelement == DamageType.TEMPORAL then		
+			DamageType:get(DamageType.TEMPORAL).projector(self, x, y, DamageType.TEMPORAL, dam)
+			-- Make our homing missile
+			local proj = require("mod.class.Projectile"):makeHoming(
+				self,
+				{particle="arrow", particle_args={tile="particles_images/temporal_bolt", proj_x=self.x, proj_y=self.y, src_x=x, src_y=y}, trail="trail_paradox"},
+				{speed=3, name=_t"Temporal Bolt", dam=dam, cdr=cdr, start_x=x, start_y=y},
+				self, self:getTalentRange(t),
+				function(self, src)
+					local talent = src:getTalentFromId 'T_REK_HEKA_EYE_EYE_LASH'
+					local target = game.level.map(self.x, self.y, engine.Map.ACTOR)
+					if target and not target.dead and src ~= target then
+						local DT = require("engine.DamageType")
+						local multi = (10 - self.homing.count)/20
+						local dam = self.def.dam * (1 + multi)
+						src:project({type="hit", selffire=false, talent=talent}, self.x, self.y, DT.TEMPORAL, dam)
+					end
+				end,
+				function(self, src)
+				end
+			)
+			game.zone:addEntity(game.level, proj, "projectile", x, y)
+		else
+			self:project(tg, x, y, DamageType.ARCANE, dam)
 			local _ _, x, y = self:canProject(tg, x, y)
 			game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "arcane_drill_beam", {tx=x-self.x, ty=y-self.y})
+			game:playSoundNear(self, "talents/flame")
 		end
-		
-		game:playSoundNear(self, "talents/flame")
-		return true
-	end,
+    return true
+  end,
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
 		return ([[Focus your attention into a destructive beam, dealing %0.2f arcane damage.
 Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.ARCANE, damage))
 	end,
 }
---		[Talents.T_BURNING_HEX]=3,
---		[Talents.T_ICE_SHARDS]=3,
---		[Talents.T_STRIKE]=3,
---		[Talents.T_MANATHRUST]=3,
---		[Talents.T_HYDRA]=3,
---		[Talents.T_CURSE_OF_DEATH]=3,
---		[Talents.T_SEARING_LIGHT]=3,
---		[Talents.T_LIGHTNING]=3,
---		[Talents.T_VIRULENT_DISEASE]=3,
---		[Talents.T_DRAIN]=3,
---		[Talents.T_SPIT_POISON]=3,
---		[Talents.T_MIND_DISRUPTION]=3,
 
 newTalent{
 	name = "Stare Down", short_name = "REK_HEKA_EYE_STAREDOWN",
