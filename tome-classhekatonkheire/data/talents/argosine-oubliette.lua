@@ -21,7 +21,7 @@ newTalent{
 		-- Add a lasting map effect
 		game.level.map:addEffect(self,
 														 x, y, t.getDuration(self, t),
-														 DamageType.VOID, {dam=t.getDamage(self, t), x=self.x, y=self.y, apply_wet=5},
+														 DamageType.VOID, t.getDamage(self, t),
 														 1,
 														 5, nil,
 														 MapEffect.new{color_br=30, color_bg=60, color_bb=100, effect_shader="shader_images/water_effect1.png"},
@@ -106,7 +106,7 @@ newTalent{
 			tgts[#tgts+1] = act
 		end)
 
-		for tgt, i in pairs(tgts) do
+		for i, tgt in pairs(tgts) do
 			if tgt:checkHit(self:combatSpellpower(), tgt:combatSpellResist()) then
 				local count = 0
 				local numDur = 0

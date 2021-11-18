@@ -25,7 +25,7 @@ newTalent{
 			local _ _, x, y = self:canProject(tg, x, y)
 			game.level.map:particleEmitter(self.x, self.y, tg.radius, "flamebeam", {tx=x-self.x, ty=y-self.y})
 			game:playSoundNear(self, "talents/flame")
-		elseif self.eyelement == DamateType.PHYSICAL then
+		elseif self.eyelement == DamageType.PHYSICAL then
 			self:project(tg, x, y, DamageType.PHYSICAL, dam)
 			self:project(tg, x, y, function(px, py, tg, self)
 										 local target = game.level.map(px, py, Map.ACTOR)
@@ -61,7 +61,7 @@ newTalent{
 			game:playSoundNear(self, "talents/spell_generic")
 		elseif self.eyelement == DamageType.COLD then
 			self:project(tg, x, y, DamageType.ICE, {chance=25, do_wet=true, dam=dam})
-			game.level.map:particleEmitter(self.x, self.y, 0.5, "ice_beam_wide", {tx=x-self.x, ty=y-self.y})
+			game.level.map:particleEmitter(self.x, self.y, 0, "ice_beam_wide", {tx=x-self.x, ty=y-self.y})
 		elseif self.eyelement == DamageType.DARKNESS then
 			self:project(tg, x, y, function(tx, ty)
 										 local target = game.level.map(tx, ty, Map.ACTOR)
@@ -87,6 +87,7 @@ newTalent{
 			self:project(tg, x, y, function(px, py)
 										 DamageType:get(DamageType.BLIGHT).projector(self, px, py, DamageType.BLIGHT, dam*0.5)
 										 local target = game.level.map(px, py, Map.ACTOR)
+										 if not target then return end
 										 local diseases = {{self.EFF_WEAKNESS_DISEASE, "str"}, {self.EFF_ROTTING_DISEASE, "con"}, {self.EFF_DECREPITUDE_DISEASE, "dex"}}
 										 local disease = rng.table(diseases)
 										 

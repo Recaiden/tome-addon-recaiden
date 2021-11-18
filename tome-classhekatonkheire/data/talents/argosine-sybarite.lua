@@ -246,6 +246,7 @@ newTalent{
 				end
 			end
 		)
+		return true
 	end,
 	info = function(self, t)
 		return ([[Briefly unveil your full presence, and enemies within range %d are cast down, losing %d%% of a turn (#SLATE#no save#LAST#).]]):tformat(self:getTalentRange(t), t:_getLoss(self)*100)
