@@ -31,7 +31,7 @@ newTalent{
 				self.x, self.y,
 				function(px, py)
 					local a = game.level.map(px, py, engine.Map.ACTOR)
-					if a and a:reactionToward(self) < 0 and rng.percent(t.getChance(self, t)) and a:checkHit(self:combatPhysicalpower(1, weapon, t.getPowerBonus(self, t )), a:combatPhysicalResist(), 0, 95, 15) then
+					if a and a:reactionToward(self) < 0 and rng.percent(t.getChance(self, t)) and a:checkHit(self:combatSpellpower(), a:combatPhysicalResist(), 0, 95, 15) then
 						a:crossTierEffect(
 							a.EFF_OFFBALANCE,
 							self:combatSpellpower())

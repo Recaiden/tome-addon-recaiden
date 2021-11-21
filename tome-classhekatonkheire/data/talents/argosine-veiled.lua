@@ -93,6 +93,7 @@ newTalent{
 		local tg_hit = {type="ball", range=0, radius=1, no_restrict=true, friendlyfire=false, x=target.x, y=target.y}
 
 		target:project(tg_hit, target.x, target.y, DamageType.REK_HEKA_LENS, {dam=self:spellCrit(t.getDamage(self, t)), dur=t.getDuration(self, t)})
+		target:addParticles(Particles.new("meleestorm", 1, {radius=1}))
 		
 		return true
 	end,

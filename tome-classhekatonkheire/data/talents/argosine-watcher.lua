@@ -128,6 +128,7 @@ newTalent{
 	action = function(self, t)
 		if not self.in_combat then return nil end
 		self:setEffect(self.EFF_REK_HEKA_EYE_STOCK, 10, {src=self, stacks = t.getTurns(self, t), max_stacks=t:_getMaxTurns(self)})
+		game.level.map:particleEmitter(self.x, self.y, 1, "image_rise", {img="eyes_small", life=20, fade_in=true})
 		return true
 	end,
 	info = function(self, t)

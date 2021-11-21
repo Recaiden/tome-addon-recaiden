@@ -6,7 +6,6 @@ local Chat = require "engine.Chat"
 local Map = require "engine.Map"
 local Level = require "engine.Level"
 
-
 newEffect{
 	name = "REK_HEKA_SUNDERED_RESISTANCES", image = "talents/rek_heka_titanic_sunder.png",
 	desc = _t"Sundered",
@@ -560,8 +559,14 @@ newEffect{
 	subtype = { hands=true,},
 	status = "detrimental",
 	parameters = {power=10},
-	activate = function(self, eff) eff.tmpid = self:addTemporaryValue("numbed", eff.power) end,
-	deactivate = function(self, eff) self:removeTemporaryValue("numbed", eff.tmpid) end,
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("numbed", eff.power)
+		eff.particle = self:addParticles(Particles.new("spinning_halo", 1, {img="eyes_small"}))
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("numbed", eff.tmpid)
+		self:removeParticles(eff.particle)
+	end,
 }
 
 newEffect{

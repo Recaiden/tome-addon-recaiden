@@ -59,11 +59,16 @@ newTalent{
 			local target = game.level.map(px, py, engine.Map.ACTOR)
 			if target then
 				if target:checkHit(self:combatSpellpower(), target:combatSpellResist()) then
+					local found = false
 					for tid, _ in pairs(target.talents_cd) do
 						local t = target:getTalentFromId(tid)
 						if t and not t.fixed_cooldown and rng.percent(chance) then
 							target.talents_cd[tid] = target.talents_cd[tid] + 1
+							found = true
 						end
+					end
+					if found then
+						game.level.map:particleEmitter(target.x, target.y, 1, "image_rise", {img="heka_devil_claws"})
 					end
 				end
 			end
@@ -97,6 +102,18 @@ newTalent{
 	getDurationMult = function(self, t) return self:combatTalentLimit(t, 2.0, 1.1, 1.35) end,
 	getNumb = function(self, t) return self:combatTalentLimit(t, 50, 5, 13) end,
 	target = function(self, t) return {type="ball", range=0, radius=self:getTalentRange(t), nolock=true, nowarning=true, talent=t} end,
+
+	on_pre_use = function(self, t, silent)
+		local count = 0
+		for eff_id, p in pairs(self.tmp) do
+			local eff = self.tempeffect_def[eff_id]
+			if eff.status == "detrimental" and eff.type ~= "other" then return true end
+		end
+		
+		if not silent then game.logPlayer(self, "You require a detrimental effect to spread.") end
+		return false
+	end,
+	
 	action = function(self, t)
 		-- Pick valid targets for transfer attempt
 		local tgts = {}
@@ -111,6 +128,7 @@ newTalent{
 				local count = 0
 				local numDur = 0
 				for eff_id, p in pairs(self.tmp) do
+					local eff = self.tempeffect_def[eff_id]
 					if eff.status == "detrimental" and eff.type ~= "other" and count < t.getEffectCount(self, t) then
 						self:cloneEffect(eff_id, tgt)
 						count = count + 1
@@ -118,6 +136,9 @@ newTalent{
 					end
 				end
 				tgt:setEffect(tgt.EFF_REK_HEKA_EYELIGHT, numDur, {src=self, power=t.getNumb(self, t)})
+				local hx, hy = self:attachementSpot("back", true)
+				local ps = Particles.new("blood_trail", 1, {range=core.fov.distance(self.x, self.y, tgt.x, tgt.y), dir=math.deg(math.atan2(tgt.y-self.y, tgt.x-self.x)+math.pi/2), img="curse_trail_segment", dx=hx, dy=hy, grab=false})
+				self:addParticles(ps)
 			end
 		end
 		
@@ -155,7 +176,7 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[When you or your summons reduce a creature to less than 10%% life, it may die instantly (#SLATE# mental save vs spellpower + %d #LAST#).  Creatures immune to instant death instead take %0.1f mind damage and may be brainlocked.  This can only affect a given creature once every 3 turns.
+		return ([[When you or your summons reduce a creature to less than 10%% life, it may die instantly (#SLATE# mental save vs %d + spellpower#LAST#).  Creatures immune to instant death instead take %0.1f mind damage and may be brainlocked.  This can only affect a given creature once every 3 turns.
 Spellpower: increases damage.]]):tformat(t.getPowerBonus(self, t), damDesc(self, DamageType.MIND, t.getDamage(self, t)))
 	end,
 }

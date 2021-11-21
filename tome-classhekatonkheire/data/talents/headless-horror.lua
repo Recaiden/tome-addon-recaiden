@@ -61,7 +61,7 @@ newTalent{
 			game:playSoundNear(self, "talents/spell_generic")
 		elseif self.eyelement == DamageType.COLD then
 			self:project(tg, x, y, DamageType.ICE, {chance=25, do_wet=true, dam=dam})
-			game.level.map:particleEmitter(self.x, self.y, 0, "ice_beam_wide", {tx=x-self.x, ty=y-self.y})
+			game.level.map:particleEmitter(self.x, self.y, 1, "ice_beam", {tx=x-self.x, ty=y-self.y})
 		elseif self.eyelement == DamageType.DARKNESS then
 			self:project(tg, x, y, function(tx, ty)
 										 local target = game.level.map(tx, ty, Map.ACTOR)

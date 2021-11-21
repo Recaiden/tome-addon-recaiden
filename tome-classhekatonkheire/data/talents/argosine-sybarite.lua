@@ -141,7 +141,8 @@ newTalent{
 	tactical = {BUFF = 1},
 	range = 8,
 	getDuration = function(self, t) return 8 end,
-	getDamage = function(self, t) return self:combatTalentScale(t, 25, 100) end,									getResist = function(self, t) return self:combatTalentLimit(t, 35, 10, 25) end,
+	getDamage = function(self, t) return self:combatTalentScale(t, 25, 100) end,
+	getResist = function(self, t) return self:combatTalentLimit(t, 35, 10, 25) end,
 	makeHole = function(self, t, x, y)
 		local duration = t.getDuration(self, t)
 		local oe = game.level.map(x, y, Map.TERRAIN)
@@ -211,6 +212,7 @@ newTalent{
 				t.makeHole(self, t, tx, ty)
 			end
 		)
+		game.level.map:particleEmitter(self.x, self.y, tg.radius, "ball_physical", {radius=tg.radius, grids=grids, tx=self.x, ty=self.y})
 		self:setEffect(self.EFF_REK_HEKA_ARENA, t.getDuration(self, t), {damageMax=t.getDamage(self, t), resistMax=t.getResist(self, t), walls=countWalls, src=self})
 		--todo sound
 		--todo visual
@@ -239,10 +241,11 @@ newTalent{
 		local tg = self:getTalentTarget(t)
 		self:project(
 			tg, self.x, self.y,
-			function(tx, ty)
+			function(px, py)
 				local target = game.level.map(px, py, Map.ACTOR)
 				if target and self:reactionToward(target) <= 0 then
 					target.energy.value = target.energy.value - game.energy_to_act * t:_getLoss(self)
+					game.level.map:particleEmitter(px, py, 1, "image_rise", {img="heka_knelt"})
 				end
 			end
 		)

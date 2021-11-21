@@ -87,7 +87,7 @@ newTalent{
 	range = 8,
 	getSlow = function(self, t) return self:combatTalentScale(t, 10, 40) end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 0, 50) end,
-	getDuration = function(self, t) return math.ceil(self:combatTalentScale(t, 1, 5)) end,
+	getDuration = function(self, t) return math.ceil(self:combatTalentScale(t, 2, 5)) end,
 	action = function(self, t)
 		game.logPlayer(self, "Select an eye...")
 		local tg_eye = {default_target=self, type="ball", friendlyblock = false, nowarning=true, range=self:getTalentRange(t), radius=self:getTalentRadius(t), first_target = "friend"}
@@ -106,7 +106,7 @@ newTalent{
 														 DamageType.REK_HEKA_ARCANE_SLOW, {dam=self:spellCrit(t:_getDamage(self)), power=t:_getSlow(self)/100},
 														 self:getTalentRadius(t),
 														 5, nil,
-														 {type="light_zone"},
+														 {type="star_zone"},
 														 nil, false, false
 		)
 		

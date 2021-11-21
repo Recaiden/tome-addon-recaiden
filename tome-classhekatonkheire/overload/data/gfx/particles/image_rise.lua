@@ -1,5 +1,6 @@
 base_size = 64
 local life = life or 8
+local fade_in = fade_in or false
 local nb = 0
 return { generator = function()
 	return {
@@ -14,7 +15,7 @@ return { generator = function()
 		r = 1, rv = 0, ra = 0,
 		g = 1, gv = 0, ga = 0,
 		b = 1, bv = 0, ba = 0,
-		a = 1, av = 0, aa = -1/life/life,
+		a = fade_in and 0.25 or 1, av = fade_in and 0.5/life or 0, aa = fade_in and -2/life/life or -1/life/life,
 	}
 end, },
 function(self)
