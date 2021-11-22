@@ -176,7 +176,7 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[When you or your summons reduce a creature to less than 10%% life, it may die instantly (#SLATE# mental save vs %d + spellpower#LAST#).  Creatures immune to instant death instead take %0.1f mind damage and may be brainlocked.  This can only affect a given creature once every 3 turns.
+		return ([[When you or your summons reduce a creature to less than 10%% life, it may die instantly (#SLATE# mental save vs spellpower + #LAST#%d).  Creatures immune to instant death instead take %0.1f mind damage and may be brainlocked.  This can only affect a given creature once every 3 turns.
 Spellpower: increases damage.]]):tformat(t.getPowerBonus(self, t), damDesc(self, DamageType.MIND, t.getDamage(self, t)))
 	end,
 }

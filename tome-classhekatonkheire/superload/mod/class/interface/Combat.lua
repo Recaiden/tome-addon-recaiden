@@ -26,7 +26,7 @@ local base_combatSpellpowerRaw = _M.combatSpellpowerRaw
 function _M:combatSpellpowerRaw(add)
 	add = add or 0
 	if self.summoner and self.summoner.knowTalent and self.summoner:knowTalent(self.summoner.T_REK_HEKA_WATCHER_HATCHERY) then
-		local mult = self.summoner:callTalent(self.summoner.T_REK_HEKA_WATCHR_HATCHERY,"getInherit") / 100
+		local mult = self.summoner:callTalent(self.summoner.T_REK_HEKA_WATCHER_HATCHERY, "getInherit") / 100
 		add = add + mult * self.summoner:combatSpellpowerRaw()
 	end
 	if self:knowTalent(self.T_REK_HEKA_HEADLESS_ADAPT) then

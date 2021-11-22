@@ -128,8 +128,7 @@ newTalent{
 	callbackOnSummonKill = function(self, t) t.recover(self, t)	end,
 	callbackOnSummonDeath = function(self, t) t.recover(self, t) end,
 	info = function(self, t)
-		return ([[Whenever you or your summons kill an enemy, or when one of your summons dies, you receive a burst of life and power, regaining %d hands and providing %d healing to you and 
-1/3 as much healing your eyes.
+		return ([[Whenever you or your summons kill an enemy, or when one of your summons dies, you receive a burst of life and power, regaining %d hands and providing %d healing to you and 1/3 as much healing to your eyes.
 
 #{italic}#Most victims are just more flesh for you to use.#{normal}#]]):tformat(t:_getHands(self), t:_getHeal(self))
 	end,

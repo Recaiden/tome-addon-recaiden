@@ -121,8 +121,8 @@ newTalent{
 	getMaxTurns = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 3, 9.8)) end,
 	callbackOnTalentPost = function(self, t, ab, ret, silent)
 		if not self.in_combat then return end
-		if util.getval(t.hands, self, t) > 0 then
-			self:setEffect(self.EFF_REK_HEKA_EYE_STOCK, 10, {src=self, max_stacks=t:_getMaxTurns(self)})
+		if util.getval(ab.hands, self, t) > 0 then
+			self:setEffect(self.EFF_REK_HEKA_EYE_STOCK, 10, {src=self, stacks=1, max_stacks=t:_getMaxTurns(self)})
 		end
 	end,
 	action = function(self, t)
@@ -152,7 +152,8 @@ newTalent{
 	name = "Eye Hatchery", short_name = "REK_HEKA_WATCHER_HATCHERY",
 	type = {"spell/watcher", 4}, require = eye_req_slow4, points = 5,
 	mode = "passive",
-	getBonusEyes = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 0.5, 2.95)) end,
+	getUnroundEyes = function(self, t) return self:combatTalentLimit(t, 4, 0.5, 2.1) end,
+	getBonusEyes = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 0.5, 2.2)) end,
 	getInherit = function(self, t) return self:combatTalentScale(t, 20, 60) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "talent_cd_reduction", {[self.T_REK_HEKA_HEADLESS_EYES] = 5})

@@ -29,13 +29,15 @@ newTalent{
 			self:project(tg, x, y, DamageType.PHYSICAL, dam)
 			self:project(tg, x, y, function(px, py, tg, self)
 										 local target = game.level.map(px, py, Map.ACTOR)
-										 game:onTickEnd(function() 
-												 if target:checkHit(self:combatSpellpower(), target:combatPhysicalResist(), 0, 95, 15) and target:canBe("knockback") then
-													 target:knockback(self.x, self.y, 3)
-													 target:crossTierEffect(target.EFF_OFFBALANCE, self:combatSpellpower())
-													 game.logSeen(target, "%s is knocked back!", target:getName():capitalize())
-												 end
-										 end)
+										 if target then
+											 game:onTickEnd(function() 
+													 if target:checkHit(self:combatSpellpower(), target:combatPhysicalResist(), 0, 95, 15) and target:canBe("knockback") then
+														 target:knockback(self.x, self.y, 3)
+														 target:crossTierEffect(target.EFF_OFFBALANCE, self:combatSpellpower())
+														 game.logSeen(target, "%s is knocked back!", target:getName():capitalize())
+													 end
+											 end)
+										 end
 			end)
 		elseif self.eyelement == DamageType.NATURE then
 			self:project(tg, x, y, DamageType.POISON, dam*2)
@@ -562,19 +564,26 @@ newTalent{
 		if game.zone.wilderness then return false end
 		
 		self.eyes.remainingCooldown = self.eyes.remainingCooldown - 1
-		local stock = self:hasEffect(self.EFF_REK_HEKA_EYE_STOCK)
-		if stock then
-			local cost = math.min(self.eyes.remainingCooldown, stock.stacks)
-			self.eyes.remainingCooldown = self.eyes.remainingCooldown - cost
-			stock.stacks = stock.stacks - cost
-			if stock.stacks <= 0 then
-				self:removeEffect(self.EFF_REK_HEKA_EYE_STOCK)
+		if self.eyes.remainingCooldown > 0 then
+			local stock = self:hasEffect(self.EFF_REK_HEKA_EYE_STOCK)
+			if stock then
+				local cost = math.min(self.eyes.remainingCooldown, stock.stacks)
+				self.eyes.remainingCooldown = self.eyes.remainingCooldown - cost
+				stock.stacks = stock.stacks - cost
+				if stock.stacks <= 0 then
+					self:removeEffect(self.EFF_REK_HEKA_EYE_STOCK)
+				end
 			end
 		end
 		if self.eyes.remainingCooldown > 0 then return false end
-		self.eyes.remainingCooldown = 10
+
+		-- only try to summon and reset if we're actually missing an eye
+		local eyeCount = t.nbEyesUp(self, t)
+		if eyeCount >= t.getMaxEyes(self, t) then return true end
 		
+		self.eyes.remainingCooldown = 10
 		t.summonEye(self, t)
+		
 		return true
 	end,
 	info = function(self, t)
@@ -594,6 +603,7 @@ newTalent{
 	mode = "passive",
 	getRedirectThreshold = function(self, t) return self:combatTalentLimit(t, 15, 66, 30) end,
 	getReinforcement = function(self, t) return self.level*0.8 end,
+	callbackPriorities = {callbackOnTakeDamage = 5}, --higher (later) than per-class defenses.
 	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, state, no_martyr)
 		local split = dam / 3
 		local remaining = dam

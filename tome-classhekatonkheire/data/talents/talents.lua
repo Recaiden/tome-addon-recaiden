@@ -50,7 +50,7 @@ mag_req_high5 = {
 }
 
 eye_req_slow4 = {
-	stat = { mag=function(level) return 30 + (level-1) * 2 end },
+	stat = { mag=function(level) return 36 + (level-1) * 6 end },
 	level = function(level) return 12 + (level-1)*6  end,
 }
 
