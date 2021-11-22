@@ -562,7 +562,9 @@ newTalent{
 		end
 		
 		if game.zone.wilderness then return false end
-		
+
+		if t.nbEyesUp(self, t) >= t.getMaxEyes(self, t) then return true end
+
 		self.eyes.remainingCooldown = self.eyes.remainingCooldown - 1
 		if self.eyes.remainingCooldown > 0 then
 			local stock = self:hasEffect(self.EFF_REK_HEKA_EYE_STOCK)
@@ -593,7 +595,9 @@ Each Wandering Eye is a weak combatant that can attack with magical blasts or a 
 
 Your sight radius permanently becomes 1, but you cannot be blinded and can see through each eye out to a range of 7.  Any other increases and decreases to your sight radius apply to your eyes.
 
-You cannot hurt or be hurt by your own eyes.]]):tformat(maxEyes)
+You cannot hurt or be hurt by your own eyes.
+
+Talent level increases the damage of the eyes' talents.]]):tformat(maxEyes)
 	end,
 }
 
@@ -644,7 +648,7 @@ newTalent{
 	range = 7,
 	requires_target = true,
 	tactical = { ATTACK = 2, HEAL = 1 },
-	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nowarning=true} end,
+	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nowarning=true, pass_terrain=true} end,
 	on_pre_use = function(self, t, silent)
 		if not self:isTalentActive(self.T_REK_HEKA_HEADLESS_EYES) then
 			if not silent then game.logPlayer(self, "You have no eyes to blink!") end
@@ -681,7 +685,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Passively strengthen the attacks of your eyes, giving them %d%% extra Accuracy and %d%% extra damage.
-You can activate this talent to have each eye use its bite attack on a chosen target.]]):tformat(t.getCombatAtk(self, t), t.getIncDamage(self, t))
+You can activate this talent to have each eye use its bite attack on a chosen target (if they can see it).]]):tformat(t.getCombatAtk(self, t), t.getIncDamage(self, t))
 	end
 }
 

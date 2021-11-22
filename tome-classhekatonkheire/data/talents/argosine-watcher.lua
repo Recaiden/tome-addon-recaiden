@@ -13,7 +13,7 @@ newTalent{
 	name = "See No Evil", short_name = "REK_HEKA_WATCHER_SKIP",
 	type = {"spell/watcher", 1}, require = mag_req1, points = 5,
 	points = 5,
-	cooldown = 6,
+	cooldown = function(self, t) return t.getDuration(self, t) + 3 end,
 	hands = 20,
 	tactical = { ATTACK = {MIND = 1}, DISABLE = 2 },
 	range = 10,
@@ -106,7 +106,7 @@ newTalent{
 	info = function(self, t)
 		local damage = t.getDamage(self, t)
 		local duration = t.getDuration(self, t)
-		return ([[Turn your attention away from a target and let them fall into the other place.  This inflicts %0.1f mind damage and freezes the target in time for %d turns.  While frozen in time, a creature cannot affect or be affected by anything.
+		return ([[Turn your attention away from a target and let them fall into the other place.  This inflicts %0.1f mind damage and freezes the target in time (#SLATE#spell save#LAST#) for %d turns.  While frozen in time, a creature cannot affect or be affected by anything.
 The damage will scale with your Spellpower.
 This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(damDesc(self, DamageType.MIND, damage), duration)
 	end,
@@ -121,7 +121,7 @@ newTalent{
 	getMaxTurns = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 3, 9.8)) end,
 	callbackOnTalentPost = function(self, t, ab, ret, silent)
 		if not self.in_combat then return end
-		if util.getval(ab.hands, self, t) > 0 then
+		if ab.hands and util.getval(ab.hands, self, ab) > 0 then
 			self:setEffect(self.EFF_REK_HEKA_EYE_STOCK, 10, {src=self, stacks=1, max_stacks=t:_getMaxTurns(self)})
 		end
 	end,
@@ -152,8 +152,9 @@ newTalent{
 	name = "Eye Hatchery", short_name = "REK_HEKA_WATCHER_HATCHERY",
 	type = {"spell/watcher", 4}, require = eye_req_slow4, points = 5,
 	mode = "passive",
-	getUnroundEyes = function(self, t) return self:combatTalentLimit(t, 4, 0.5, 2.1) end,
-	getBonusEyes = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 0.5, 2.2)) end,
+	getBonusEyes = function(self, t)
+		return 1 + math.floor(self:combatTalentLimit(t, 4, 0.1, 2.8))
+	end,
 	getInherit = function(self, t) return self:combatTalentScale(t, 20, 60) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "talent_cd_reduction", {[self.T_REK_HEKA_HEADLESS_EYES] = 5})

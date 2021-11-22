@@ -7,7 +7,7 @@ newTalent{
 	range = 0,
 	requires_target = true,
 	radius = function(self, t)
-		return 1 + 0.5 * t.getDuration(self, t)
+		return t.getDuration(self, t)/2
 	end,
 	target = function(self, t)
 		return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire = false}
@@ -38,11 +38,11 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[A well of draining emptiness moves out from the caster with an initial radius of 1, increasing by 1 per turn to a maximum radius of %d, doing %0.2f darkness damage and %0.2f arcane damage to all inside.
+		return ([[A well of draining emptiness moves out from the caster with an initial radius of 1, increasing every 2 turns, doing %0.2f darkness damage and %0.2f arcane damage to all inside.
 The well lasts for %d turns.
 Spellpower: increases damage and duration.
 
-Whenever one of your minions dies, the same well is cast from their position automatically.]]):tformat(self:getTalentRadius(t), damDesc(self, DamageType.DARKNESS, t.getDamage(self, t)/2), damDesc(self, DamageType.ARCANE, t.getDamage(self, t)/2), t.getDuration(self, t))
+Whenever one of your minions dies, the same well is cast from their position automatically.]]):tformat(damDesc(self, DamageType.DARKNESS, t.getDamage(self, t)/2), damDesc(self, DamageType.ARCANE, t.getDamage(self, t)/2), t.getDuration(self, t))
 	end,
 }
 

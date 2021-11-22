@@ -47,6 +47,20 @@ newTalent{
 		-- Pick a target
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
+
+		-- check that at least 1 eye is in range
+		local ranged = false
+		for _, e in pairs(game.level.entities) do
+			if isMyEye(self, e) then
+				local subtalent = e:getTalentFromId(e.T_REK_HEKA_EYE_EYE_LASH)
+				local subtg = {type="beam", range=e:getTalentRange(subtalent), friendlyfire=false, talent=subtalent}
+				if e:canProject(subtg, x, y) then ranged = true end
+			end
+		end
+		if not ranged and not core.key.modState("ctrl") then
+			game.logPlayer(self, "None of your eyes are in range. Hold <ctrl> to force them to cast anyway.")
+			return nil
+		end
 		
 		-- Switch our targeting type back
 		local tg = self:getTalentTarget(t)
@@ -55,10 +69,12 @@ newTalent{
 		local power = t:_getCritDamage(self)
 		for _, e in pairs(game.level.entities) do
 			if isMyEye(self, e) then
-				e:setEffect(e.EFF_REK_HEKA_LASHING_POWER, 1, {src=self, chance=chance, power=power})
-				e:forceUseTalent(e.T_REK_HEKA_EYE_EYE_LASH, {ignore_cd=true, ignore_energy=true, force_target={x=x,y=y}, ignore_ressources=true, silent=true})
-				if e then
-					if e:hasEffect(e.EFF_REK_HEKA_LASHING_POWER) then e:removeEffect(e.EFF_REK_HEKA_LASHING_POWER) end
+				if e:hasLOS( x, y) then 				
+					e:setEffect(e.EFF_REK_HEKA_LASHING_POWER, 1, {src=self, chance=chance, power=power})
+					e:forceUseTalent(e.T_REK_HEKA_EYE_EYE_LASH, {ignore_cd=true, ignore_energy=true, force_target={x=x,y=y}, ignore_ressources=true, silent=true})
+					if e then
+						if e:hasEffect(e.EFF_REK_HEKA_LASHING_POWER) then e:removeEffect(e.EFF_REK_HEKA_LASHING_POWER) end
+					end
 				end
 			end
 		end
@@ -79,7 +95,7 @@ newTalent{
 	getDuration = function(self, t) return math.ceil(self:combatTalentScale(t, 1, 5)) end,
 	action = function(self, t)
 		game.logPlayer(self, "Select an eye...")
-		local tg_eye = {default_target=self, type="hit", friendlyblock = false, nowarning=true, range=self:getTalentRange(t), first_target = "friend"}
+		local tg_eye = {default_target=self, type="hit", pass_terrain=true, friendlyblock = false, nowarning=true, range=self:getTalentRange(t), first_target = "friend"}
 		tx, ty = self:getTarget(tg_eye)
 		if not tx or not ty then return nil end
 		if tx then

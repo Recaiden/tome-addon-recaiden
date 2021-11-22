@@ -127,7 +127,7 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[Walls within 2 spaces of you become flat ground, and remain passable for 3 turns after you leave.  Creatures that would be left in a wall when you leave are shunted to the closest open space.
+		return ([[Diggable walls within 2 spaces of you become flat ground, and remain passable for 3 turns after you leave.  Creatures that would be left in a wall when you leave are shunted to the closest open space.
 Levels in this talent increase your movement speed by %d%%]]):tformat(t.getPassiveSpeed(self, t)*100)
 	end
 }
@@ -219,7 +219,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Extend the royal road outward, making walls within range %d passable for %d turns.  During this time you gain up to +%d%% damage and +%d%% resistance, based on the number of walls flattened.
+		return ([[Extend the royal road outward, making walls within range %d passable for %d turns.  During this time you grow 1 size category and gain up to +%d%% damage and +%d%% resistance, based on the number of walls flattened.
 
 #{italic}#No lures, tunnels, nor ambushes.  Fight your enemy in glorious open combat!#{normal}#]]):tformat(self:getTalentRange(t), t:_getDuration(self), t:_getDamage(self), t:_getResist(self))
 	end,

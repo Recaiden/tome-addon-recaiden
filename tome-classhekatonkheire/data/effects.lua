@@ -592,7 +592,7 @@ newEffect{
 	name = "REK_HEKA_EYELEMENT_EYE", image = "talents/rek_heka_watcher_element.png",
 	desc = _t"Eyelemental",
 	long_desc = function(self, eff)
-		return ("Increases resistance to %d by +%d%%"):tformat(eff.element, eff.resist)
+		return ("Increases resistance to %s by +%d%%"):tformat(eff.element, eff.resist)
 	end,
 	type = "other",
 	subtype = { eyes=true },
@@ -615,7 +615,7 @@ newEffect{
 
 newEffect{
 	name = "REK_HEKA_ARENA", image = "talents/rek_heka_sybarite_revel.png",
-	desc = _t"Queen of the Arena",
+	desc = _t"Lord of the Arena",
 	long_desc = function(self, eff) return ("The target's damage has been increased by %d%% and its resistances by %d%%."):tformat(eff.damage, eff.resist) end,
 	type = "magical",
 	subtype = { arcane=true },
@@ -625,6 +625,7 @@ newEffect{
 		local proportion = math.max(1, math.log(eff.walls)) / math.log(180) -- don't require them to be in the center of a huge circle of walls to best use it
 		eff.damage = eff.damageMax * proportion
 		eff.resist = eff.resistMax * proportion
+		self:effectTemporaryValue(eff, "size_category", 1)
 		self:effectTemporaryValue(eff, "resists", {all = eff.resist})
 		self:effectTemporaryValue(eff, "inc_damage", {all = eff.damage})
 	end,
