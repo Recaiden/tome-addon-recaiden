@@ -1,3 +1,4 @@
+local Particles = require "engine.Particles"
 
 newBirthDescriptor{
 	type = "subclass",
@@ -36,7 +37,10 @@ newBirthDescriptor{
 		["spell/otherness"]={true, 0.0},
 	},
 	birth_example_particles = {
-		"golden_shield",
+		function(actor)
+			actor:addParticles(Particles.new("otherside_rising_sparks", 1, {base_rot=0, a=235, appear=12, nb=3}))
+		end,
+		--"golden_shield",
 		-- function(actor)
 		-- 	if core.shader.active(4) then local x, y = actor:attachementSpot("back", true) actor:addParticles(Particles.new("shader_wings", 1, {x=x, y=y, infinite=1}))
 		-- 	else actor:addParticles(Particles.new("wildfire", 1))

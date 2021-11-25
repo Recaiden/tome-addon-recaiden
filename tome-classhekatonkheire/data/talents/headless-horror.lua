@@ -331,119 +331,119 @@ local function createEye(self, level, tCallEyes, tPhylactery, tBlink, tStagger, 
 		image_alt = ("npc/%s.png"):format(imageStr.."_fangs"),
 		
 		never_anger = true,
-      summoner = self,
-      summoner_gain_exp=true,
-      summon_time = duration,
-      faction = self.faction,
-      size_category = 1,
-      rank = 2,
-      autolevel = "none",
-      level_range = {level, level},
-      exp_worth = 0,
-      avoid_traps = 1,
-			levitation = 1,
-			minion_be_nice = 1,
-      is_wandering_eye = true,
-      
-      max_life = resolvers.rngavg(20,20), life_rating = 7, life_regen = 1+self:getTalentLevel(tPhylactery),
-      stats = { -- affected by stat limits
-         str=math.floor(self:combatScale(level, 5, 0, 55, 50, 0.75)),
-         dex=math.floor(self:combatScale(level, 10, 0, 85, 50, 0.75)),
-         mag=math.floor(self:combatScale(level, 10, 0, 85, 50, 0.75)),
-         wil=math.floor(self:combatScale(level, 5, 0, 55, 50, 0.75)),
-         cun=math.floor(self:combatScale(level, 5, 0, 40, 50, 0.75)),
-         con=math.floor(self:combatScale(level, 10, 0, 40, 50, 0.75)),
-      },
-      combat_armor = 0, combat_def = 3,
-      combat = {
-         dam=math.floor(self:combatScale(level, 1.5, 1, 75, 50, 0.75)),
-         atk=10 + level,
-         apr=8,
-         dammod={str=0.5, dex=0.5}
-      },
-      summoner_hate_per_kill = self.hate_per_kill,
-      resolvers.talents{
-				[self.T_REK_HEKA_EYE_STAREDOWN]=1,
-				[self.T_REK_HEKA_EYE_PHASE_DOOR]=tCallEyes.getPhaseDoorLevel(self, tCallEyes),
-				[self.T_REK_HEKA_EYE_BLINDSIDE]=tCallEyes.getBlindsideLevel(self, tCallEyes),
-				[self.T_REK_HEKA_EYE_EYE_LASH]=tCallEyes.getLashLevel(self, tCallEyes),
-				[self.T_REK_HEKA_EYE_KNOCKBACK]=tStagger and tStagger.getStaggerLevel(self, tStagger) or 0,
-                       },
+		summoner = self,
+		summoner_gain_exp=true,
+		summon_time = duration,
+		faction = self.faction,
+		size_category = 1,
+		rank = 2,
+		autolevel = "none",
+		level_range = {level, level},
+		exp_worth = 0,
+		avoid_traps = 1,
+		levitation = 1,
+		minion_be_nice = 1,
+		is_wandering_eye = true,
+		
+		max_life = 20, life_rating = 7, life_regen = 1+self:getTalentLevel(tPhylactery),
+		stats = { -- affected by stat limits
+			str=math.floor(self:combatScale(level, 5, 0, 55, 50, 0.75)),
+			dex=math.floor(self:combatScale(level, 10, 0, 85, 50, 0.75)),
+			mag=math.floor(self:combatScale(level, 10, 0, 85, 50, 0.75)),
+			wil=math.floor(self:combatScale(level, 5, 0, 55, 50, 0.75)),
+			cun=math.floor(self:combatScale(level, 5, 0, 40, 50, 0.75)),
+			con=math.floor(self:combatScale(level, 10, 0, 40, 50, 0.75)),
+		},
+		combat_armor = 0, combat_def = 3,
+		combat = {
+			dam=math.floor(self:combatScale(level, 1.5, 1, 75, 50, 0.75)),
+			atk=10 + level,
+			apr=8,
+			dammod={str=0.5, dex=0.5}
+		},
+		summoner_hate_per_kill = self.hate_per_kill,
+		resolvers.talents{
+			[self.T_REK_HEKA_EYE_STAREDOWN]=1,
+			[self.T_REK_HEKA_EYE_PHASE_DOOR]=tCallEyes.getPhaseDoorLevel(self, tCallEyes),
+			[self.T_REK_HEKA_EYE_BLINDSIDE]=tCallEyes.getBlindsideLevel(self, tCallEyes),
+			[self.T_REK_HEKA_EYE_EYE_LASH]=tCallEyes.getLashLevel(self, tCallEyes),
+			[self.T_REK_HEKA_EYE_KNOCKBACK]=tStagger and tStagger.getStaggerLevel(self, tStagger) or 0,
+		},
+		
+		no_breath = 1,
+		stone_immune = 1,
+		confusion_immune = 1,
+		fear_immune = 1,
+		teleport_immune = 1,
+		disease_immune = 1,
+		poison_immune = 1,
+		stun_immune = 1,
+		blind_immune = 1,
+		see_invisible = 80,
+		resists = { [DamageType.ARCANE] = 50 },
+		resists_pen = { all=25 },
+		
+		avoid_master_damage = 0,
+		
+		ai = "heka_eye",
+		ai_state = {
+			tactic_leash = 5,
+			actor_range = 8,
+			location_range = 4,
+			target_time = 0,
+			target_timeout = 10,
+			focus_on_target = false,
 			
-      no_breath = 1,
-      stone_immune = 1,
-      confusion_immune = 1,
-      fear_immune = 1,
-      teleport_immune = 1,
-      disease_immune = 1,
-      poison_immune = 1,
-      stun_immune = 1,
-      blind_immune = 1,
-      see_invisible = 80,
-      resists = { [DamageType.ARCANE] = 50 },
-      resists_pen = { all=25 },
-
-      avoid_master_damage = 0,
-
-      ai = "heka_eye",
-      ai_state = {
-         tactic_leash = 5,
-         actor_range = 8,
-         location_range = 4,
-         target_time = 0,
-         target_timeout = 10,
-         focus_on_target = false,
-
-         blindside_chance = 15,
-         phasedoor_chance = 5,
-         close_attack_spell_chance = 0,
-         far_attack_spell_chance = 33,
-      },
-      ai_target = {
-         actor=target,
-         x = nil,
-         y = nil
-      },
-      closeAttackSpell = function(self)
-				return self:useTalent(self.T_REK_HEKA_EYE_KNOCKBACK)
-      end,
-      farAttackSpell = function(self)
-				return self:useTalent(self.T_REK_HEKA_EYE_EYE_LASH)
-      end,
-      feed = function(self)
-				if self.summoner:knowTalent(self.summoner.T_REK_HEKA_HEADLESS_ADAPT) then
-					local tStagger = self.summoner:getTalentFromId(self.summoner.T_REK_HEKA_HEADLESS_ADAPT)
-					self.ai_state.close_attack_spell_chance = tStagger.getKnockChance(self.summoner, tStagger)
-				end
-				if self.ai_state.feed_temp1 then self:removeTemporaryValue("combat_atk", self.ai_state.feed_temp1) end
-				self.ai_state.feed_temp1 = nil
-				if self.ai_state.feed_temp2 then self:removeTemporaryValue("inc_damage", self.ai_state.feed_temp2) end
-				self.ai_state.feed_temp2 = nil
-				if self.summoner:knowTalent(self.summoner.T_REK_HEKA_HEADLESS_BLINK) then
-				   local tEyeWarriors = self.summoner:getTalentFromId(self.summoner.T_REK_HEKA_HEADLESS_BLINK)
-				   self.ai_state.feed_temp1 = self:addTemporaryValue("combat_atk", tEyeWarriors.getCombatAtk(self.summoner, tEyeWarriors))
-					 self.ai_state.feed_temp2 = self:addTemporaryValue("inc_damage", {all=tEyeWarriors.getIncDamage(self.summoner, tEyeWarriors)})
-				end
-				-- Argosine elements
-				if self.summoner:knowTalent(self.summoner.T_REK_HEKA_WATCHER_ELEMENT) then
-					local tElement = self.summoner:getTalentFromId(self.summoner.T_REK_HEKA_WATCHER_ELEMENT)
-					self.eyelemental = tElement.getResists(self.summoner, tElement)
-					self.eyelement = nil
-				end
-      end,
-      onTakeHit = function(self, value, src)
-				if src == self.summoner and self.avoid_master_damage then
-					value = value * self.avoid_master_damage
-				end
-				
-				return mod.class.Actor.onTakeHit(self, value, src)
-      end,
-      on_act = function(self)
-         -- clean up
-         if self.summoner.dead then
-            self:die(self)
-         end
-      end
+			blindside_chance = 15,
+			phasedoor_chance = 5,
+			close_attack_spell_chance = 0,
+			far_attack_spell_chance = 33,
+		},
+		ai_target = {
+			actor=target,
+			x = nil,
+			y = nil
+		},
+		closeAttackSpell = function(self)
+			return self:useTalent(self.T_REK_HEKA_EYE_KNOCKBACK)
+		end,
+		farAttackSpell = function(self)
+			return self:useTalent(self.T_REK_HEKA_EYE_EYE_LASH)
+		end,
+		feed = function(self)
+			if self.summoner:knowTalent(self.summoner.T_REK_HEKA_HEADLESS_ADAPT) then
+				local tStagger = self.summoner:getTalentFromId(self.summoner.T_REK_HEKA_HEADLESS_ADAPT)
+				self.ai_state.close_attack_spell_chance = tStagger.getKnockChance(self.summoner, tStagger)
+			end
+			if self.ai_state.feed_temp1 then self:removeTemporaryValue("combat_atk", self.ai_state.feed_temp1) end
+			self.ai_state.feed_temp1 = nil
+			if self.ai_state.feed_temp2 then self:removeTemporaryValue("inc_damage", self.ai_state.feed_temp2) end
+			self.ai_state.feed_temp2 = nil
+			if self.summoner:knowTalent(self.summoner.T_REK_HEKA_HEADLESS_BLINK) then
+				local tEyeWarriors = self.summoner:getTalentFromId(self.summoner.T_REK_HEKA_HEADLESS_BLINK)
+				self.ai_state.feed_temp1 = self:addTemporaryValue("combat_atk", tEyeWarriors.getCombatAtk(self.summoner, tEyeWarriors))
+				self.ai_state.feed_temp2 = self:addTemporaryValue("inc_damage", {all=tEyeWarriors.getIncDamage(self.summoner, tEyeWarriors)})
+			end
+			-- Argosine elements
+			if self.summoner:knowTalent(self.summoner.T_REK_HEKA_WATCHER_ELEMENT) then
+				local tElement = self.summoner:getTalentFromId(self.summoner.T_REK_HEKA_WATCHER_ELEMENT)
+				self.eyelemental = tElement.getResists(self.summoner, tElement)
+				self.eyelement = nil
+			end
+		end,
+		onTakeHit = function(self, value, src)
+			if src == self.summoner and self.avoid_master_damage then
+				value = value * self.avoid_master_damage
+			end
+			
+			return mod.class.Actor.onTakeHit(self, value, src)
+		end,
+		on_act = function(self)
+			-- clean up
+			if self.summoner.dead then
+				self:die(self)
+			end
+		end
 	}
 	self:attr("summoned_times", 1)
 	return npc
@@ -552,6 +552,7 @@ newTalent{
 	end,
 	callbackOnRest = function(self, t, mode)
 		if mode ~= "check" then return end
+		if game.zone and game.zone.wilderness then return false end
 		if t.nbEyesUp(self, t) < t.getMaxEyes(self, t) then return true end
 	end,
 	callbackOnActBase = function(self, t)

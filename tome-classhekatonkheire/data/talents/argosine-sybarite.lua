@@ -52,7 +52,7 @@ newTalent{
 		if not game.level.map:isBound(x, y) then return end
 		local oe = game.level.map(x, y, Map.TERRAIN)
 		if not oe or oe.special then return end
-		if not oe or oe:attr("temporary") or not oe.dig or not game.level.map:checkEntity(x, y, engine.Map.TERRAIN, "block_move") then return end
+		if oe:attr("temporary") or not oe.dig or not game.level.map:checkEntity(x, y, engine.Map.TERRAIN, "block_move") then return end
 		local e = Object.new{
 			old_feat = oe,
 			name = oe.name, image = oe.image,
@@ -65,8 +65,8 @@ newTalent{
 			timeout = 3,
 			x = x, y = y,
 			canAct = false,
-			add_displays = oe.add_displays,
-			add_mos = oe.add_mos,
+			add_displays = {},--oe.add_displays,
+			add_mos = {},--oe.add_mos,
 			displace = road_displaceActor,
 			act = function(self)
 				local Map = require "engine.Map"
@@ -98,8 +98,9 @@ newTalent{
 		}
 		e.tooltip = mod.class.Grid.tooltip
 		game.level:addEntity(e)
+		e:removeAllMOs()
 		game.level.map(x, y, Map.TERRAIN, e)
-		--game.level.map:updateMap(x, y)
+		game.level.map:updateMap(x, y)
 		e.particles = Particles.new("royal_road", 1, {})
 		e.particles.x = x
 		e.particles.y = y
@@ -158,8 +159,8 @@ newTalent{
 			timeout = duration,
 			x = x, y = y,
 			canAct = false,
-			add_displays = oe.add_displays,
-			add_mos = oe.add_mos,
+			add_displays = {},--oe.add_displays,
+			add_mos = {},--oe.add_mos,
 			displace = road_displaceActor,
 			act = function(self)
 				local Map = require "engine.Map"
@@ -199,15 +200,15 @@ newTalent{
 		game.level.map:addParticleEmitter(e.particles)
 	end,
 	action = function(self, t)
-		local tg = {type="ball", range=0, radius=self:getTalentRange(t), talent=t}
+		local tg = {type="ball", range=0, radius=self:getTalentRange(t), pass_terrain=true, talent=t}
 		local countWalls = 0
 		local grids = self:project(
 			tg, self.x, self.y,
 			function(tx, ty)
 				if not game.level.map:isBound(tx, ty) then return end
 				local oe = game.level.map(tx, ty, Map.TERRAIN)
-				if not oe or oe.special then return end
-				if not oe or oe:attr("temporary") or not oe.dig or not game.level.map:checkEntity(tx, ty, engine.Map.TERRAIN, "block_move") then return end
+				if not oe or oe.special or oe:attr("temporary") then return end
+				if not game.level.map:checkEntity(tx, ty, engine.Map.TERRAIN, "block_move") or not oe.dig then return end
 				countWalls = countWalls + 1
 				t.makeHole(self, t, tx, ty)
 			end

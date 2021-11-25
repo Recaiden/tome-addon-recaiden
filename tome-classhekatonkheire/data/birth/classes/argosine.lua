@@ -1,3 +1,4 @@
+local Particles = require "engine.Particles"
 
 newBirthDescriptor{
 	type = "subclass",
@@ -36,7 +37,10 @@ newBirthDescriptor{
 		["spell/otherness"]={true, 0.0},
 	},
 	birth_example_particles = {
-		"golden_shield",
+		function(actor)
+			--actor:addShaderAura("rek_heka_metafolded", "awesomeaura", {time_factor=16000, alpha=0.9}, "particles_images/metafolded.png")
+			actor:addParticles(Particles.new("circle", 1, {base_rot=1, oversize=0.5, a=150, appear=8, y=-0.68, speed=0, img="sudden_insight_eye", radius=0}))
+		end,
 	},
 	talents = {
 		[ActorTalents.T_REK_HEKA_HEADLESS_EYES] = 1,

@@ -3,6 +3,7 @@ local DamageType = require "engine.DamageType"
 
 -- Eye Action Priority
 -- Teleport back within range of summoner
+-- If summoner is resting, rest
 -- Get bored after 10 turns fighting the same enemy
 -- Confront an enemy if you have one
 -- Move towards a location if you have one
@@ -291,6 +292,12 @@ newAI("heka_eye", function(self)
 		self:useTalent(self.T_REK_HEKA_EYE_PHASE_DOOR)
 		--game.logPlayer(self.summoner, "#PINK#%s -> phase door", self.name:capitalize())
 		return true
+	end
+
+	-- resting
+	if self.summoner and self.summoner.resting then
+		self.energy.value = self.energy.value - game.energy_to_act
+		return true		
 	end
 
 	-- out of time on current target?
