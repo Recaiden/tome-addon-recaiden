@@ -212,6 +212,7 @@ newEffect{
 	type = "other",
 	subtype = { hands=true },
 	status = "neutral",
+	no_remove = true,
 	decrease = 0,
 	charges = function(self, eff)
 		local total = 0
