@@ -46,7 +46,7 @@ sling_req1 = function(self, t) local stat = self:getStr() >= self:getDex() and "
       stat = { [stat]=function(level) return 10 + (level-1) * 6 end },
       level = function(level) return 0 + (level-1)  end,
       special = {
-         desc="Uses the higher of your Strength or Dexterity",
+         desc=_t"Uses the higher of your Strength or Dexterity",
          fct=function(self) return true end
       },
    } end
@@ -55,7 +55,7 @@ sling_req2 = function(self, t) local stat = self:getStr() >= self:getDex() and "
       stat = { [stat]=function(level) return 20 + (level-1) * 2 end },
       level = function(level) return 4 + (level-1)  end,
       special = {
-         desc="Uses the higher of your Strength or Dexterity",
+         desc=_t"Uses the higher of your Strength or Dexterity",
          fct=function(self) return true end
       },
 }end
@@ -63,7 +63,7 @@ sling_req3 = function(self, t) local stat = self:getStr() >= self:getDex() and "
 	stat = { [stat]=function(level) return 28 + (level-1) * 2 end },
 	level = function(level) return 8 + (level-1)  end,
         special = {
-           desc="Uses the higher of your Strength or Dexterity",
+           desc=_t"Uses the higher of your Strength or Dexterity",
            fct=function(self) return true end
         },
 }end
@@ -71,7 +71,7 @@ sling_req4 = function(self, t) local stat = self:getStr() >= self:getDex() and "
       stat = { [stat]=function(level) return 36 + (level-1) * 2 end },
       level = function(level) return 12 + (level-1)  end,
       special = {
-         desc="Uses the higher of your Strength or Dexterity",
+         desc=_t"Uses the higher of your Strength or Dexterity",
          fct=function(self) return true end
       },
 } end
@@ -79,7 +79,7 @@ sling_reqMaster = function(self, t) local stat = self:getStr() >= self:getDex() 
       stat = { [stat]=function(level) return 10 + (level-1) * 6 end },
       level = function(level) return 0 + (level-1)  end,
       special = {
-         desc="Uses the higher of your Strength or Dexterity",
+         desc=_t"Uses the higher of your Strength or Dexterity",
          fct=function(self) return true end
       },
 }end
@@ -179,7 +179,7 @@ martyr_mirror_req1 = function(self, t) local stat = self:getStr() >= self:getDex
       fct=function(self) return canLearnMirror(self) end
    },
    special2 = {
-      desc="Points in Vagabond talents allow you to learn Chivalry talents",
+      desc=_t"Points in Vagabond talents allow you to learn Chivalry talents",
       fct=function(self) return canLearnMirror(self) end
    },
 } end
@@ -192,7 +192,7 @@ martyr_mirror_req2 = function(self, t) local stat = self:getStr() >= self:getDex
       fct=function(self) return canLearnMirror(self) end
    },
    special2 = {
-      desc="Points in Vagabond talents allow you to learn Chivalry talents",
+      desc=_t"Points in Vagabond talents allow you to learn Chivalry talents",
       fct=function(self) return canLearnMirror(self) end
    },
 }end
@@ -205,7 +205,7 @@ martyr_mirror_req3 = function(self, t) local stat = self:getStr() >= self:getDex
       fct=function(self) return canLearnMirror(self) end
    },
    special2 = {
-      desc="Points in Vagabond talents allow you to learn Chivalry talents",
+      desc=_t"Points in Vagabond talents allow you to learn Chivalry talents",
       fct=function(self) return canLearnMirror(self) end
    },
 }end
@@ -218,7 +218,7 @@ martyr_mirror_req4 = function(self, t) local stat = self:getStr() >= self:getDex
       fct=function(self) return canLearnMirror(self) end
    },
    special2 = {
-      desc="Points in Vagabond talents allow you to learn Chivalry talents",
+      desc=_t"Points in Vagabond talents allow you to learn Chivalry talents",
       fct=function(self) return canLearnMirror(self) end
    },
 }end
@@ -229,13 +229,13 @@ archeryWeaponCheck = function(self, weapon, ammo, silent, weapon_type)
       if not silent then
          -- ammo contains error message
          game.logPlayer(self, ({
-                                  ["disarmed"] = "You are currently disarmed and cannot use this talent.",
-                                  ["no shooter"] = ("You require a %s to use this talent."):format(weapon_type or "missile launcher"),
-                                  ["no ammo"] = "You require ammo to use this talent.",
-                                  ["bad ammo"] = "Your ammo cannot be used.",
-                                  ["incompatible ammo"] = "Your ammo is incompatible with your missile launcher.",
-                                  ["incompatible missile launcher"] = ("You require a %s to use this talent."):format(weapon_type or "bow"),
-                               })[ammo] or "You require a missile launcher and ammo for this talent.")
+                                  ["disarmed"] = _t"You are currently disarmed and cannot use this talent.",
+                                  ["no shooter"] = ("You require a %s to use this talent."):tformat(weapon_type or "missile launcher"),
+                                  ["no ammo"] = _t"You require ammo to use this talent.",
+                                  ["bad ammo"] = _t"Your ammo cannot be used.",
+                                  ["incompatible ammo"] = _t"Your ammo is incompatible with your missile launcher.",
+                                  ["incompatible missile launcher"] = ("You require a %s to use this talent."):tformat(weapon_type or "bow"),
+                               })[ammo] or _t"You require a missile launcher and ammo for this talent.")
       end
       return false
    else
@@ -324,51 +324,51 @@ doMartyrPreUse = function(self, weapon, silent)
 end
 
 if not Talents.talents_types_def["demented/chivalry"] then
-   newTalentType{ allow_random=true, is_mind=true, type="demented/chivalry", name = "Chivalry", description = "Onward, to greater challenges, for glory!" }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/chivalry", name = _t("Chivalry", "talent type"), description = _t"Onward, to greater challenges, for glory!" }
    load("/data-classmartyr/talents/chivalry.lua")
 end
 
 if not Talents.talents_types_def["demented/vagabond"] then
-   newTalentType{ allow_random=true, is_mind=true, type="demented/vagabond", name = "Vagabond", description = "I'm not the only one seeing this, right?" }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/vagabond", name = _t("Vagabond", "talent type"), description = _t"I'm not the only one seeing this, right?" }
    load("/data-classmartyr/talents/vagabond.lua")
 end
 
 if not Talents.talents_types_def["demented/whispers"] then
-   newTalentType{ allow_random=true, type="demented/whispers", name = "Beinagrind Whispers", description = "Exist on the edge of madness", is_mind=true }
+   newTalentType{ allow_random=true, type="demented/whispers", name = _t("Beinagrind Whispers", "talent type"), description = _t"Exist on the edge of madness", is_mind=true }
    load("/data-classmartyr/talents/whispers.lua")
 end
 
 if not Talents.talents_types_def["demented/unsettling"] then
-   newTalentType{ allow_random=true, type="demented/unsettling", name = "Unsettling Words", description = "Distort your enemies' perceptions and fray their sanity.", is_mind=true }
+   newTalentType{ allow_random=true, type="demented/unsettling", name = _t("Unsettling Words", "talent type"), description = _t"Distort your enemies' perceptions and fray their sanity.", is_mind=true }
    load("/data-classmartyr/talents/unsettling.lua")
 end
 
 if not Talents.talents_types_def["demented/polarity"] then
-   newTalentType{ allow_random=true, is_mind=true, generic=true, type="demented/polarity", name = "Polarity", description = "Dive into the madness; power comes at the price of sanity" }
+   newTalentType{ allow_random=true, is_mind=true, generic=true, type="demented/polarity", name = _t("Polarity", "talent type"), description = _t"Dive into the madness; power comes at the price of sanity" }
    load("/data-classmartyr/talents/polarity.lua")
 end
 
 if not Talents.talents_types_def["demented/scourge"] then
-   newTalentType{ allow_random=true, is_mind=true, type="demented/scourge", name = "Scourge", description = "We will fight; you are but a vessel." }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/scourge", name = _t("Scourge", "talent type"), description = _t"We will fight; you are but a vessel." }
    load("/data-classmartyr/talents/scourge.lua")
 end
 
 if not Talents.talents_types_def["demented/standard-bearer"] then
-   newTalentType{ allow_random=true, is_mind=true, type="demented/standard-bearer", name = "Standard-Bearer", description = "To he who is victorious, ever more victories will flow!" }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/standard-bearer", name = _t("Standard-Bearer", "talent type"), description = _t"To he who is victorious, ever more victories will flow!" }
    load("/data-classmartyr/talents/standard-bearer.lua")
 end
 
 if not Talents.talents_types_def["demented/moment"] then
-   newTalentType{ allow_random=true, is_mind=true, type="demented/moment", name = "Final Moment", min_lev = 10, description = "Wield the blade of the ancient kings, and you will never be late nor lost." }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/moment", name = _t("Final Moment", "talent type"), min_lev = 10, description = _t"Wield the blade of the ancient kings, and you will never be late nor lost." }
    load("/data-classmartyr/talents/moment.lua")
 end
 
 if not Talents.talents_types_def["psionic/crucible"] then
-   newTalentType{ allow_random=true, is_mind=true, type="psionic/crucible", name = "Crucible", min_lev = 10, description = "Pain brings clarity.  To see clearly is painful." }
+   newTalentType{ allow_random=true, is_mind=true, type="psionic/crucible", name = _t("Crucible", "talent type"), min_lev = 10, description = _t"Pain brings clarity.  To see clearly is painful." }
    load("/data-classmartyr/talents/crucible.lua")
 end
 
 if not Talents.talents_types_def["demented/revelation"] then
-   newTalentType{ allow_random=true, is_mind=true, type="demented/revelation", name = "Revelation", min_lev = 10, description = "You see the world as it truly is, Eyal in the Age of Scourge.  The world is horrid, but the truth has power." }
+   newTalentType{ allow_random=true, is_mind=true, type="demented/revelation", name = _t("Revelation", "talent type"), min_lev = 10, description = _t"You see the world as it truly is, Eyal in the Age of Scourge.  The world is horrid, but the truth has power." }
    load("/data-classmartyr/talents/revelation.lua")
 end

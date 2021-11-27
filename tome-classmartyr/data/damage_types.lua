@@ -73,7 +73,7 @@ applyGuidanceBurn = function(target, t)
                                        end,
                                        0, 0
                                       )
-    ef.name = "warning lights"
+    ef.name = _t"warning lights"
 
     game.level.map:addEffect(target,
                                        target.x, target.y, dur,
@@ -93,86 +93,86 @@ applyGuidanceBurn = function(target, t)
 end
 
 newDamageType{
-   name = "healing guidance", type = "REK_MTYR_GUIDE_HEAL",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      local target = game.level.map(x, y, Map.ACTOR)
-      if target and target == src then         
-         -- do the bonus
-         target:setEffect(target.EFF_REK_MTYR_GUIDANCE_HEAL, 3, {power=dam})
-         
-         -- do the upgrade
-         if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
-            local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
-            applyGuidanceBurn(target, t3)
-         end
-         
-         local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_HEAL)
-         if geff then
-            removeGroundEffect(geff)
-            game.level.map:particleEmitter(x, y, 2, "generic_sploom", {rm=20, rM=20, gm=160, gM=180, bm=20, bM=20, am=35, aM=90, radius=2, basenb=30})
-         end
-         game:playSoundNear(target, "talents/heal")
-      end
-   end,
+	name = _t("healing guidance", "damage type"), type = "REK_MTYR_GUIDE_HEAL",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target and target == src then         
+			-- do the bonus
+			target:setEffect(target.EFF_REK_MTYR_GUIDANCE_HEAL, 3, {power=dam})
+			
+			-- do the upgrade
+			if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
+				local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
+				applyGuidanceBurn(target, t3)
+			end
+			
+			local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_HEAL)
+			if geff then
+				removeGroundEffect(geff)
+				game.level.map:particleEmitter(x, y, 2, "generic_sploom", {rm=20, rM=20, gm=160, gM=180, bm=20, bM=20, am=35, aM=90, radius=2, basenb=30})
+			end
+			game:playSoundNear(target, "talents/heal")
+		end
+	end,
 }
 
 newDamageType{
-   name = "energizing guidance", type = "REK_MTYR_GUIDE_BUFF",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      local target = game.level.map(x, y, Map.ACTOR)
-      if target and target == src then         
-         -- do the bonus
-         if not target:attr("no_talents_cooldown") then
-            for tid, _ in pairs(target.talents_cd) do
-               local t = target:getTalentFromId(tid)
-               if t and not t.fixed_cooldown then
-                  target.talents_cd[tid] = math.max(0, target.talents_cd[tid] - math.max(1, math.floor(dam/25)))
-               end
-            end
-         end
-         
-         -- do the upgrade
-         if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
-            local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
-            applyGuidanceBurn(target, t3)
-         end
-         
-         local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_BUFF)
-         if geff then
-            removeGroundEffect(geff)
-            game.level.map:particleEmitter(x, y, 2, "generic_sploom", {rm=10, rM=30, gm=90, gM=110, bm=235, bM=255, am=35, aM=90, radius=2, basenb=30})
-         end
-         game:playSoundNear(target, "talents/distortion")
+	name = _t("energizing guidance", "damage type"), type = "REK_MTYR_GUIDE_BUFF",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target and target == src then         
+			-- do the bonus
+			if not target:attr("no_talents_cooldown") then
+				for tid, _ in pairs(target.talents_cd) do
+					local t = target:getTalentFromId(tid)
+					if t and not t.fixed_cooldown then
+						target.talents_cd[tid] = math.max(0, target.talents_cd[tid] - math.max(1, math.floor(dam/25)))
+					end
+				end
+			end
+			
+			-- do the upgrade
+			if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
+				local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
+				applyGuidanceBurn(target, t3)
+			end
+			
+			local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_BUFF)
+			if geff then
+				removeGroundEffect(geff)
+				game.level.map:particleEmitter(x, y, 2, "generic_sploom", {rm=10, rM=30, gm=90, gM=110, bm=235, bM=255, am=35, aM=90, radius=2, basenb=30})
+			end
+			game:playSoundNear(target, "talents/distortion")
       end
-   end,
+	end,
 }
 
 newDamageType{
-   name = "destructive guidance", type = "REK_MTYR_GUIDE_FLASH",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      local target = game.level.map(x, y, Map.ACTOR)
-      if target and target == src then         
-         -- do the bonus
-         target:setEffect(target.EFF_REK_MTYR_GUIDANCE_FLASH, 3, {power=dam*0.25})
-         
-         -- do the upgrade
-         if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
-            local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
-            applyGuidanceBurn(target, t3)
-         end
-         
-         local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_FLASH)
-         if geff then
-            removeGroundEffect(geff)
-            game.level.map:particleEmitter(x, y, 2, "generic_sploom", {rm=235, rM=255, gm=200, gM=220, bm=50, bM=70, am=35, aM=90, radius=2, basenb=30})
-         end
-         game:playSoundNear(target, "talents/tidalwave")
-      end
-   end,
+	name = _t("destructive guidance", "damage type"), type = "REK_MTYR_GUIDE_FLASH",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target and target == src then         
+			-- do the bonus
+			target:setEffect(target.EFF_REK_MTYR_GUIDANCE_FLASH, 3, {power=dam*0.25})
+			
+			-- do the upgrade
+			if target:knowTalent(target.T_REK_MTYR_WHISPERS_WARNING) then
+				local t3 = target:getTalentFromId(target.T_REK_MTYR_WHISPERS_WARNING)
+				applyGuidanceBurn(target, t3)
+			end
+			
+			local geff = game.level.map:hasEffectType(x, y, DamageType.REK_MTYR_GUIDE_FLASH)
+			if geff then
+				removeGroundEffect(geff)
+				game.level.map:particleEmitter(x, y, 2, "generic_sploom", {rm=235, rM=255, gm=200, gM=220, bm=50, bM=70, am=35, aM=90, radius=2, basenb=30})
+			end
+			game:playSoundNear(target, "talents/tidalwave")
+		end
+	end,
 }

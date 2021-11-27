@@ -59,7 +59,7 @@ This works for all blows, even those from other talents and from shield bashes, 
 #INSANE_GREEN#Minimum Insanity: %d#LAST#
 This talent will deactivate if it brings you to below its minimum insanity, or upon resting.
 
-Dexterity or Willpower: increases chance]]):format(t.getChance(self, t), t.getCost(self, t), t.getThreshold(self, t))
+Dexterity or Willpower: increases chance]]):tformat(t.getChance(self, t), t.getCost(self, t), t.getThreshold(self, t))
    end,
 }
 
@@ -168,7 +168,7 @@ newTalent{
 	end,
 	
 	info = function(self, t)
-		return ([[Hop astride your noble steed and run down a target at least 3 spaces away, striking with all weapons (including shield) for %d%% damage. A hit will stun them (#SLATE#Physical Power vs. Physical#LAST#) for %d turns and grant you an additional #INSANE_GREEN#15 insanity#LAST#.  All other targets next to your path will be attacked with your mainhand weapon for %d%% damage and dazed (#SLATE#Physical Power vs. Physical#LAST#) for %d turns on a hit.]]):format(t.getSideDamage(self, t)*100, t.getDazeDuration(self, t), t.getHitDamage(self, t)*100, t.getStunDuration(self, t))
+		return ([[Hop astride your noble steed and run down a target at least 3 spaces away, striking with all weapons (including shield) for %d%% damage. A hit will stun them (#SLATE#Physical Power vs. Physical#LAST#) for %d turns and grant you an additional #INSANE_GREEN#15 insanity#LAST#.  All other targets next to your path will be attacked with your mainhand weapon for %d%% damage and dazed (#SLATE#Physical Power vs. Physical#LAST#) for %d turns on a hit.]]):tformat(t.getSideDamage(self, t)*100, t.getDazeDuration(self, t), t.getHitDamage(self, t)*100, t.getStunDuration(self, t))
 	end,
 }
 --If you are wielding the #MIDNIGHT#Moment#LAST# you will deal full damage to all targets.
@@ -231,7 +231,7 @@ newTalent{
    info = function(self, t)
       return ([[Throw off a stun, daze, or pin that might stop you from moving, take a step, and then strike a random adjacent enemy for %d%% damage.
 This will also attack with your shield if you have one equipped.
-]]):format(t.getDamage(self, t)*100)
+]]):tformat(t.getDamage(self, t)*100)
    end,
 }
 

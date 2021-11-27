@@ -42,7 +42,7 @@ newTalent{
 Your attention to detail increases stealth detection and invisibility detection by %d. The things you have learned give you %d%% resistance to and %d%% increased damage against the Horrors you see.
 
 #ROYAL_BLUE#Sometimes reveals hidden truths that you'd rather not see.#LAST#
-]]):format(t.getVision(self, t), t.getPower(self, t), t.getPower(self, t))
+]]):tformat(t.getVision(self, t), t.getPower(self, t), t.getPower(self, t))
    end,
 }
 
@@ -82,7 +82,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[Fire a shot into the mindscape to shatter the worldly guise of the target, dealing %d%% damage and revealing its true nature as a horror!
-The horror will resume its disguise after %d turns.]]):format(t.getDamage(self,t) * 100, t.getDuration(self, t))
+The horror will resume its disguise after %d turns.]]):tformat(t.getDamage(self,t) * 100, t.getDuration(self, t))
    end,
 }
 
@@ -115,7 +115,7 @@ newTalent{
       return ([[Immediately reload %d times.  For the next %d turns, your ranged attack speed increases by %d%% and your accuracy by %d.
 
 #{italic}#Harmonize with the world of horror all around you, letting the eyestalks guide your shots and the tentacles be your hands.#{normal}#
-]]):format(t.getAmmo(self, t), t.getDuration(self, t), t.getSpeed(self, t)*100, t.getAccuracy(self, t))
+]]):tformat(t.getAmmo(self, t), t.getDuration(self, t), t.getSpeed(self, t)*100, t.getAccuracy(self, t))
    end,
 }
 
@@ -170,6 +170,6 @@ newTalent{
 Rare and stronger targets will be invulnerable for the duration, and will break free of the effect after %d turns.
 Weaker targets can be controlled for %d turns and will die from the strain afterward.
 
-#{italic}#Don't you remember?  #GREEN#We#LAST#'ve already absorbed that one.#{normal}# ]]):format(2+self:getTalentLevelRaw(t), t.getDuration(self, t))
+#{italic}#Don't you remember?  #GREEN#We#LAST#'ve already absorbed that one.#{normal}# ]]):tformat(2+self:getTalentLevelRaw(t), t.getDuration(self, t))
    end,
 }

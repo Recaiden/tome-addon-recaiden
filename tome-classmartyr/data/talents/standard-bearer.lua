@@ -293,7 +293,7 @@ newTalent{
 Summoning a flag has a cooldown.
 The flag's level is your level + %d, its stats increase with your Willpower, and its damage is increased by %d%%.
 Flags last until destroyed or until you leave the level, but you can only have 3 placed at a time.
-]]):format(t.thRare(self, t)*100, t.thBoss(self, t)*100, t.thEBoss(self, t)*100, t.getLevel(self, t), t.getPercentInc(self, t)*100)
+]]):tformat(t.thRare(self, t)*100, t.thBoss(self, t)*100, t.thEBoss(self, t)*100, t.getLevel(self, t), t.getPercentInc(self, t)*100)
    end,
 }
 
@@ -346,7 +346,7 @@ newTalent{
       return ([[When you place a flag yourself, it can go anywhere within range %d.
 
 Levels in this talent grant your flags the ability to move around of their own volition: travelling in range %d with accuracy %d.
-]]):format(self:getTalentRange(t), t.getFlagRange(self, t), t.getFlagRadius(self, t))
+]]):tformat(self:getTalentRange(t), t.getFlagRange(self, t), t.getFlagRadius(self, t))
    end,
 }
 
@@ -381,6 +381,6 @@ newTalent{
    info = function(self, t)
       return ([[Whenever you start a turn within range 3 of one of your flags, each of you gains %d%% all resistance for 3 turns.
 
-Levels in this talent grant your flags an area attack doing %d%% of their normal damage.]]):format(t.getResist(self, t), t.getDamage(self,t)*100)
+Levels in this talent grant your flags an area attack doing %d%% of their normal damage.]]):tformat(t.getResist(self, t), t.getDamage(self,t)*100)
    end,
 }

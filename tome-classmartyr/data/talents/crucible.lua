@@ -64,7 +64,7 @@ newTalent{
    info = function(self, t)
       local damage = t.getDamage(self, t)
       return ([[Force the pain you've felt out of your mind and into the world, doing %0.2f mind damage to target enemy and all enemies with radius 2 of them.  Each affected target after the first increases damage done to all targets by 10%%.
-Mindpower: improves damage.]]):format(damDesc(self, DamageType.MIND, damage))
+Mindpower: improves damage.]]):tformat(damDesc(self, DamageType.MIND, damage))
    end,
          }
 
@@ -82,7 +82,7 @@ Talents are recharged in this order:
  - Memento Mori
  - Runaway Resonation
  - Resonance Field
- - Conversion]]):format(t.getEfficiency(self, t))
+ - Conversion]]):tformat(t.getEfficiency(self, t))
       if self:knowTalentType("psionic/discharge") or self:knowTalentType("psionic/discharge") == false then
          ret = ret..[[
  - Focused Wrath]]
@@ -173,7 +173,7 @@ newTalent{
    info = function(self, t)
       local duration = t.getDuration(self, t)
       local crit_bonus = t.getCritBonus(self, t)
-      return ([[Focus your feedback in on itself, setting your mind surging with unstoppable power.  For %d turns, your critical power is increased by half your mental critical rate (%d%% => %d), and your mental critical rate becomes 100%%.]]):format(duration, self:combatMindCrit(), crit_bonus)
+      return ([[Focus your feedback in on itself, setting your mind surging with unstoppable power.  For %d turns, your critical power is increased by half your mental critical rate (%d%% => %d), and your mental critical rate becomes 100%%.]]):tformat(duration, self:combatMindCrit(), crit_bonus)
    end,
 }
 

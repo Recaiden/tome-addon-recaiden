@@ -76,7 +76,7 @@ newTalent{
 Mindpower: increases damage.
 
 #GREEN#Our Gift:#LAST# The target will be crippled (#SLATE#Mindpower vs. Physical#LAST#) for %d turns.
-]]):format(t.getDotDamage(self, t), 5, t.getDuration(self, t))
+]]):tformat(t.getDotDamage(self, t), 5, t.getDuration(self, t))
 	end,
 }
 
@@ -91,7 +91,7 @@ newTalent{
    info = function(self, t)
       return ([[The knowledge of their failure compounds over time, increasing the mind damage Scorn deals by %d%% each turn as long as you are within 3 spaces of them.
 
-#GREEN#Our Gift:#LAST# Scorn also gives the victim a %d%% chance to fail to use talents.]]):format(t.getRamp(self, t)*100, t.getFail(self, t))
+#GREEN#Our Gift:#LAST# Scorn also gives the victim a %d%% chance to fail to use talents.]]):tformat(t.getRamp(self, t)*100, t.getFail(self, t))
    end,
 }
 
@@ -163,6 +163,6 @@ newTalent{
    info = function(self, t)
       return ([[Whenever your Scorn effect deals damage, you heal for %d%% of the damage done.  
 
-#GREEN#Our Gift:#LAST# The damage dealt by Scorn is increased by 10-50%% based on your current insanity.]]):format(100*t.getDrain(self, t))
+#GREEN#Our Gift:#LAST# The damage dealt by Scorn is increased by 10-50%% based on your current insanity.]]):tformat(100*t.getDrain(self, t))
    end,
 }

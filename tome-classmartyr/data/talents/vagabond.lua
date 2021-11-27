@@ -35,7 +35,7 @@ It also allows you to equip weapons and armor using the higher of your strength 
 
 Whenever you hit with a ranged weapon, you will gain #INSANE_GREEN#5 insanity.#LAST#
 
-#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):format(t.getDamage(self, t), 100*t.getPercentInc(self, t), t.getReload(self, t))
+#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):tformat(t.getDamage(self, t), 100*t.getPercentInc(self, t), t.getReload(self, t))
 	end,
 }
 
@@ -161,7 +161,7 @@ Mindpower: increases damage.
 
 All your shots, including bullets from Shoot and other talents, now travel around friendly targets without causing them harm (regardless of whether this talent is sustained).
 
-#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):format(damDesc(self, DamageType.MIND, t.getDamage(self, t)))
+#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):tformat(damDesc(self, DamageType.MIND, t.getDamage(self, t)))
    end,
 }
 
@@ -181,6 +181,6 @@ Direct critical hits againts you deal %d%% less extra damage.
 
 #{italic}#Nothing's ever going to hurt me worse than #GREEN#we#LAST# already have.#{normal}#
 
-#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):format(t.getCritResist(self, t))
+#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):tformat(t.getCritResist(self, t))
    end,
 }

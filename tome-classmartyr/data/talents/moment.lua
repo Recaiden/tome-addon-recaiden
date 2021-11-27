@@ -100,12 +100,12 @@ You are not holding the sword.
 
 The sword springs from your mind.  Behold!
 		%s
-]]):format(damage * 100, tostring(weapon_stats))
+]]):tformat(damage * 100, tostring(weapon_stats))
 			local descS = ([[Summon an impossible sword, the Final Moment, and use it to strike everyone adjacent to you for %d%% weapon damage.
 Mindpower: improves damage, accuracy, armor penetration, critical chance.
 
 		Current Final Moment Stats:
-		%s]]):format(damage * 100, tostring(weapon_stats))
+		%s]]):tformat(damage * 100, tostring(weapon_stats))
 			return amSane(self) and descS or descI
    end,
          }
@@ -218,10 +218,10 @@ The sword comes to you.
 You are not holding a sword.                                        
 
 Strikes with the sword grow more accurate (%d).
-#YELLOW#Regain your sanity to better understand this talent.#LAST#]]):format(self:getTalentRange(t), t.getDamage(self, t) * 100, t.getAttack(self, t))
+#YELLOW#Regain your sanity to better understand this talent.#LAST#]]):tformat(self:getTalentRange(t), t.getDamage(self, t) * 100, t.getAttack(self, t))
 		local descS = ([[Throw the Final Moment up to %d spaces, attacking all targets in a line for %d%% weapon damage and teleporting yourself to the end of the line.  2 turns later, repeat the attack against all targets between your original position and your current position.                              
 
-Learning this talent increases the Accuracy of your Final Moment by %d]]):format(self:getTalentRange(t), t.getDamage(self, t) * 100, t.getAttack(self, t))
+Learning this talent increases the Accuracy of your Final Moment by %d]]):tformat(self:getTalentRange(t), t.getDamage(self, t) * 100, t.getAttack(self, t))
 		return amSane(self) and descS or descI
 	end,
 }
@@ -264,14 +264,14 @@ You are holding a sword.
 You have %0.2f breaths.
 
 Strikes with the sword may grant you a tenth of a breath (%d%%).
-#YELLOW#Regain your sanity to better understand this talent.#LAST#]]):format(t.getGain(self, t), t.getChance(self, t))
+#YELLOW#Regain your sanity to better understand this talent.#LAST#]]):tformat(t.getGain(self, t), t.getChance(self, t))
 		local descS = ([[If you would gain insanity beyond your maximum, or would take damage exceeding your current health, time stops, granting you %0.2f turns.  While time is stopped, you use the Final Moment for all your attacks.
 Mindpower: improves turn gain
 
 This effect has a cooldown.
 
 All attacks with the Final Moment have %d%% to grant you 10%% of a turn (up to 3 times per turn).
-]]):format(t.getGain(self, t), t.getChance(self, t))
+]]):tformat(t.getGain(self, t), t.getChance(self, t))
 		return amSane(self) and descS or descI
 	end,
 }
@@ -305,12 +305,12 @@ The danger strikes you, weakened by %d.
 					Your sword strikes back (%d%%).
 
 Strikes with the sword may strike again.
-#YELLOW#Regain your sanity to better understand this talent.#LAST#]]):format(t.getBlock(self, t), damage * 100)
+#YELLOW#Regain your sanity to better understand this talent.#LAST#]]):tformat(t.getBlock(self, t), damage * 100)
 		local descS = ([[Summon the Final Moment to block incoming attacks.  For 1 turn, all incoming damage is reduced by %d and you will counterattack using the Final Moment for %d%% damage, even at range.  The counterattack can only happen once per attacker.
 Mindpower: increases damage blocked
 Mental Critical: increases damage blocked
 
-Learning this talent gives attacks with the Final Moment a 20%% chance to trigger Cut Time (talent level %0.1f)]]):format(t.getBlock(self, t), damage * 100, self:getTalentLevel(t))
+Learning this talent gives attacks with the Final Moment a 20%% chance to trigger Cut Time (talent level %0.1f)]]):tformat(t.getBlock(self, t), damage * 100, self:getTalentLevel(t))
 		return amSane(self) and descS or descI	
 	end,
 }

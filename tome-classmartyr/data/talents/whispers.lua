@@ -79,7 +79,7 @@ You benefit from #ORANGE#Sanity Bonus#LAST# while you have up to 40 Insanity.
 You benefit from #GREEN#Our Gift#LAST# while you have at least 60 Insanity.
 
 #{italic}#As long as I don't start thinking like #GREEN#us#LAST#, I'll be safe.#{normal}#
-]]):format(t.getMaxPower(self, t), t.getPower(self, t), t.getMaxReduction(self, t), t.getReduction(self, t))
+]]):tformat(t.getMaxPower(self, t), t.getPower(self, t), t.getMaxReduction(self, t), t.getReduction(self, t))
    end,
          }
 	
@@ -166,7 +166,7 @@ newTalent{
       return ([[While in combat, zones of guiding light will appear nearby, lasting %d turns.
 Entering a green light will cause you to regenerate for %d health per turn for 5 turns.
 Entering a blue light will refresh you, reducing the duration of outstanding cooldowns by %d turns.
-Entering a orange light will grant you terrible strength, giving you +%d%% to all damage for 3 turns.]]):format(t.getDuration(self, t), t.getPower(self,t), math.max(1, math.floor(t.getPower(self,t)/25)), t.getPower(self,t)/4)
+Entering a orange light will grant you terrible strength, giving you +%d%% to all damage for 3 turns.]]):tformat(t.getDuration(self, t), t.getPower(self,t), math.max(1, math.floor(t.getPower(self,t)/25)), t.getPower(self,t)/4)
    end,
 }
 
@@ -183,7 +183,7 @@ newTalent{
       return ([[Entering any light will imbue you with a destructive aura, dealing %d - %d mind damage to enemies within range 2 each turn for %d turns.  The damage will increase with your current insanity.
 Mindpower: increases damage.
 
-#{italic}#The light whispers secrets to bring about the destruction of your enemies.#{normal}#]]):format(damDesc(self, DamageType.MIND, t.getDamage(self, t)), 2*damDesc(self, DamageType.MIND, t.getDamage(self, t)), t.getDuration(self, t))
+#{italic}#The light whispers secrets to bring about the destruction of your enemies.#{normal}#]]):tformat(damDesc(self, DamageType.MIND, t.getDamage(self, t)), 2*damDesc(self, DamageType.MIND, t.getDamage(self, t)), t.getDuration(self, t))
    end,
 }
 
@@ -197,7 +197,7 @@ newTalent{
 	callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, tmp)
 		if dam >= (self.life - self.die_at) then
 
-			game:delayedLogDamage(src or self, self, 0, ("%s(%d to the dream)#LAST#"):format(DamageType:get(type).text_color or "#aaaaaa#", dam), false)
+			game:delayedLogDamage(src or self, self, 0, ("%s(%d to the dream)#LAST#"):tformat(DamageType:get(type).text_color or "#aaaaaa#", dam), false)
 			dam = 0						
 			self:forceUseTalent(self.T_REK_MTYR_WHISPERS_JOLT, {ignore_energy=true})
 			game:playSoundNear(self, "talents/rek_false_death")
@@ -220,6 +220,6 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[If you suffer damage that would kill you, you instead awake from a dream of dying, setting your insanity to zero and becoming immune to damage for the rest of the turn.]]):format()
+		return ([[If you suffer damage that would kill you, you instead awake from a dream of dying, setting your insanity to zero and becoming immune to damage for the rest of the turn.]]):tformat()
 	end,
 }

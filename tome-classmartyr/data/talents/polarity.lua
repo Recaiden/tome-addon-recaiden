@@ -13,7 +13,7 @@ Positive insanity effects will have at least %d / 50 power and be %d%% more comm
 Negative insanity effects will have at least %d / 50 power but be %d%% less common.
 
 (Insanity effects normally have 50 power at 100 insanity)
-]]):format(t.getMinBonus(self, t), t.getRerollChance(self, t) / 2, t.getMinPenalty(self, t), t.getRerollChance(self, t) / 2)
+]]):tformat(t.getMinBonus(self, t), t.getRerollChance(self, t) / 2, t.getMinPenalty(self, t), t.getRerollChance(self, t) / 2)
    end,
 }
 
@@ -48,7 +48,7 @@ Moving at this speed triggers Out of Phase effects, as if you had teleported.
 
 #INSANE_GREEN#Minimum Insanity: 10#LAST#
 
-#{italic}#Perfection is not 'going faster'.  Perfection is 'already being there'.#{normal}#]]):format(t.getMinSteps(self, t), t.getMaxSteps(self, t))
+#{italic}#Perfection is not 'going faster'.  Perfection is 'already being there'.#{normal}#]]):tformat(t.getMinSteps(self, t), t.getMaxSteps(self, t))
 	end,
 }
 
@@ -70,7 +70,7 @@ newTalent{
    end,
    info = function(self, t)
       return ([[When you suffer a negative insanity effect, the mad visions grant you Inspiration, increasing your Mindpower by %d for %d turns.  This stacks up to %d times.
-]]):format(t.getPower(self, t), t.getDuration(self, t), t.getMaxStacks(self, t))
+]]):tformat(t.getPower(self, t), t.getDuration(self, t), t.getMaxStacks(self, t))
    end,
 }
 
@@ -109,6 +109,6 @@ newTalent{
       return ([[Consume your Inspiration to drag a target into the depths of insanity(#SLATE#Mindpower vs. Mental#LAST#), reducing their damage dealt by %d%% and increasing the cooldowns of any talents they use by %d%% for the next %d turns.
 
 Mindpower: increases effects
-]]):format(100*t.getPower(self, t), 100*t.getPower(self, t), t.getDuration(self, t))
+]]):tformat(100*t.getPower(self, t), 100*t.getPower(self, t), t.getDuration(self, t))
    end,
 }

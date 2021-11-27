@@ -105,7 +105,7 @@ newTalent{
 		return ([[Inform an enemy about the true bleak vistas of reality, confusing (#SLATE#Mindpower vs. Mental#LAST#) them for %d turns (%d confusion power).  The range of this talent will increase with the firing range of a ranged weapon in your main set or offset (but is always at least 3).
 
 #ORANGE#Sanity Bonus:#LAST# Take advantage of their moment of realization to throw a sucker punch or other sneak attack, dealing %d%% unarmed damage.
-]]):format(t.getDuration(self, t), t.getPower(self, t), 100*t.getDamage(self, t))
+]]):tformat(t.getDuration(self, t), t.getPower(self, t), 100*t.getDamage(self, t))
 	end,
 }
 
@@ -122,7 +122,7 @@ newTalent{
 Mindpower: improves damage
 
 #ORANGE#Sanity Bonus:#LAST# Unnerve also reduces the victim's physical, spell, and mind power by %d.
-Mindpower: improves stat reduction]]):format(t.getDamage(self, t), t.getPowerDrain(self, t))
+Mindpower: improves stat reduction]]):tformat(t.getDamage(self, t), t.getPowerDrain(self, t))
    end,
 }
 
@@ -137,7 +137,7 @@ newTalent{
       return ([[The truth weighs heavily on the mind.  Each turn, unnerved targets have a %d%% chance that their cooling down talents will increase in cooldown.
 
 #ORANGE#Sanity Bonus:#LAST# Whenever an Unnerved character acts, you may gain a small amount of insanity (based on how Confused they are).
-]]):format(t.getPitiless(self, t))
+]]):tformat(t.getPitiless(self, t))
    end,
 }
 
@@ -152,6 +152,6 @@ newTalent{
    info = function(self, t)
       return ([[Your Unnerve ability can penetrate confusion immunity, with %d%% reduced effectiveness. 
 
-#ORANGE#Sanity Bonus:#LAST# Your Unnerve affects a %d radius ball rather than a single target.]]):format(t.getReduction(self, t), t.getRadius(self, t))
+#ORANGE#Sanity Bonus:#LAST# Your Unnerve affects a %d radius ball rather than a single target.]]):tformat(t.getReduction(self, t), t.getRadius(self, t))
    end,
 }
