@@ -29,11 +29,56 @@ function _M:use(item)
          self.actor.easy_mode_lifes = self.actor.easy_mode_lifes + 1
       end
       game.permadeath = game.PERMADEATH_MANY
-      self:eidolonPlane()
+			
+			self.actor:attr("easy_mode_lifes", -1)
+			local nb = self.actor:attr("easy_mode_lifes") and self.actor:attr("easy_mode_lifes") or 0
+			local style
+			if(nb > 0) then style = ("#LIGHT_RED#You have %d life(s) left."):tformat(nb)
+			else style = ("#LIGHT_RED#You have no more lives left."):tformat() end
+			game.log(style)
+			
+			local is_exploration = game.permadeath == game.PERMADEATH_INFINITE
+			self:cleanActor(self.actor)
+			self:resurrectBasic(self.actor, "eidolon_plane")
+			for e, _ in pairs(game.party.members) do if e ~= self.actor then
+					self:cleanActor(e)
+			end end
+			for uid, e in pairs(game.level.entities) do
+				if not is_exploration or game.party:hasMember(e) then
+					self:restoreResources(e)
+				end
+			end
+
+			game.party:goToEidolon(self.actor)
+
+			game.log("#LIGHT_RED#From the brink of death you seem to be yanked to another plane.")
+			game.player:updateMainShader()
+			if not config.settings.cheat then game:onTickEnd(function() game:saveGame() end) end
+			
+			self.actor:checkTwoHandedPenalty()
    elseif act == "drop_to_explore" then
-      self.actor:attr("infinite_lifes", 1)
-      game.permadeath = game.PERMADEATH_INFINITE
-      self:eidolonPlane()
+		 self.actor:attr("infinite_lifes", 1)
+		 game.permadeath = game.PERMADEATH_INFINITE
+		 
+		 local is_exploration = game.permadeath == game.PERMADEATH_INFINITE
+		 self:cleanActor(self.actor)
+		 self:resurrectBasic(self.actor, "eidolon_plane")
+		 for e, _ in pairs(game.party.members) do if e ~= self.actor then
+				 self:cleanActor(e)
+		 end end
+		 for uid, e in pairs(game.level.entities) do
+			 if not is_exploration or game.party:hasMember(e) then
+				 self:restoreResources(e)
+			 end
+		 end
+		 
+		 game.party:goToEidolon(self.actor)
+		 
+		 game.log("#LIGHT_RED#From the brink of death you seem to be yanked to another plane.")
+		 game.player:updateMainShader()
+		 if not config.settings.cheat then game:onTickEnd(function() game:saveGame() end) end
+		 
+		 self.actor:checkTwoHandedPenalty()
    else
       return base_use(self, item)
    end
