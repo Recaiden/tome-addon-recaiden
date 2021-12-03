@@ -633,3 +633,109 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+newEffect{
+	name = "REK_HEKA_OCULATUS", image = "talents/rek_heka_intrusion_eye.png",
+	desc = _t"Eye Shield",
+	long_desc = function(self, eff) return ("The target's reduces all incoming damage by %d."):tformat(eff.power) end,
+	type = "physical",
+	subtype = { arcane=true },
+	status = "beneficial",
+	parameters = { power=5 },
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("flat_damage_armor", { all = eff.power })
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("flat_damage_armor", eff.tmpid)
+	end,
+}
+
+newEffect{
+	name = "REK_HEKA_CRAB_GRAB", image = "talents/rek_heka_intrusion_claw.png",
+	desc = _t"pinned by a crab claw",
+	long_desc = function(self, eff) return _t"The target is pinned by a crab claw, unable to move and taking damage." end,
+	type = "physical",
+	subtype = { pin=true },
+	status = "detrimental",
+	parameters = {power = 5},
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("never_move", 1)
+
+		if not self.add_displays then
+			self.add_displays = { Entity.new{image='npc/bone_grab_pin.png', display=' ', display_on_seen=true } }
+			eff.added_display = true
+		end
+		self:removeAllMOs()
+		game.level.map:updateMap(self.x, self.y)
+	end,
+	deactivate = function(self, eff)
+		if eff.added_display then self.add_displays = nil end
+		self:removeAllMOs()
+		game.level.map:updateMap(self.x, self.y)
+
+		self:removeTemporaryValue("never_move", eff.tmpid)
+	end,
+	on_timeout = function(self, eff)
+		DamageType:get(DamageType.PHYSICAL).projector(eff.src or self, self.x, self.y, DamageType.PHYSICAL, eff.power)
+	end,
+}
+
+newEffect{
+	name = "REK_HEKA_FUSILLADE", image = "talents/rek_heka_intrusion_spider.png",
+	desc = _t"Arachnofusillade",
+	long_desc = function(self, eff) return ("Each turn, stab the ground, causing 2 random explosions doing %0.1f physical damage in radius 1."):tformat(eff.dam) end,
+	type = "magical",
+	subtype = { arcane=true },
+	status = "beneficial",
+	parameters = { dam=10 },
+	on_gain = function(self, err) return _t"#Target# begins stabbing wildly through a breach in reality!", _t"+Intrusion" end,
+	on_lose = function(self, err) return _t"The breach around #Target# seals itself.", _t"-Intrusion" end,
+	on_timeout = function(self, eff)
+		if game.zone.short_name.."-"..game.level.level ~= eff.level then return end
+
+		for i=1, 2 do
+			local spot = rng.table(eff.list)
+			if not spot or not spot.x then return end
+			self:project({type="ball", x=spot.x, y=spot.y, radius=1, selffire=self:spellFriendlyFire()}, spot.x, spot.y, DamageType.REK_HEKA_PHYSICAL_STUN, self:spellCrit(eff.dam))
+			game.level.map:particleEmitter(spot.x, spot.y, 2, "generic_sploom", {rm=150, rM=180, gm=150, gM=180, bm=150, bM=180, am=80, aM=150, radius=1, basenb=120})
+		end
+		game:playSoundNear(self, "talents/arcane")
+	end,
+	on_merge = function(self, old_eff, new_eff)
+		new_eff.dur = new_eff.dur + old_eff.dur
+		if old_eff.particle then game.level.map:removeParticleEmitter(old_eff.particle) end
+		new_eff.particle = Particles.new("circle", new_eff.radius, {a=150, speed=0.15, img="aether_breach", radius=new_eff.radius})
+		new_eff.particle.zdepth = 6
+		game.level.map:addParticleEmitter(new_eff.particle, new_eff.x, new_eff.y)		
+		return new_eff
+	end,
+	activate = function(self, eff)
+		eff.particle = Particles.new("circle", eff.radius, {a=150, speed=0.15, img="aether_breach", radius=eff.radius})
+		eff.particle.zdepth = 6
+		game.level.map:addParticleEmitter(eff.particle, eff.x, eff.y)
+
+		local spot = {x=eff.x, y=eff.y}
+		self:project({type="ball", x=spot.x, y=spot.y, radius=1, selffire=self:spellFriendlyFire()}, spot.x, spot.y, DamageType.REK_HEKA_PHYSICAL_STUN, self:spellCrit(eff.dam))
+		game.level.map:particleEmitter(spot.x, spot.y, 2, "generic_sploom", {rm=150, rM=180, gm=150, gM=180, bm=150, bM=180, am=80, aM=150, radius=1, basenb=120})
+	end,
+	deactivate = function(self, eff)
+		if game.zone.short_name.."-"..game.level.level ~= eff.level then return end
+		game.level.map:removeParticleEmitter(eff.particle)
+	end,
+}
+
+newEffect{
+	name = "REK_HEKA_SPEARED", image = "talents/rek_heka_intrusion_hellyfish.png",
+	desc = _t"Numbed",
+	long_desc = function(self, eff) return ("The target is weakened by painful stinging, all damage it does is reduced by %d%%."):tformat(eff.power) end,
+	type = "physical",
+	subtype = { hands=true,},
+	status = "detrimental",
+	parameters = {power=10},
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("numbed", eff.power)
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("numbed", eff.tmpid)
+	end,
+}

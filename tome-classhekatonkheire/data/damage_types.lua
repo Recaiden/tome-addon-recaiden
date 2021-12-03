@@ -98,6 +98,20 @@ newDamageType{
 	end,
 }
 
+-- physical damage with physical numbing
+newDamageType{
+	name = _t("stinging", "damage type"), type = "REK_HEKA_PHYSICAL_NUMB", text_color = "#GREY#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			target:setEffect(target.EFF_REK_HEKA_SPEARED, dam.dur, {power=dam.numb, apply_power=src:combatSpellpower()})
+		end
+		return DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
+	end,
+}
+
 -- arcane damage with slow
 newDamageType{
 	name = _t("rift", "damage type"), type = "REK_HEKA_ARCANE_SLOW", text_color = "#WHITE#",
@@ -109,6 +123,24 @@ newDamageType{
 		local target = game.level.map(x, y, Map.ACTOR)
 		if target then
 			target:setEffect(target.EFF_SLOW, 3, {power=dam.power, no_ct_effect=true})
+		end
+	end,
+}
+
+-- Physical + spellpower stun
+newDamageType{
+	name = _t("spider stab", "damage type"), type = "REK_HEKA_PHYSICAL_STUN",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			if target:canBe("stun") then
+				target:setEffect(target.EFF_STUNNED, 2, {src=src, apply_power=src:combatSpellpower(), min_dur=1})
+			else
+				game.logSeen(target, "%s resists the stun!", target:getName():capitalize())
+			end
 		end
 	end,
 }

@@ -243,3 +243,9 @@ if not Talents.talents_types_def["spell/oubliette"] then
    newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/oubliette", name = _t("Oubliette", "talent type"), description = _t"Isn't it terrible, to die imprisoned and alone?" }
    load("/data-classhekatonkheire/talents/argosine-oubliette.lua")
 end
+
+-- kharybdian
+if not Talents.talents_types_def["spell/intrusion"] then
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/intrusion", name = _t("Intrusion", "talent type"), description = _t"Breach the Way and wreak destruction upon the world." }
+   load("/data-classhekatonkheire/talents/kharyb-intrusion.lua")
+end
