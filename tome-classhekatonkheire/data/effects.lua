@@ -739,3 +739,16 @@ newEffect{
 		self:removeTemporaryValue("numbed", eff.tmpid)
 	end,
 }
+
+
+newEffect{
+	name = "REK_HEKA_LULLABY", image = "talents/rek_heka_oceansong_fail.png",
+	desc = _t"Lullaby Distraction",
+	long_desc = function(self, eff) return ("The target can't think straight, causing their actions to fail %d%% of the time."):tformat(eff.power) end,
+	type = "other",
+	subtype = { sound=true },
+	status = "detrimental",
+	parameters = {},
+	activate = function(self, eff) self:effectTemporaryValue(eff, "talent_fail_chance", eff.power) end,
+	deactivate = function(self, eff) end,
+}

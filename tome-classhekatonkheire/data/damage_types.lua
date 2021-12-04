@@ -144,3 +144,37 @@ newDamageType{
 		end
 	end,
 }
+
+-- Mind + potential talentfail
+newDamageType{
+	name = _t("mind", "damage type"), type = "REK_HEKA_MIND_CRIPPLE",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		DamageType:get(DamageType.MIND).projector(src, x, y, DamageType.MIND, dam, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target and src and src.knowTalent and src:knowTalent(src.T_REK_HEKA_OCEANSONG_FAIL) then
+			local power = src:callTalent(src.T_REK_HEKA_OCEANSONG_FAIL, "getFail")
+			target:setEffect(target.EFF_REK_HEKA_LULLABY, 1, {src=src, apply_power=src:combatSpellpower(), apply_save="combatSpellResist", power=power, no_ct_effect=true})
+		end
+	end,
+}
+
+
+-- Mind + spellpower confuse
+newDamageType{
+	name = _t("music", "damage type"), type = "REK_HEKA_MIND_HARMONY",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		DamageType:get(DamageType.REK_HEKA_MIND_CRIPPLE).projector(src, x, y, DamageType.REK_HEKA_MIND_CRIPPLE, dam, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			if target:canBe("confusion") then
+				target:setEffect(target.EFF_CONFUSED, 3, {src=src, apply_power=src:combatSpellpower(), power=33})
+			else
+				game.logSeen(target, "%s resists the confusion!", target:getName():capitalize())
+			end
+		end
+	end,
+}

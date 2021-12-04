@@ -246,6 +246,11 @@ end
 
 -- kharybdian
 if not Talents.talents_types_def["spell/intrusion"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/intrusion", name = _t("Intrusion", "talent type"), description = _t"Breach the Way and wreak destruction upon the world." }
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/intrusion", name = _t("Intrusion", "talent type"), description = _t"Breach the Paths  and wreak destruction upon the world." }
    load("/data-classhekatonkheire/talents/kharyb-intrusion.lua")
+end
+
+if not Talents.talents_types_def["spell/oceansong"] then
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/oceansong", name = _t("Oceansong", "talent type"), description = _t"Call out from under the sea, and they will return." }
+   load("/data-classhekatonkheire/talents/kharyb-oceansong.lua")
 end
