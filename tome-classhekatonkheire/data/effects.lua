@@ -752,3 +752,74 @@ newEffect{
 	activate = function(self, eff) self:effectTemporaryValue(eff, "talent_fail_chance", eff.power) end,
 	deactivate = function(self, eff) end,
 }
+
+newEffect{
+	name = "REK_HEKA_OVERWATCH", image = "talents/rek_heka_page_regen.png",
+	desc = _t"Carnigenesis",
+	long_desc = function(self, eff) return ("This creature is rapidly gaining hands."):tformat() end,
+	type = "physical",
+	subtype = { hands=true },
+	status = "beneficial",
+	parameters = { hands=5, power=5 },
+	activate = function(self, eff)
+		eff.hands_base = eff.hands
+		self:effectTemporaryValue(eff, "combat_spellpower", eff.power)
+		eff.hid = self:addTemporaryValue("hands_regen", eff.hands)
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("hands_regen", eff.hid)
+	end,
+	on_timeout = function(self, eff)
+		self:removeTemporaryValue("hands_regen", eff.hid)
+		eff.hands = eff.hands + eff.hands_base
+		eff.hid = self:addTemporaryValue("hands_regen", eff.hands)
+	end,
+}
+
+newEffect{
+	name = "REK_HEKA_PHASE_OUT", image = "talents/rek_heka_page_flip.png",
+	desc = _t"Total Phase Shift",
+	long_desc = function(self, eff) return ("Sealed away into the warped realm of a kharybdian, unable to act but completely invulnerable."):tformat() end,
+	type = "magical",
+	subtype = { warp=true, time=true },
+	status = "detrimental",
+	parameters = { },
+	tick_on_timeless = true,
+	on_gain = function(self, err) return _t"#Target# is drawn into the other place!", _t"+Phase Shift" end,
+	on_lose = function(self, err) return _t"#Target# returns to normal space.", _t"-Phase Shift" end,
+	activate = function(self, eff)
+		eff.iid = self:addTemporaryValue("invulnerable", 1)
+		eff.sid = self:addTemporaryValue("time_prison", 1)
+		eff.tid = self:addTemporaryValue("no_timeflow", 1)
+		eff.imid = self:addTemporaryValue("status_effect_immune", 1)
+		if core.shader.active(4) then
+			eff.particle1 = self:addParticles(Particles.new("shader_ring_rotating", 1, {rotation=0, radius=1.1, img="arcanegeneric"}, {type="circular_flames", ellipsoidalFactor={1,2}, time_factor=3000, noup=2.0}))
+			eff.particle1.toback = true
+			eff.particle2 = self:addParticles(Particles.new("shader_ring_rotating", 1, {rotation=0, radius=1.1, img="arcanegeneric"}, {type="circular_flames", ellipsoidalFactor={1,2}, time_factor=3000, noup=1.0}))
+		else
+			eff.particle1 = self:addParticles(Particles.new("time_prison", 1))
+		end
+		self.energy.value = 0
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("invulnerable", eff.iid)
+		self:removeTemporaryValue("time_prison", eff.sid)
+		self:removeTemporaryValue("no_timeflow", eff.tid)
+		self:removeTemporaryValue("status_effect_immune", eff.imid)
+		if eff.particle1 then self:removeParticles(eff.particle1) end
+		if eff.particle2 then self:removeParticles(eff.particle2) end
+	end,
+	on_timeout = function(self, eff)
+		-- Reduce cooldowns
+		for tid, _ in pairs(self.talents_cd) do
+			local t = self:getTalentFromId(tid)
+			if t then
+				if not t.fixed_cooldown then
+					self.talents_cd[tid] = self.talents_cd[tid] - 2
+				else
+					self.talents_cd[tid] = self.talents_cd[tid] - 1
+				end
+			end
+		end
+	end,
+}
