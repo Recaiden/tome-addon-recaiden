@@ -65,9 +65,9 @@ function _M:combatGetResistPen(type, straight)
 	return pen
 end
 
-local base_combatGetDamageIncrease = _M.combatGetResistPen
+local base_combatGetDamageIncrease = _M.combatGetDamageIncrease
 function _M:combatGetDamageIncrease(type, straight)
-	local amp = base_combatGetResistPen(self, type, straight)
+	local amp = base_combatGetDamageIncrease(self, type, straight)
 	if self.summoner and self.summoner.knowTalent and self.summoner:knowTalent(self.summoner.T_REK_HEKA_WATCHER_HATCHERY) then
 		local highest = self.summoner.inc_damage.all or 0
 		for kind, v in pairs(self.summoner.inc_damage) do

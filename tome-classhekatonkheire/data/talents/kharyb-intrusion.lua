@@ -21,7 +21,7 @@ newTalent{
 		if not target then return end
 		
 		-- Project our damage
-		self:project(tg, x, y, DamageType.PHYSICALBLEED, self:spellCrit(t.getDamage(self, t)))
+		self:project(tg, x, y, DamageType.PHYSICALBLEED, self:spellCrit(t.getDamage(self, t)*getKharybdianTempo(self, t.id)))
 		
 		game.level.map:particleEmitter(x, y, 1, "otherside_teleport_gate_in", nil, nil, 15)
 		game:playSoundNear(self, "talents/arcane")
@@ -65,7 +65,7 @@ newTalent{
 		if not target then return end
 		
 		if target:canBe("pin") then
-			target:setEffect(target.EFF_REK_HEKA_CRAB_GRAB, t.getDuration(self, t), {src=self, power=t.getDamage(self, t)})
+			target:setEffect(target.EFF_REK_HEKA_CRAB_GRAB, t.getDuration(self, t), {src=self, power=t.getDamage(self, t)*getKharybdianTempo(self, t.id)})
 		end
 
 		return true
@@ -100,7 +100,7 @@ newTalent{
 		local list = {}
 		self:project(tg, x, y, function(px, py) list[#list+1] = {x=px, y=py} end)
 
-		self:setEffect(self.EFF_REK_HEKA_FUSILLADE, t.getDuration(self, t), {src=self, x=x, y=y, radius=tg.radius, list=list, level=game.zone.short_name.."-"..game.level.level, dam=t.getDamage(self, t)})
+		self:setEffect(self.EFF_REK_HEKA_FUSILLADE, t.getDuration(self, t), {src=self, x=x, y=y, radius=tg.radius, list=list, level=game.zone.short_name.."-"..game.level.level, dam=t.getDamage(self, t)*getKharybdianTempo(self, t.id)})
 
 		game:playSoundNear(self, "talents/arcane")
 		return true
@@ -129,7 +129,7 @@ newTalent{
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
-		self:project(tg, x, y, DamageType.REK_HEKA_PHYSICAL_NUMB, {dur=t.getDuration(self, t), numb=t.getNumb(self, t), dam=self:spellCrit(t.getDamage(self, t))})
+		self:project(tg, x, y, DamageType.REK_HEKA_PHYSICAL_NUMB, {dur=t.getDuration(self, t), numb=t.getNumb(self, t), dam=self:spellCrit(t.getDamage(self, t)*getKharybdianTempo(self, t.id))})
 
 		game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_earth", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
 		game:playSoundNear(self, "talents/fireflash")

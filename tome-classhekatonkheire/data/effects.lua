@@ -754,7 +754,7 @@ newEffect{
 }
 
 newEffect{
-	name = "REK_HEKA_OVERWATCH", image = "talents/rek_heka_page_regen.png",
+	name = "REK_HEKA_HAND_REGEN", image = "talents/rek_heka_page_regen.png",
 	desc = _t"Carnigenesis",
 	long_desc = function(self, eff) return ("This creature is rapidly gaining hands."):tformat() end,
 	type = "physical",
@@ -821,5 +821,41 @@ newEffect{
 				end
 			end
 		end
+	end,
+}
+
+newEffect{
+	name = "REK_HEKA_TEMPO", image = "talents/rek_heka_bloodtide_buff.png",
+	desc = _t"Tidal Tempo",
+	long_desc = function(self, eff)
+		local str = ("Ready to cast a spell for increased damage | "):tformat(eff.stacks)
+		for tid, time in pairs(eff.talents) do
+			if time > 0 then
+				local t = self:getTalentById(tid)
+				str = str..(" %d |"):tformat(t.name)
+			end
+		return str
+	end,
+	type = "other",
+	subtype = { hands=true },
+	status = "beneficial",
+	parameters = { },
+	on_merge = function(self, old_eff, new_eff, e)
+		old_eff.dur = new_eff.dur
+		old_eff.talents[new_eff.tid] = 1
+
+		new_eff.stacks = util.bound(old_eff.stacks + new_eff.stacks, 1, new_eff.max_stacks)
+		return old_eff
+	end,
+	activate = function(self, eff)
+	end,
+	deactivate = function(self, eff)
+	end,
+	on_timeout = function(self, eff)
+		for tid, time in pairs(eff.talents) do
+			eff.talents[tid] = time - 1
+			if time - 1 <= 0 then
+				eff.talents[tid] = nil
+			end
 	end,
 }

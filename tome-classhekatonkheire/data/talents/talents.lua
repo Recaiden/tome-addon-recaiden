@@ -161,6 +161,12 @@ countEyes = function(self)
 	return eyes
 end
 
+getKharybdianTempo = function(self, tid)
+	local eff = self:hasEffect(self.EFF_REK_HEKA_TEMPO)
+	if eff.talents[tid] then return self:callTalent(self.T_REK_HEKA_BLOODTIDE_BUFF, "getMultiplier") or 1.0
+	if not eff then return 1.0
+end
+
 -- shared
 if not Talents.talents_types_def["technique/helping-hands"] then
    newTalentType{ allow_random=true, type="technique/helping-hands", name = _t("Helping Hands", "talent type"), description = _t"Many hands make light work." }
@@ -245,6 +251,11 @@ if not Talents.talents_types_def["spell/oubliette"] then
 end
 
 -- kharybdian
+if not Talents.talents_types_def["spell/bloodtide"] then
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/bloodtide", name = _t("Bloodtide", "talent type"), description = _t"In and out, high and low, as steady as can be." }
+   load("/data-classhekatonkheire/talents/kharyb-bloodtide.lua")
+end
+
 if not Talents.talents_types_def["spell/intrusion"] then
    newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/intrusion", name = _t("Intrusion", "talent type"), description = _t"Breach the Paths  and wreak destruction upon the world." }
    load("/data-classhekatonkheire/talents/kharyb-intrusion.lua")
@@ -253,4 +264,9 @@ end
 if not Talents.talents_types_def["spell/oceansong"] then
    newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/oceansong", name = _t("Oceansong", "talent type"), description = _t"Call out from under the sea, and they will return." }
    load("/data-classhekatonkheire/talents/kharyb-oceansong.lua")
+end
+
+if not Talents.talents_types_def["spell/other-page"] then
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, generic=true, type="spell/other-page", name = _t("Other Page", "talent type"), description = _t"Look forward and back, it's all here" }
+   load("/data-classhekatonkheire/talents/page.lua")
 end

@@ -55,4 +55,23 @@ function _M:takeHit(value, src, death_note)
 	return dead, val
 end
 
+local base_canBe = _M.canBe
+function _M:canBe(what, eid)
+	if self:attr("negative_status_effect_immune") or self:attr("physical_negative_status_effect_immune") then
+		return base_canBe(self, what, eid)
+	end
+	if self:knowTalent(self.T_REK_HEKA_BLOODTIDE_WATERS) and what == "stun" then
+		return false
+	end
+	return base_canBe(self, what, eid)
+end
+
+local base_recomputeGlobalSpeed = _M.recomputeGlobalSpeed
+function _M:recomputeGlobalSpeed()
+	if self:knowTalent(self.T_REK_HEKA_BLOODTIDE_SHIELD) then
+		return 1.0
+	end
+	return base_recomputeGlobalSpeed(self)
+end
+
 return _M

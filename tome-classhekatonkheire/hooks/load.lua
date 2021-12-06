@@ -44,14 +44,14 @@ ActorResource:defineResource ("Hands", "hands", "T_HANDS_POOL", "hands_regen", "
 })
 
 class:bindHook("ToME:load", function(self, data)
-                  Talents:loadDefinition('/data-classhekatonkheire/talents/talents.lua')
-                  ActorTemporaryEffects:loadDefinition('/data-classhekatonkheire/effects.lua')
-                  Birther:loadDefinition("/data-classhekatonkheire/birth/classes/hekatonkhiere.lua")
-									Birther:loadDefinition("/data-classhekatonkheire/birth/classes/argosine.lua")
-									Birther:loadDefinition("/data-classhekatonkheire/birth/classes/kharybdian.lua")
-                  DamageType:loadDefinition("/data-classhekatonkheire/damage_types.lua")
-									ActorAI:loadDefinition("/data-classhekatonkheire/ai")
-                            end)
+								 Talents:loadDefinition('/data-classhekatonkheire/talents/talents.lua')
+								 ActorTemporaryEffects:loadDefinition('/data-classhekatonkheire/effects.lua')
+								 Birther:loadDefinition("/data-classhekatonkheire/birth/classes/hekatonkhiere.lua")
+								 Birther:loadDefinition("/data-classhekatonkheire/birth/classes/argosine.lua")
+								 Birther:loadDefinition("/data-classhekatonkheire/birth/classes/kharybdian.lua")
+								 DamageType:loadDefinition("/data-classhekatonkheire/damage_types.lua")
+								 ActorAI:loadDefinition("/data-classhekatonkheire/ai")
+end)
 
 -- class:bindHook("Entity:loadList", function(self, data)
 -- 		  if data.file == "/data/general/objects/world-artifacts.lua" then

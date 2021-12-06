@@ -56,4 +56,13 @@ function _M:playerFOV()
 	end
 end
 
+local base_onTalentCooledDown = _M:onTalentCooledDown
+function _M:onTalentCooledDown(tid)
+	if not self:knowTalent(tid) then return end
+	base_onTalentCooledDown(self, tid)
+	if self:knowTalent(self.T_REK_HEKA_BLOODTIDE_BUFF) then
+		local t = self:getTalentFromId(tid)
+		game.flyers:add(x, y, 30, -0.3, -3.5, ("Tempo: %s!"):tformat(t.name:capitalize()), {255,0,00})
+		self:setEffect(self.EFF_REK_HEKA_TEMPO, 1, {src=self, talents={[tid]=1}})
+	end
 return _M
