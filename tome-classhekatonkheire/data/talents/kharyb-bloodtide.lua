@@ -2,6 +2,7 @@ newTalent{
 	name = "Pulse Shield", short_name = "REK_HEKA_BLOODTIDE_SHIELD",
 	type = {"spell/bloodtide", 1}, require = mag_req1, points = 5,
 	mode= "passive",
+	no_unlearn_last = true,
 	getPercentage = function(self, t) return self:combatTalentLimit(t, 100, 45, 90) end,
 	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, tmp, no_martyr)
 		local false_speed = 1
@@ -12,10 +13,13 @@ newTalent{
 
 		if false_speed == 1.0 then return {dam=dam} end
 
-		local effective_speed = t:_getPercentage() * false_speed / 100
+		local percentage = t:_getPercentage(self)
+		local delta = false_speed - 1
+		local delta_eff = false_speed >= 1.0 and delta * (percentage / 100) or delta * (100/(100+percentage))
+		local effective_speed =  1 + delta_eff
 
 		local amped = dam / effective_speed
-		if amped < dam then game:delayedLogDamage(src, self, 0, ("#WHITE#(%dam-amped to pulse shield)#LAST#"):format(dam-amped), false)
+		if amped < dam then game:delayedLogDamage(src, self, 0, ("#WHITE#(%d to pulse shield)#LAST#"):format(dam-amped), false)
 		else
 			game:delayedLogDamage(src, self, 0, ("#WHITE#(%d extra from pulse shield)#LAST#"):format(amped-dam), false)
 		end
@@ -41,11 +45,11 @@ newTalent{
 	name = "Relentless Waters", short_name = "REK_HEKA_BLOODTIDE_WATERS",
 	type = {"spell/bloodtide", 3}, require = mag_req3, points = 5,
 	mode = "passive",
-	cooldown = function(self, t) return math.floor(self:combatTalentLimit(8, 20, 10)) end,
-	callbackOnTemporaryEffect = function(self, t, eff_id, e, p)
-		if self:e.subtype(stun) and not self:isTalentCoolingDown(t) then
+	cooldown = function(self, t) return math.floor(self:combatTalentLimit(t, 8, 20, 10)) end,
+	callbackOnTemporaryEffectAdd = function(self, t, eff_id, e, p)
+		if e.subtype and e.subtype.stun and not self:isTalentCoolingDown(t) then
 			self:removeEffect(eff_id)
-			self:startTalentCooldown(t, math.ceil(self:getTalentCooldown(t) * (1 - self.stun_immune or 0)))
+			self:startTalentCooldown(t, math.ceil(self:getTalentCooldown(t) * (1 - (self.stun_immune or 0))))
 		end
 	end,
 	info = function(self, t)
@@ -69,6 +73,7 @@ newTalent{
 		for tid, _ in pairs(eff.talents) do
 			eff.talents[tid] = eff.talents[tid] + 1
 		end
+		eff.dur = eff.dur + 1
 	end,
 	on_pre_use = function(self, t, silent)
 		if self:hasEffect(self.EFF_REK_HEKA_TEMPO) then return true end
@@ -83,7 +88,7 @@ newTalent{
 		local _ _, x, y = self:canProject(tg, x, y)
 		local target = game.level.map(x, y, Map.ACTOR)
 		if not target then return end
-		local eff = self:hasEffect(self._EFF_REK_HEKA_TEMPO)
+		local eff = self:hasEffect(self.EFF_REK_HEKA_TEMPO)
 		if not eff then return end
 		for tid, _ in pairs(eff.talents) do
 			self:forceUseTalent(tid, {ignore_energy=true, force_target=target})
@@ -92,6 +97,6 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[If you wait on the turn a Kharybdian talent comes off cooldown, it is paused, and will count as having just become ready next turn as well.  Use this talent to cast all readied talents at once, at the same target.]]):tformat(t.getDuration(self, t), t.getChance(self, t), -t.getPowerChange(self, t))
+		return ([[If you wait on the turn a Kharybdian talent comes off cooldown, it is paused, and will count as having just become ready next turn as well.  Use this talent to cast all readied talents at once, at the same target.]]):tformat()
 	end,
 }

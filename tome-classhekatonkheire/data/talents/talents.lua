@@ -163,8 +163,16 @@ end
 
 getKharybdianTempo = function(self, tid)
 	local eff = self:hasEffect(self.EFF_REK_HEKA_TEMPO)
-	if eff.talents[tid] then return self:callTalent(self.T_REK_HEKA_BLOODTIDE_BUFF, "getMultiplier") or 1.0
-	if not eff then return 1.0
+	if not eff then return 1.0 end
+	if eff.talents[tid] then return self:callTalent(self.T_REK_HEKA_BLOODTIDE_BUFF, "getMultiplier") or 1.0 end
+	return 1.0
+end
+
+investHands = function(self, t)
+	game:onTickEnd(function() 
+			self:setEffect(self.EFF_REK_HEKA_INVESTED, t:_getDuration(self),
+										 {investitures={{power=util.getval(t.hands, self, t)}}, src=self})
+	end)
 end
 
 -- shared

@@ -18,7 +18,7 @@ newBirthDescriptor{
 	not_on_random_boss = true,
 	talents_types = {
 		-- base talents
-		--["spell/bloodtide"]={true, 0.3},
+		["spell/bloodtide"]={true, 0.3},
 		["spell/intrusion"]={true, 0.3},
 		["spell/oceansong"]={true, 0.3},
 		--["spell/chronorium"]={true, 0.3},
@@ -32,7 +32,7 @@ newBirthDescriptor{
 		--generics
 		["technique/combat-training"]={true, 0.0},
 		["cunning/survival"]={true, 0.3},
-		--["spell/other-page"]={true, 0.3},
+		["spell/other-page"]={true, 0.3},
 		["spell/otherness"]={true, 0.0},
 	},
 	birth_example_particles = {
@@ -42,7 +42,7 @@ newBirthDescriptor{
 	},
 	talents = {
 		[ActorTalents.T_REK_HEKA_INTRUSION_EYE] = 1,
-		--[ActorTalents.T_REK_HEKA_SYBARITE_ROYAL_ROAD] = 1,
+		[ActorTalents.T_REK_HEKA_BLOODTIDE_SHIELD] = 1,
 		--[ActorTalents.T_REK_HEKA_VEILED_LASHING] = 1,
 		
 		--[ActorTalents.T_LIGHT_ARMOUR_TRAINING] = 1,

@@ -27,8 +27,10 @@ newTalent{
 		local charms = {"cd", "buff", "heal", "evade", "pen", "dam"}
 		local charm = rng.table(charms)
 		if charm == "cd" then
+			game.logPlayer(self, "%s is refreshed!", self:getName():capitalize())
 			self:talentCooldownFilter(nil, t:_getCharmCount(self), 2, true)
 		elseif charm == "buff" then
+			game.logPlayer(self, "%s's powers are extended!", self:getName():capitalize())
 			local eff_ids = self:effectsFilter(function(eff)
 				if eff.status == "beneficial" and eff.type ~= "other" then return true end
 			end, t:_getCharmCount(self))
@@ -39,14 +41,18 @@ newTalent{
 				end
 			end
 		elseif charm == "heal" then
+			game.logPlayer(self, "%s is healed!", self:getName():capitalize())
 			self:attr("allow_on_heal", 1)
-			self:heal(self:spellCrit(t:_getCharmPower(self)), self)
+			self:heal(self:spellCrit(20+t:_getCharmPower(self)*2.6), self)
 			self:attr("allow_on_heal", -1)		
 		elseif charm == "evade" then
+			game.logPlayer(self, "%s begins evading!", self:getName():capitalize())
 			self:setEffect(self.EFF_ITEM_CHARM_EVASIVE, 2, {chance = t:_getCharmPower(self)*0.3})
 		elseif charm == "pen" then
+			game.logPlayer(self, "%s becomes more piercing!", self:getName():capitalize())
 			self:setEffect(self.EFF_ITEM_CHARM_PIERCING, 2, {penetration = t:_getCharmPower(self)*0.2})
 		elseif charm == "dam" then
+			game.logPlayer(self, "%s becomes more powerful!", self:getName():capitalize())
 			self:setEffect(self.EFF_ITEM_CHARM_POWERFUL, 2, {damage = t:_getCharmPower(self)*0.2})
 		end
 	end,
@@ -54,8 +60,8 @@ newTalent{
 		self:talentTemporaryValue(p, "quick_weapon_swap", 1)
 	end,
 	info = function(self, t)
-		return ([[You dedicate spare tentacles and pincers to holding each and every item, allowing you to swapequipment sets instantly.
-What's more, whenever you use an item, you activate a random charm effect:
+		return ([[You dedicate spare tentacles and pincers to holding each and every item, allowing you to swap equipment sets instantly.
+What's more, whenever you use an item, you activate a random charm effect (scales with Spellpower):
  * reduce %d talent cooldowns by %d turns
  * extend %d beneficial effects by %d turns
  * heal %d life
@@ -63,7 +69,7 @@ What's more, whenever you use an item, you activate a random charm effect:
  * increase resistance penetration by %d%% for 2 turns
  * increase all damage by %d%% for 2 turns.
 
-#{italic}#You can't lose it if you never put it down.#{normal}#]]):tformat(t:_getCharmCount(self), 2, t:_getCharmCount(self), math.ceil(t:_getCharmPower(self)*0.02), t:_getCharmPower(self), t:_getCharmPower(self)*0.3, t:_getCharmPower(self)*0.2, t:_getCharmPower(self)*0.2)
+#{italic}#You can't lose it if you never put it down.#{normal}#]]):tformat(t:_getCharmCount(self), 2, t:_getCharmCount(self), math.ceil(t:_getCharmPower(self)*0.02), 20+t:_getCharmPower(self)*2.6, t:_getCharmPower(self)*0.3, t:_getCharmPower(self)*0.2, t:_getCharmPower(self)*0.2)
 	end,
 }
 
@@ -85,9 +91,10 @@ newTalent{
 		local target = game.level.map(x, y, Map.ACTOR)
 		if not target then return end
 		
-		self:setEffect(self.EFF_REK_HEKA_PHASE_OUT, t.getDuration(self, t), {src=self, apply_power=self:combatSpellpoewr()})
+		target:setEffect(target.EFF_REK_HEKA_PHASE_OUT, t.getDuration(self, t), {src=self, apply_power=self:combatSpellpower()})
 
 		game:playSoundNear(self, "talents/arcane")
+		investHands(self, t)
 		return true
 	end,
 	info = function(self, t)
@@ -101,16 +108,17 @@ newTalent{
 	name = "Sea of Flesh", short_name = "REK_HEKA_PAGE_SEA",
 	type = {"spell/other-page", 4}, require = mag_req4, points = 5,
 	mode = "passive",
-	getHands = function(self, t) return self:combatTalentScale(t, 10, 50) end,
+	getHands = function(self, t) return 5 * math.floor(self:combatTalentScale(t, 2, 10)) end,
 	getHandRegen = function(self, t) return 5 end,
 	passives = function(self, t, p)
-		self:talentTemporaryValue(p "max_hands", t:_getHands(self))
-	end,
-	callbackOnActBase = function(self, t)
-		if self.hands >= 100 then
-			self.hands = math.min(self.max_hands, self.hands + t:_getHandRegen(self))
+		self:talentTemporaryValue(p, "max_hands", t:_getHands(self))
+		if self:getHands() >= 100 then
+			self:talentTemporaryValue(p, "hands_regen", t:_getHandRegen(self))
 		end
 	end,
+	callbackOnActBase = function(self, t) self:updateTalentPassives(t) end,
+	callbackOnTalentPost = function(self, t, ab) self:updateTalentPassives(t) end,
+	-- bonus regen in mod/class/interface/ActorResource/lua
 	info = function(self, t)
 		return ([[Your form stretches endlessly through the other place, increasing your maximum Hands by %d. While you have more than 100 hands, you regenerate an extra %d hands per round.]]):tformat(t:_getHands(self), t:_getHandRegen(self))
 	end,

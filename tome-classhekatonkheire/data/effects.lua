@@ -831,20 +831,19 @@ newEffect{
 		local str = ("Ready to cast a spell for increased damage | "):tformat(eff.stacks)
 		for tid, time in pairs(eff.talents) do
 			if time > 0 then
-				local t = self:getTalentById(tid)
-				str = str..(" %d |"):tformat(t.name)
+				local t = self:getTalentFromId(tid)
+				str = str..(" %s |"):tformat(t.name)
 			end
+		end
 		return str
 	end,
 	type = "other",
 	subtype = { hands=true },
 	status = "beneficial",
-	parameters = { },
+	parameters = { talents = {} },
 	on_merge = function(self, old_eff, new_eff, e)
 		old_eff.dur = new_eff.dur
-		old_eff.talents[new_eff.tid] = 1
-
-		new_eff.stacks = util.bound(old_eff.stacks + new_eff.stacks, 1, new_eff.max_stacks)
+		table.merge(old_eff.talents, new_eff.talents)
 		return old_eff
 	end,
 	activate = function(self, eff)
@@ -857,5 +856,6 @@ newEffect{
 			if time - 1 <= 0 then
 				eff.talents[tid] = nil
 			end
+		end
 	end,
 }
