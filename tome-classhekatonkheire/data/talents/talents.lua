@@ -278,3 +278,19 @@ if not Talents.talents_types_def["spell/other-page"] then
    newTalentType{ allow_random=true, is_spell=true, no_silence=true, generic=true, type="spell/other-page", name = _t("Other Page", "talent type"), description = _t"Look forward and back, it's all here" }
    load("/data-classhekatonkheire/talents/page.lua")
 end
+
+
+if not Talents.talents_types_def["spell/moon-wurm"] then
+   newTalentType{ allow_random=true, is_spell=true, type="spell/moon-wurm", name = _t("Moon Wurm", "talent type"),  description = _t"Eyal was not the only place with long-gone life.  These are spells, but can be used while silenced." }
+   load("/data-classhekatonkheire/talents/kharyb-wurm.lua")
+end
+
+if not Talents.talents_types_def["spell/null-vizier"] then
+   newTalentType{ allow_random=true, is_spell=true, type="spell/null-vizier", name = _t("Null Vizier", "talent type"), min_lev = 10, no_silence=true, description = _t"The mightiest of gods were forced to kneel, but were no less mighty for doing so." }
+   load("/data-classhekatonkheire/talents/kharyb-vizier.lua")
+end
+
+if not Talents.talents_types_def["spell/marching-sea"] then
+   newTalentType{ allow_random=true, is_spell=true, type="spell/marching-sea", name = _t("Marching Sea", "talent type"), min_lev = 10, no_silence=true, description = _t"The ocean and the desert are two sides of the same coin." }
+   load("/data-classhekatonkheire/talents/kharyb-march.lua")
+end
