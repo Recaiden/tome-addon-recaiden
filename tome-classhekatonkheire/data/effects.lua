@@ -859,3 +859,37 @@ newEffect{
 		end
 	end,
 }
+
+newEffect{
+	name = "REK_HEKA_RECURRING_VISIONS", image = "talents/rek_heka_chronorium_visions.png",
+	desc = _t"Recurring Visions",
+	long_desc = function(self, eff) return ([[%0.1f damage from the past will be taken in the future.]]):tformat(eff.power) end,
+	type = "other",
+	subtype = { temporal=true },
+	status = "detrimental",
+	parameters = { power=0, thresh=10, ratio=0.3 },
+	on_merge = function(self, old_eff, new_eff, e)
+		old_eff.dur = new_eff.dur
+		old_eff.power = old_eff.power + new_eff.power
+		return old_eff
+	end,
+	activate = function(self, eff) end,
+	deactivate = function(self, eff) end,
+	callbackOnActEnd = function(self, eff)
+		if self.resists and self.resists.absolute then
+			eff.power = eff.power * ((100 - math.min(self.resists_cap.absolute or 70, self.resists.absolute)) / 100)
+		end
+		local reserved = 0
+		if eff.power > eff.thresh then
+			reserved = math.min(eff.power - eff.thresh, eff.power * eff.ratio)
+			eff.power = eff.power - reserved
+		end
+		
+		game.logSeen(self, "%s takes %0.1f damage from the past.",self:getName():capitalize(), eff.power)
+		self:takeHit(eff.power, self)
+		eff.power = reserved
+		if eff.power > 0 then
+			eff.dur = eff.dur + 1
+		end
+	end,
+}

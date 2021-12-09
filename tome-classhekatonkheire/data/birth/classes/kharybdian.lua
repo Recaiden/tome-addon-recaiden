@@ -21,8 +21,8 @@ newBirthDescriptor{
 		["spell/bloodtide"]={true, 0.3},
 		["spell/intrusion"]={true, 0.3},
 		["spell/oceansong"]={true, 0.3},
-		--["spell/chronorium"]={true, 0.3},
-		--["spell/polyps"]={true, 0.3},
+		["spell/chronorium"]={true, 0.3},
+		["spell/polyp"]={true, 0.3},
 		["spell/moon-wurm"]={false, 0.3},
 
 		--advanced talents

@@ -274,6 +274,16 @@ if not Talents.talents_types_def["spell/oceansong"] then
    load("/data-classhekatonkheire/talents/kharyb-oceansong.lua")
 end
 
+if not Talents.talents_types_def["spell/polyp"] then
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/polyp", name = _t("Polyps", "talent type"), description = _t"A reef, or army, are both built up bdoy by body." }
+   load("/data-classhekatonkheire/talents/kharyb-polyp.lua")
+end
+
+if not Talents.talents_types_def["spell/chronorium"] then
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/chronorium", name = _t("Chronorium", "talent type"), description = _t"A broken clock is still right whenever you want it to be." }
+   load("/data-classhekatonkheire/talents/kharyb-chronorium.lua")
+end
+
 if not Talents.talents_types_def["spell/other-page"] then
    newTalentType{ allow_random=true, is_spell=true, no_silence=true, generic=true, type="spell/other-page", name = _t("Other Page", "talent type"), description = _t"Look forward and back, it's all here" }
    load("/data-classhekatonkheire/talents/page.lua")

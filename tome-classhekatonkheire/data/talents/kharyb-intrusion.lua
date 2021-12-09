@@ -1,7 +1,6 @@
 newTalent{
 	name = "Oculatus", short_name = "REK_HEKA_INTRUSION_EYE",
 	type = {"spell/intrusion", 1}, require = mag_req1, points = 5,
-	points = 5,
 	cooldown = 3,
 	hands = 15,
 	tactical = { ATTACK = {PHYSICAL = 1}, BUFF = 1 },

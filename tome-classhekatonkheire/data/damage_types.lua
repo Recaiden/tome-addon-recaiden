@@ -40,6 +40,12 @@ newDamageType{
 	death_message = {_t"stoned"},
 }
 
+newDamageType{
+	name = _t"pylon", type = "REK_HEKA_PYLON_MARKER", text_color = "#BLACK#",
+	projector = function(src, x, y, type, dam) end,
+	death_message = {_t"astrologized"},
+}
+
 -- mind damage with 1 turn slow
 newDamageType{
 	name = _t"stare", type = "REK_HEKA_STARE",
