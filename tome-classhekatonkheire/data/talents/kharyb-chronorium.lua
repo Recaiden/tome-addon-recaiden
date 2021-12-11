@@ -28,7 +28,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Instantly teleport to a nearby zodiac pylon]]):tformat()
+		return ([[Instantly teleport to a nearby zodiac pylon.]]):tformat()
 	end,
 }
 
@@ -47,7 +47,7 @@ newTalent{
 		self:unlearnTalent(self.T_REK_HEKA_CHRONORIUM_TELEPORT)
 	end,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nolock=true, talent=t} end,
-	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 4, 8)) end,
+	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 6, 10)) end,
 	createPylon = function(self, t, x, y)
 		game.level.map:addEffect(self,
 														 x, y, t:_getDuration(self),

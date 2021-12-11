@@ -64,7 +64,7 @@ function _M:canBe(what, eid)
 		return base_canBe(self, what, eid)
 	end
 	if self:knowTalent(self.T_REK_HEKA_BLOODTIDE_WATERS) and what == "stun" then
-		return false
+		return true, 100
 	end
 	return base_canBe(self, what, eid)
 end

@@ -43,7 +43,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Flail wildly with your tentacles, doing %0.1f acid damage to enemies in radius %d.
-		The damage will increase with your Willpower.]]):tformat(amDesc(self, DamageType.ACID, t:_getDamage(self)), self:getTalentRadius(t))
+		The damage will increase with your Willpower.]]):tformat(damDesc(self, DamageType.ACID, t:_getDamage(self)), self:getTalentRadius(t))
 	end,
 }
 
@@ -89,8 +89,8 @@ newTalent{
 			},
 			combat_armor = 5, combat_def = 3,
 			combat = {
-				dam=math.floor(self:combatScale(level, 1.5, 1, 75, 50, 0.75)),
-				atk=10 + level,
+				dam=math.floor(self:combatScale(self.level, 1.5, 1, 75, 50, 0.75)),
+				atk=10 + self.level,
 				apr=8,
 				dammod={str=0.5, mag=0.5}
 			},
@@ -121,12 +121,12 @@ newTalent{
 		
 		npc:resolve()
 		npc:resolve(nil, true)
-		npc:forceLevelup(level)
+		npc:forceLevelup(self.level)
 		game.zone:addEntity(game.level, npc, "actor", x, y)
 		game.level.map:particleEmitter(x, y, 1, "teleport_in")
 	end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 230) end,
-	getDamageEnd = function(self, t) return self:combatTalentSpellDamage(t, 10, 150) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 230)/3 end,
+	getDamageEnd = function(self, t) return self:combatTalentSpellDamage(t, 10, 100) end,
 	getDuration = function(self, t) return 3 end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
@@ -146,7 +146,7 @@ newTalent{
 	info = function(self, t)
 		return ([[Infects the target with parasitoid polyps for %d turns. Each turn the growing polyp will deal %0.1f blight damage.
 
-If not removed early it will inflict %0.1f physical damage as the polyp hatches and appears near the target's location for %d turns.
+If the effect lasts its full duration, it will inflict %0.1f physical damage as the polyp hatches and appears near the target's location for %d turns.  The polyp is also summoned if the target dies.
 This effect ignores immunities but is considered a disease.
 Spellpower: increases damage.
 

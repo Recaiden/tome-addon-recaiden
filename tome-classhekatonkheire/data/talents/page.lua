@@ -24,7 +24,7 @@ newTalent{
 	getCharmCount = function(self, t) return math.floor(self:combatTalentScale(t, 1, 2)) end,
 	getCharmPower = function(self, t) return self:combatTalentSpellDamage(t, 10, 100) end,
 	doCharm = function(self, t)
-		local charms = {"cd", "buff", "heal", "evade", "pen", "dam"}
+		local charms = {"buff", "heal", "evade", "pen", "dam"}
 		local charm = rng.table(charms)
 		if charm == "cd" then
 			game.logPlayer(self, "%s is refreshed!", self:getName():capitalize())
@@ -62,14 +62,13 @@ newTalent{
 	info = function(self, t)
 		return ([[You dedicate spare tentacles and pincers to holding each and every item, allowing you to swap equipment sets instantly.
 What's more, whenever you use an item, you activate a random charm effect (scales with Spellpower):
- * reduce %d talent cooldowns by %d turns
  * extend %d beneficial effects by %d turns
  * heal %d life
  * gain %d%% evasion for 2 turns
  * increase resistance penetration by %d%% for 2 turns
  * increase all damage by %d%% for 2 turns.
 
-#{italic}#You can't lose it if you never put it down.#{normal}#]]):tformat(t:_getCharmCount(self), 2, t:_getCharmCount(self), math.ceil(t:_getCharmPower(self)*0.02), 20+t:_getCharmPower(self)*2.6, t:_getCharmPower(self)*0.3, t:_getCharmPower(self)*0.2, t:_getCharmPower(self)*0.2)
+#{italic}#You can't lose it if you never put it down.#{normal}#]]):tformat(t:_getCharmCount(self), math.ceil(t:_getCharmPower(self)*0.02), 20+t:_getCharmPower(self)*2.6, t:_getCharmPower(self)*0.3, t:_getCharmPower(self)*0.2, t:_getCharmPower(self)*0.2)
 	end,
 }
 

@@ -247,7 +247,6 @@ newEffect{
 	deactivate = function(self, eff)
 		if eff.costid then self:removeTemporaryValue("max_hands", eff.costid) end
 	end,
-
 	on_timeout = function(self, eff)
 		local total = 0
 		for i, instance in pairs(eff.investitures) do
@@ -275,7 +274,7 @@ newEffect{
 		eff.costid = self:addTemporaryValue("max_hands", -total)
 		self:incHands(0)
 
-		if total <= 0 then
+		if total <= 1 then
 			self:removeEffect(self.EFF_REK_HEKA_INVESTED)
 		end
 	end,
@@ -652,7 +651,7 @@ newEffect{
 
 newEffect{
 	name = "REK_HEKA_CRAB_GRAB", image = "talents/rek_heka_intrusion_claw.png",
-	desc = _t"pinned by a crab claw",
+	desc = _t"Crab Grab",
 	long_desc = function(self, eff) return _t"The target is pinned by a crab claw, unable to move and taking damage." end,
 	type = "physical",
 	subtype = { pin=true },
@@ -884,8 +883,9 @@ newEffect{
 			reserved = math.min(eff.power - eff.thresh, eff.power * eff.ratio)
 			eff.power = eff.power - reserved
 		end
-		
-		game.logSeen(self, "%s takes %0.1f damage from the past.",self:getName():capitalize(), eff.power)
+
+		game:delayedLogDamage(self, self, 0, ("#WHITE#%d#LAST#"):format(eff.power), false)
+		--game.logSeen(self, "%s takes %0.1f damage from the past.",self:getName():capitalize(), eff.power)
 		self:takeHit(eff.power, self)
 		eff.power = reserved
 		if eff.power > 0 then
@@ -910,14 +910,18 @@ newEffect{
 	end,
 	summon = function(self, eff)
 		if eff.spawned then return end
-		
-		DamageType:get(DamageType.PHYSICAL).projector(eff.src, self.x, self.y, DamageType.PHYSICAL, eff.damEnd, {from_disease=true})
+			
 		eff.src:callTalent(eff.src.T_REK_HEKA_POLYP_POLYP, "summon", self)		
 		game.logSeen(self, "#LIGHT_RED#An otherworldly polyp bursts out of %s!", self:getName():capitalize())
 		eff.spawned = true
 		self:removeEffect(self.EFF_REK_HEKA_POLYP)
 	end,
 	deactivate = function(self, eff)
+		DamageType:get(DamageType.PHYSICAL).projector(eff.src, self.x, self.y, DamageType.PHYSICAL, eff.damEnd, {from_disease=true})
+		local ed = self:getEffectFromId(eff.effect_id)
+		ed.summon(self, eff)
+	end,
+	callbackOnDeath = function(self, eff)
 		local ed = self:getEffectFromId(eff.effect_id)
 		ed.summon(self, eff)
 	end,
@@ -929,7 +933,7 @@ newEffect{
 			self:project(tg, self.x, self.y, function(px, py)
 										 local target = game.level.map(px, py, Map.ACTOR)
 										 if not target then return end
-										 if self:reactionTo(target) >= 0 then
+										 if self:reactionToward(target) >= 0 then
 											 if not target:hasEffect(target.EFF_REK_HEKA_POLYP) then
 												 hit = true
 												 target:setEffect(target.EFF_REK_HEKA_POLYP, eff.dur, {src=eff.src, apply_power=(eff.src and eff.src:combatSpellpower() or self:combatSpellpower()), dam=eff.dam, damEnd=eff.damEnd})
