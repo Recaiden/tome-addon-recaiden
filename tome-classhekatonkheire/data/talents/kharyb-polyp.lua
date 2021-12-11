@@ -107,15 +107,11 @@ newTalent{
 			blind_immune = 1,
 			see_invisible = 80,
 			resists_pen = { all=25 },
-			frenzy_factor = self:callTalent(self.T_REK_HEKA_POLYP_SPEED, getSpeed) or 0
+			frenzy_factor = self:callTalent(self.T_REK_HEKA_POLYP_SPEED, getSpeed) or 0,
 			on_act = function(self)
 				self.global_speed_add = self.global_speed_add + self.frenzy_factor
-				-- clean up
-				if self.summoner.dead then
-					self:die(self)
-				end
-			end
-
+			end,
+			
 			ai = "summoned", ai_real = "tactical", ai_state = { talent_in=1, ally_compassion=10},
 			ai_target = {
 				actor=target
@@ -161,7 +157,7 @@ The polyp summon scales with your level and raw spellpower.]]):tformat(t:_getDur
 newTalent{
 	name = "Contagion of Anchors", short_name = "REK_HEKA_POLYP_SPREAD",
 	type = {"spell/polyp", 2},	require = mag_req2, points = 5,
-	mode = "passive"
+	mode = "passive",
 	range = 3,
 	getIncrease = function(self, t) return self:combatTalentScale(t, 1.0, 1.5) end,
 	info = function(self, t)
@@ -204,7 +200,7 @@ newTalent{
 		if not game.level then return end
 		for _, e in pairs(game.level.entities) do
 			if e.summoner == self and e.name == "kharybdian polyp" then 
-				lyps[#lyps]+1 = e
+				lyps[#lyps+1] = e
 			end
 		end
 		if #lyps <= 0 then return end
