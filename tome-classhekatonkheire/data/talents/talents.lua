@@ -275,7 +275,7 @@ if not Talents.talents_types_def["spell/oceansong"] then
 end
 
 if not Talents.talents_types_def["spell/polyp"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/polyp", name = _t("Polyps", "talent type"), description = _t"A reef, or army, are both built up bdoy by body." }
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/polyp", name = _t("Polyps", "talent type"), description = _t"A reef, or army, are both built up body by body." }
    load("/data-classhekatonkheire/talents/kharyb-polyp.lua")
 end
 

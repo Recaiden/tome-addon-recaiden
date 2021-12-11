@@ -893,3 +893,51 @@ newEffect{
 		end
 	end,
 }
+
+newEffect{
+	name = "REK_HEKA_POLYP", image = "talents/rek_heka_polyp_polyp.png",
+	desc = _t"Polyp Anchor",
+	long_desc = function(self, eff) return ("The target is infected with larval polyps.  Each turn it will suffer %0.1f blight damage.\nAfter three turns the effect will inflict %0.1f physical damage and become a polyp summon."):tformat(eff.dam, eff.damEnd) end,
+	type = "magical",
+	subtype = { blight=true, disease=true },
+	status = "detrimental",
+	parameters = { dam=5, damEnd=10, count=3, spreadAmp=1.0, spreadRange=0 },
+	activate = function(self, eff)
+	end,
+	callbackOnDispelled = function(self, eff, type, effid_or_tid, src, allow_immunity)
+		if effid_or_tid ~= self.EFF_REK_HEKA_POLYP then return end
+		eff.spawned = true
+	end,
+	summon = function(self, eff)
+		if eff.spawned then return end
+		
+		DamageType:get(DamageType.PHYSICAL).projector(eff.src, self.x, self.y, DamageType.PHYSICAL, eff.damEnd, {from_disease=true})
+		eff.src:callTalent(eff.src.T_REK_HEKA_POLYP_POLYP, "summon", self)		
+		game.logSeen(self, "#LIGHT_RED#An otherworldly polyp bursts out of %s!", self:getName():capitalize())
+		eff.spawned = true
+		self:removeEffect(self.EFF_REK_HEKA_POLYP)
+	end,
+	deactivate = function(self, eff)
+		local ed = self:getEffectFromId(eff.effect_id)
+		ed.summon(self, eff)
+	end,
+	on_timeout = function(self, eff)
+		if self:attr("purify_disease") then self:heal(eff.dam, eff.src)
+		else
+			local tg = {type="ball", range=0, selffire=false, radius=eff.spreadRange}
+			local hit = false
+			self:project(tg, self.x, self.y, function(px, py)
+										 local target = game.level.map(px, py, Map.ACTOR)
+										 if not target then return end
+										 if self:reactionTo(target) >= 0 then
+											 if not target:hasEffect(target.EFF_REK_HEKA_POLYP) then
+												 hit = true
+												 target:setEffect(target.EFF_REK_HEKA_POLYP, eff.dur, {src=eff.src, apply_power=(eff.src and eff.src:combatSpellpower() or self:combatSpellpower()), dam=eff.dam, damEnd=eff.damEnd})
+											 end
+										 end
+			end)
+			if not hit then eff.dam = eff.dam * eff.spreadAmp end
+			DamageType:get(DamageType.BLIGHT).projector(eff.src, self.x, self.y, DamageType.BLIGHT, eff.dam, {from_disease=true})
+		end
+	end,
+}
