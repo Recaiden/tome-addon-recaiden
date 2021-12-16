@@ -1,7 +1,6 @@
 newTalent{
 	name = "Carnigenesis", short_name = "REK_HEKA_PAGE_REGEN",
 	type = {"spell/other-page", 1}, require = mag_req1, points = 5,
-	points = 5,
 	cooldown = 6,
 	tactical = { RESOURCE = 1 },
 	getSpellpower = function(self, t) return self:combatTalentScale(t, 10, 50, 1.0) end,
@@ -75,13 +74,13 @@ What's more, whenever you use an item, you activate a random charm effect (scale
 newTalent{
 	name = "Total Phase Shift", short_name = "REK_HEKA_PAGE_FLIP",
 	type = {"spell/other-page", 3}, require = mag_req3, points = 5,
-	cooldown = 5,
+	cooldown = function(self, t) return t:_getDuration(self) + 3 end,
 	hands = 30,
 	tactical = { DISABLE = 1 },
 	range = 10,
 	requires_target = true,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
-	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6))end,
+	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6)) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)

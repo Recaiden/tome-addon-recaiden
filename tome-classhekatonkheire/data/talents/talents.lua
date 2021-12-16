@@ -291,7 +291,7 @@ end
 
 
 if not Talents.talents_types_def["spell/moon-wurm"] then
-   newTalentType{ allow_random=true, is_spell=true, type="spell/moon-wurm", name = _t("Moon Wurm", "talent type"),  description = _t"Eyal was not the only place with long-gone life.  These are spells, but can be used while silenced." }
+   newTalentType{ allow_random=true, is_spell=true, type="spell/moon-wurm", name = _t("Moon Wurm", "talent type"), min_lev = 10, description = _t"Eyal was not the only place with long-gone life.  These are spells, but can be used while silenced." }
    load("/data-classhekatonkheire/talents/kharyb-wurm.lua")
 end
 
@@ -301,6 +301,6 @@ if not Talents.talents_types_def["spell/null-vizier"] then
 end
 
 if not Talents.talents_types_def["spell/marching-sea"] then
-   newTalentType{ allow_random=true, is_spell=true, type="spell/marching-sea", name = _t("Marching Sea", "talent type"), min_lev = 10, no_silence=true, description = _t"The ocean and the desert are two sides of the same coin." }
+   newTalentType{ allow_random=true, is_spell=true, type="spell/marching-sea", name = _t("Marching Sea", "talent type"), no_silence=true, description = _t"The ocean and the desert are two sides of the same coin." }
    load("/data-classhekatonkheire/talents/kharyb-march.lua")
 end

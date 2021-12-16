@@ -35,7 +35,7 @@ newTalent{
 	name = "Tidal Tempo", short_name = "REK_HEKA_BLOODTIDE_BUFF",
 	type = {"spell/bloodtide", 2},	require = mag_req2, points = 5,
 	mode = "passive",
-	getMultiplier = function(self, t) return self:combatTalentScale(t, 1.4, 2.0) end,
+	getMultiplier = function(self, t) return self:combatTalentScale(t, 1.3, 1.75) end,
 	info = function(self, t)
 		return ([[If you use your Kharybdian talents the same turn they come off cooldown, their damage will be multiplied by %0.1fx.]]):tformat(t:_getMultiplier(self))
 	end,

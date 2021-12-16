@@ -1,6 +1,6 @@
 newTalent{
 	name = "Acid Spit", short_name = "REK_HEKA_ACID_POLYP",
-	type = {"wild-gift/other", 1},	points = 5,
+	type = {"wild-gift/other", 1}, points = 5,
 	equilibrium = 2,
 	cooldown = 0,
 	tactical = { ATTACK = { ACID = 1 } },
@@ -135,10 +135,12 @@ newTalent{
 		local _ _, x, y = self:canProject(tg, x, y)
 		local target = game.level.map(x, y, Map.ACTOR)
 		if not target then return end
+		local dam = t:_getDamage(self)*getKharybdianTempo(self, t.id)
+		local damEnd = t:_getDamageEnd(self)*getKharybdianTempo(self, t.id)
 		if self:knowTalent(self.T_REK_HEKA_POLYP_SPREAD) then
-			target:setEffect(target.EFF_REK_HEKA_POLYP, t:_getDuration(self), {src=self, apply_power=self:combatSpellpower(), dam=t.getDamage(self, t), damEnd=t.getDamageEnd(self, t), spreadRange=self:getTalentRange(self.T_REK_HEKA_POLYP_SPREAD), spreadAmp=self:callTalent(self.T_REK_HEKA_POLYP_SPREAD, "getIncrease")})
+			target:setEffect(target.EFF_REK_HEKA_POLYP, t:_getDuration(self), {src=self, apply_power=self:combatSpellpower(), dam=dam, damEnd=damEnd, spreadRange=self:getTalentRange(self.T_REK_HEKA_POLYP_SPREAD), spreadAmp=self:callTalent(self.T_REK_HEKA_POLYP_SPREAD, "getIncrease")})
 		else
-			target:setEffect(target.EFF_REK_HEKA_POLYP, t:_getDuration(self), {src=self, apply_power=self:combatSpellpower(), dam=t.getDamage(self, t), damEnd=t.getDamageEnd(self, t)})
+			target:setEffect(target.EFF_REK_HEKA_POLYP, t:_getDuration(self), {src=self, apply_power=self:combatSpellpower(), dam=dam, damEnd=damEnd})
 		end
 		
 		return true

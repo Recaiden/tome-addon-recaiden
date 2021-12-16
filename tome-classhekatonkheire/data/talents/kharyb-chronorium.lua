@@ -35,7 +35,6 @@ newTalent{
 newTalent{
 	name = "Zodiac Pylon", short_name = "REK_HEKA_CHRONORIUM_PYLON",
 	type = {"spell/chronorium", 1}, require = mag_req1, points = 5,
-	points = 5,
 	cooldown = 15,
 	hands = 10,
 	tactical = { CLOSEIN = 1, ESCAPE = 1 },

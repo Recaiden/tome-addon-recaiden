@@ -12,7 +12,6 @@ end
 newTalent{
 	name = "See No Evil", short_name = "REK_HEKA_WATCHER_SKIP",
 	type = {"spell/watcher", 1}, require = mag_req1, points = 5,
-	points = 5,
 	cooldown = function(self, t) return t.getDuration(self, t) + 3 end,
 	hands = 20,
 	tactical = { ATTACK = {MIND = 1}, DISABLE = 2 },

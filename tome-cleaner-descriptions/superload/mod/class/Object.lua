@@ -325,7 +325,7 @@ function _M:getTextualDesc(compare_with, use_actor)
 		local talents = {}
 		local ret = tstring{}
 		if self[s_power] then
-			if data.talent then
+			if data and data.talent then
 				for _, data in ipairs(self[s_power]) do
 					talents[data.talent] = {data.chance, data.level}
 				end
