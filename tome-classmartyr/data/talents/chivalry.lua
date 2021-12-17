@@ -236,20 +236,19 @@ This will also attack with your shield if you have one equipped.
 }
 
 newTalent{
-   name = "Hero's Resolve", short_name = "REK_MTYR_CHIVALRY_HEROS_RESOLVE",
-   type = {"demented/chivalry", 4},
-   require = martyr_mirror_req4,
-   points = 5,
-   mode = "passive",
-   getImmunities = function(self, t) return self:combatTalentLimit(t, 1, 0.2, 0.5) end,
-   passives = function(self, t, p)
-      self:talentTemporaryValue(p, "blind_immune", t.getImmunities(self, t))
-      self:talentTemporaryValue(p, "disarm_immune", t.getImmunities(self, t))
-      self:talentTemporaryValue(p, "cut_immune", t.getImmunities(self, t))
-   end,
-   info = function(self, t)
-      return ([[You will not let minor wounds and difficulties stop you from fighting.
-		You gain %d%% resistance to blindness, wounds, and being disarmed.]]):
-      format(100*t.getImmunities(self, t))
-   end,
+	name = "Hero's Resolve", short_name = "REK_MTYR_CHIVALRY_HEROS_RESOLVE",
+	type = {"demented/chivalry", 4},
+	require = martyr_mirror_req4,
+	points = 5,
+	mode = "passive",
+	getImmunities = function(self, t) return self:combatTalentLimit(t, 1, 0.2, 0.5) end,
+	passives = function(self, t, p)
+		self:talentTemporaryValue(p, "blind_immune", t.getImmunities(self, t))
+		self:talentTemporaryValue(p, "disarm_immune", t.getImmunities(self, t))
+		self:talentTemporaryValue(p, "cut_immune", t.getImmunities(self, t))
+	end,
+	info = function(self, t)
+		return ([[You will not let minor wounds and difficulties stop you from fighting.
+		You gain %d%% resistance to blindness, wounds, and being disarmed.]]):tformat(100*t.getImmunities(self, t))
+	end,
 }

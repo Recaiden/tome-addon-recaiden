@@ -8,7 +8,7 @@ local Level = require "engine.Level"
 
 newEffect{
 	name = "REK_MTYR_UNNERVE", image = "talents/rek_mtyr_unnerve.png",
-	desc = "Unnerved",
+	desc = _t"Unnerved",
 	long_desc = function(self, eff) return ("Unable to handle the truth, giving them a %d chance to act randomly, suffering %d damage, and losing %d power, with a %d%% chance for longer cooldowns"):tformat(eff.power, eff.damage, eff.powerlessness, eff.pitilessness) end,
 	type = "mental",
 	subtype = { confusion=true, },
@@ -88,7 +88,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_JOLT_SHIELD", image = "talents/rek_mtyr_whispers_jolt.png",
-   desc = "Recently Awakened",
+   desc = _t"Recently Awakened",
    long_desc = function(self, eff) return ("Just woke up and is immune to all damage."):tformat() end,
    type = "other",
    subtype = { temporal=true },
@@ -107,7 +107,7 @@ newEffect{
 
 newEffect{
 	name = "REK_MTYR_SCORN", image = "talents/rek_mtyr_scourge_infest.png",
-	desc = "Scorned",
+	desc = _t"Scorned",
 	long_desc = function(self, eff)
 		local damageTotal = 0
 		for i, instance in pairs(eff.damage) do
@@ -195,7 +195,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_INSPIRED", image = "talents/rek_mtyr_polarity_rebound.png",
-   desc = "Inspired",
+   desc = _t"Inspired",
    long_desc = function(self, eff) return ("You are empowered by your madness, increasing  mindpower by %d."):tformat(eff.power * eff.stacks) end,
    type = "other",
    charges = function(self, eff) return eff.stacks end,
@@ -223,7 +223,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_DEMENTED", image = "talents/rek_mtyr_polarity_dement.png",
-   desc = "Demented",
+   desc = _t"Demented",
    long_desc = function(self, eff) return ("The target cannot think clearly, reducing their damage and increasing their cooldowns by %d%%."):tformat(eff.power*100) end,
    type = "mental",
    subtype = { demented=true },
@@ -239,7 +239,7 @@ newEffect{
 
 newEffect{
 	name = "REK_MTYR_MANIC_SPEED", image = "talents/rek_mtyr_polarity_manic_speed.png",
-	desc = "Manic Speed",
+	desc = _t"Manic Speed",
 	long_desc = function(self, eff) return ("The target is moving at infinite speed for %d to %d steps."):tformat(eff.min_steps, eff.max_steps) end,
 	type = "mental",
 	charges = function(self, eff) return math.max(0, eff.min_steps - eff.steps) end,
@@ -247,8 +247,8 @@ newEffect{
 	status = "beneficial",
 	parameters = { min_steps=1, max_steps=8 },
 	
-	on_gain = function(self, err) return "#Target# accelerates out of sight!", "+Infinite Speed" end,
-	on_lose = function(self, err) return "#Target# has lost their manic speed.", "-Infinite Speed" end,
+	on_gain = function(self, err) return _t"#Target# accelerates out of sight!", _t"+Infinite Speed" end,
+	on_lose = function(self, err) return _t"#Target# has lost their manic speed.", _t"-Infinite Speed" end,
 	activate = function(self, eff)
 		self:effectTemporaryValue(eff, "free_movement", 1)
 		eff.steps = 0
@@ -284,7 +284,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_OVERSEER", image = "talents/rek_mtyr_vagabond_tainted_bullets.png",
-   desc = "Psychic Tunneling",
+   desc = _t"Psychic Tunneling",
    long_desc = function(self, eff) return ("Detects creatures of type %s/%s in radius 15."):tformat(eff.type, eff.subtype) end,
    type = "mental",
    subtype = { whisper=true },
@@ -300,14 +300,14 @@ newEffect{
 
 newEffect{
    name = "REK_FLAG_SYMBIOSIS", image = "talents/rek_mtyr_standard_symbiosis.png",
-   desc = "Aura of Confidence",
+   desc = _t"Aura of Confidence",
    long_desc = function(self, eff) return ("Linked to their flag gaining %d%% all damage resistance."):tformat(eff.resist) end,
    type = "other",
    subtype = { miscellaneous=true },
    status = "beneficial",
    parameters = { resist=10, save=0 },
-   on_gain = function(self, err) return "#Target# links closer to his ally!", true end,
-   on_lose = function(self, err) return "#Target# no longer seems to be in sync with his ally.", true end,
+   on_gain = function(self, err) return _t"#Target# links closer to his ally!", true end,
+   on_lose = function(self, err) return _t"#Target# no longer seems to be in sync with his ally.", true end,
    activate = function(self, eff)
       self:effectTemporaryValue(eff, "resists", {all = eff.resist})
    end,
@@ -316,7 +316,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_GUIDANCE_HEAL", image = "effects/rek_mtyr_whispers_guiding_light_heal.png",
-   desc = "Guided to Healing",
+   desc = _t"Guided to Healing",
    long_desc = function(self, eff)
       return ("A light of life shines upon the target, regenerating %0.2f life per turn."):tformat(eff.power)
    end,
@@ -324,8 +324,8 @@ newEffect{
    subtype = { healing=true, regeneration=true },
    status = "beneficial",
    parameters = { power=10, aura=0 },
-   on_gain = function(self, err) return "#Target# is healing in the light.", "+Regen" end,
-   on_lose = function(self, err) return "#Target# stops healing.", "-Regen" end,
+   on_gain = function(self, err) return _t"#Target# is healing in the light.", _t"+Regen" end,
+   on_lose = function(self, err) return _t"#Target# stops healing.", _t"-Regen" end,
    activate = function(self, eff)
       eff.tmpid = self:addTemporaryValue("life_regen", eff.power)   
       if core.shader.active(4) then
@@ -348,7 +348,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_GUIDANCE_FLASH", image = "effects/rek_mtyr_whispers_guiding_light_eyes.png",
-   desc = "Guided to Destroy",
+   desc = _t"Guided to Destroy",
    long_desc = function(self, eff) return ("The target's damage is improved by +%d%%."):tformat(eff.power) end,
    type = "mental",
    subtype = { focus=true },
@@ -363,7 +363,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_GUIDANCE_AVAILABLE", image = "talents/rek_mtyr_whispers_guiding_light.png",
-   desc = "Seeking the Light",
+   desc = _t"Seeking the Light",
    long_desc = function(self, eff) return ("Somewhere nearby is a beam of light this creature is looking for"):tformat() end,
    type = "other",
    subtype = { whisper=true },
@@ -378,14 +378,14 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_RESONATION", image = "talents/rek_mtyr_crucible_resonation.png",
-   desc = "Runaway Resonation",
+   desc = _t"Runaway Resonation",
    long_desc = function(self, eff) return ("The target's subconscious is surging with energy, guaranteeing critical mental attacks and increasing critical power by +%d."):tformat(eff.power) end,
    type = "mental",
    subtype = { psionic=true },
    status = "beneficial",
    parameters = { power = 1 },
-   on_gain = function(self, err) return "#Target#'s subconscious surges with power.", "+Resonation" end,
-   on_lose = function(self, err) return "#Target#'s subconscious has returned to normal.", "-Resonation" end,
+   on_gain = function(self, err) return _t"#Target#'s subconscious surges with power.", _t"+Resonation" end,
+   on_lose = function(self, err) return _t"#Target#'s subconscious has returned to normal.", _t"-Resonation" end,
    activate = function(self, eff)
       self:effectTemporaryValue(eff, "combat_mindcrit", 100)
       self:effectTemporaryValue(eff, "combat_critical_power", eff.power)
@@ -396,7 +396,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_SEVENFOLD_SPEED", image = "talents/rek_mtyr_revelation_speed.png",
-   desc = "Writhing Speed",
+   desc = _t"Writhing Speed",
    long_desc = function(self, eff) return ("The target's is making tentacle-assisted archery attacks very quickly."):tformat(eff.power) end,
    type = "mental",
    subtype = { physical=true },
@@ -411,7 +411,7 @@ newEffect{
 
 newEffect{
 	name = "REK_MTYR_MOMENT_COUNTER", image = "talents/rek_mtyr_moment_block.png",
-	desc = "Cut Danger",
+	desc = _t"Cut Danger",
 	long_desc = function(self, eff) return ("The target is countering all attacks, preventing %d damage."):tformat(eff.power) end,
 	type = "other",
 	subtype = { temporal=true, block=true },
@@ -438,7 +438,7 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_MOMENT_WIELD", image = "talents/rek_mtyr_moment_stop.png",
-   desc = "Cutting Fate",
+   desc = _t"Cutting Fate",
    long_desc = function(self, eff) return ("The target is wielding the Final Moment as a sword."):tformat() end,
    type = "other",
    subtype = { temporal=true, weapon=true },
@@ -454,14 +454,14 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_ABYSSAL_LUMINOUS", image = "talents/rek_mtyr_revelation_abyssal_shot.png",
-   desc = "Abyssal Form: Luminous",
+   desc = _t"Abyssal Form: Luminous",
    long_desc = function(self, eff) return ("The target is revealed as a luminous horror!"):tformat() end,
    type = "other",
    subtype = { horror=true, morph=true },
    status = "detrimental",
    parameters = { talent_power=1 },
-   on_gain = function(self, err) return "#PURPLE##Target# is revealed to have been a luminous horror all along!", true end,
-   on_lose = function(self, err) return "#Target# returns to their normal guise.", true end,
+   on_gain = function(self, err) return "_t#PURPLE##Target# is revealed to have been a luminous horror all along!", true end,
+   on_lose = function(self, err) return _t"#Target# returns to their normal guise.", true end,
    activate = function(self, eff)
       eff.allow_talent = {
          [self.T_CHANT_OF_FORTITUDE] = true,
@@ -527,14 +527,14 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_ABYSSAL_UMBRAL", image = "talents/rek_mtyr_revelation_abyssal_shot.png",
-   desc = "Abyssal Form: Umbral",
+   desc = _t"Abyssal Form: Umbral",
    long_desc = function(self, eff) return ("The target is revealed as an umbral horror!"):tformat() end,
    type = "other",
    subtype = { horror=true, morph=true },
    status = "detrimental",
    parameters = { talent_power=1 },
-   on_gain = function(self, err) return "#PURPLE##Target# is revealed to have been an umbral horror all along!", true end,
-   on_lose = function(self, err) return "#Target# returns to their normal guise.", true end,
+   on_gain = function(self, err) return _t"#PURPLE##Target# is revealed to have been an umbral horror all along!", true end,
+   on_lose = function(self, err) return _t"#Target# returns to their normal guise.", true end,
    activate = function(self, eff)
       eff.allow_talent = {
          [self.T_CALL_SHADOWS] = true,
@@ -604,14 +604,14 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_ABYSSAL_BLOATED", image = "talents/rek_mtyr_revelation_abyssal_shot.png",
-   desc = "Abyssal Form: Bloated",
+   desc = _t"Abyssal Form: Bloated",
    long_desc = function(self, eff) return ("The target is revealed as a bloated horror!"):tformat() end,
    type = "other",
    subtype = { horror=true, morph=true },
    status = "detrimental",
    parameters = { talent_power=1 },
-   on_gain = function(self, err) return "#PURPLE##Target# is revealed to have been a bloated horror all along!", true end,
-   on_lose = function(self, err) return "#Target# returns to their normal guise.", true end,
+   on_gain = function(self, err) return _t"#PURPLE##Target# is revealed to have been a bloated horror all along!", true end,
+   on_lose = function(self, err) return _t"#Target# returns to their normal guise.", true end,
    activate = function(self, eff)
       eff.allow_talent = {
          [self.T_MIND_DISRUPTION] = true,
@@ -663,14 +663,14 @@ newEffect{
 
 newEffect{
    name = "REK_MTYR_ABYSSAL_PARASITIC", image = "talents/rek_mtyr_revelation_abyssal_shot.png",
-   desc = "Abyssal Form: Parasitic",
+   desc = _t"Abyssal Form: Parasitic",
    long_desc = function(self, eff) return ("The target is revealed as a Parasitic horror!"):tformat() end,
    type = "other",
    subtype = { horror=true, morph=true },
    status = "detrimental",
    parameters = { talent_power=1 },
-   on_gain = function(self, err) return "#PURPLE##Target# is revealed to have been a Parasitic horror all along!", true end,
-   on_lose = function(self, err) return "#Target# returns to their normal guise.", true end,
+   on_gain = function(self, err) return _t"#PURPLE##Target# is revealed to have been a Parasitic horror all along!", true end,
+   on_lose = function(self, err) return _t"#Target# returns to their normal guise.", true end,
    activate = function(self, eff)
       eff.allow_talent = {
          [self.T_CRAWL_ACID] = true,
@@ -730,7 +730,7 @@ newEffect{
 
 newEffect{
 	name = "REK_MTYR_SANE", image = "effects/rek_mtyr_insanity_low.png",
-	desc = "Sane",
+	desc = _t"Sane",
 	long_desc = function(self, eff) return ("You see the world as it truly is."):tformat(eff.slow, eff.armor) end,
 	type = "other",
 	subtype = { insanity=true },
@@ -763,7 +763,7 @@ newEffect{
 
 newEffect{
 	name = "REK_MTYR_INSANE", image = "effects/rek_mtyr_insanity_high.png",
-	desc = "Insane",
+	desc = _t"Insane",
 	long_desc = function(self, eff) return "You see the world as it should be." end,
 	type = "other",
 	subtype = { insanity=true },
@@ -795,7 +795,7 @@ newEffect{
 
 newEffect{
 	name = "MARTYR_STACKING_SLOW", image = "talents/rek_mtyr_vagabond_tainted_bullets.png",
-	desc = "Tainted Rounds",
+	desc = _t"Tainted Rounds",
 	long_desc = function(self, eff)
 		local source = eff.src or self
 		return ("Reduces movement speed by %d%% and deals %0.2f mind damge when a new stack is applied."):tformat(math.floor(eff.stacks * 10), source:damDesc("MIND", eff.power*eff.stacks))
@@ -805,8 +805,8 @@ newEffect{
 	subtype = { disease=true, slow=true },
 	status = "detrimental",
 	parameters = { power=3, stacks=1, max_stacks=10 },
-	on_gain = function(self, err) return "#Target# is slowed by the taint", "+Tainted Slow" end,
-	on_lose = function(self, err) return "#Target# speeds up.", "-Tainted Slow" end,
+	on_gain = function(self, err) return _t"#Target# is slowed by the taint", _t"+Tainted Slow" end,
+	on_lose = function(self, err) return _t"#Target# speeds up.", _t"-Tainted Slow" end,
 	on_merge = function(self, old_eff, new_eff)
 		old_eff.dur = new_eff.dur
 		old_eff.stacks = math.min(old_eff.stacks + new_eff.stacks, new_eff.max_stacks)

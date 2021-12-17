@@ -148,8 +148,7 @@ newTalent{
    info = function(self, t)
       return ([[Demand that your foes return to face you rather than flee!  All diseased enemies in a cone of radius %d are pulled towards you #SLATE#(checks knockback resistance)#LAST#.
 
-#GREEN#Our Gift:#LAST# All targets pulled in are then pinned for 1 turn #SLATE#(no save)#LAST#]]):
-      format(self:getTalentRange(t), damDesc(self, DamageType.BLIGHT, t.getDamage(self, t) * 100))
+#GREEN#Our Gift:#LAST# All targets pulled in are then pinned for 1 turn #SLATE#(no save)#LAST#]]):tformat(self:getTalentRange(t), damDesc(self, DamageType.BLIGHT, t.getDamage(self, t) * 100))
    end,
 }
 

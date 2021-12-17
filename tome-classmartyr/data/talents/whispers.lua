@@ -202,7 +202,7 @@ newTalent{
 			self:forceUseTalent(self.T_REK_MTYR_WHISPERS_JOLT, {ignore_energy=true})
 			game:playSoundNear(self, "talents/rek_false_death")
 			game.logSeen(self, "#YELLOW#%s awakens from a terrible dream!#LAST#", self.name:capitalize())
-			if self == game.player then game.bignews:say(80, "#GREEN#"..string.format("You die in the dream!")) end
+			if self == game.player then game.bignews:say(80, "#GREEN#You die in the dream!") end
 			
 			self:incInsanity(-1 * self:getInsanity())
 			self:setEffect(self.EFF_REK_MTYR_JOLT_SHIELD, 1, {src=self})

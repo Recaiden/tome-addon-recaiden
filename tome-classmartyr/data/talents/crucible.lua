@@ -144,8 +144,7 @@ newTalent{
    info = function(self, t)
       return ([[Meld together your painful feedback with a target's own suffering to form a lethal blade of mental turmoil. 
 The target will take mind damage equal to %d%% of the life it already lost (up to %d).
-Mindpower: raises the cap.]]):
-      format(t.getDam(self, t), t.getMax(self, t))
+Mindpower: raises the cap.]]):tformat(t.getDam(self, t), t.getMax(self, t))
    end,
 }
 

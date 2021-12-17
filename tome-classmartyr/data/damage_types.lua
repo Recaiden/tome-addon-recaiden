@@ -24,18 +24,18 @@ local initState = DamageType.initState
 
 -- Mind that only hits enemies
 newDamageType{
-   name = "mind", type = "REK_MTYR_MIND_FRIENDS",
-   projector = function(src, x, y, type, dam, state)
-      state = initState(state)
-      useImplicitCrit(src, state)
-      if src and src:getInsanity() then
-         dam = dam * (1 + src:getInsanity()/100)
-      end
-      local target = game.level.map(x, y, Map.ACTOR)
-      if target and src:reactionToward(target) < 0 then
-         DamageType:get(DamageType.MIND).projector(src, x, y, DamageType.MIND, dam, state)
-      end
-   end,
+	name = _t("mind", "damage type"), type = "REK_MTYR_MIND_FRIENDS",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		if src and src:getInsanity() then
+			dam = dam * (1 + src:getInsanity()/100)
+		end
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target and src:reactionToward(target) < 0 then
+			DamageType:get(DamageType.MIND).projector(src, x, y, DamageType.MIND, dam, state)
+		end
+	end,
 }
 
 removeGroundEffect = function(e)

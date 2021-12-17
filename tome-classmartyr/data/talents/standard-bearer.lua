@@ -138,8 +138,7 @@ newTalent{
 
 		If at least one enemy is hit you gain %d insanity.
 
-		#YELLOW_GREEN#When constricting:#WHITE#The tendrils pummel your constricted target for %d%% tentacle damage and if adjacent you make an additional mainhand weapon attack.  Talent cooldown reduced to 10.]]):
-      format(self:getTalentRadius(t), t.getDamageTentacle(self, t) * 100, t.getInsanity(self, t), t.getDamageTentacle(self, t) * 1.5 * 100)
+		#YELLOW_GREEN#When constricting:#WHITE#The tendrils pummel your constricted target for %d%% tentacle damage and if adjacent you make an additional mainhand weapon attack.  Talent cooldown reduced to 10.]]):tformat(self:getTalentRadius(t), t.getDamageTentacle(self, t) * 100, t.getInsanity(self, t), t.getDamageTentacle(self, t) * 1.5 * 100)
    end,
 }
 
@@ -171,7 +170,7 @@ newTalent{
 		type = "horror", subtype = "eldritch",
 		display = "h", color=colors.WHITE,
 		blood_color = colors.BLUE,
-		name = "glorious flag",
+		name = _t"glorious flag",
 		display = "G", color=colors.ORANGE,
 		image="npc/sprouting_tentacles_mtyr_flag.png",
 		sound_moam = {"creatures/rek_flag/on_hit%d", 1, 1},
@@ -328,8 +327,7 @@ newTalent{
    info = function(self, t)
       return ([[With incredible boldness, you plant a flag nearby without needing to defeat an enemy!
 
-Levels in this talent grant your flags the ability to slowly pull enemies closer to them and reduce the cooldown between automatic flag placements by %d turns.]]):
-      format(t.getCDReduce(self, t))
+Levels in this talent grant your flags the ability to slowly pull enemies closer to them and reduce the cooldown between automatic flag placements by %d turns.]]):tformat(t.getCDReduce(self, t))
    end,
 }
 

@@ -122,8 +122,7 @@ Learning this talent allows martyr talents to instantly and automatically swap t
 
 #{italic}#Keep your distance!  It's...for your own good.#{normal}#
 
-#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):
-      format(t.getDamage(self, t) * 100, t.getDist(self, t))
+#YELLOW#Every level in this talent allows you to learn a Chivalry talent for free.#LAST#]]):tformat(t.getDamage(self, t) * 100, t.getDist(self, t))
    end,
 }
 
