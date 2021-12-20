@@ -68,7 +68,7 @@ newTalent{
 			type = "horror", subtype = "eldritch",
 			name = "kharybdian polyp",
 			desc = [[A solid-looking little creature with more tentacles than you'd prefer.]],
-			display = 'h', color=colors.SLATE,
+			display = 'h', color=colors.LIGHT_BLUE,
 			image = ("npc/%s.png"):format(imageStr),
 			
 			never_anger = true,

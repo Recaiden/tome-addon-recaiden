@@ -342,7 +342,31 @@ newEffect{
 	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, state, no_martyr)
 		if dam < self.life + self.dieAt then return nil end
 		self:heal(eff.power)
+
+		if eff.src:knowTalent(eff.src.T_REK_HEKA_MOONWURM_SUMMON) then
+			eff.src:callTalent(eff.src.T_REK_HEKA_MOONWURM_SUMMON, "summon", self.x, self.y)
+		end
+
 		self:removeEffect(self.EFF_REK_HEKA_RESERVOIR, true, true)
 		return {dam=0, stopped=true}
 	end,
 }
+
+newEffect{
+	name = "REK_HEKA_WURMDISTRACTION", image = "talents/rek_heka_moonwurn_distraction.png",
+	desc = _t"Distracted",
+	long_desc = function(self, eff) return ("Taking %d%% more dmaage from all sources."):tformat(eff.power*100) end,
+	type = "other",
+	subtype = { hands=true },
+	status = "detrimental",
+	charges = function(self, eff)
+		return ([[%d%%]]):format(eff.power*100)
+	end,
+	parameters = { power = 0.0 },
+	activate = function(self, eff) end,
+	deactivate = function(self, eff) end,
+	callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, state)
+		return {dam=dam*(1+eff.power)}
+	end,
+}
+
