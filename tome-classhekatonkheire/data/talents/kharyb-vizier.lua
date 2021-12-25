@@ -5,6 +5,7 @@ newTalent{
 	cooldown = 16,
 	mode = "sustained",
 	tactical = { ESCAPE = 2, DEFEND = 2 },
+	no_energy = function(self, t) return self:isTalentActive(t.id) end,
 	getInvisibilityPower = function(self, t) return math.ceil(self:combatTalentSpellDamage(t, 10, 50)) end,
 	getDamPower = function(self, t) return self:combatTalentScale(t, 10, 30) end,
 	activate = function(self, t)
@@ -29,12 +30,13 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Split your flesh with infinite precision and grasp the light itself, bending it around you to become invisible (%d power based on spellpower).  While invisible all damage you deal against blinded foes is increased by +%d%%.]]):tformat(t:_getInvisibilityPower(self), t:_getDamPower(self))
+		return ([[Split your flesh with infinite precision and grasp the light itself, bending it around you to become invisible (%d power based on spellpower).  While invisible all damage you deal against blinded foes is increased by +%d%%.
+Deactivating this talent is instant.]]):tformat(t:_getInvisibilityPower(self), t:_getDamPower(self))
 	end,
 }
 
 newTalent{
-	name = "Photohammer", short_name = "REK_HEKA_VIZIER_BITE",
+	name = "Photohammer", short_name = "REK_HEKA_VIZIER_ATTACK",
 	type = {"spell/null-vizier", 2},	require = mag_req2, points = 5,
 	mode = "passive",
 	range = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 6, 10)) end,
@@ -51,9 +53,8 @@ newTalent{
 				end
 		end end
 		
-		-- Randomly take targets
 		local tg = t.oneTarget(self, t)
-		if #tgts <= 0 then break end
+		if #tgts <= 0 then return end
 		local a, id = rng.table(tgts)
 		table.remove(tgts, id)
 		
@@ -67,7 +68,7 @@ newTalent{
 	end,
 	callbackOnWait = function(self, t)
 		t.fire(self, t)
-	end
+	end,
 	info = function(self, t)
 		return ([[Your assistant has grown enough to extrude and project spines through your anchor. Every %d turns, it fires a poison needle at a nearby enemy within range %d, dealing %0.1f nature damage over 5 turns.
 Moving reduces the cooldown by 1, and waiting causes it to fire immediately.]]):tformat(self:getTalentCooldown(t), self:getTalentRange(t), damDesc(self, DamageType.NATURE, t:_getDamage(self, t)))

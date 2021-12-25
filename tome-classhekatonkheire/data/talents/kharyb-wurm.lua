@@ -34,9 +34,8 @@ newTalent{
 				end
 		end end
 		
-		-- Randomly take targets
 		local tg = t.oneTarget(self, t)
-		if #tgts <= 0 then break end
+		if #tgts <= 0 then return end
 		local a, id = rng.table(tgts)
 		table.remove(tgts, id)
 		
@@ -50,7 +49,7 @@ newTalent{
 	end,
 	callbackOnWait = function(self, t)
 		t.fire(self, t)
-	end
+	end,
 	info = function(self, t)
 		return ([[Your assistant has grown enough to extrude and project spines through your anchor. Every %d turns, it fires a poison needle at a nearby enemy within range %d, dealing %0.1f nature damage over 5 turns.
 Moving reduces the cooldown by 1, and waiting causes it to fire immediately.]]):tformat(self:getTalentCooldown(t), self:getTalentRange(t), damDesc(self, DamageType.NATURE, t:_getDamage(self, t)))
@@ -77,10 +76,9 @@ newTalent{
 					tgts[#tgts+1] = a
 				end
 		end end
-		
-		-- Randomly take targets
+
 		local tg = t.oneTarget(self, t)
-		if #tgts <= 0 then break end
+		if #tgts <= 0 then return end
 		local a, id = rng.table(tgts)
 		table.remove(tgts, id)
 		a:setEffect(a.EFF_REK_HEKA_WURMDISTRACTION, 1, {src=self, power=t:_getAmp(self)})

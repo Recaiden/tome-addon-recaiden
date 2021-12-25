@@ -252,11 +252,14 @@ newEffect{
 		for i, instance in pairs(eff.investitures) do
 			-- applications that have lived out their allotted time are cleared.
 			eff.investitures[i].dur_m = instance.dur_m - 1
-			if instance.dur_m <= 0 then
+			if instance.dur_m == 0 then
 				if self:knowTalent(self.T_REK_HEKA_HELPING_HEALING) then
 					self:callTalent(self.T_REK_HEKA_HELPING_HEALING, "doHeal", instance.power)
 				end
-				--eff.investitures[i].power = 0
+				eff.investitures[i].power = 0
+				eff.investitures[i] = nil
+			elseif instance.dur_m < 0 then
+				eff.investitures[i].power = 0
 				eff.investitures[i] = nil
 			elseif eff.investitures[i].power > 0 then
 				total = total + eff.investitures[i].power
