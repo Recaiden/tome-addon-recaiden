@@ -246,12 +246,13 @@ In exchange, you can use shadow magic for elemental attacks, healing, and telepo
 }
 
 local Talents = require "engine.interface.ActorTalents"
-
-local baseCSDeactivate = Talents.talents_def.T_FLN_CALL_SHADOWS.deactivate
-Talents.talents_def.T_FLN_CALL_SHADOWS.deactivate = function(self, t)
-	if self:knowTalent(self.T_REK_EVOLUTION_FALLEN_HOLLOW) and not (self.turn_procs and self.turn_procs.resetting_talents) then
-		game.logPlayer(self, "The lomea call can no longer be stopped.")
-		return nil
+if Talents.talents_def.T_FLN_CALL_SHADOWS then
+	local baseCSDeactivate = Talents.talents_def.T_FLN_CALL_SHADOWS.deactivate
+	Talents.talents_def.T_FLN_CALL_SHADOWS.deactivate = function(self, t)
+		if self:knowTalent(self.T_REK_EVOLUTION_FALLEN_HOLLOW) and not (self.turn_procs and self.turn_procs.resetting_talents) then
+			game.logPlayer(self, "The lomea call can no longer be stopped.")
+			return nil
+		end
+		return baseCSDeactivate(self, t)
 	end
-	return baseCSDeactivate(self, t)
 end
