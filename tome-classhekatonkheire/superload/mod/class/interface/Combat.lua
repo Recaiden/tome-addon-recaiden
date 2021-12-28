@@ -82,4 +82,13 @@ function _M:combatGetDamageIncrease(type, straight)
 	return amp
 end
 
+local base_checkHit = _M.checkHit
+function _M:checkHit(atk, def, min, max, factor, p)
+	local hit, chance = base_checkHit(self, atk, def, min, max, factor, p)
+	if hit and self:knowTalent(self.summoner.T_REK_HEKA_MARCH_DESTRUCTION) then
+		self:callTalent(self.T_REK_HEKA_MARCH_DESTRUCTION, "applyBoost")
+	end
+	return hit, chance
+end
+
 return _M

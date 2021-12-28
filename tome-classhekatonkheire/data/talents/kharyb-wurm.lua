@@ -1,6 +1,6 @@
 newTalent{
 	name = "Orbital Wurm", short_name = "REK_HEKA_MOONWURM_RESERVOIR",
-	type = {"spell/moon-wurm", 1}, require = mag_req1, points = 5,
+	type = {"spell/moon-wurm", 1}, require = mag_req_high1, points = 5,
 	mode = "passive",
 	getLife = function(self, t) return self.max_life * self:combatTalentLimit(t, 1.5, 0.2, 0.5) + 2 * (self:getCon() - 10) end,
 	callbackOnKill = function (self, t, target)
@@ -18,7 +18,7 @@ Rarer and higher-level enemies fill the reservoir faster.]]):tformat(t:_getLife(
 
 newTalent{
 	name = "Wurm's Bite", short_name = "REK_HEKA_MOONWURM_BITE",
-	type = {"spell/moon-wurm", 2},	require = mag_req2, points = 5,
+	type = {"spell/moon-wurm", 2},	require = mag_req_high2, points = 5,
 	mode = "passive",
 	range = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 6, 10)) end,
 	oneTarget = function(self, t) return {type="bolt", range=self:getTalentRange(t), talent=t, display={particle="bolt_fire"}, friendlyblock=false, friendlyfire=false} end,
@@ -58,7 +58,7 @@ Moving reduces the cooldown by 1, and waiting causes it to fire immediately.]]):
 
 newTalent{
 	name = "Crescent Motion", short_name = "REK_HEKA_MOONWURM_DISTRACTION",
-	type = {"spell/moon-wurm", 3}, require = mag_req3, points = 5,
+	type = {"spell/moon-wurm", 3}, require = mag_req_high3, points = 5,
 	mode = "passive",
 	range = 10,
 	requires_target = true,
@@ -90,7 +90,7 @@ newTalent{
 
 newTalent{
 	name = "Anchor Eclipse", short_name = "REK_HEKA_MOONWURM_SUMMON",
-	type = {"spell/moon-wurm", 4}, require = mag_req4, points = 5,
+	type = {"spell/moon-wurm", 4}, require = mag_req_high4, points = 5,
 	cooldown = 30,
 	tactical = { ATTACK = 3 },
 	range = 5,

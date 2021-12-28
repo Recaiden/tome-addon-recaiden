@@ -394,3 +394,71 @@ newEffect{
 		self:removeTemporaryValue("resists", eff.tmpid)
 	end,
 }
+
+newEffect{
+	name = "REK_HEKA_SALTED", image = "talents/rek_heka_march_salt.png",
+	desc = _t"Salted",
+	long_desc = function(self, eff) return _t"The target has been encased in salt: it is rooted in place and may be shattered by a single blow dealing more than 30% of its maximum life." end,
+	type = "magical",
+	subtype = { earth=true, stone=true, stun = true},
+	status = "detrimental",
+	parameters = {},
+	callbackPriorities = {callbackOnHit = 210},
+	callbackOnHit = function(self, eff, cb, src, death_note)
+		if cb.value <= 0 then return cb end
+		if cb.value >= self:getMaxLife() * 0.3 then
+		-- Make the damage high enough to kill it
+			cb.value = self.max_life + (self.die_at or 1) +1
+			game.logSeen(self, "%s crumbles into grains of salt!", self:getName():capitalize())
+		end
+		return cb
+	end,
+	activate = function(self, eff)
+		eff.never_move = self:addTemporaryValue("never_move", 1)
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("never_move", eff.never_move)
+	end,
+}
+
+newEffect{
+	name = "REK_HEKA_UNBLEEDING_HEART", image = "talents/rek_heka_march_heart.png",
+	desc = _t"Unbleeding Heart",
+	long_desc = function(self, eff) return _t"The target's main heart has manifested on the battlefield to attack." end,
+	type = "magical",
+	subtype = { hands=true },
+	status = "beneficial",
+	parameters = {power=6},
+	callbackOnCrit = function(self, eff, crit_type, damage, chance, target)
+		eff.src:callTalent(eff.src.T_REK_HEKA_MARCH_HEART, "doSpike", eff.power)
+	end,
+	on_timeout = function(self, eff)
+		eff.src:callTalent(eff.src.T_REK_HEKA_MARCH_HEART, "doSpike", eff.power)
+	end,
+	activate = function(self, eff)
+		eff.src:callTalent(eff.src.T_REK_HEKA_MARCH_HEART, "doSpike", eff.power)
+	end,
+	deactivate = function(self, eff) end,
+}
+
+newEffect{
+	name = "REK_HEKA_LINGERING_DESTRUCTION", image = "talents/rek_heka_march_destruction.png",
+	desc = "Power from Destruction",
+	long_desc = function(self, eff) return ("Increased spellpower by %d"):format(eff.power) end,
+	type = "physical",
+	subtype = { hands=true, arcane = true },
+	status = "beneficial",
+	parameters = { power=1, max_power=100},
+	charges = function(self, eff) return eff.power end,
+	on_merge = function(self, old_eff, new_eff)
+		self:removeTemporaryValue("combat_spellpower", old_eff.pid)
+		new_eff.power = math.min(new_eff.max_power, old_eff.power+new_eff.power)
+		new_eff.pid = self:addTemporaryValue("combat_spellpower", new_eff.power)
+		return new_eff
+	end,
+	activate = function(self, eff)
+		eff.pid = self:addTemporaryValue("combat_spellpower", eff.power)
+	end,
+	deactivate = function(self, eff)
+	end,
+}

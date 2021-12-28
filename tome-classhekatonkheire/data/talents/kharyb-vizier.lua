@@ -1,6 +1,6 @@
 newTalent{
 	name = "Light Work", short_name = "REK_HEKA_VIZIER_RESERVOIR",
-	type = {"spell/null-vizier", 1}, require = mag_req1, points = 5,
+	type = {"spell/null-vizier", 1}, require = mag_req_high1, points = 5,
 	drain_hands = 5,
 	cooldown = 16,
 	mode = "sustained",
@@ -37,7 +37,7 @@ Deactivating this talent is instant.]]):tformat(t:_getInvisibilityPower(self), t
 
 newTalent{
 	name = "Photohammer", short_name = "REK_HEKA_VIZIER_ATTACK",
-	type = {"spell/null-vizier", 2},	require = mag_req2, points = 5,
+	type = {"spell/null-vizier", 2},	require = mag_req_high2, points = 5,
 	cooldown = 10,
 	hands = 30,
 	requires_target = true,
@@ -52,7 +52,7 @@ newTalent{
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
-		self:project(tg, x, y, DamageType.REK_HEKA_LIGHT_PUNISHMENT, {dam=self:spellCrit(t.getDamage(self, t)*getKharybdianTempo(self, t.id)), amp=t.getPunishment(self, t)})
+		self:project(tg, x, y, DamageType.REK_HEKA_PHYSICAL_PUNISHMENT, {dam=self:spellCrit(t.getDamage(self, t)*getKharybdianTempo(self, t.id)), amp=t.getPunishment(self, t)})
 
 		game:playSoundNear(self, "talents/fireflash")
 		return true
@@ -66,7 +66,7 @@ Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.PHYSICAL, t.ge
 
 newTalent{
 	name = "Empyreal Throne", short_name = "REK_HEKA_VIZIER_AURA",
-	type = {"spell/null-vizier", 3}, require = mag_req3, points = 5,
+	type = {"spell/null-vizier", 3}, require = mag_req_high3, points = 5,
 	mode = "passive",
 	getDazzle = function(self, t) return self:combatTalentLimit(t, 50, 6, 18) end,
 	callbackOnHit = function(self, t, dam, src, death_note)
@@ -74,15 +74,16 @@ newTalent{
 		if src:hasProc("heka_throne") then return end
 		src:setProc("heka_throne", true, 10)
 		src:setEffect(src.EFF_DAZZLED, 5, {src=self, power=t:_getDazzle(self), apply_power=self:combatSpellpower()})
+		return dam
 	end,
 	info = function(self, t)
-		return ([[The radiance of the other place surrounds and protects you.  An enemy that damages you may then be dazzled (#SLATE#Spell save#LAST#) for 5 turns, reducing the damage they do to you by %d%%.  Each enemy can only be affected once every 10 of their turns.]]):tformat(t.getDuration(self, t))
+		return ([[The radiance of the other place surrounds and protects you.  An enemy that damages you may then be dazzled (#SLATE#Spell save#LAST#) for 5 turns, reducing the damage they do to you by %d%%.  This can only affect a given creature once every 10 of their turns.]]):tformat(t.getDazzle(self, t))
 	end,
 }
 
 newTalent{
 	name = "The Sun Beneath the Sea", short_name = "REK_HEKA_VIZIER_SUN",
-	type = {"spell/null-vizier", 4}, require = mag_req4, points = 5,
+	type = {"spell/null-vizier", 4}, require = mag_req_high4, points = 5,
 	cooldown = 30,
 	mode = "sustained",
 	tactical = { BUFF = 2 },
@@ -98,7 +99,7 @@ newTalent{
 		self:project(
 			tg, self.x, self.y,
 			function(px, py)
-				local target = game.level.map(x, y, Map.ACTOR)
+				local target = game.level.map(px, py, Map.ACTOR)
 				if not target then return end
 				target:setEffect(target.EFF_REK_HEKA_WITHERED_RESISTANCES, 1, {src=self, power=5, max_power=5*t:_getMaxCount(self)})
 			end
@@ -110,7 +111,6 @@ newTalent{
 	activate = function(self, t)
 		self:removeEffectsFilter(self, {subtype={blind=true}}, 10)
 
-		action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		game.level.map:particleEmitter(self.x, self.y, tg.radius, "sunburst", {radius=tg.radius, grids=grids, tx=self.x, ty=self.y, max_alpha=80})
 		self:project(tg, self.x, self.y, DamageType.BLIND, 4)
@@ -118,8 +118,6 @@ newTalent{
 		tg.friendlyfire = true
 		self:project(tg, self.x, self.y, DamageType.LITE, 1)
 		game:playSoundNear(self, "talents/heal")
-		return true
-	end,
 		
 		local r = {}
 		self:effectTemporaryValue(r, "blind_immune", t:_getBlindResist(self))

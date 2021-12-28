@@ -184,3 +184,20 @@ newDamageType{
 		end
 	end,
 }
+
+-- physical damage with more damage per positive or negative effect
+-- damage should be table of dam (base damage) and amp (fraction of bonus damage per effect)
+newDamageType{
+	name = _t("radiance", "damage type"), type = "REK_HEKA_PHYSICAL_PUNISHMENT", text_color = "#WHITE#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			local effs = target:effectsFilter({types={physical=true, magical=true, mental=true}}, 7)
+			local nb = #effs or 0
+			dam.dam = dam.dam * (1 + dam.amp*nb)
+		end
+		return DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
+	end,
+}
