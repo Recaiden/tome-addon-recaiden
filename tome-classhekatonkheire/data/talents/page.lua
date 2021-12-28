@@ -96,7 +96,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Seal a creture entirely into the Other Place (#SLATE#Spell save#LAST#) for %d turns. While there time does not pass for them - they are unable to act and immune to harm - except that their talents cool down, and at double speed.
+		return ([[Seal a creature entirely into the Other Place (#SLATE#Spell save#LAST#) for %d turns. While there time does not pass for them - they are unable to act and immune to harm - except that their talents cool down, and at double speed.
 
 This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(t.getDuration(self, t))
 	end,

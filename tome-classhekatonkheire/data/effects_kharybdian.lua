@@ -370,3 +370,27 @@ newEffect{
 	end,
 }
 
+newEffect{
+	name = "REK_HEKA_WITHERED_RESISTANCES", image = "talents/rek_heka_vizier_sun.png",
+	desc = _t"Withered",
+	long_desc = function(self, eff) return ("The target's resistances have been reduced by %d%%."):tformat(eff.power) end,
+	type = "other",
+	subtype = { light=true },
+	status = "detrimental",
+	parameters = { power=5, max_power=5 },
+	charges = function(self, eff) return eff.power end,
+	on_merge = function(self, old_eff, new_eff)
+		self:removeTemporaryValue("resists", old_eff.tmpid)
+
+		new_eff.max_power = math.max(new_eff.max_power, old_eff.max_power)
+		new_eff.power = math.min(new_eff.max_power, old_eff.power+new_eff.power)
+		new_eff.tmpid = self:addTemporaryValue("resists", {all = -new_eff.power})
+		return new_eff
+	end,
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("resists", {all = -eff.power})
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("resists", eff.tmpid)
+	end,
+}

@@ -30,7 +30,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Split your flesh with infinite precision and grasp the light itself, bending it around you to become invisible (%d power based on spellpower).  While invisible all damage you deal against blinded foes is increased by +%d%%.
+		return ([[Split your flesh with infinite precision and grasp the light itself, bending it around you to become invisible (%d power based on spellpower).  While invisible, all damage you deal against blinded foes is increased by +%d%%.
 Deactivating this talent is instant.]]):tformat(t:_getInvisibilityPower(self), t:_getDamPower(self))
 	end,
 }
@@ -38,85 +38,98 @@ Deactivating this talent is instant.]]):tformat(t:_getInvisibilityPower(self), t
 newTalent{
 	name = "Photohammer", short_name = "REK_HEKA_VIZIER_ATTACK",
 	type = {"spell/null-vizier", 2},	require = mag_req2, points = 5,
-	mode = "passive",
-	range = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 6, 10)) end,
-	oneTarget = function(self, t) return {type="bolt", range=self:getTalentRange(t), talent=t, display={particle="bolt_fire"}, friendlyblock=false, friendlyfire=false} end,
-	cooldown = 3,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 230) end,
-	fire = function(self, t)
-		local tgts = {}
-		local grids = core.fov.circle_grids(self.x, self.y, self:getTalentRange(t), true)
-		for x, yy in pairs(grids) do for y, _ in pairs(grids[x]) do
-				local a = game.level.map(x, y, Map.ACTOR)
-				if a and self:reactionToward(a) < 0 then
-					tgts[#tgts+1] = a
-				end
-		end end
-		
-		local tg = t.oneTarget(self, t)
-		if #tgts <= 0 then return end
-		local a, id = rng.table(tgts)
-		table.remove(tgts, id)
-		
-		self:projectile(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, self:spellCrit(t.getDamage(self, t)), {type="slime"})
-		
-		self:startTalentCooldown(t)
-	end,
-	callbackOnActBase = function(self, t)
-		if self:isTalentCoolingDown(t) then return end
-		t.fire(self, t)
-	end,
-	callbackOnWait = function(self, t)
-		t.fire(self, t)
-	end,
-	info = function(self, t)
-		return ([[Your assistant has grown enough to extrude and project spines through your anchor. Every %d turns, it fires a poison needle at a nearby enemy within range %d, dealing %0.1f nature damage over 5 turns.
-Moving reduces the cooldown by 1, and waiting causes it to fire immediately.]]):tformat(self:getTalentCooldown(t), self:getTalentRange(t), damDesc(self, DamageType.NATURE, t:_getDamage(self, t)))
-	end,
-}
-
-newTalent{
-	name = "Total Phase Shift", short_name = "REK_HEKA_VIZIER_FLIP",
-	type = {"spell/null-vizier", 3}, require = mag_req3, points = 5,
-	cooldown = function(self, t) return t:_getDuration(self) + 3 end,
+	cooldown = 10,
 	hands = 30,
-	tactical = { DISABLE = 1 },
-	range = 10,
 	requires_target = true,
-	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
-	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6)) end,
+	range = 9,
+	radius = 1,
+	target = function(self, t)
+		return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), friendlyfire=false, talent=t}
+	end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 0, 230) end,
+	getPunishment = function(self, t) return self:combatTalentLimit(t, 0.6, 0.1, 0.35) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
-		local _ _, x, y = self:canProject(tg, x, y)
-		local target = game.level.map(x, y, Map.ACTOR)
-		if not target then return end
-		
-		target:setEffect(target.EFF_REK_HEKA_PHASE_OUT, t.getDuration(self, t), {src=self, apply_power=self:combatSpellpower()})
+		self:project(tg, x, y, DamageType.REK_HEKA_LIGHT_PUNISHMENT, {dam=self:spellCrit(t.getDamage(self, t)*getKharybdianTempo(self, t.id)), amp=t.getPunishment(self, t)})
 
-		game:playSoundNear(self, "talents/arcane")
-		investHands(self, t)
+		game:playSoundNear(self, "talents/fireflash")
 		return true
 	end,
 	info = function(self, t)
-		return ([[Seal a creture entirely into the Other Place (#SLATE#Spell save#LAST#) for %d turns. While there time does not pass for them - they are unable to act and immune to harm - except that their talents cool down, and at double speed.
-
-This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(t.getDuration(self, t))
+		return ([[Shine forth with the overwhelming radiance of the other place, striking enemies in  a circle of radius 1.  The energy deas %0.1f physical damage, plus %0.1f per non-other effect on a target (up to 7 effects).
+Sustains are not effects.
+Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)*t.getPunishment(self, t)))
 	end,
 }
 
 newTalent{
-	name = "Hyperevolution", short_name = "REK_HEKA_VIZIER_SEA",
+	name = "Empyreal Throne", short_name = "REK_HEKA_VIZIER_AURA",
+	type = {"spell/null-vizier", 3}, require = mag_req3, points = 5,
+	mode = "passive",
+	getDazzle = function(self, t) return self:combatTalentLimit(t, 50, 6, 18) end,
+	callbackOnHit = function(self, t, dam, src, death_note)
+		if not src or not src.setEffect then return dam end
+		if src:hasProc("heka_throne") then return end
+		src:setProc("heka_throne", true, 10)
+		src:setEffect(src.EFF_DAZZLED, 5, {src=self, power=t:_getDazzle(self), apply_power=self:combatSpellpower()})
+	end,
+	info = function(self, t)
+		return ([[The radiance of the other place surrounds and protects you.  An enemy that damages you may then be dazzled (#SLATE#Spell save#LAST#) for 5 turns, reducing the damage they do to you by %d%%.  Each enemy can only be affected once every 10 of their turns.]]):tformat(t.getDuration(self, t))
+	end,
+}
+
+newTalent{
+	name = "The Sun Beneath the Sea", short_name = "REK_HEKA_VIZIER_SUN",
 	type = {"spell/null-vizier", 4}, require = mag_req4, points = 5,
 	cooldown = 30,
-	tactical = { ATTACK = 3 },
-	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 5, 10)) end,
-	action = function(self, t)
+	mode = "sustained",
+	tactical = { BUFF = 2 },
+	hands = 10, drain_hands = 5,
+	getBlindResist = function(self, t) return math.min(1, self:combatTalentScale(t, 0.3, 1.0)) end,
+	getMaxCount = function(self, t) return math.floor(self:combatTalentScale(t, 1, 9)) end,
+	range = 0,
+	radius = function(self, t) return math.floor(self:combatTalentScale(t, 6, 10)) end,
+	target = function(self, t) return {type="ball", range=self:getTalentRange(t), friendlyfire=false, radius=self:getTalentRadius(t), talent=t} end,
+	burn = function(self, t)
+		local tg = self:getTalentTarget(t)
+		game.level.map:particleEmitter(self.x, self.y, tg.radius, "sunburst", {radius=tg.radius, grids=grids, tx=self.x, ty=self.y, max_alpha=80})
+		self:project(
+			tg, self.x, self.y,
+			function(px, py)
+				local target = game.level.map(x, y, Map.ACTOR)
+				if not target then return end
+				target:setEffect(target.EFF_REK_HEKA_WITHERED_RESISTANCES, 1, {src=self, power=5, max_power=5*t:_getMaxCount(self)})
+			end
+		)
+	end,
+	callbackOnActBase = function(self, t)
+		t.burn(self, t)
+	end,
+	activate = function(self, t)
+		self:removeEffectsFilter(self, {subtype={blind=true}}, 10)
+
+		action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		game.level.map:particleEmitter(self.x, self.y, tg.radius, "sunburst", {radius=tg.radius, grids=grids, tx=self.x, ty=self.y, max_alpha=80})
+		self:project(tg, self.x, self.y, DamageType.BLIND, 4)
+		t.burn(self, t)
+		tg.friendlyfire = true
+		self:project(tg, self.x, self.y, DamageType.LITE, 1)
+		game:playSoundNear(self, "talents/heal")
+		return true
+	end,
+		
+		local r = {}
+		self:effectTemporaryValue(r, "blind_immune", t:_getBlindResist(self))
+		return r
+	end,
+	deactivate = function(self, t, r)
 		return true
 	end,
 	info = function(self, t)
-		return ([[Your assistant crawls out through your anchor, summoning it onto the battlefield for %d turns.  Its statistics are based on your raw spellpower.
-This talent activates automatically when your Reservoir is consumed.]]):tformat(t:_getDuration(self))
+		return ([[Let the radiance of the other place flow through you, removing ay blindness effects and making you immune to blindness, while blinding enemies within range %d for %d turns (#SLATE#Spellpower vs Physical#LAST#).
+Each turn, the radiance will reduce enemy resistance to damage by %d%%, stacking up to %d times.]]):tformat(self:getTalentRadius(t), 4, 5, t:_getMaxCount(self))
 	end,
 }
