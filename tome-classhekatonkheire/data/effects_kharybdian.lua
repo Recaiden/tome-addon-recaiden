@@ -319,7 +319,7 @@ newEffect{
 }
 
 newEffect{
-	name = "REK_HEKA_RESERVOIR", image = "talents/rek_heka_moonwurn_reservoir.png",
+	name = "REK_HEKA_RESERVOIR", image = "talents/rek_heka_moonwurm_reservoir.png",
 	desc = _t"Reservoir",
 	long_desc = function(self, eff) return ("%d life is saved to revive you."):tformat(eff.power) end,
 	type = "other",
@@ -328,8 +328,10 @@ newEffect{
 	no_remove = true,
 	decrease = 0,
 	charges = function(self, eff)
-		return ([[%d / %d]]):format(eff.power, eff.max)
+		return eff.power >= eff.max and "Max" or math.floor(eff.power)
+		--return ([[%d/%d]]):format(eff.power, eff.max)
 	end,
+	charges_smallfont = true,
 	parameters = { power = 0, max = 100 },
 	on_merge = function(self, old_eff, new_eff)
 		old_eff.max = new_eff.max
@@ -340,7 +342,7 @@ newEffect{
 	deactivate = function(self, eff) end,
 	callbackPriorities = {callbackOnTakeDamage = 10}, --higher (later) than hand talents
 	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, state, no_martyr)
-		if dam < self.life + self.dieAt then return nil end
+		if dam < self.life + (self.die_at or 0) then return nil end
 		self:heal(eff.power)
 
 		if eff.src:knowTalent(eff.src.T_REK_HEKA_MOONWURM_SUMMON) then
@@ -406,7 +408,7 @@ newEffect{
 	callbackPriorities = {callbackOnHit = 210},
 	callbackOnHit = function(self, eff, cb, src, death_note)
 		if cb.value <= 0 then return cb end
-		if cb.value >= self:getMaxLife() * 0.3 then
+		if cb.value >= self.max_life * 0.3 then
 		-- Make the damage high enough to kill it
 			cb.value = self.max_life + (self.die_at or 1) +1
 			game.logSeen(self, "%s crumbles into grains of salt!", self:getName():capitalize())

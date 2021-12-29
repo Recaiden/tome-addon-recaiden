@@ -1,5 +1,5 @@
 newTalent{
-	name = "Light Work", short_name = "REK_HEKA_VIZIER_RESERVOIR",
+	name = "Light Work", short_name = "REK_HEKA_VIZIER_INVIS",
 	type = {"spell/null-vizier", 1}, require = mag_req_high1, points = 5,
 	drain_hands = 5,
 	cooldown = 16,
@@ -13,7 +13,7 @@ newTalent{
 		self:talentTemporaryValue(r, "invisible", t:_getInvisibilityPower(self))
 		self:effectTemporaryValue(r, "blind_inc_damage", t:_getDamPower(self))
 		if not self.shader then
-			eff.set_shader = true
+			r.set_shader = true
 			self.shader = "invis_edge"
 			self:removeAllMOs()
 			game.level.map:updateMap(self.x, self.y)
@@ -21,7 +21,7 @@ newTalent{
 		return r
 	end,
 	deactivate = function(self, t, r)
-		if eff.set_shader then
+		if r.set_shader then
 			self.shader = nil
 			self:removeAllMOs()
 			game.level.map:updateMap(self.x, self.y)
@@ -58,7 +58,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Shine forth with the overwhelming radiance of the other place, striking enemies in  a circle of radius 1.  The energy deas %0.1f physical damage, plus %0.1f per non-other effect on a target (up to 7 effects).
+		return ([[Shine forth with the overwhelming radiance of the other place, striking enemies in a circle of radius 1.  The energy deals %0.1f physical damage, plus %0.1f per non-other effect on a target (up to 7 effects).
 Sustains are not effects.
 Spellpower: increases damage.]]):tformat(damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)), damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t)*t.getPunishment(self, t)))
 	end,
@@ -95,7 +95,7 @@ newTalent{
 	target = function(self, t) return {type="ball", range=self:getTalentRange(t), friendlyfire=false, radius=self:getTalentRadius(t), talent=t} end,
 	burn = function(self, t)
 		local tg = self:getTalentTarget(t)
-		game.level.map:particleEmitter(self.x, self.y, tg.radius, "sunburst", {radius=tg.radius, grids=grids, tx=self.x, ty=self.y, max_alpha=80})
+		--game.level.map:particleEmitter(self.x, self.y, tg.radius, "sunburst", {radius=tg.radius, grids=grids, tx=self.x, ty=self.y, max_alpha=80})
 		self:project(
 			tg, self.x, self.y,
 			function(px, py)

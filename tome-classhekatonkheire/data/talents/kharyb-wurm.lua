@@ -7,7 +7,7 @@ newTalent{
 		if target.summoner then return end
 		if target.summoned_time then return end
 		if target.exp_worth == 0 then return end
-		local power = t:_getLife(self) * target.level * target.rank / (self.level * 200)
+		local power = t:_getLife(self) * target.level * target.rank * target.rank / (self.level * 400)
 		self:setEffect(self.EFF_REK_HEKA_RESERVOIR, 1, {src=self, max=t:_getLife(self), power=power})
 	end,
 	info = function(self, t)
@@ -39,7 +39,7 @@ newTalent{
 		local a, id = rng.table(tgts)
 		table.remove(tgts, id)
 		
-		self:projectile(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, self:spellCrit(t.getDamage(self, t)), {type="slime"})
+		self:projectile(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t)}, {type="slime"})
 		
 		self:startTalentCooldown(t)
 	end,
@@ -51,7 +51,7 @@ newTalent{
 		t.fire(self, t)
 	end,
 	info = function(self, t)
-		return ([[Your assistant has grown enough to extrude and project spines through your anchor. Every %d turns, it fires a poison needle at a nearby enemy within range %d, dealing %0.1f nature damage over 5 turns.
+		return ([[Your assistant has grown enough to extrude and project spines through your anchor. Every %d turns, it fires a poison needle at a nearby enemy within range %d, dealing %0.1f nature damage over 5 turns with a 25%% chance for disabling effects.
 Moving reduces the cooldown by 1, and waiting causes it to fire immediately.]]):tformat(self:getTalentCooldown(t), self:getTalentRange(t), damDesc(self, DamageType.NATURE, t:_getDamage(self, t)))
 	end,
 }
@@ -64,7 +64,7 @@ newTalent{
 	requires_target = true,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
 	getChance = function(self, t) return 3 + self:getTalentLevel(t) end,
-	getAmp = function(self, t) return math.floor(self:combatTalentScale(t, 0.2, 0.5)) end,
+	getAmp = function(self, t) return self:combatTalentScale(t, 0.2, 0.5) end,
 	callbackOnActBase = function (self, t)
 		if not self.in_combat then return end
 		if not rng.percent(t:_getChance(self)) then return end
@@ -77,14 +77,14 @@ newTalent{
 				end
 		end end
 
-		local tg = t.oneTarget(self, t)
+		local tg = t.target(self, t)
 		if #tgts <= 0 then return end
 		local a, id = rng.table(tgts)
 		table.remove(tgts, id)
-		a:setEffect(a.EFF_REK_HEKA_WURMDISTRACTION, 1, {src=self, power=t:_getAmp(self)})
+		a:setEffect(a.EFF_REK_HEKA_WURMDISTRACTION, 2, {src=self, power=t:_getAmp(self)})
 	end,
 	info = function(self, t)
-		return ([[Your assistant stretches its tether, with a %d%% chance each round of reaching out to distract a nearby enemy for 1 turn, during which they take %d%% increased damage.]]):tformat(t:_getChance(self), t:_getAmp(self)*100)
+		return ([[Your assistant stretches its tether, with a %d%% chance each round of reaching out to distract a nearby enemy for 2 turns, during which they take %d%% increased damage.]]):tformat(t:_getChance(self), t:_getAmp(self)*100)
 	end,
 }
 
@@ -110,14 +110,14 @@ newTalent{
 		local npc = require("mod.class.NPC").new{
 			type = "horror", subtype = "eldritch",
 			name = "kharybdian wurm",
-			desc = [[A long, unearthly creature with no eyes and many teeth in its ponited maw.]],
+			desc = [[A long, unearthly creature with three eyes and many teeth in its pointed maw.]],
 			display = 'h', color=colors.BLUE,
 			image = ("npc/%s.png"):format(imageStr),
 			
 			never_anger = true,
 			summoner = self,
 			summoner_gain_exp=true,
-			summon_time = t:_getSummonDuration(self),
+			summon_time = t:_getDuration(self),
 			faction = self.faction,
 			size_category = 4,
 			rank = 3.5,
@@ -130,7 +130,7 @@ newTalent{
 			stats = {
 				str=stat, dex=stat, mag=stat, wil=stat, cun=stat, con=stat,
 			},
-			combat_armor = 10, combat_def = 5,
+			combat_armor = 10+self.level * 2, combat_def = 5+self.level,
 			combat = {
 				dam=math.floor(self:combatScale(self.level, 1.5, 1, 75, 50, 0.75)),
 				atk=10 + self.level,
