@@ -114,7 +114,7 @@ newEffect{
 
 newEffect{
 	name = "REK_HEKA_LULLABY", image = "talents/rek_heka_oceansong_fail.png",
-	desc = _t"Lullaby Distraction",
+	desc = _t"Confounding Lullaby",
 	long_desc = function(self, eff) return ("The target can't think straight, causing their actions to fail %d%% of the time."):tformat(eff.power) end,
 	type = "other",
 	subtype = { sound=true },

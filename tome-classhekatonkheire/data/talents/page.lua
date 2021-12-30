@@ -79,7 +79,7 @@ newTalent{
 	tactical = { DISABLE = 1 },
 	range = 10,
 	requires_target = true,
-	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
+	target = function(self, t) return {type="hit", nowarning=true, range=self:getTalentRange(t), talent=t} end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 6)) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)

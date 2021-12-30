@@ -57,7 +57,7 @@ newTalent{
 	mode = "passive",
 	getFail = function(self, t) return self:combatTalentLimit(t, 50, 8, 20) end,
 	info = function(self, t)
-		return ([[Enhance your Lamenting Echo with melodies of peaceful demise that distract enemies (#SLATE#Spell save, no spellshock#LAST#) for 1 turn. Distracted enemies have a %d%% chance upon using a talent to fail and lose a turn.]]):tformat(t:_getFail(self))
+		return ([[Enhance your Lamenting Echo with melodies of peaceful demise that confound enemies (#SLATE#Spell save, no spellshock#LAST#) for 1 turn. Confounded enemies have a %d%% chance upon using a talent to fail and lose a turn.]]):tformat(t:_getFail(self))
 	end,
 }
 
