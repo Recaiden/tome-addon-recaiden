@@ -9,13 +9,14 @@ local Level = require "engine.Level"
 newEffect{
 	name = "REK_HEKA_OCULATUS", image = "talents/rek_heka_intrusion_eye.png",
 	desc = _t"Eye Shield",
-	long_desc = function(self, eff) return ("The target's reduces all incoming damage by %d."):tformat(eff.power) end,
+	long_desc = function(self, eff) return ("The target grows and reduces all incoming damage by %d."):tformat(eff.power) end,
 	type = "physical",
 	subtype = { arcane=true },
 	status = "beneficial",
 	parameters = { power=5 },
 	activate = function(self, eff)
 		eff.tmpid = self:addTemporaryValue("flat_damage_armor", { all = eff.power })
+		self:effectTemporaryValue(eff, "size_category", 1)
 	end,
 	deactivate = function(self, eff)
 		self:removeTemporaryValue("flat_damage_armor", eff.tmpid)
@@ -341,7 +342,7 @@ newEffect{
 	activate = function(self, eff) end,
 	deactivate = function(self, eff) end,
 	callbackPriorities = {callbackOnTakeDamage = 10}, --higher (later) than hand talents
-	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, state, no_martyr)
+	callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, state, no_martyr)
 		if dam < self.life + (self.die_at or 0) then return nil end
 		self:heal(eff.power)
 

@@ -43,9 +43,8 @@ newBirthDescriptor{
 	talents = {
 		[ActorTalents.T_REK_HEKA_INTRUSION_EYE] = 1,
 		[ActorTalents.T_REK_HEKA_BLOODTIDE_SHIELD] = 1,
-		--[ActorTalents.T_REK_HEKA_VEILED_LASHING] = 1,
+		[ActorTalents.T_REK_HEKA_POLYP_POLYP] = 1,
 		
-		--[ActorTalents.T_LIGHT_ARMOUR_TRAINING] = 1,
 		[ActorTalents.T_REK_HEKA_OTHERNESS_HIDDEN_PATHS] = 1,
 	},
 	

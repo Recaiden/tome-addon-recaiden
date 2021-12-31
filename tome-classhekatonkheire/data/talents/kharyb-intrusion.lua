@@ -37,7 +37,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		local damage = damDesc(self, DamageType.PHYSICAL, t.getDamage(self, t))
-		return ([[Your eye swims through the world and takes a bite out of an enemy on the way, dealing %0.1f physical damage and bleeding them for %0.1f over %d turns.  The meal strengthens you, granting %d flat damage reduction for %d turns.
+		return ([[Your eye swims through the world and takes a bite out of an enemy on the way, dealing %0.1f physical damage and bleeding them for %0.1f over %d turns.  The meal strengthens you, increasing your size category by 1 and granting %d flat damage reduction for %d turns.
 Spellpower: increases damage and damage reduction.
 This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(damage, damage/2, 5, t:_getReduction(self), t:_getDuration(self))
 	end,

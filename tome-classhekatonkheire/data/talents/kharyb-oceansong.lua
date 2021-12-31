@@ -9,7 +9,7 @@ newTalent{
 		if not ab.hands then return end
 		local targets = {}
 		self:project(
-			{type="ball", range=0, radius=10},
+			{type="ball", range=0, radius=10, friendlyfire=false},
 			self.x, self.y,
 			function(px, py)
 				local a = game.level.map(px, py, engine.Map.ACTOR)
