@@ -2,38 +2,56 @@ local Particles = require "engine.Particles"
 
 newBirthDescriptor{
 	type = "subclass",
-	name = "Kharybdian",
-	locked = function() return profile.mod.allow_build.mage end,
-	locked_desc = _t"Between a rock, and a hard place.",
+	name = "Khimeral",
+	locked = function() return profile.mod.allow_build.adventurer and true or "hide"  end,
+	locked_desc = _t"Save the world, create a monster.",
 	desc = {
-		_t"You've finally realized: you are not just you.  You are all who came before you, countless aeons within the sea.",
-		_t"A kharybdian is a mage attuned to the primordial ocean.",
-		_t"Their most important stat is Magic.",
+		_t"You've finally realized: you are not just you.  You are everything else, and something brand new.",
+		_t"A khimeral can do a little bit of everything that other Hand users can do.",
+		_t"It is a bonus class and by no means balanced.",
 		_t"#GOLD#Stat modifiers:",
-		_t"#LIGHT_BLUE# * +3 Constitution, +5 Magic, +1 Cunning",
+		_t"#LIGHT_BLUE# * +2 Strength, +2 Constitution, +2 Magic, +2 Cunning",
 		_t"#GOLD#Life Rating:#LIGHT_BLUE# +0",
 	},
 	power_source = { arcane=true },
-	stats = { con=3, mag=5, cun=1 },
+	stats = { str=2, con=2, mag=2, cun=2 },
 	not_on_random_boss = true,
 	talents_types = {
+		-- titanic talents
+		["spell/marching-sea"]={true, 0.3},
+		["spell/oubliette"]={true, 0.3},
+		["spell/mountainshaper"]={true, 0.3},
+
 		-- base talents
-		["spell/bloodtide"]={true, 0.3},
-		["spell/intrusion"]={true, 0.3},
-		["spell/oceansong"]={true, 0.3},
-		["spell/chronorium"]={true, 0.3},
-		["spell/polyp"]={true, 0.3},
-		["spell/marching-sea"]={false, 0.3},
+		["spell/bloodtide"]={false, 0.3},
+		["spell/intrusion"]={false, 0.3},
+		["spell/oceansong"]={false, 0.3},
+		["spell/chronorium"]={false, 0.3},
+		["spell/polyp"]={false, 0.3},
+		["spell/sybarite"]={false, 0.3},
+		["spell/watcher"]={false, 0.3},
+		["spell/veiled-shepherd"]={false, 0.3},
+		["spell/headless-horror"]={false, 0.3},
+		["spell/hale-hands"]={false, 0.3},
+		["spell/shambler"]={false, 0.3},
+		["technique/titanic-blows"]={false, 0.3},
+		["technique/helping-hands"]={false, 0.3},
+		["technique/harming-hands"]={false, 0.3},
 
 		--advanced talents
 		["spell/null-vizier"]={false, 0.3},
+		["spell/eyebite"]={false, 0.3},
+		["spell/eyesight"]={false, 0.3},
+		["technique/splintered-lord"]={false, 0.3},
 		["spell/moon-wurm"]={false, 0.3},
-		
+
 		--generics
 		["technique/combat-training"]={true, 0.0},
-		["cunning/survival"]={true, 0.3},
-		["spell/other-page"]={true, 0.3},
+		["cunning/survival"]={true, 0.0},
 		["spell/otherness"]={true, 0.0},
+		["spell/other-page"]={false, 0.3},
+		["spell/divination"]={false, 0.3},
+		["technique/conditioning"]={false, 0.3},
 	},
 	birth_example_particles = {
 		function(actor)
@@ -41,16 +59,19 @@ newBirthDescriptor{
 		end,
 	},
 	talents = {
-		[ActorTalents.T_REK_HEKA_INTRUSION_EYE] = 1,
-		[ActorTalents.T_REK_HEKA_BLOODTIDE_SHIELD] = 1,
-		[ActorTalents.T_REK_HEKA_POLYP_POLYP] = 1,
+		[ActorTalents.T_REK_HEKA_MOUNTAIN_EARTHDRUM] = 1,
+		[ActorTalents.T_REK_HEKA_MARCH_HEART] = 1,
+		[ActorTalents.T_REK_HEKA_TENTACLE_WAVE] = 1,
 		
 		[ActorTalents.T_REK_HEKA_OTHERNESS_HIDDEN_PATHS] = 1,
+		
+		[ActorTalents.T_REK_HEKA_CHIMERA_UNLOCK] = 1,
 	},
 	
 	copy = {
 		class_start_check = start_zone,
 		max_life = 100,
+		heka_chimera_points = 4,
 		mage_equip_filters,
 		resolvers.equipbirth{
 			id=true,
@@ -91,4 +112,4 @@ if not getBirthDescriptor("class", "Demented") then
 	}
 end
 
-getBirthDescriptor("class", "Demented").descriptor_choices.subclass["Kharybdian"] = "allow"
+getBirthDescriptor("class", "Demented").descriptor_choices.subclass["Khimeral"] = "allow"

@@ -304,3 +304,61 @@ if not Talents.talents_types_def["spell/marching-sea"] then
    newTalentType{ allow_random=true, is_spell=true, type="spell/marching-sea", name = _t("Marching Sea", "talent type"), no_silence=true, description = _t"The ocean and the desert are two sides of the same coin." }
    load("/data-classhekatonkheire/talents/kharyb-march.lua")
 end
+
+if not Talents.talents_def.T_REK_HEKA_CHIMERA_UNLOCK then
+newTalent{
+  name = "Design Vessel", short_name = "REK_HEKA_CHIMERA_UNLOCK", image = "talents/rek_heka_moonwurm_summon.png",
+  type = {"spell/other", 1},
+  points = 1,
+  cooldown = 0,
+  no_energy = true,
+  no_npc_use = true,
+	getOptions = function(self, t)
+		local o = {}
+
+		local Birther = require "engine.Birther"
+		local classes = Birther.birth_descriptor_def.subclass
+		local class = classes["Khimeral"]
+		local talents = class.talents_types
+		for t, access in pairs(talents) do
+			if access[1] == false then
+				local tt_def = self:getTalentTypeFrom(t)
+				if self:knowTalentType(tt_def.type) then
+					-- do nothing
+				elseif tt_def.type == "technique/helping-hands" and self:knowTalentType("spell/hale-hands") then
+					-- do nothing
+				elseif tt_def.type == "spell/hale-hands" and self:knowTalentType("technique/helping-hands") then
+					-- do nothing
+				else
+					o[#o+1] = {type=t, name=tt_def.name}
+				end
+			end
+		end
+		return o
+	end,
+  action = function(self, t)
+		local Dialog = require "engine.ui.Dialog"
+    local possibles = t.getOptions(self, t)
+    local tt = self:talentDialog(Dialog:listPopup("Design Vessel", "Learn one of these talent categories:", possibles, 400, 400, function(item) self:talentDialogReturn(item) end))
+		if not tt then return false end
+		self:learnTalentType(tt.type, true)
+		if tt.type == "spell/hale-hands" then
+			if self:knowTalentType("technique/helping-hands") then return nil end
+			self.talents_types["technique/helping-hands"] = nil
+		end
+		if tt.type == "technique/helping-hands" then
+			if self:knowTalentType("spell/hale-hands") then return nil end
+			self.talents_types["spell/hale-hands"] = nil
+		end
+		self.heka_chimera_points = self.heka_chimera_points - 1
+		if self.heka_chimera_points <= 0 then
+			self:unlearnTalentFull(t.id)
+		end
+    
+    return true
+  end,
+  info = function(self, t)
+    return ([[You can activate this talent up to %d times to unlock one of your talent categories.  Helping Hands and Hale Hands are mutually exclusive.]]):tformat(self.heka_chimera_points)
+  end,
+}
+end
