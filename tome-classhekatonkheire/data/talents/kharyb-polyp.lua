@@ -110,8 +110,8 @@ newTalent{
 			frenzy_factor = self:callTalent(self.T_REK_HEKA_POLYP_SPEED, "getSpeed") or 0,
 			on_act = function(self)
 				self.global_speed_add = self.global_speed_add + self.frenzy_factor
+				self:recomputeGlobalSpeed()
 			end,
-			
 			ai = "summoned", ai_real = "tactical", ai_state = { talent_in=1, ally_compassion=10},
 			ai_target = {
 				actor=target
@@ -138,7 +138,8 @@ newTalent{
 		local dam = t:_getDamage(self)*getKharybdianTempo(self, t.id)
 		local damEnd = t:_getDamageEnd(self)*getKharybdianTempo(self, t.id)
 		if self:knowTalent(self.T_REK_HEKA_POLYP_SPREAD) then
-			target:setEffect(target.EFF_REK_HEKA_POLYP, t:_getDuration(self), {src=self, apply_power=self:combatSpellpower(), dam=dam, damEnd=damEnd, spreadRange=self:getTalentRange(self.T_REK_HEKA_POLYP_SPREAD), spreadAmp=self:callTalent(self.T_REK_HEKA_POLYP_SPREAD, "getIncrease")})
+			local t2 =  self:getTalentFromId(self.T_REK_HEKA_POLYP_SPREAD)
+			target:setEffect(target.EFF_REK_HEKA_POLYP, t:_getDuration(self), {src=self, apply_power=self:combatSpellpower(), dam=dam, damEnd=damEnd, spreadRange=self:getTalentRange(t2), spreadAmp=self:callTalent(self.T_REK_HEKA_POLYP_SPREAD, "getIncrease")})
 		else
 			target:setEffect(target.EFF_REK_HEKA_POLYP, t:_getDuration(self), {src=self, apply_power=self:combatSpellpower(), dam=dam, damEnd=damEnd})
 		end

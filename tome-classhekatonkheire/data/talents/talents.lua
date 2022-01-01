@@ -285,7 +285,7 @@ if not Talents.talents_types_def["spell/chronorium"] then
 end
 
 if not Talents.talents_types_def["spell/other-page"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, generic=true, type="spell/other-page", name = _t("Other Page", "talent type"), description = _t"Look forward and back, it's all here" }
+   newTalentType{ allow_random=true, is_spell=true, no_silence=true, generic=true, type="spell/other-page", name = _t("Other Page", "talent type"), description = _t"Look forward and back, it's all here." }
    load("/data-classhekatonkheire/talents/page.lua")
 end
 

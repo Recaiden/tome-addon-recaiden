@@ -282,6 +282,7 @@ newEffect{
 	status = "detrimental",
 	parameters = { dam=5, damEnd=10, count=3, spreadAmp=1.0, spreadRange=0 },
 	activate = function(self, eff)
+		eff.spreadable = false
 	end,
 	callbackOnDispelled = function(self, eff, type, effid_or_tid, src, allow_immunity)
 		if effid_or_tid ~= self.EFF_REK_HEKA_POLYP then return end
@@ -309,16 +310,21 @@ newEffect{
 		else
 			local tg = {type="ball", range=0, selffire=false, radius=eff.spreadRange}
 			local hit = false
-			self:project(tg, self.x, self.y, function(px, py)
-										 local target = game.level.map(px, py, Map.ACTOR)
-										 if not target then return end
-										 if self:reactionToward(target) >= 0 then
-											 if not target:hasEffect(target.EFF_REK_HEKA_POLYP) then
-												 hit = true
-												 target:setEffect(target.EFF_REK_HEKA_POLYP, eff.dur, {src=eff.src, apply_power=(eff.src and eff.src:combatSpellpower() or self:combatSpellpower()), dam=eff.dam, damEnd=eff.damEnd})
+			if eff.spreadable then
+				self:project(tg, self.x, self.y, function(px, py)
+											 local target = game.level.map(px, py, Map.ACTOR)
+											 if not target then return end
+											 if self:reactionToward(target) >= 0 then
+												 if not target:hasEffect(target.EFF_REK_HEKA_POLYP) then
+													 hit = true
+													 target:setEffect(target.EFF_REK_HEKA_POLYP, eff.dur, {src=eff.src, apply_power=(eff.src and eff.src:combatSpellpower() or self:combatSpellpower()), dam=eff.dam, damEnd=eff.damEnd})
+												 end
 											 end
-										 end
-			end)
+				end)
+			else
+				hit = true
+				eff.spreadable = true
+			end
 			if not hit then eff.dam = eff.dam * eff.spreadAmp end
 			DamageType:get(DamageType.BLIGHT).projector(eff.src, self.x, self.y, DamageType.BLIGHT, eff.dam, {from_disease=true})
 		end
