@@ -3,14 +3,15 @@ newTalent{
 	type = {"spell/oceansong", 1}, require = mag_req1, points = 5,
 	mode= "passive",
 	radius = function(self, t) return math.floor(self:combatTalentScale(t, 1, 2.6)) end,
-	target = function(self, t) return {type="ball", range=0, radius=10, selffire=false, friendlyfire=false} end,
+	targetCenters = function(self, t) return {type="ball", range=0, radius=10, selffire=false, friendlyfire=false} end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 120) end,
 	callbackOnTalentPost = function(self, t, ab)
 		if not ab.hands then return end
-		local tg = self:getTalentTarget(t)
+		local tgMain = t.targetCenters(self, t)
+
 		local targets = {}
 		self:project(
-			tg,
+			tgMain,
 			self.x, self.y,
 			function(px, py)
 				local a = game.level.map(px, py, engine.Map.ACTOR)
@@ -25,7 +26,7 @@ newTalent{
 		local rad = self:getTalentRadius(t)
 		while rad + dist > 10 do rad = rad - 1 end
 		
-		local tg = {type="ball", radius=rad, range=10, talent=t}
+		local tg = {type="ball", radius=rad, range=10, selffire=false, friendlyfire=false, talent=t}
 
 		local t2 = self:getTalentFromId(self.T_REK_HEKA_OCEANSONG_HARMONY)
 		if self:knowTalent(self.T_REK_HEKA_OCEANSONG_HARMONY) and not self:isTalentCoolingDown(t2) then
