@@ -119,7 +119,7 @@ newTalent{
 	range = 0,
 	radius = function(self, t) return math.floor(self:combatTalentScale(t, 5, 10)) end,
 	target = function(self, t)
-		return {type="cone", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, talent=t}
+		return {type="cone", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, friendlyfire=false, talent=t}
 	end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 250) end,
 	getDuration = function(self, t) return 4 end,

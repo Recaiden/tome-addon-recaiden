@@ -41,9 +41,8 @@ end
 local base_recomputeGlobalSpeed = _M.recomputeGlobalSpeed
 function _M:recomputeGlobalSpeed()
 	local ret = base_recomputeGlobalSpeed(self)
-	self.hands_regen = 10 * self.global_speed
 	if self:knowTalent(self.T_REK_HEKA_BLOODTIDE_SHIELD) then
-		return 1.0
+		self.global_speed = 1.0
 	end
 	return ret
 end

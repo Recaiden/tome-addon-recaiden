@@ -107,7 +107,7 @@ newTalent{
 			blind_immune = 1,
 			see_invisible = 80,
 			resists_pen = { all=25 },
-			frenzy_factor = self:callTalent(self.T_REK_HEKA_POLYP_SPEED, getSpeed) or 0,
+			frenzy_factor = self:callTalent(self.T_REK_HEKA_POLYP_SPEED, "getSpeed") or 0,
 			on_act = function(self)
 				self.global_speed_add = self.global_speed_add + self.frenzy_factor
 			end,
@@ -163,8 +163,8 @@ newTalent{
 	range = 3,
 	getIncrease = function(self, t) return self:combatTalentScale(t, 1.0, 1.5) end,
 	info = function(self, t)
-		return ([[On the second and third turn of infection, the polyp status will spread to a nearby uninfected enemy. If it cannot, the original target takes %d%% damage that turn.
-]]):tformat(t:_getIncrease(self) * 100)
+		return ([[On the second and third turn of infection, the polyp status will spread to a nearby uninfected enemy (range %d). If it cannot, the original target takes %d%% damage that turn.
+]]):tformat(self:getTalentRange(t), t:_getIncrease(self) * 100)
 	end,
 }
 

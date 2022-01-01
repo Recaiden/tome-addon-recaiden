@@ -37,7 +37,7 @@ newTalent{
 			local a, id = rng.table(tgts)
 			table.remove(tgts, id)
 			
-			self:projectile(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t), random_chance=50}, {type="slime"})
+			self:projectile(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t), random_chance=50, apply_power=self:combatSpellpower()}, {type="slime"})
 		end
 		return true
 	end,
@@ -76,7 +76,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Flail wildly with your tentacles, doing %d%% unarmed damage to enemies in radius %d and distracting them, applying %d%% vulnerability for 2 turns.]]):tformat(t:_getDamage(self)*100, self:getTalentRadius(t), self:getTalentRadius(t), t:_getAmp(self)*100)
+		return ([[Flail wildly with your tentacles, doing %d%% unarmed damage to enemies in radius %d and distracting them, applying %d%% vulnerability for 2 turns.]]):tformat(t:_getDamage(self)*100, self:getTalentRadius(t), t:_getAmp(self)*100)
 	end,
 }
 
@@ -190,7 +190,7 @@ newTalent{
 		local a, id = rng.table(tgts)
 		table.remove(tgts, id)
 		
-		self:projectile(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t)}, {type="slime"})
+		self:projectile(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t), apply_power=self:combatSpellpower()}, {type="slime"})
 		
 		self:startTalentCooldown(t)
 	end,
@@ -248,9 +248,9 @@ newTalent{
 		a:setEffect(a.EFF_REK_HEKA_WURMDISTRACTION, 2, {src=self, power=t:_getAmp(self)})
 	end,
 	info = function(self, t)
-		return ([[Your assistant stretches its tether, with a %d%% chance each round of reaching out to distract a nearby enemy for 2 turns, during which they take %d%% increased damage.
+		return ([[Your assistant stretches its tether, with a %d%% chance each round of reaching out to distract an enemy within range %d for 2 turns, during which they take %d%% increased damage.
 
-When summoned, your assistant gains a disabling melee attack based on levels in this talent.]]):tformat(t:_getChance(self), t:_getAmp(self)*100)
+When summoned, your assistant gains a disabling melee attack based on levels in this talent.]]):tformat(t:_getChance(self), self:getTalentRange(t), t:_getAmp(self)*100)
 	end,
 }
 

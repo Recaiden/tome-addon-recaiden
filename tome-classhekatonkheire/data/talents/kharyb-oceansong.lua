@@ -3,13 +3,14 @@ newTalent{
 	type = {"spell/oceansong", 1}, require = mag_req1, points = 5,
 	mode= "passive",
 	radius = function(self, t) return math.floor(self:combatTalentScale(t, 1, 2.6)) end,
-	target = function(self, t)  end,
+	target = function(self, t) return {type="ball", range=0, radius=10, selffire=false, friendlyfire=false} end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 120) end,
 	callbackOnTalentPost = function(self, t, ab)
 		if not ab.hands then return end
+		local tg = self:getTalentTarget(t)
 		local targets = {}
 		self:project(
-			{type="ball", range=0, radius=10, friendlyfire=false},
+			tg,
 			self.x, self.y,
 			function(px, py)
 				local a = game.level.map(px, py, engine.Map.ACTOR)

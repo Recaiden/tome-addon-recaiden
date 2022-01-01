@@ -185,7 +185,7 @@ newEffect{
 		-- Reduce cooldowns
 		for tid, _ in pairs(self.talents_cd) do
 			local t = self:getTalentFromId(tid)
-			if t then
+			if t and tid ~= self.T_REK_HEKA_PAGE_FLIP then
 				if not t.fixed_cooldown then
 					self.talents_cd[tid] = self.talents_cd[tid] - 2
 				else
@@ -247,6 +247,9 @@ newEffect{
 	end,
 	activate = function(self, eff) end,
 	deactivate = function(self, eff) end,
+	callbackOnDeath = function(self, eff)
+		self:removeEffect(self.EFF_REK_HEKA_RECURRING_VISIONS, true, true)
+	end,
 	callbackOnActEnd = function(self, eff)
 		if self.resists and self.resists.absolute then
 			eff.power = eff.power * ((100 - math.min(self.resists_cap.absolute or 70, self.resists.absolute)) / 100)

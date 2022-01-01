@@ -127,7 +127,7 @@ newTalent{
 		end
 
 		if #effs == 0 then return nil end
-		self:takeHit(self:getMaxLife()*0.15)
+		self:takeHit(self.max_life*0.15)
 		for i = 1, t.getRemoveCount(self, t) do
 			if #effs == 0 then break end
 			local eff = rng.tableRemove(effs)

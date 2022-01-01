@@ -88,15 +88,19 @@ newTalent{
 		local _ _, x, y = self:canProject(tg, x, y)
 		local target = game.level.map(x, y, Map.ACTOR)
 		if not target then return end
-		
-		target:setEffect(target.EFF_REK_HEKA_PHASE_OUT, t.getDuration(self, t), {src=self, apply_power=self:combatSpellpower()})
+
+		if target == self then
+			target:setEffect(target.EFF_REK_HEKA_PHASE_OUT, t.getDuration(self, t), {src=self})
+		else
+			target:setEffect(target.EFF_REK_HEKA_PHASE_OUT, t.getDuration(self, t), {src=self, apply_power=self:combatSpellpower()})
+		end
 
 		game:playSoundNear(self, "talents/arcane")
 		investHands(self, t)
 		return true
 	end,
 	info = function(self, t)
-		return ([[Seal a creature entirely into the Other Place (#SLATE#Spell save#LAST#) for %d turns. While there time does not pass for them - they are unable to act and immune to harm - except that their talents cool down, and at double speed.
+		return ([[Seal a creature entirely into the Other Place (#SLATE#Spell save#LAST#) for %d turns. While there time does not pass for them - they are unable to act and immune to harm - except that their talents cool down, and at double speed (except for Total Phase Shift, if they know it).
 
 This talent invests hands; your maximum hands will be reduced by its cost until it expires.]]):tformat(t.getDuration(self, t))
 	end,
@@ -116,7 +120,6 @@ newTalent{
 	end,
 	callbackOnActBase = function(self, t) self:updateTalentPassives(t) end,
 	callbackOnTalentPost = function(self, t, ab) self:updateTalentPassives(t) end,
-	-- bonus regen in mod/class/interface/ActorResource/lua
 	info = function(self, t)
 		return ([[Your form stretches endlessly through the other place, increasing your maximum Hands by %d. While you have more than 100 hands, you regenerate an extra %d hands per round.]]):tformat(t:_getHands(self), t:_getHandRegen(self))
 	end,
