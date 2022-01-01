@@ -251,22 +251,25 @@ newEffect{
 		self:removeEffect(self.EFF_REK_HEKA_RECURRING_VISIONS, true, true)
 	end,
 	callbackOnActEnd = function(self, eff)
-		if self.resists and self.resists.absolute then
-			eff.power = eff.power * ((100 - math.min(self.resists_cap.absolute or 70, self.resists.absolute)) / 100)
-		end
-		local reserved = 0
-		if eff.power > eff.thresh then
-			reserved = math.min(eff.power - eff.thresh, eff.power * eff.ratio)
-			eff.power = eff.power - reserved
-		end
-
-		game:delayedLogDamage(self, self, 0, ("#WHITE#%d#LAST#"):format(eff.power), false)
-		--game.logSeen(self, "%s takes %0.1f damage from the past.",self:getName():capitalize(), eff.power)
-		self:takeHit(eff.power, self)
-		eff.power = reserved
-		if eff.power > 0 then
-			eff.dur = eff.dur + 1
-		end
+		game:onTickEnd(function() 
+				local rest = self.resting
+				if self.resists and self.resists.absolute then
+					eff.power = eff.power * ((100 - math.min(self.resists_cap.absolute or 70, self.resists.absolute)) / 100)
+				end
+				local reserved = 0
+				if eff.power > eff.thresh then
+					reserved = math.min(eff.power - eff.thresh, eff.power * eff.ratio)
+					eff.power = eff.power - reserved
+				end
+				
+				game:delayedLogDamage(self, self, 0, ("#WHITE#%d#LAST#"):format(eff.power), false)
+				--game.logSeen(self, "%s takes %0.1f damage from the past.",self:getName():capitalize(), eff.power)
+				self:takeHit(eff.power, self)
+				eff.power = reserved
+				if eff.power > 0 then
+					eff.dur = eff.dur + 1
+				end
+		end)
 	end,
 }
 
