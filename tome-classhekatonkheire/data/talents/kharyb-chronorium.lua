@@ -16,12 +16,12 @@ newTalent{
 		local geff = game.level.map:hasEffectType(x, y, DamageType.REK_HEKA_PYLON_MARKER)
 		if not geff then return end
 
-		game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
+		local ox, oy = self.x, self.y
 		if not self:teleportRandom(x, y, 0) then
 			game.logSeen(self, "%s's time folding fizzles!", self:getName():capitalize())
 		else
 			game.logSeen(self, "%s emerges from a space-time rift!", self:getName():capitalize())
-			game.level.map:particleEmitter(self.x, self.y, 1, "temporal_teleport")
+			game.level.map:particleEmitter(self.x, self.y, 1, "arcane_teleport_stream", { dx = ox - self.x, dy = oy - self.y, dir_c=0, color_r=160, color_g=50, color_b=200})
 		end
 		game:playSoundNear(self, "talents/teleport")
 		
@@ -136,9 +136,15 @@ newTalent{
 	end,
 	activate = function(self, t)
 		game:playSoundNear(self, "talents/spell_generic")
-		return {}
+		local ret = {}
+		if not self:addShaderAura("stone_skin", "crystalineaura", {time_factor=1500, spikeOffset=0.123123, spikeLength=0.9, spikeWidth=3, growthSpeed=2, color={0xD7/255, 0xD7/255, 0xD7/255}}, "particles_images/heka_spikes.png") then
+			ret.particle = self:addParticles(Particles.new("stone_skin", 1))
+		end
+		return ret
 	end,
 	deactivate = function(self, t, p)
+		self:removeShaderAura("stone_skin")
+		self:removeParticles(p.particle)
 		return true
 	end,
 	info = function(self, t)

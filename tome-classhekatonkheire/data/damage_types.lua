@@ -193,11 +193,12 @@ newDamageType{
 		state = initState(state)
 		useImplicitCrit(src, state)
 		local target = game.level.map(x, y, Map.ACTOR)
+		local amp = 1
 		if target then
 			local effs = target:effectsFilter({types={physical=true, magical=true, mental=true}}, 7)
 			local nb = #effs or 0
-			dam.dam = dam.dam * (1 + dam.amp*nb)
+			amp = (1 + dam.amp * nb)
 		end
-		return DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam, state)
+		return DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam * amp, state)
 	end,
 }

@@ -164,12 +164,11 @@ newEffect{
 		eff.sid = self:addTemporaryValue("time_prison", 1)
 		eff.tid = self:addTemporaryValue("no_timeflow", 1)
 		eff.imid = self:addTemporaryValue("status_effect_immune", 1)
-		if core.shader.active(4) then
-			eff.particle1 = self:addParticles(Particles.new("shader_ring_rotating", 1, {rotation=0, radius=1.1, img="arcanegeneric"}, {type="circular_flames", ellipsoidalFactor={1,2}, time_factor=3000, noup=2.0}))
-			eff.particle1.toback = true
-			eff.particle2 = self:addParticles(Particles.new("shader_ring_rotating", 1, {rotation=0, radius=1.1, img="arcanegeneric"}, {type="circular_flames", ellipsoidalFactor={1,2}, time_factor=3000, noup=1.0}))
+		if core.shader.active() then
+			self:effectParticles(eff, {type="shader_shield", args={toback=true,  size_factor=1, img="heka_phase_shift"}, shader={type="rotatingshield", noup=2.0, cylinderRotationSpeed=1.7, appearTime=0.2}})
+			self:effectParticles(eff, {type="shader_shield", args={toback=false, size_factor=1, img="heka_phase_shift"}, shader={type="rotatingshield", noup=1.0, cylinderRotationSpeed=1.7, appearTime=0.2}})
 		else
-			eff.particle1 = self:addParticles(Particles.new("time_prison", 1))
+			self:effectParticles(eff, {type="time_prison", args={}})
 		end
 		self.energy.value = 0
 	end,
@@ -178,8 +177,6 @@ newEffect{
 		self:removeTemporaryValue("time_prison", eff.sid)
 		self:removeTemporaryValue("no_timeflow", eff.tid)
 		self:removeTemporaryValue("status_effect_immune", eff.imid)
-		if eff.particle1 then self:removeParticles(eff.particle1) end
-		if eff.particle2 then self:removeParticles(eff.particle2) end
 	end,
 	on_timeout = function(self, eff)
 		-- Reduce cooldowns
@@ -283,6 +280,7 @@ newEffect{
 	parameters = { dam=5, damEnd=10, count=3, spreadAmp=1.0, spreadRange=0 },
 	activate = function(self, eff)
 		eff.spreadable = false
+		eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=0, oversize=0.7, a=255, appear=8, speed=0, img="blight_polyps", radius=0}))
 	end,
 	callbackOnDispelled = function(self, eff, type, effid_or_tid, src, allow_immunity)
 		if effid_or_tid ~= self.EFF_REK_HEKA_POLYP then return end
@@ -297,6 +295,7 @@ newEffect{
 		self:removeEffect(self.EFF_REK_HEKA_POLYP)
 	end,
 	deactivate = function(self, eff)
+		self:removeParticles(eff.particle)
 		DamageType:get(DamageType.PHYSICAL).projector(eff.src, self.x, self.y, DamageType.PHYSICAL, eff.damEnd, {from_disease=true})
 		local ed = self:getEffectFromId(eff.effect_id)
 		ed.summon(self, eff)

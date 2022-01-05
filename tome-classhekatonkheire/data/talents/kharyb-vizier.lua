@@ -54,6 +54,13 @@ newTalent{
 		if not x or not y then return nil end
 		self:project(tg, x, y, DamageType.REK_HEKA_PHYSICAL_PUNISHMENT, {dam=self:spellCrit(t.getDamage(self, t)*getKharybdianTempo(self, t.id)), amp=t.getPunishment(self, t)})
 
+		game.level.map:particleEmitter(x, y, tg.radius, "ellipse_burst", {radius=tg.radius, tx=x, ty=y, max_alpha=80, stretch_y=0.5})
+		local particles = {type="light"}
+		if core.shader.allow("adv") then
+			particles = {type="volumetric", args={kind="conic_cylinder", life=14, base_rotation=rng.range(160, 200), radius=4, y=1.8, density=40, shininess=20, growSpeed=0.006, img="photohammer"}}
+		end
+		game.level.map:particleEmitter(x, y, 1, particles.type, particles.args)
+
 		game:playSoundNear(self, "talents/fireflash")
 		return true
 	end,
@@ -71,6 +78,7 @@ newTalent{
 	getDazzle = function(self, t) return self:combatTalentLimit(t, 50, 6, 18) end,
 	callbackOnHit = function(self, t, dam, src, death_note)
 		if not src or not src.setEffect then return dam end
+		if src == self then return dam end
 		if src:hasProc("heka_throne") then return end
 		src:setProc("heka_throne", true, 10)
 		src:setEffect(src.EFF_DAZZLED, 5, {src=self, power=t:_getDazzle(self), apply_power=self:combatSpellpower()})
@@ -88,6 +96,7 @@ newTalent{
 	mode = "sustained",
 	tactical = { BUFF = 2 },
 	hands = 10, drain_hands = 5,
+	no_sustain_autoreset = true,
 	getBlindResist = function(self, t) return math.min(1, self:combatTalentScale(t, 0.3, 1.0)) end,
 	getMaxCount = function(self, t) return math.floor(self:combatTalentScale(t, 1, 9)) end,
 	range = 0,
@@ -121,9 +130,16 @@ newTalent{
 		
 		local r = {}
 		self:effectTemporaryValue(r, "blind_immune", t:_getBlindResist(self))
+		r.particle = self:addParticles(Particles.new("circle", 1, {base_rot=1, oversize=0.5, a=150, appear=8, y=-0.68, speed=0, img="sun_sea_orb", radius=0}))
+		if core.shader.active(4) then
+			r.aura = self:addParticles(Particles.new("shader_shield", 1, {size_factor=0.2+self:getTalentRadius(t)*1.78, blend=true, img="vizier_sun_aura"}, {type="shield", shieldIntensity=0.02, ellipsoidalFactor=1, color={1,0.8,0.4}}))
+		end
+
 		return r
 	end,
 	deactivate = function(self, t, r)
+		self:removeParticles(r.particle)
+		if r.aura then self:removeParticles(r.aura) end
 		return true
 	end,
 	info = function(self, t)
