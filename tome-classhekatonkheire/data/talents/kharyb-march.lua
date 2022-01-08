@@ -45,7 +45,8 @@ newTalent{
 		
 		local proj = require("mod.class.Projectile"):makeHoming(
 			self,
-			{particle="image", particle_args={image="particles_images/birds_tropical_03", size=64}},
+			--{particle="image", particle_args={image="particles_images/blood_spike", size=48}},
+			{particle="arrow", particle_args={tile="particles_images/blood_spike", proj_x=self.x, proj_y=self.y, src_x=x, src_y=y}},
 			{speed=5, name="Blood Spike", dam=damage},
 			target, self:getTalentRange(t),
 			moveSpike,	arriveSpike,	true
@@ -127,6 +128,7 @@ newTalent{
 		end
 
 		if #effs == 0 then return nil end
+		game.level.map:particleEmitter(target.x, target.y, 2, "generic_ball", {img="particles_images/smoke_whispery_bright", size={8,20}, life=16, density=10, radius=2})
 		self:takeHit(self.max_life*0.15, self)
 		for i = 1, t.getRemoveCount(self, t) do
 			if #effs == 0 then break end

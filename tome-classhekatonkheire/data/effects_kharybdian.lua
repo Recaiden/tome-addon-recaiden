@@ -451,8 +451,9 @@ newEffect{
 	end,
 	activate = function(self, eff)
 		eff.src:callTalent(eff.src.T_REK_HEKA_MARCH_HEART, "doSpike", eff.power)
+		eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=0, oversize=0.3, y=-0.68, a=255, appear=8, speed=0, img="sea_heart", radius=0}))
 	end,
-	deactivate = function(self, eff) end,
+	deactivate = function(self, eff) self:removeParticles(eff.particle) end,
 }
 
 newEffect{
