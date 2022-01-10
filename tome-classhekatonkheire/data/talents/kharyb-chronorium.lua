@@ -48,12 +48,13 @@ newTalent{
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nolock=true, talent=t} end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 6, 10)) end,
 	createPylon = function(self, t, x, y)
+		local img = "zodiac_0"..((game.calendar:getDayOfYear(game.turn) % 7) + 1)
 		game.level.map:addEffect(self,
 														 x, y, t:_getDuration(self),
 														 DamageType.REK_HEKA_PYLON_MARKER, 99,
 														 0,
 														 5, nil,
-														 {type="time_prison"},
+														 MapEffect.new{zdepth=6, alpha=0, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, img=img, radius=0, base_rot=0, speed = 0, oversize=0.7, a=250}}, effect_shader="shader_images/blank_effect.png"},
 														 nil, false
 		)
 	end,

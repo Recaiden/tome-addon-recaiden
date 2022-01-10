@@ -137,6 +137,12 @@ newEffect{
 		eff.hands_base = eff.hands
 		self:effectTemporaryValue(eff, "combat_spellpower", eff.power)
 		eff.hid = self:addTemporaryValue("hands_regen", eff.hands)
+		if core.shader.active() then
+			self:effectParticles(eff, {type="shader_shield", args={toback=true,  size_factor=1, img="heka_hand_regen_top"}, shader={type="rotatingshield", noup=2.0, cylinderRotationSpeed=3.4, cylinderVerticalPos=-0.2, appearTime=0.2}})
+			self:effectParticles(eff, {type="shader_shield", args={toback=false, size_factor=1, img="heka_hand_regen_top"}, shader={type="rotatingshield", noup=1.0, cylinderRotationSpeed=3.4, cylinderVerticalPos=-0.2, appearTime=0.2}})
+			self:effectParticles(eff, {type="shader_shield", args={toback=true,  size_factor=1, img="heka_hand_regen_bot"}, shader={type="rotatingshield", noup=2.0, cylinderRadius=0.30, cylinderRotationSpeed=2.1, cylinderVerticalPos=-0.2, appearTime=0.2}})
+			self:effectParticles(eff, {type="shader_shield", args={toback=false, size_factor=1, img="heka_hand_regen_bot"}, shader={type="rotatingshield", noup=1.0, cylinderRadius=0.30, cylinderRotationSpeed=2.1, cylinderVerticalPos=-0.2, appearTime=0.2}})
+		end
 	end,
 	deactivate = function(self, eff)
 		self:removeTemporaryValue("hands_regen", eff.hid)

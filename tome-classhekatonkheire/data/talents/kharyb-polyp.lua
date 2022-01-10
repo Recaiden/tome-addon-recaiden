@@ -59,8 +59,6 @@ newTalent{
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
 	getSummonDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 8)) end,
 	summon = function(self, t, target)
-		local colors = {"red", "green", "blue"}
-		local imageStr = ("horror_eldritch_wandering_eye_%s"):format(colors[rng.range(1, #colors)])
 		local stat = self:combatSpellpowerRaw()*0.5
 		local x, y = util.findFreeGrid(target.x, target.y, 5, true, {[Map.ACTOR]=true})
 		if not x then return nil end
@@ -69,7 +67,7 @@ newTalent{
 			name = "kharybdian polyp",
 			desc = [[A solid-looking little creature with more tentacles than you'd prefer.]],
 			display = 'h', color=colors.LIGHT_BLUE,
-			image = ("npc/%s.png"):format(imageStr),
+			image = "npc/horror_eldritch_kharybdian_polyp.png",
 			
 			never_anger = true,
 			summoner = self,

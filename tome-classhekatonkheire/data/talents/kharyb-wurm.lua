@@ -269,8 +269,6 @@ newTalent{
 		target = self.ai_target.actor
 		if target == self then target = nil end
 
-		local colors = {"red", "green", "blue"}
-		local imageStr = ("horror_eldritch_wandering_eye_%s"):format(colors[rng.range(1, #colors)])
 		local stat = self:combatSpellpowerRaw()
 
 		local l1, l2, l3 = 0, 0, 0
@@ -289,7 +287,7 @@ newTalent{
 			name = "kharybdian wurm",
 			desc = [[A long, unearthly creature with three eyes and many teeth in its pointed maw.]],
 			display = 'h', color=colors.BLUE,
-			image = ("npc/%s.png"):format(imageStr),
+			image = "npc/horror_eldritch_kharybdian_wurm.png",
 			
 			never_anger = true,
 			summoner = self,

@@ -17,6 +17,7 @@ ActorResource:defineResource ("Hands", "hands", "T_HANDS_POOL", "hands_regen", "
 		highlight = function(player, vc, vn, vm, vr)
 			if player then
 				local cur_t = player.hands
+				if player:knowTalent(player.T_REK_HEKA_PAGE_SEA) then return cur_t >= 100 end
 				if cur_t > 20 then return true end
 			end
 		end,
