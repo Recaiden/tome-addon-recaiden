@@ -32,6 +32,7 @@ newTalent{
 		if self:knowTalent(self.T_REK_HEKA_OCEANSONG_HARMONY) and not self:isTalentCoolingDown(t2) then
 			self:project(tg, x, y, DamageType.REK_HEKA_MIND_HARMONY, self:spellCrit(t.getDamage(self, t))*self:callTalent(self.T_REK_HEKA_OCEANSONG_HARMONY, "getMultiplier"))
 			self:startTalentCooldown(self.T_REK_HEKA_OCEANSONG_HARMONY)
+			game:playSoundNear(self, "talents/chant_one")
 		else
 			self:project(tg, x, y, DamageType.MIND, self:spellCrit(t.getDamage(self, t)))
 		end
@@ -85,6 +86,7 @@ newTalent{
 		local duration = t.getDuration(self, t)
 		local chance = t.getChance(self, t)
 		target:setEffect(target.EFF_BECKONED, duration, {src=self, range=range, chance=chance, spellpowerChange=0, mindpowerChange=0})
+		game:playSoundNear(self, "talents/chant_two")
 
 		return true
 	end,

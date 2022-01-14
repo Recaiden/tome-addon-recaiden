@@ -82,13 +82,36 @@ function _M:combatGetDamageIncrease(type, straight)
 	return amp
 end
 
-local base_checkHit = _M.checkHit
-function _M:checkHit(atk, def, min, max, factor, p)
-	local hit, chance = base_checkHit(self, atk, def, min, max, factor, p)
-	if hit and self:knowTalent(self.T_REK_HEKA_MARCH_DESTRUCTION) then
-		self:callTalent(self.T_REK_HEKA_MARCH_DESTRUCTION, "applyBoost")
+-- local base_checkHit = _M.checkHit
+-- function _M:checkHit(atk, def, min, max, factor, p)
+-- 	local hit, chance = base_checkHit(self, atk, def, min, max, factor, p)
+-- 	if hit and self:knowTalent(self.T_REK_HEKA_MARCH_DESTRUCTION) then
+-- 		self:callTalent(self.T_REK_HEKA_MARCH_DESTRUCTION, "applyBoost")
+-- 	end
+-- 	return hit, chance
+-- end
+
+local base_spellCrit = _M.spellCrit
+function _M:spellCrit(dam, add_chance, crit_power_add)
+	local boost = 0
+
+	if self:knowTalent(self.T_REK_HEKA_MARCH_DESTRUCTION) then
+		local cap = self:callTalent(self.T_REK_HEKA_MARCH_DESTRUCTION, "getCap")
+		local grids = core.fov.circle_grids(self.x, self.y, 10, true)
+		for x, yy in pairs(grids) do
+			for y, _ in pairs(grids[x]) do
+				local a = game.level.map(x, y, Map.ACTOR)
+				if a and self:reactionToward(a) < 0 then
+					local effs = a:effectsFilter({types={physical=true, magical=true, mental=true}}, cap)
+					local nb = #effs or 0
+					boost = math.min(cap, boost+nb)
+				end
+			end
+		end
 	end
-	return hit, chance
+
+	return base_spellCrit(self, dam, (add_chance or 0)+boost, (crit_power_add or 0) + boost)
 end
+
 
 return _M

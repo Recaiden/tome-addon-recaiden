@@ -165,7 +165,7 @@ newTalent{
 		return dam
 	end,
 	info = function(self, t)
-		return ([[Your anchor is surrounded by a vast desolation, and enemies that approach within range %d may be lost there for %d turns (#SLATE#spell save#LAST#), during which they are pinned and made brittle (dying instantly if struck for more than 30%% of their maximum life).  This can only affect a given creature once every 10 of their turns.
+		return ([[Your anchor is surrounded by an aura of desolation, and enemies that approach within range %d may be lost there for %d turns (#SLATE#spell save#LAST#), during which they are pinned and made brittle (dying instantly if struck for more than 30%% of their maximum life).  This can only affect a given creature once every 10 of their turns.
 
 #{italic}#Between us lie seas that melt and seas that have dried away, sands made silver and salt that cuts like steel.  Even there, things live.#{normal}#]]):tformat(self:getTalentRange(t), t.getDuration(self, t))
 	end,
@@ -175,14 +175,10 @@ newTalent{
 	name = "Lingering Destruction", short_name = "REK_HEKA_MARCH_DESTRUCTION",
 	type = {"spell/marching-sea", 4}, require = mag_req4, points = 5,
 	mode = "passive",
-	getSp = function(self, t) return 1 + self:getTalentLevel(t) end,
-	applyBoost = function(self, t)
-		if not self.in_combat then return nil end
-		self:setEffect(self.EFF_REK_HEKA_LINGERING_DESTRUCTION, 3, {src=self, power=t:_getSp(self)})
-	end,
+	getCap = function(self, t) return math.floor(self:combatTalentScale(t, 5, 20)) end,
 	info = function(self, t)
-		return ([[Whenever you beat an opponent's saving throw or defense in combat, you gain %d spellpower for the next 3 turns.
+		return ([[Every negative non-other effect on an enemy within 10 spaces makes you stronger, giving you +1%% spell critical strike chance and critical power, stacking up to %d times.
 
-#{italic}#It is better to torment your enemies, to weaken and bind them, rather than allow them a quick defeat.#{normal}#]]):tformat(t:_getSp(self))
+#{italic}#It is better to torment your enemies, to weaken and bind them, rather than allow them a quick defeat.#{normal}#]]):tformat(t:_getCap(self))
 	end,
 }

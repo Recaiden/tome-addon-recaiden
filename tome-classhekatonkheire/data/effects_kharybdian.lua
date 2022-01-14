@@ -35,7 +35,7 @@ newEffect{
 		eff.tmpid = self:addTemporaryValue("never_move", 1)
 
 		if not self.add_displays then
-			self.add_displays = { Entity.new{image='npc/bone_grab_pin.png', display=' ', display_on_seen=true } }
+			self.add_displays = { Entity.new{image='npc/crab_grab_pin.png', display=' ', display_on_seen=true } }
 			eff.added_display = true
 		end
 		self:removeAllMOs()
@@ -70,7 +70,7 @@ newEffect{
 			local spot = rng.table(eff.list)
 			if not spot or not spot.x then return end
 			self:project({type="ball", x=spot.x, y=spot.y, radius=1, selffire=self:spellFriendlyFire()}, spot.x, spot.y, DamageType.REK_HEKA_PHYSICAL_STUN, self:spellCrit(eff.dam))
-			game.level.map:particleEmitter(spot.x, spot.y, 2, "generic_sploom", {rm=150, rM=180, gm=150, gM=180, bm=150, bM=180, am=80, aM=150, radius=1, basenb=120})
+			game.level.map:particleEmitter(spot.x, spot.y, 1, "fusillade_burst", {radius=1, tx=spot.x, ty=spot.y, max_alpha=80})
 		end
 		game:playSoundNear(self, "talents/arcane")
 	end,
@@ -83,13 +83,13 @@ newEffect{
 		return new_eff
 	end,
 	activate = function(self, eff)
-		eff.particle = Particles.new("circle", eff.radius, {a=150, speed=0.15, img="aether_breach", radius=eff.radius})
+		eff.particle = Particles.new("circle", eff.radius, {a=150, speed=0.15, img="vortex_slam", radius=eff.radius})
 		eff.particle.zdepth = 6
 		game.level.map:addParticleEmitter(eff.particle, eff.x, eff.y)
 
 		local spot = {x=eff.x, y=eff.y}
 		self:project({type="ball", x=spot.x, y=spot.y, radius=1, selffire=self:spellFriendlyFire()}, spot.x, spot.y, DamageType.REK_HEKA_PHYSICAL_STUN, self:spellCrit(eff.dam))
-		game.level.map:particleEmitter(spot.x, spot.y, 2, "generic_sploom", {rm=150, rM=180, gm=150, gM=180, bm=150, bM=180, am=80, aM=150, radius=1, basenb=120})
+		game.level.map:particleEmitter(spot.x, spot.y, 1, "fusillade_burst", {radius=1, tx=spot.x, ty=spot.y, max_alpha=80})
 	end,
 	deactivate = function(self, eff)
 		if game.zone.short_name.."-"..game.level.level ~= eff.level then return end

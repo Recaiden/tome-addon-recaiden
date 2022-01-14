@@ -22,7 +22,8 @@ newTalent{
 		-- Project our damage
 		self:project(tg, x, y, DamageType.PHYSICALBLEED, self:spellCrit(t.getDamage(self, t)*getKharybdianTempo(self, t.id)))
 		
-		game.level.map:particleEmitter(x, y, 1, "otherside_teleport_gate_in", nil, nil, 15)
+		game.level.map:particleEmitter(x, y, 1, "otherside_teleport_gate_in", {dur=8}, nil, 15)
+		game.level.map:particleEmitter(x, y, 1, "image_rise", {life=32, img="oculatus_bite"})
 		game:playSoundNear(self, "talents/arcane")
 
 		self:setEffect(self.EFF_REK_HEKA_OCULATUS, t:_getDuration(self), {power=t.getReduction(self, t)})
@@ -130,7 +131,11 @@ newTalent{
 		if not x or not y then return nil end
 		self:project(tg, x, y, DamageType.REK_HEKA_PHYSICAL_NUMB, {dur=t.getDuration(self, t), numb=t.getNumb(self, t), dam=self:spellCrit(t.getDamage(self, t)*getKharybdianTempo(self, t.id))})
 
-		game.level.map:particleEmitter(self.x, self.y, tg.radius, "breath_earth", {radius=tg.radius, tx=x-self.x, ty=y-self.y})
+		local hx, hy = self:attachementSpot("back", true)
+		self:project(tg, x, y, function(px, py)
+									 self:addParticles(Particles.new("blood_trail", 1, {range=core.fov.distance(self.x, self.y, px, py), dir=math.deg(math.atan2(py-self.y, px-self.x)+math.pi/2), img="jelly_trail_segment", dx=hx, dy=hy, grab=false}))
+		end)
+		
 		game:playSoundNear(self, "talents/fireflash")
 		return true
 	end,

@@ -37,7 +37,8 @@ newTalent{
 			local a, id = rng.table(tgts)
 			table.remove(tgts, id)
 			
-			self:project(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t), random_chance=50, apply_power=self:combatSpellpower()})--, {type="slime"})
+			self:project(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t), random_chance=50, apply_power=self:combatSpellpower()})
+			game.level.map:particleEmitter(self.x, self.y, tg.range, "bone_spear", {tx=a.x - self.x, ty=a.y - self.y})
 		end
 		return true
 	end,
@@ -190,7 +191,8 @@ newTalent{
 		local a, id = rng.table(tgts)
 		table.remove(tgts, id)
 		
-		self:project(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t), apply_power=self:combatSpellpower()})--, {type="slime"})
+		self:project(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t), apply_power=self:combatSpellpower()})
+		game.level.map:particleEmitter(self.x, self.y, tg.range, "bone_spear", {tx=a.x - self.x, ty=a.y - self.y})
 		
 		self:startTalentCooldown(t)
 	end,

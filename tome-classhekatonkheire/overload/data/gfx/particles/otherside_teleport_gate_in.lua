@@ -1,5 +1,5 @@
-local dur = 24
-local life = 16
+local dur = dur or 24
+local life = life or 16
 
 return {
 	generator = function()
