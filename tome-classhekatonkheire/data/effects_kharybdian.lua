@@ -218,18 +218,28 @@ newEffect{
 	parameters = { talents = {} },
 	on_merge = function(self, old_eff, new_eff, e)
 		old_eff.dur = new_eff.dur
+		for tid, time in pairs(new_eff.talents) do
+			new_eff.src:callTalent(new_eff.src.T_REK_HEKA_BLOODTIDE_BUFF, "doHighlight", tid)
+		end
 		table.merge(old_eff.talents, new_eff.talents)
 		return old_eff
 	end,
 	activate = function(self, eff)
+		for tid, time in pairs(eff.talents) do
+			eff.src:callTalent(eff.src.T_REK_HEKA_BLOODTIDE_BUFF, "doHighlight", tid)
+		end
 	end,
 	deactivate = function(self, eff)
+		for tid, time in pairs(eff.talents) do
+			eff.src:callTalent(eff.src.T_REK_HEKA_BLOODTIDE_BUFF, "doUnHighlight", tid)
+		end
 	end,
 	on_timeout = function(self, eff)
 		for tid, time in pairs(eff.talents) do
 			eff.talents[tid] = time - 1
 			if time - 1 <= 0 then
 				eff.talents[tid] = nil
+				eff.src:callTalent(eff.src.T_REK_HEKA_BLOODTIDE_BUFF, "doUnHighlight", tid)
 			end
 		end
 	end,

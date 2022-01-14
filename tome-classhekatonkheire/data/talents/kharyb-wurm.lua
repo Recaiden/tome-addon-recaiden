@@ -5,8 +5,8 @@ newTalent{
 	tactical = { ATTACK = { NATURE = 1 } },
 	range = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 6, 10)) end,
 	requires_target = true,
-	target = function(self, t) return {type="bolt", range=self:getTalentRange(t), talent=t} end,
-	oneTarget = function(self, t) return {type="bolt", range=self:getTalentRange(t), talent=t, display={particle="bone_spear"}, friendlyblock=false, friendlyfire=false} end,
+	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
+	oneTarget = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t, friendlyblock=false, friendlyfire=false} end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 230) end,
 	callbackOnTeleport = function(self, t, teleported, ox, oy, x, y)
 		if not teleported then return end
@@ -37,7 +37,7 @@ newTalent{
 			local a, id = rng.table(tgts)
 			table.remove(tgts, id)
 			
-			self:projectile(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t), random_chance=50, apply_power=self:combatSpellpower()})--, {type="slime"})
+			self:project(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t), random_chance=50, apply_power=self:combatSpellpower()})--, {type="slime"})
 		end
 		return true
 	end,
@@ -172,7 +172,7 @@ newTalent{
 	type = {"spell/moon-wurm", 2},	require = mag_req_high2, points = 5,
 	mode = "passive",
 	range = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 6, 10)) end,
-	oneTarget = function(self, t) return {type="bolt", range=self:getTalentRange(t), talent=t, display={particle="bone_spear"}, friendlyblock=false, friendlyfire=false} end,
+	oneTarget = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t, friendlyblock=false, friendlyfire=false} end,
 	cooldown = 3,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 230) end,
 	fire = function(self, t)
@@ -190,7 +190,7 @@ newTalent{
 		local a, id = rng.table(tgts)
 		table.remove(tgts, id)
 		
-		self:projectile(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t), apply_power=self:combatSpellpower()})--, {type="slime"})
+		self:project(table.clone(tg), a.x, a.y, DamageType.RANDOM_POISON, {dam=self:spellCrit(t.getDamage(self, t)), power=10+self:getTalentLevel(t), apply_power=self:combatSpellpower()})--, {type="slime"})
 		
 		self:startTalentCooldown(t)
 	end,

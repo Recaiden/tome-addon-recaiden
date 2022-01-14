@@ -36,6 +36,57 @@ newTalent{
 	type = {"spell/bloodtide", 2},	require = mag_req2, points = 5,
 	mode = "passive",
 	getMultiplier = function(self, t) return self:combatTalentScale(t, 1.3, 1.75) end,
+	doUnHighlight = function(self, t, tid)
+		if not self:playerControlled() then return end
+		
+		game.uiset.bloodtide_particles = game.uiset.bloodtide_particles or {}
+		if game.uiset.bloodtide_particles[tid] then
+			local p = game.uiset.bloodtide_particles[tid].p
+			game.uiset.particles[p] = nil
+			game.uiset.bloodtide_particles[tid] = nil
+		end
+	end,
+	doHighlight = function(self, t, tid)
+		if not self:playerControlled() then return end
+		
+		game.uiset.bloodtide_particles = game.uiset.bloodtide_particles or {}
+		
+		local hk
+		-- find the hotkey
+		for n, info in pairs(self.hotkey) do
+			local kind, hk_tid = info[1], info[2]
+			if kind == 'talent' then
+				if hk_tid == tid then
+					hk = n
+				end
+			end
+		end
+		
+		local x, y
+		local zone
+		
+		if hk and config.settings.tome.visual_hotkeys and game.uiset.hotkeys_display and game.uiset.hotkeys_display.clics and game.uiset.hotkeys_display.clics[hk] and self.hotkey[hk] then
+			zone = game.uiset.hotkeys_display.clics[hk]
+			x = game.uiset.hotkeys_display.display_x + zone[1] + zone[3] / 2
+			y = game.uiset.hotkeys_display.display_y + zone[2] + zone[4] / 2
+		end
+		
+		--if there's already a particle and its not in the right place, delet
+		if game.uiset.bloodtide_particles[tid] and (game.uiset.bloodtide_particles[tid].x ~= x or game.uiset.bloodtide_particles[tid].y ~= y) then
+			local p = game.uiset.bloodtide_particles[tid].p
+			game.uiset.particles[p] = nil
+			game.uiset.bloodtide_particles[tid] = nil
+		end
+		
+		--if we have a valid position and there isn't already a particle in that position, add
+		if zone and
+			not game.uiset.bloodtide_particles[tid] or
+			not (game.uiset.bloodtide_particles[tid] and game.uiset.bloodtide_particles[tid].x == x and game.uiset.bloodtide_particles[tid].y == y) then
+			local p = Particles.new("hotkey_highlight_bloodtide", 1, {icon_w=game.uiset.hotkeys_display.icon_w})
+			game.uiset.particles[p] = {x=x or 0, y=y or 0}
+			game.uiset.bloodtide_particles[tid] = {p=p, x=x or 0, y=y or 0}
+		end
+	end,
 	info = function(self, t)
 		return ([[If you use your Kharybdian talents the same turn they come off cooldown, their damage will be multiplied by %0.1fx.]]):tformat(t:_getMultiplier(self))
 	end,
