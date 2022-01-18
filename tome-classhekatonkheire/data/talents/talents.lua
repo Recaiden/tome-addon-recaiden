@@ -8,6 +8,10 @@ mag_req_slow = {
 	stat = { mag=function(level) return 12 + (level-1) * 2 end },
 	level = function(level) return 0 + (level-1)*4  end,
 }
+mag_req_slow2 = {
+	stat = { mag=function(level) return 20 + (level-1) * 6 end },
+	level = function(level) return 4 + (level-1)*5  end,
+}
 mag_req1 = {
 	stat = { mag=function(level) return 12 + (level-1) * 2 end },
 	level = function(level) return 0 + (level-1)  end,

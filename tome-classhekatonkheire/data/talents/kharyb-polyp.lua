@@ -51,7 +51,7 @@ newTalent{
 	name = "Anchor Polyp", short_name = "REK_HEKA_POLYP_POLYP",
 	type = {"spell/polyp", 1}, require = mag_req1, points = 5,
 	cooldown = 3,
-	hands = 15,
+	hands = 20,
 	tactical = { ATTACK = {PHYSICAL = 1, BLIGHT = 1} },
 	range = 10,
 	direct_hit = true,
@@ -123,8 +123,8 @@ newTalent{
 		game.zone:addEntity(game.level, npc, "actor", x, y)
 		game.level.map:particleEmitter(x, y, 1, "teleport_in")
 	end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 230)/3 end,
-	getDamageEnd = function(self, t) return self:combatTalentSpellDamage(t, 10, 100) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 130)/3 end,
+	getDamageEnd = function(self, t) return self:combatTalentSpellDamage(t, 10, 78) end,
 	getDuration = function(self, t) return 3 end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)

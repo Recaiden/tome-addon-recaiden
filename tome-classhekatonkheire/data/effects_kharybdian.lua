@@ -304,14 +304,14 @@ newEffect{
 	end,
 	summon = function(self, eff)
 		if eff.spawned then return end
-			
+		eff.spawned = true
 		eff.src:callTalent(eff.src.T_REK_HEKA_POLYP_POLYP, "summon", self)		
 		game.logSeen(self, "#LIGHT_RED#An otherworldly polyp bursts out of %s!", self:getName():capitalize())
-		eff.spawned = true
 		self:removeEffect(self.EFF_REK_HEKA_POLYP)
 	end,
 	deactivate = function(self, eff)
 		self:removeParticles(eff.particle)
+		if eff.spawned then return end
 		DamageType:get(DamageType.PHYSICAL).projector(eff.src, self.x, self.y, DamageType.PHYSICAL, eff.damEnd, {from_disease=true})
 		local ed = self:getEffectFromId(eff.effect_id)
 		ed.summon(self, eff)
@@ -370,7 +370,7 @@ newEffect{
 	deactivate = function(self, eff) end,
 	callbackPriorities = {callbackOnTakeDamage = 10}, --higher (later) than hand talents
 	callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, state, no_martyr)
-		if dam < self.life + (self.die_at or 0) then return nil end
+		if dam < self.life + (self.die_at or 0) then return {dam=dam} end
 		self:heal(eff.power)
 
 		if eff.src:knowTalent(eff.src.T_REK_HEKA_MOONWURM_SUMMON) then

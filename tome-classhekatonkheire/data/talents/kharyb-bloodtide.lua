@@ -3,7 +3,7 @@ newTalent{
 	type = {"spell/bloodtide", 1}, require = mag_req1, points = 5,
 	mode= "passive",
 	no_unlearn_last = true,
-	getPercentage = function(self, t) return self:combatTalentLimit(t, 100, 45, 90) end,
+	getPercentage = function(self, t) return self:combatTalentLimit(t, 100, 30, 90) end,
 	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, tmp, no_martyr)
 		local false_speed = 1
 		if self.global_speed_add >= 0 then false_speed = self.global_speed_base + self.global_speed_add
@@ -15,7 +15,7 @@ newTalent{
 
 		local percentage = t:_getPercentage(self)
 		local delta = false_speed - 1
-		local delta_eff = false_speed >= 1.0 and delta * (percentage / 100) or delta * (100/(100+percentage))
+		local delta_eff = false_speed >= 1.0 and delta * (percentage / 100) or delta * (50/(50+percentage))
 		local effective_speed =  1 + delta_eff
 
 		local amped = dam / effective_speed
@@ -26,14 +26,15 @@ newTalent{
 		return {dam=amped}
 	end,
 	info = function(self, t)
-		return ([[You are always perfectly balanced, acting as if your global speed was exactly 100%%.  If you would be hasted, you reduce incoming damage, and if you would be slowed, you take more damage.
-Levels in this talent increase the protection and reduce the vulnerability by a factor of %d%%.]]):tformat(t:_getPercentage(self))
+		return ([[You are always perfectly balanced, acting as if your global speed was exactly 100%%.  
+If you would be hasted, you reduce incoming damage by %d%% of your bonus speed.
+If you would be slowed, you increase incoming damage by %d%% of your missing speed.]]):tformat(t:_getPercentage(self), 5000/(50+t:_getPercentage(self)))
 	end,
 }
 
 newTalent{
 	name = "Tidal Tempo", short_name = "REK_HEKA_BLOODTIDE_BUFF",
-	type = {"spell/bloodtide", 2},	require = mag_req2, points = 5,
+	type = {"spell/bloodtide", 2},	require = mag_req_slow2, points = 5,
 	mode = "passive",
 	getMultiplier = function(self, t) return self:combatTalentScale(t, 1.3, 1.75) end,
 	doUnHighlight = function(self, t, tid)
@@ -104,7 +105,7 @@ newTalent{
 		end
 	end,
 	info = function(self, t)
-		return ([[If you are stunned while this talent is ready, the stun is removed and this talent goes on cooldown.  Your stun immunity reduces the effective cooldown of this talent isntead of having its normal effect.
+		return ([[If you are stunned while this talent is ready, the stun is removed and this talent goes on cooldown.  Your stun immunity reduces the effective cooldown of this talent instead of having its normal effect.
 ]]):tformat()
 	end,
 }

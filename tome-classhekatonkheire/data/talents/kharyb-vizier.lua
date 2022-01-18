@@ -11,6 +11,7 @@ newTalent{
 	activate = function(self, t)
 		local r = {}
 		self:talentTemporaryValue(r, "invisible", t:_getInvisibilityPower(self))
+		self:talentTemporaryValue(r, "clear_invisibility", 1)
 		self:effectTemporaryValue(r, "blind_inc_damage", t:_getDamPower(self))
 		if not self.shader then
 			r.set_shader = true
@@ -79,7 +80,7 @@ newTalent{
 	callbackOnHit = function(self, t, dam, src, death_note)
 		if not src or not src.setEffect then return dam end
 		if src == self then return dam end
-		if src:hasProc("heka_throne") then return end
+		if src:hasProc("heka_throne") then return dam end
 		src:setProc("heka_throne", true, 10)
 		src:setEffect(src.EFF_DAZZLED, 5, {src=self, power=t:_getDazzle(self), apply_power=self:combatSpellpower()})
 		return dam

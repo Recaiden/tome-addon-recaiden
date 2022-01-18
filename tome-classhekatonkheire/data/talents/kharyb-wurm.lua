@@ -160,6 +160,9 @@ newTalent{
 		local power = t:_getLife(self) * target.level * target.rank * target.rank / (self.level * 200)
 		self:setEffect(self.EFF_REK_HEKA_RESERVOIR, 1, {src=self, max=t:_getLife(self), power=power})
 	end,
+	callbackOnLevelup = function (self, t, level)
+		self:setEffect(self.EFF_REK_HEKA_RESERVOIR, 1, {src=self, max=t:_getLife(self), power=(t:_getLife(self) / 20)})
+	end,
 	info = function(self, t)
 		return ([[You are assisted by a small creature that isn't you, and isn't quite here.  It collects bits and scraps whenever you kill an enemy, giving you a Reservoir of up to %d (based on your max life and constitution). If you would take lethal damage, you are healed for your Reservoir, possibly saving you.
 Rarer and higher-level enemies fill the reservoir faster.
@@ -181,7 +184,7 @@ newTalent{
 		local grids = core.fov.circle_grids(self.x, self.y, self:getTalentRange(t), true)
 		for x, yy in pairs(grids) do for y, _ in pairs(grids[x]) do
 				local a = game.level.map(x, y, Map.ACTOR)
-				if a and self:reactionToward(a) < 0 then
+				if a and self:reactionToward(a) < 0 and (a.poison_immune or 0) < 1 then
 					tgts[#tgts+1] = a
 				end
 		end end

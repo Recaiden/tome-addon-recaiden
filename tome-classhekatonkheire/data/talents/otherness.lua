@@ -64,13 +64,13 @@ newTalent{
 			function(tx, ty)
 				local act = game.level.map(tx, ty, engine.Map.ACTOR)
 				if act and act:reactionToward(self) < 0 and act:canBe("stun") then
-					act:setEffect(act.EFF_DAZED, dur, {apply_power=self:combatPhysicalpower()})
+					act:setEffect(act.EFF_DAZED, dur, {apply_power=math.max(self:combatPhysicalpower(), self:combatSpellpower())})
 				end
 			end)
 	end,
 	info = function(self, t)
 		return ([[You gain %d armor, plus %d per size category above medium you are.
-In addition, whenever you kill a creature smaller than yourself, enemies within range %d are dazed (#SLATE#Physical vs physical#LAST#) for 5 turns.
+In addition, whenever you kill a creature smaller than yourself, enemies within range %d are dazed (#SLATE#Physical or Spell vs physical#LAST#) for 5 turns.
 
 #{italic}#A warrior of your stature has little to fear from petty wounds.#{normal}#
 ]]):tformat(t:_getArmorBase(self), t:_getArmorSize(self), self:getTalentRange(t))

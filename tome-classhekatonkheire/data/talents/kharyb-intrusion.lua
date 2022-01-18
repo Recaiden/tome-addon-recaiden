@@ -23,7 +23,7 @@ newTalent{
 		self:project(tg, x, y, DamageType.PHYSICALBLEED, self:spellCrit(t.getDamage(self, t)*getKharybdianTempo(self, t.id)))
 		
 		game.level.map:particleEmitter(x, y, 1, "otherside_teleport_gate_in", {dur=8}, nil, 15)
-		game.level.map:particleEmitter(x, y, 1, "image_rise", {life=32, img="oculatus_bite"})
+		game.level.map:particleEmitter(x, y, 1, "image_rise", {life=24, img="oculatus_bite"})
 		game:playSoundNear(self, "talents/arcane")
 
 		self:setEffect(self.EFF_REK_HEKA_OCULATUS, t:_getDuration(self), {power=t.getReduction(self, t)})
@@ -55,7 +55,7 @@ newTalent{
 	tactical = { ATTACK = { PHYSICAL = 1 }, DISABLE = 1 },
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 60) end,
-	getDuration = function(self, t) return 5 end,
+	getDuration = function(self, t) return 4 end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)

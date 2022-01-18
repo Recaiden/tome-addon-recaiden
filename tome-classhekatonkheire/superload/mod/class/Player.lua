@@ -61,11 +61,24 @@ function _M:onTalentCooledDown(tid)
 	if not self:knowTalent(tid) then return end
 	base_onTalentCooledDown(self, tid)
 	local t = self:getTalentFromId(tid)
-	if self:knowTalent(self.T_REK_HEKA_BLOODTIDE_BUFF) and t.hands and t.getDamage then
+	if self:knowTalent(self.T_REK_HEKA_BLOODTIDE_BUFF) and t.hands and t.getDamage and self.in_combat then
 		game.flyers:add(x, y, 30, -0.3, -3.5, ("Tempo: %s!"):tformat(t.name:capitalize()), {255,0,00})
 		self:setEffect(self.EFF_REK_HEKA_TEMPO, 1, {src=self, talents={[tid]=1}})
 		local eff = self:hasEffect(self.EFF_REK_HEKA_TEMPO)
 		if eff then eff.dur = 0 end
 	end
 end
+
+local base_updateMainShader = _M.updateMainShader
+function _M:updateMainShader()
+	if self:attr("clear_invisibility") then
+		local invis = self:attr("invisible")
+		local id = self:addTemporaryValue("invisible", -1 * invis)
+		local retval = base_updateMainShader(self)
+		self:removeTemporaryValue("invisible", id)
+		return retval
+	end
+	return base_updateMainShader(self)
+end
+
 return _M
