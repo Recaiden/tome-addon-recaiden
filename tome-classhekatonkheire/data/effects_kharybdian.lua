@@ -61,6 +61,7 @@ newEffect{
 	subtype = { arcane=true },
 	status = "beneficial",
 	parameters = { dam=10 },
+	cancel_on_level_change = true,
 	on_gain = function(self, err) return _t"#Target# begins stabbing wildly through a breach in reality!", _t"+Intrusion" end,
 	on_lose = function(self, err) return _t"The breach around #Target# seals itself.", _t"-Intrusion" end,
 	on_timeout = function(self, eff)

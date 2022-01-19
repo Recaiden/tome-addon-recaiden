@@ -91,6 +91,7 @@ end
 -- 	return hit, chance
 -- end
 
+local Map = require "engine.Map"
 local base_spellCrit = _M.spellCrit
 function _M:spellCrit(dam, add_chance, crit_power_add)
 	local boost = 0
