@@ -2,7 +2,6 @@
 *.svg
 *.pdn
 
-
 # unpacked mods
 tome-tareyal
 tome-raider
@@ -20,6 +19,7 @@ boot-cosmetic-ui-frogge
 tome-cosmetic-ui-frogge
 tome-campaign-hammer-characters
 tome-classtrooper
+tome-tides
 
 # ToME files
 *.teaa

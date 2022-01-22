@@ -136,6 +136,9 @@ newTalent{
 		if not src.__is_actor then return end
 		if src.turn_procs and src.turn_procs.rek_glr_telepathic_aim then return end
 		if not rng.percent(t.getChance(self, t)) then return end
+		if self.in_tp_aim then return end
+
+		self.in_tp_aim = true
 		
 		-- shoot them
 		local old_target_forced = game.target.forced
@@ -158,6 +161,7 @@ newTalent{
 		self:archeryShoot(targets, t, {type = "hit", speed = 200}, params)
 		self:attr("instant_shot", -1)
 		game.target.forced = old_target_forced
+		self.in_tp_aim = nil
 		return {dam=dam}
 	end,
 
