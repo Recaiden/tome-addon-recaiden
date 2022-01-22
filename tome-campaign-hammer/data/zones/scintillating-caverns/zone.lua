@@ -100,16 +100,18 @@ return {
 
 	on_leave = function(lev, old_lev, newzone)
 		if not newzone then return end
-		if game.player:isQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "crystals") then
+		if game.player:isQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "crystals") and not game.player:hasQuest("campaign-hammer+demon-siege") then
 			require("engine.ui.Dialog"):simpleLongPopup("Crystals", [[With the Rhaloren out of the way, the fearscape's mages move in to investigate the crystals.  Soon enough, demonic crystal beings are rampaging out of control, consuming the elven lands.  Your work here is done.]], 500)
 			game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "crystals-2")
 		end
 
 		if game.player:isQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "crystals") or game.player:isQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "rhalore")then
-			local Chat = require "engine.Chat"
-			local chat = Chat.new("campaign-hammer+crystal-power", {name=_t"Spellblaze Crystals"}, game.player)
-			chat:invoke()
-			game.player:grantQuest("campaign-hammer+demon-siege")
+			if not game.player:hasQuest("campaign-hammer+demon-siege") then
+				local Chat = require "engine.Chat"
+				local chat = Chat.new("campaign-hammer+crystal-power", {name=_t"Spellblaze Crystals"}, game.player)
+				chat:invoke()
+				game.player:grantQuest("campaign-hammer+demon-siege")
+			end
 		end
 	end,
 }
