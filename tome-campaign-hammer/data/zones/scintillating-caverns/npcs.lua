@@ -28,12 +28,12 @@ alterCrystals = function(add, mult)
 	end
 end
 
-load("/data/general/npcs/crystal.lua", alterCrystals(15))
+load("/data/general/npcs/crystal.lua", alterCrystals(40))
 
-load("/data/general/npcs/rodent.lua", alter(5))
-load("/data/general/npcs/vermin.lua", alter(2))
-load("/data/general/npcs/snake.lua", alter(3))
-load("/data/general/npcs/bear.lua", alter(2))
+load("/data/general/npcs/rodent.lua", alter(35))
+load("/data/general/npcs/vermin.lua", alter(35))
+load("/data/general/npcs/snake.lua", alter(35))
+load("/data/general/npcs/bear.lua", alter(30))
 load("/data/general/npcs/elven-warrior.lua", alter(0))
 load("/data/general/npcs/elven-caster.lua", alter(0))
 

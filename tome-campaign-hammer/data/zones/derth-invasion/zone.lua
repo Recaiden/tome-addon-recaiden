@@ -67,7 +67,7 @@ return {
 				},
 				actor = {
 					class = "mod.class.generator.actor.Random",
-					filters = { {type="animal"}, {type="humanoid"},},
+					filters = { {type="animal"}, {type="humanoid"}, {type="elemental"}},
 					nb_npc = {20, 25},
 				},
 			},

@@ -31,7 +31,11 @@ if wda.cur_patrols < 3 then
 			game.zone:addEntity(game.level, e, "actor", spot.x, spot.y)
 			wda.cur_patrols = wda.cur_patrols + 1
 			e.world_zone = zone
-			e.on_die = function(self) game.level.data.wda.zones[self.world_zone].cur_patrols = game.level.data.wda.zones[self.world_zone].cur_patrols - 1 end
+			e.on_die = function(self)
+				if game and game.level and game.level.data and game.level.data.wda then
+					game.level.data.wda.zones[self.world_zone].cur_patrols = game.level.data.wda.zones[self.world_zone].cur_patrols - 1
+				end
+			end
 		end
 	end
 end

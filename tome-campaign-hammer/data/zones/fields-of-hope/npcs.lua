@@ -299,7 +299,7 @@ newEntity{
 	vim_regen = 15,
 	rank = 5,
 	size_category = 3,
-	stats = { str=60, dex=45, con=50, cun=30, mag=30, wil=40 },
+	stats = { str=80, dex=45, con=50, cun=60, mag=30, wil=40 },
 
 	see_invisible = 100,
 	instakill_immune = 1,
@@ -318,14 +318,13 @@ newEntity{
 		BODY = {type="armor", special=function(e) return e.subtype=="massive" end},
 	},
 	resolvers.equip{
-		{type="weapon", subtype="longsword", force_drop=true,  forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
-		{type="weapon", subtype="shield", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
+		{type="weapon", subtype="longsword", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
+		{type="armor", subtype="shield", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
 		{type="armor", subtype="massive", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
 		{type="armor", subtype="feet", name="pair of voratun boots", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
 		{type="armor", subtype="head", defined="CROWN_TOLAK", autoreq=true},
 		{type="armor", subtype="hands", name="voratun gauntlets", forbid_power_source={antimagic=true}, force_drop=true, tome_drops="boss", autoreq=true},
 	},
-	--resolvers.drops{chance=100, nb=1, {defined="PEARL_LIFE_DEATH"} },
 	resolvers.drops{chance=100, nb=5, {tome_drops="boss"} },
 
 	resolvers.talents{
@@ -339,15 +338,15 @@ newEntity{
 		[Talents.T_INDOMITABLE]=5,
 		
 		[Talents.T_WEAPON_COMBAT]={base=5, every=10},
-		[Talents.T_ARMOUR_TRAINING]={base=5, every=6},
-		[Talents.T_WEAPONS_MASTERY]={base=5, every=10},
+		[Talents.T_ARMOUR_TRAINING]={base=5, every=5},
+		[Talents.T_WEAPONS_MASTERY]={base=5, every=5},
 		
 		[Talents.T_RUSH]={base=5, every=6},
 
-		[Talents.T_SHIELD_PUMMEL]={base=4, every=6, max=6},
-		[Talents.T_SHIELD_SLAM]={base=4, every=6, max=6},
-		[Talents.T_RIPOSTE]={base=4, every=6, max=6},
-		[Talents.T_ASSAULT]={base=3, every=6, max=6},
+		[Talents.T_SHIELD_PUMMEL]={base=4, every=6, max=20},
+		[Talents.T_SHIELD_SLAM]={base=4, every=6, max=20},
+		[Talents.T_RIPOSTE]={base=4, every=6, max=20},
+		[Talents.T_ASSAULT]={base=3, every=6, max=20},
 		[Talents.T_SHIELD_WALL]={base=5, every=6},
 		[Talents.T_SHIELD_EXPERTISE]={base=5, every=6},
 		[Talents.T_OVERPOWER]={base=5, every=6},
@@ -359,7 +358,7 @@ newEntity{
 		[Talents.T_JUGGERNAUT]={base=5, every=6},
 		
 		[Talents.T_UNSTOPPABLE]={base=5, every=6},
-		[Talents.T_MORTAL_TERROR]={base=3, every=6, max=6},
+		[Talents.T_MORTAL_TERROR]={base=3, every=6},
 		[Talents.T_BLOODBATH]={base=5, every=6},
 
 		[Talents.T_DEMON_BLADE]={base=5, every=6},

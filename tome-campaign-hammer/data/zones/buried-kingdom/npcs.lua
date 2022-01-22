@@ -81,7 +81,7 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 
 		if not self.rewind then self.rewind = game.turn end
 		if game.player then
-			game.player:teleportRandom(self.x, self.y, 3, 7)
+			game.player:teleportRandom(self.x, self.y, 7, 3)
 			game.player:resetToFull()
 			local effs = {}
 			for eff_id, p in pairs(game.player.tmp) do
@@ -177,7 +177,8 @@ newEntity{ base = "BASE_NPC_HORROR_TEMPORAL",
 		[Talents.T_SPIN_FATE]={base=5, every=7, max=8},
 		[Talents.T_WEAPON_FOLDING]={base=5, every=7, max=8},
 		[Talents.T_WEAPON_MANIFOLD]={base=5, every=7, max=8},
-		
+
+		[Talents.T_UNARMED_MASTERY]={base=5, every=7},
 		[Talents.T_STEALTH]={base=3, every=7, max=5},
 		[Talents.T_SHADOWSTRIKE]={base=3, every=7, max=5},
 		[Talents.T_LETHALITY]={base=1, every=6, max=5},
@@ -187,7 +188,7 @@ newEntity{ base = "BASE_NPC_HORROR_TEMPORAL",
 		[Talents.T_SHADOW_VEIL]={last=20, base=0, every=6, max=6},
 	},
 
-	resolvers.inscriptions(1, "rune"),
+	resolvers.inscriptions(1, {"stormshield rune"}),
 	resolvers.inscriptions(1, "infusion"),
 
 	resolvers.sustains_at_birth(),
@@ -204,7 +205,8 @@ newEntity{ base = "BASE_NPC_HORROR_TEMPORAL",
 	max_life = resolvers.rngavg(80, 120),
 	life_rating = 15,
 	autolevel = "summoner",
-	ai = "dumb_talented_simple", ai_state = { talent_in=1, ai_move="move_snake" },
+	ai = "dumb_talented_simple",
+	ai_state = { ai_target="target_player_radius", ai_move="move_snake", sense_radius=6, talent_in=1, },
 	combat_armor = 1, combat_def = 10,
 	combat = { dam=resolvers.levelup(resolvers.mbonus(40, 15), 1, 1.2), atk=15, apr=15, dammod={wil=0.8}, damtype=DamageType.VOID },
 	on_melee_hit = { [DamageType.VOID] = resolvers.mbonus(20, 10), },

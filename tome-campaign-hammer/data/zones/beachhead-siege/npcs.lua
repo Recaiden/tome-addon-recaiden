@@ -7,9 +7,10 @@ rarityWithLoot = function(add, mult)
 	end
 end
 
-load("/data/general/npcs/plant.lua", rarityWithLoot(0))
-load("/data/general/npcs/canine.lua", rarityWithLoot(3))
-load("/data/general/npcs/bear.lua", rarityWithLoot(3))
+load("/data/general/npcs/plant.lua", rarityWithLoot(20))
+load("/data/general/npcs/canine.lua", rarityWithLoot(30))
+load("/data/general/npcs/bear.lua", rarityWithLoot(30))
+load("/data/general/npcs/feline.lua", rarityWithLoot(5))
 load("/data/general/npcs/demon-major.lua", switchRarity("demons"))
 load("/data/general/npcs/demon-minor.lua", switchRarity("demons"))
 
@@ -23,7 +24,6 @@ newEntity{
 	display = "p", color=colors.WHITE,
 	faction = "thalore",
 	anger_emote = _t"Catch @himher@!",
-	exp_worth = 0,
 	combat = { dam=resolvers.rngavg(1,2), atk=2, apr=0, dammod={str=0.4} },
 
 	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, QUIVER=1 },
@@ -48,17 +48,18 @@ newEntity{
 newEntity{ base = "BASE_NPC_THALORE_SOLDIER",
 	name = "thalore hunter", color=colors.LIGHT_UMBER,
 	desc = _t[[A stern-looking elven soldier, he will not let you survive.]],
-	level_range = {1, nil}, exp_worth = 0,
-	rarity = 3,
+	level_range = {1, nil},	rarity = 3,
 	max_life = resolvers.rngavg(70,80),
 	resolvers.talents{
 		[Talents.T_BOW_MASTERY]={base=1, every=10, max=5},
+		[Talents.T_WEAPON_COMBAT]={base=1, every=10, max=5},
 		[Talents.T_THALOREN_WRATH]=5,
 		[Talents.T_SHOOT]=1,
 	},
 	ai_state = { talent_in=1, },
 
 	autolevel = "archer",
+	resolvers.auto_equip_filters("Archer"),
 	resolvers.inscriptions(1, "infusion"),
 	resolvers.equip{
 		{type="weapon", subtype="longbow", not_properties={"unique"}, autoreq=true},
@@ -75,8 +76,7 @@ newEntity{ base = "BASE_NPC_THALORE_SOLDIER",
 	name = "thalore wilder", color=colors.GREEN,
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_thalore_thalore_wilder.png", display_h=2, display_y=-1}}},
 	desc = _t[[A tall elf, skin covered in green moss.]],
-	level_range = {1, nil}, exp_worth = 0,
-	rarity = 3,
+	level_range = {1, nil}, rarity = 3,
 	max_life = resolvers.rngavg(50,60),
 	ai_state = { talent_in=1, },
 	autolevel = "wildcaster",

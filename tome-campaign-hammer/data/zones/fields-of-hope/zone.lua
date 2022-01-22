@@ -5,7 +5,7 @@ return {
 		if game.level.level == 5 then return _t"Last Hope" end
 		return ("Fields of Hope (%d)"):tformat(game.level.level)
 	end,
-	level_range = {45, 90},
+	level_range = {55, 90},
 	level_scheme = "player",
 	max_level = 6,
 	decay = {300, 800},
@@ -20,7 +20,6 @@ return {
 		if game.level.level == 5 then return "For the king and the country!.ogg" end
 		return "Hold the Line.ogg"
 	end,
-	--ambient_music = 
 	min_material_level = 4,
 	max_material_level = 5,
 	generator =  {
