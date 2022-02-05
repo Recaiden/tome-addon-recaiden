@@ -78,7 +78,7 @@ newEffect{
 	on_merge = function(self, old_eff, new_eff)
 		new_eff.dur = new_eff.dur + old_eff.dur
 		if old_eff.particle then game.level.map:removeParticleEmitter(old_eff.particle) end
-		new_eff.particle = Particles.new("circle", new_eff.radius, {a=150, speed=0.15, img="aether_breach", radius=new_eff.radius})
+		new_eff.particle = Particles.new("circle", new_eff.radius, {a=150, speed=0.15, img="vortex_slam", radius=new_eff.radius})
 		new_eff.particle.zdepth = 6
 		game.level.map:addParticleEmitter(new_eff.particle, new_eff.x, new_eff.y)		
 		return new_eff
@@ -378,8 +378,11 @@ newEffect{
 			eff.src:callTalent(eff.src.T_REK_HEKA_MOONWURM_SUMMON, "summon", self.x, self.y)
 		end
 
+		for i = 1, 5 do
+			game.level.map:particleEmitter(self.x, self.y, 1, "fusillade_burst", {radius=2, tx=self.x, ty=self.y, max_alpha=80})
+		end
 		self:removeEffect(self.EFF_REK_HEKA_RESERVOIR, true, true)
-		return {dam=0, stopped=true}
+		return {stopped=0}
 	end,
 }
 
