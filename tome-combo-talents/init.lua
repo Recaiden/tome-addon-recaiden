@@ -9,6 +9,6 @@ description = [[Lets you link together instant talents so that you can use them 
 tags = {'combo','buff','talent',} -- tags MUST immediately follow description
 
 hooks = true
-overload = false
+overload = true
 superload = true
 data = true
