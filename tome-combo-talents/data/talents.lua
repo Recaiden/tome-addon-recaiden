@@ -3,9 +3,28 @@ local Tiles = require "engine.Tiles"
 local Entity = require "engine.Entity"
 local Dialog = require "engine.ui.Dialog"
 
+comboContainsMultipleActives = function(self, i)
+	if not self.rec_combo or not self.rec_combo[i] then return false end
+	local count = 0
+	local combo = self.rec_combo[i]
+	for order, tid in ipairs(combo) do
+		local t_sub = self:getTalentFromId(tid)
+		if not util.getval(t_sub.no_energy, self, t_sub) then count = count + 1 end
+	end
+	return count >= 2
+end
+
 pre_use_combo = function(self, t, silent, i)
 	if not self.rec_combo or not self.rec_combo[i] then return false end
 	local combo = self.rec_combo[i]
+
+	if comboContainsMultipleActives(self, i) then
+		if not silent then
+			game.logPlayer(self, "This combo somehow contains multiple non-instant talents and cannot be used.")
+		end
+		return false
+	end
+	
 	if self.turn_procs and self.turn_procs.combo_override then return true end
 	for order, tid in ipairs(combo) do
 		local t_sub = self:getTalentFromId(tid)
