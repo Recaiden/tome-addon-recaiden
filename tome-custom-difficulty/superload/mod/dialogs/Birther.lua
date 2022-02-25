@@ -27,6 +27,97 @@ local Talents = require "engine.interface.ActorTalents"
 
 local _M = loadPrevious(...)
 
+standardDifficulties = {
+	["Easy"] = {
+		zone_mul = "1.0", zone_add = "0",
+		talent = "0", talent_boss = "1.0",
+		randrare = 4, randboss = 0,
+		stairwait = "2",
+		health = "1.0",
+		hunted = false, ezstatus = true,
+		start_level = "1", start_life = "0", start_gold = "0",
+	},
+	["Normal"] = {
+		zone_mul = "1.0", zone_add = "0",
+		talent = "0", talent_boss = "1.0",
+		randrare = 4, randboss = 0,
+		stairwait = "2",
+		health = "1.0",
+		hunted = false, ezstatus = false,
+		start_level = "1", start_life = "0", start_gold = "0",
+	},
+	["Nightmare"] = {
+		zone_mul = "1.25", zone_add = "0",
+		talent = "30", talent_boss = "1.3",
+		randrare = 12.5, randboss = 0,
+		stairwait = "3",
+		health = "1.0",
+		hunted = false, ezstatus = false,
+		start_level = "1", start_life = "0", start_gold = "0",
+	},
+	["Insane"] = {
+		zone_mul = "1.5", zone_add = "1",
+		talent = "70", talent_boss = "1.7",
+		randrare = 33.3, randboss = 5,
+		stairwait = "5",
+		health = "1.0",
+		hunted = false, ezstatus = false,
+		start_level = "1", start_life = "0", start_gold = "0",
+	},
+	["Madness"] = {
+		zone_mul = "2.5", zone_add = "2",
+		talent = "170", talent_boss = "2.7",
+		randrare = 33.3, randboss = 5,
+		stairwait = "9",
+		health = "3.0",
+		hunted = true, ezstatus = false,
+		start_level = "1", start_life = "100", start_gold = "500",
+	}
+}
+
+function _M:passesStandardDifficulty(name)
+	local preset = standardDifficulties[name] or standardDifficulties["Normal"]
+	if not self.c_rek_dif_zone_mul then return true end
+
+	if (tonumber(self.c_rek_dif_zone_mul.text) or 1) < tonumber(preset.zone_mul) then
+		print("CNFG zone mul too low")
+		return false end
+	if (tonumber(self.c_rek_dif_zone_add.text) or 1) < tonumber(preset.zone_add) then
+		print("CNFG zone add too low")
+		return false end
+	if (tonumber(self.c_rek_dif_talent.text) or 1) < tonumber(preset.talent) then
+		print("CNFG talent fail")
+		return false end
+	if self.c_rek_dif_randrare.value < preset.randrare then
+		print("CNFG randrare")
+		return false end
+	if self.c_rek_dif_randboss.value < preset.randboss then
+		print("CNFG randboss")
+		return false end
+	if (tonumber(self.c_rek_dif_health.text) or 1) < tonumber(preset.health) then
+		print("CNFG life mult")
+		return false end
+	if (tonumber(self.c_rek_dif_stairwait.text) or 1) < tonumber(preset.stairwait) then
+		print("CNFG stairwait")
+		return false end
+	if preset.hunted and not self.c_rek_dif_hunted.checked then
+		print("CNFG hunted")
+		return false end
+	if self.c_rek_dif_ezstatus.checked and not preset.ezstatus then
+		print("CNFG checked")
+		return false end
+	if (tonumber(self.c_rek_dif_life_bonus.text) or 0) > tonumber(preset.start_life) then
+		print("CNFG excess life")
+		return false end
+	if (tonumber(self.c_rek_dif_gold.text) or 0) > tonumber(preset.start_gold) then
+		print("CNFG excess gold")
+		return false end
+	if (tonumber(self.c_rek_dif_level.text) or 0) > tonumber(preset.start_level) then
+		print("CNFG excess level")
+		return false end
+	return true
+end
+
 function updateDifficulties(self)   
    --local d = {}
    local d = self.birth_descriptor_def.difficulty["Custom"]
@@ -105,64 +196,21 @@ function updateDifficulties(self)
    end
    
    -- Determine difficulty for achievements
-   if
-      (tonumber(self.c_rek_dif_zone_mul.text) or 1) >= 2.5
-      and (tonumber(self.c_rek_dif_zone_add.text) or 1) >= 2
-      and (tonumber(self.c_rek_dif_talent.text) or 1) >= 170
-      and self.c_rek_dif_randrare.value >= 30
-      and self.c_rek_dif_randboss.value >= 5
-      and (tonumber(self.c_rek_dif_health.text) or 1) >= 1.2
-      and (tonumber(self.c_rek_dif_stairwait.text) or 1) >= 9
-      and self.c_rek_dif_hunted.checked
-   then
+   if self:passesStandardDifficulty("Madness") then
       copy["__game_difficulty"] = 5
       d["name"] = "Madness" 
-   elseif (tonumber(self.c_rek_dif_zone_mul.text) or 1) >= 1.5
-      and (tonumber(self.c_rek_dif_zone_add.text) or 1) >= 1
-      and (tonumber(self.c_rek_dif_talent.text) or 1) >= 70
-      and self.c_rek_dif_randrare.value >= 30
-      and self.c_rek_dif_randboss.value >= 5
-      and (tonumber(self.c_rek_dif_stairwait.text) or 1) >= 5
-   then
+   elseif self:passesStandardDifficulty("Insane") then
       copy["__game_difficulty"] = 4
       d["name"] = "Insane"
-   elseif (tonumber(self.c_rek_dif_zone_mul.text) or 1) >= 1.25
-      and (tonumber(self.c_rek_dif_talent.text) or 1) >= 30
-      and self.c_rek_dif_randrare.value >= 12.5
-      and (tonumber(self.c_rek_dif_health.text) or 1) >= 1
-      and (tonumber(self.c_rek_dif_stairwait.text) or 1) >= 3
-   then
+   elseif self:passesStandardDifficulty("Nightmare") then
       copy["__game_difficulty"] = 3
       d["name"] = "Nightmare" 
-   elseif (tonumber(self.c_rek_dif_zone_mul.text) or 1) >= 1
-      and (tonumber(self.c_rek_dif_health.text) or 1) >= 1
-      and (tonumber(self.c_rek_dif_stairwait.text) or 1) >= 2
-   then
+   elseif self:passesStandardDifficulty("Normal") then
       copy["__game_difficulty"] = 2
       d["name"] = "Normal"
-   end
-
-	 copy["__game_difficulty"] = copy["__game_difficulty"] or 1
-	 
-   if copy["__game_difficulty"] < 5
-      and((tonumber(self.c_rek_dif_gold.text) or 0) > 0
-       or (tonumber(self.c_rek_dif_life_bonus.text) or 0) > 0)
-   then
-      copy["__game_difficulty"] = 1
-      d["name"] = "Easy"
-   end
-
-   if (tonumber(self.c_rek_dif_gold.text) or 0) > 500
-       or (tonumber(self.c_rek_dif_life_bonus.text) or 0) > 100
-   then
-      copy["__game_difficulty"] = 1
-      d["name"] = "Easy"
-   end
-   
-   if self.c_rek_dif_ezstatus.checked
-   then
-      copy["__game_difficulty"] = 1
-      d["name"] = "Easy"
+	 else
+		 copy["__game_difficulty"] = 1
+		 d["name"] = "Easy"
    end
 
    d.copy = copy
@@ -172,84 +220,108 @@ function updateDifficulties(self)
 end
 
 function numberSliderSetValue(box, value)
-   box.nbox.number = value
-   box.nbox:updateText(0)
-   box:onChange()
+	box.nbox.number = value
+	box.nbox:updateText(0)
+	box:onChange()
 end
 
 function setToStandardDifficulty(self, name)
-   if name == "Easy" then
-      self.c_rek_dif_zone_mul:setText("1.0")
-      self.c_rek_dif_zone_add:setText("0")
-      self.c_rek_dif_talent:setText("0")
-      numberSliderSetValue(self.c_rek_dif_randrare, 4)
-      numberSliderSetValue(self.c_rek_dif_randboss, 0)
-      self.c_rek_dif_bossscale:setText("1.0")
-      self.c_rek_dif_stairwait:setText("2")
-      self.c_rek_dif_health:setText("1.0")
-      self.c_rek_dif_hunted.checked = false
-      self.c_rek_dif_ezstatus.checked = true
-      self.c_rek_dif_level:setText("1")
-      self.c_rek_dif_life_bonus:setText("0")
-      self.c_rek_dif_gold:setText("0")
-   elseif name == "Normal" then
-      self.c_rek_dif_zone_mul:setText("1.0")
-      self.c_rek_dif_zone_add:setText("0")
-      self.c_rek_dif_talent:setText("0")
-      numberSliderSetValue(self.c_rek_dif_randrare, 4)
-      numberSliderSetValue(self.c_rek_dif_randboss, 0)
-      self.c_rek_dif_bossscale:setText("1.0")
-      self.c_rek_dif_stairwait:setText("2")
-      self.c_rek_dif_health:setText("1.0")
-      self.c_rek_dif_hunted.checked = false
-      self.c_rek_dif_ezstatus.checked = false
-      self.c_rek_dif_level:setText("1")
-      self.c_rek_dif_life_bonus:setText("0")
-      self.c_rek_dif_gold:setText("0")
-   elseif name == "Nightmare" then
-      self.c_rek_dif_zone_mul:setText("1.25")
-      self.c_rek_dif_zone_add:setText("0")
-      self.c_rek_dif_talent:setText("30")
-      numberSliderSetValue(self.c_rek_dif_randrare, 12.5)
-      numberSliderSetValue(self.c_rek_dif_randboss, 0)
-      self.c_rek_dif_bossscale:setText("1.3")
-      self.c_rek_dif_stairwait:setText("3")
-      self.c_rek_dif_health:setText("1.0")
-      self.c_rek_dif_hunted.checked = false
-      self.c_rek_dif_ezstatus.checked = false
-      self.c_rek_dif_level:setText("1")
-      self.c_rek_dif_life_bonus:setText("0")
-      self.c_rek_dif_gold:setText("0")
-   elseif name == "Insane" then
-      self.c_rek_dif_zone_mul:setText("1.5")
-      self.c_rek_dif_zone_add:setText("1")
-      self.c_rek_dif_talent:setText("70")
-      numberSliderSetValue(self.c_rek_dif_randrare, 30)
-      numberSliderSetValue(self.c_rek_dif_randboss, 5)
-      self.c_rek_dif_bossscale:setText("1.7")
-      self.c_rek_dif_stairwait:setText("5")
-      self.c_rek_dif_health:setText("1.0")
-      self.c_rek_dif_hunted.checked = false
-      self.c_rek_dif_ezstatus.checked = false
-      self.c_rek_dif_level:setText("1")
-      self.c_rek_dif_life_bonus:setText("0")
-      self.c_rek_dif_gold:setText("0")
-   elseif name == "Madness" then
-      self.c_rek_dif_zone_mul:setText("2.5")
-      self.c_rek_dif_zone_add:setText("2")
-      self.c_rek_dif_talent:setText("170")
-      numberSliderSetValue(self.c_rek_dif_randrare, 30)
-      numberSliderSetValue(self.c_rek_dif_randboss, 5)
-      self.c_rek_dif_bossscale:setText("2.7")
-      self.c_rek_dif_stairwait:setText("9")
-      self.c_rek_dif_health:setText("3.0")
-      self.c_rek_dif_hunted.checked = true
-      self.c_rek_dif_ezstatus.checked = false
-      self.c_rek_dif_level:setText("1")
-      self.c_rek_dif_life_bonus:setText("100")
-      self.c_rek_dif_gold:setText("500")
-   end
-   updateDifficulties(self)
+	local preset = standardDifficulties[name] or standardDifficulties["Normal"]
+	self.c_rek_dif_zone_mul:setText(preset.zone_mul or "1.0")
+	self.c_rek_dif_zone_add:setText(preset.zone_add or "0")
+	self.c_rek_dif_talent:setText(preset.talent or "0")
+	numberSliderSetValue(self.c_rek_dif_randrare, preset.randrare or 4)
+	numberSliderSetValue(self.c_rek_dif_randboss, preset.randboss or 0)
+	self.c_rek_dif_bossscale:setText(preset.talent_boss or "0")
+	self.c_rek_dif_stairwait:setText(preset.stairwait or "2")
+	self.c_rek_dif_health:setText(preset.health or "1.0")
+	self.c_rek_dif_hunted.checked = preset.hunted or false
+	self.c_rek_dif_ezstatus.checked = preset.ezstatus or false
+	self.c_rek_dif_level:setText(preset.start_level or "1")
+	self.c_rek_dif_life_bonus:setText(preset.start_life or "0")
+	self.c_rek_dif_gold:setText(preset.start_gold or "0")
+	updateDifficulties(self)
+end
+
+local function setConfigStr(option, value)
+	config.settings.tome.rek_dif = config.settings.tome.rek_dif or {}
+	config.settings.tome.rek_dif[option] = value
+	game:saveSettings("tome.rek_dif."..option, ("tome.rek_dif."..option.." = \"%s\"\n"):format(value))
+end
+
+local function setConfigNum(option, value)
+	config.settings.tome.rek_dif = config.settings.tome.rek_dif or {}
+	config.settings.tome.rek_dif[option] = value
+	game:saveSettings("tome.rek_dif."..option, ("tome.rek_dif."..option.." = %d\n"):format(value))
+end
+
+-- save to secret configs
+function _M:saveDifficulty()
+	config.settings.tome.rek_dif = {
+		zone_mul = self.c_rek_dif_zone_mul.text,
+		zone_add = self.c_rek_dif_zone_add.text,
+		talent = self.c_rek_dif_talent.text,
+		randrare = self.c_rek_dif_randrare.value,
+		randboss = self.c_rek_dif_randboss.value,
+		talent_boss = self.c_rek_dif_bossscale.text,
+		stairwait = self.c_rek_dif_stairwait.text,
+		health = self.c_rek_dif_health.text,
+		hunted = self.c_rek_dif_hunted.checked,
+		ezstatus = self.c_rek_dif_ezstatus.checked,
+		start_level = self.c_rek_dif_level.text,
+		start_life = self.c_rek_dif_life_bonus.text,
+		start_gold = self.c_rek_dif_gold.text,
+	}
+	game:saveSettings("tome.rek_dif", ([[tome.rek_dif = {}
+tome.rek_dif.zone_mul = "%s"
+tome.rek_dif.zone_add = "%s"
+tome.rek_dif.talent = "%s"
+tome.rek_dif.randrare = %0.2f
+tome.rek_dif.randboss = %0.2f
+tome.rek_dif.talent_boss = "%s"
+tome.rek_dif.stairwait = "%s"
+tome.rek_dif.health = "%s"
+tome.rek_dif.hunted = %s
+tome.rek_dif.ezstatus = %s
+tome.rek_dif.start_level = "%s"
+tome.rek_dif.start_life = "%s"
+tome.rek_dif.start_gold = "%s"
+]]):format(self.c_rek_dif_zone_mul.text,
+					 self.c_rek_dif_zone_add.text,
+					 self.c_rek_dif_talent.text,
+					 self.c_rek_dif_randrare.value,
+					 self.c_rek_dif_randboss.value,
+					 self.c_rek_dif_bossscale.text,
+					 self.c_rek_dif_stairwait.text,
+					 self.c_rek_dif_health.text,
+					 self.c_rek_dif_hunted.checked,
+					 self.c_rek_dif_ezstatus.checked,
+					 self.c_rek_dif_level.text,
+					 self.c_rek_dif_life_bonus.text,
+					 self.c_rek_dif_gold.text
+	))
+end
+
+local function getConfig(str)
+	if config.settings.tome.rek_dif then return config.settings.tome.rek_dif[str] end
+	return nil
+end
+
+function _M:loadSavedDifficulty()
+	print("CNFIG", config.settings.tome.rek_dif, config.settings.tome.rek_dif.zone_mul, getConfig("zone_mul"))
+	self.c_rek_dif_zone_mul:setText(getConfig("zone_mul") or "1.0")
+	self.c_rek_dif_zone_add:setText(getConfig("zone_add") or "0")
+	self.c_rek_dif_talent:setText(getConfig("talent") or "0")
+	numberSliderSetValue(self.c_rek_dif_randrare, getConfig("randrare") or 4)
+	numberSliderSetValue(self.c_rek_dif_randboss, getConfig("randboss") or 0)
+	self.c_rek_dif_bossscale:setText(getConfig("talent_boss") or "0")
+	self.c_rek_dif_stairwait:setText(getConfig("stairwait") or "2")
+	self.c_rek_dif_health:setText(getConfig("health") or "1.0")
+	self.c_rek_dif_hunted.checked = getConfig("hunted") or false
+	self.c_rek_dif_ezstatus.checked = getConfig("ezstatus") or false
+	self.c_rek_dif_level:setText(getConfig("start_level") or "1")
+	self.c_rek_dif_life_bonus:setText(getConfig("start_life") or "0")
+	self.c_rek_dif_gold:setText(getConfig("start_gold") or "0")
 end
 
 function _M:init(title, actor, order, at_end, quickbirth, w, h)
@@ -286,6 +358,7 @@ function _M:init(title, actor, order, at_end, quickbirth, w, h)
 				--    print(j, e)
 				-- end
 			     end
+					 self:saveDifficulty()
 			     self:atEnd("created")
 			  end
    }
@@ -496,6 +569,7 @@ function _M:init(title, actor, order, at_end, quickbirth, w, h)
       self.c_male.checked = config.settings.tome.default_birth.sex ~= "Female"
       self:setDescriptor("sex", self.c_female.checked and "Female" or "Male")
    end
+	 self:loadSavedDifficulty()
    self:setFocus(self.c_campaign)
    self:setFocus(self.c_name)
    
@@ -527,7 +601,7 @@ function _M:on_focus(id, ui)
       self.c_desc:switchItem(self.c_rek_dif_talent, "Increase the level of all enemy talents by this percentage.\nNightmare: 30+\nInsane: 70+\nMadness: 170+")
       
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_randrare then
-      self.c_desc:switchItem(self.c_rek_dif_randrare, "The percentage of random enemies that will spawn with higher rank and extra talents.\nNightmare: 12.5 or higher\nInsane: 30 or higher")
+      self.c_desc:switchItem(self.c_rek_dif_randrare, "The percentage of random enemies that will spawn with higher rank and extra talents.\nNightmare: 12.5 or higher\nInsane: 33.3 or higher")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_randboss then
       self.c_desc:switchItem(self.c_rek_dif_randboss, "The percentage of random enemies that will spawn as bosses, in addition to the boss of each zone.\nBosses have additional talents and immunities and greatly increased health and attributes.\nInsane: 5+")
       
