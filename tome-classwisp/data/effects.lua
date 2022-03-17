@@ -365,3 +365,29 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+
+newEffect{
+	name = "REK_GLR_MULTI_STUNNED", image = "effects/stunned.png",
+	desc = _t"Extremely Stunned",
+	long_desc = function(self, eff) return ("The target is stunned so badly that even once they recover, they will still be stunned, up to %d times."):tformat(eff.layers) end,
+	type = "other",
+	subtype = { monitor=true },
+	status = "detrimental",
+	parameters = { layers=1, dur_base=3 },
+	charges = function(self, eff) return eff.layers end,
+	activate = function(self, eff)
+		self:setEffect(self.EFF_STUNNED, eff.dur_base, {src=dmg_src})
+	end,
+	on_timeout = function(self, eff)
+		if not self:hasEffect(self.EFF_STUNNED) and eff.layers > 0 then
+			eff.layers = eff.layers - 1
+			if eff.layers > 0 then eff.dur = eff.dur_base end
+		end
+	end,
+	deactivate = function(self, eff)
+		if eff.layers > 1 then
+			self:setEffect(self.EFF_REK_GLR_MULTI_STUNNED, eff.dur_base, {src=dmg_src, layers=eff.layers-1})
+		end
+	end,
+}

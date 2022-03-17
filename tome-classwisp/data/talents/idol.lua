@@ -388,12 +388,25 @@ newTalent{
 				if immun_phys then
 					self:attr("negative_status_effect_immune", -1*immun_all)
 				end
-				
-				-- give effects
-				if not self:hasEffect(self.EFF_SLOW_MOVE) then
-					self:setEffect(self.EFF_SLOW_MOVE, 5, {power=0.50, src=dmg_src})
-				else
-					self:setEffect(self.EFF_STUNNED, 3, {src=dmg_src})
+
+				local eff_count = 0
+				local prevented = dam
+				while prevented >= threshShock do
+					eff_count = eff_count + 1
+					prevented = prevented - threshShock
+				end
+				while eff_count > 0 do 
+					-- give effects
+					if not self:hasEffect(self.EFF_SLOW_MOVE) then
+						self:setEffect(self.EFF_SLOW_MOVE, 5, {power=0.50, src=dmg_src})
+						eff_count = eff_count-1
+					elseif not self:hasEffect(self.EFF_REK_GLR_MULTI_STUNNED) and not self:hasEffect(self.EFF_STUNNED) then
+						self:setEffect(self.EFF_REK_GLR_MULTI_STUNNED, 3, {src=dmg_src, layers=eff_count})
+						eff_count = 0
+					else
+						self:setEffect(self.EFF_REK_GLR_MULTI_STUNNED, 3, {src=dmg_src, layers=eff_count+1})
+						eff_count = 0
+					end
 				end
 				
 				-- restore special immunities
@@ -408,6 +421,10 @@ newTalent{
 			-- ignore damage
 			game:playSoundNear(self, "talents/heal")
 			incPsi2(self, -t.getPrice(self,t))
+
+			local d_color = "#F9E58B#"
+			game:delayedLogDamage(src, self, 0, ("%s(%d to love)#LAST#"):format(d_color, dam-0.05*self.max_life), false)
+			
 			return {dam=0.05*self.max_life}
 		end
 		
@@ -433,7 +450,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[If you would take damage over %d%% of your maximum life, that damage is reduced to 5%% of your maximum life at the cost of %d #4080ff# Psi. #LAST#  
-If the damage would have been at least 25%% of your maximum life, your movement is slowed by 50%% for 5 turns. If you are already slowed, you will be stunned for 3 turns.
+For every 25%% of your maximum life the damage was, you receive a detrimental effect. First your movement is slowed by 50%% for 5 turns. If you are already slowed, you will be stunned for 3 turns.  If you are already stunned, you receive a multi-layer stun that is difficult to remove.
 
 These effects ignore immunities and saves.
 

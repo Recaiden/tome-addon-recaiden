@@ -93,7 +93,7 @@ newTalent{
 			local reduce = math.min(t.getReduction(self, t), dam)
 			dam = dam - reduce
 			local d_color = "#4080ff#"
-			game:delayedLogDamage(src, self, 0, ("%s(%d to silken armor)"):format(d_color, reduce, stam_txt, d_color), false)
+			game:delayedLogDamage(src, self, 0, ("%s(%d to silken armor)#LAST#"):format(d_color, reduce), false)
 			cb.value = dam
 			if (not self.silken_armor_trigger) or (self.silken_armor_trigger < t.getCost(self, t)) then
 				local costFinal = math.min(cost, t.getCost(self, t) - (self.silken_armor_trigger or 0))
@@ -105,10 +105,15 @@ newTalent{
 	end,
 	activate = function(self, t)
 		game:playSoundNear(self, "talents/cloth")
-		--TODO particle
-		return {}
+		local ret = {}
+		if not self:addShaderAura("stone_skin", "crystalineaura", {time_factor=1000, spikeOffset=0.05555, spikeLength=0.4, spikeWidth=8, growthSpeed=3, color={34/255, 20/255, 200/255}}, "particles_images/wisp_cloth.png") then
+			ret.particle = self:addParticles(Particles.new("stone_skin", 1))
+		end
+		return ret
 	end,
 	deactivate = function(self, t, p)
+		self:removeShaderAura("stone_skin")
+		self:removeParticles(p.particle)
 		return true
 	end,
 	info = function(self, t)
