@@ -101,7 +101,7 @@ newTalent{
 			resists = { [DamageType.FIRE] = 100, [DamageType.LIGHT] = 100 },
 			affinity = { [DamageType.FIRE] = 50, [DamageType.LIGHT] = 50 },
 			resolvers.talents{
-				[Talents.T_REK_SHINE_GLOW_BEAM]=1,			
+				[Talents.T_REK_SHINE_GLOW_BEAM]=self:getTalentLevelRaw(self.T_REK_SHINE_CORE_GATE_STELLAR_NURSERY)
 			},
 			resolvers.tmasteries{ ["demented/other"]=self:getTalentMastery(t)-1, },
 

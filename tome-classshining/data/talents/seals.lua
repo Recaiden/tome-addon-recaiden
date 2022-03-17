@@ -36,6 +36,7 @@ newTalent{
 		
 		if self:knowTalent(self.T_REK_SHINE_SEALS_INSURMOUNTABLE) then
 			game.level.map:addEffect(self, self.x, self.y, t.getDuration(self, t), DamageType.COSMETIC, 0, 0, 5, {}, MapEffect.new{zdepth=6, overlay_particle={zdepth=6, only_one=true, type="circle", args={appear=8, img="solar_citadel_light", radius=self:getTalentRadius(t), base_rot=0, oversize=1.5}}, color_br=200, color_bg=200, color_bb=200, effect_shader="shader_images/blank_effect.png"}, nil, true)
+			self:setEffect(self.EFF_SANCTITY, 1, {src=self})
 		end
 		
 		game:playSoundNear(self, "talents/arcane")
@@ -94,7 +95,7 @@ newTalent{
 	name = "Insurmountable Light", short_name = "REK_SHINE_SEALS_INSURMOUNTABLE",
 	type = {"celestial/seals", 2}, require = mag_req_high3, points = 5,
 	mode = "passive",
-	getDamage = function(self, t) return reflectAmp(self, self:combatTalentSpellDamage(t, 0, 30)) end,
+	getDamage = function(self, t) return reflectAmp(self, self:combatTalentSpellDamage(t, 0, 45)) end,
 	info = function(self, t)
 		return ([[Enhance your solar citadel with unquenchable flames. You gain 100%% silence immunity while standing in it, while enemies take an additional %0.1f fire damage each turn.
 The damage will increase with your spellpower.
