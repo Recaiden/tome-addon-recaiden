@@ -10,7 +10,17 @@ end
 load("/data/general/npcs/plant.lua", rarityWithLoot(20))
 load("/data/general/npcs/canine.lua", rarityWithLoot(30))
 load("/data/general/npcs/bear.lua", rarityWithLoot(30))
-load("/data/general/npcs/feline.lua", rarityWithLoot(5))
+load("/data/general/npcs/feline.lua",
+		 function(add, mult)
+			 add = add or 5; mult = mult or 1;
+			 return function(e)
+				 e.body = { INVEN = 10 }
+				 e.bonus_loot = resolvers.drops{chance=45, nb=1, {}}
+				 e.bonus_arts = resolvers.drops{chance=1, nb=1, {tome_drops="boss"}}
+				 if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
+			 end
+		 end
+)
 load("/data/general/npcs/demon-major.lua", switchRarity("demons"))
 load("/data/general/npcs/demon-minor.lua", switchRarity("demons"))
 
