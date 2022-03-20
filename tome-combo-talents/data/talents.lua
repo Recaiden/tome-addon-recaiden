@@ -14,10 +14,26 @@ comboContainsMultipleActives = function(self, i)
 	return count >= 2
 end
 
+comboContainsMissingTalents= function(self, i)
+	if not self.rec_combo or not self.rec_combo[i] then return false end
+	local combo = self.rec_combo[i]
+	for order, tid in ipairs(combo) do
+		if not self:knowTalent(tid) then return true end
+	end
+	return false
+end
+
 pre_use_combo = function(self, t, silent, i)
 	if not self.rec_combo or not self.rec_combo[i] then return false end
 	local combo = self.rec_combo[i]
 
+	if comboContainsMissingTalents(self, i) then
+		if not silent then
+			game.logPlayer(self, "This combo somehow contains talents you do not know and cannot be used.")
+		end
+		return false
+	end
+	
 	if comboContainsMultipleActives(self, i) then
 		if not silent then
 			game.logPlayer(self, "This combo somehow contains multiple non-instant talents and cannot be used.")

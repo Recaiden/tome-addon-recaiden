@@ -288,7 +288,21 @@ function _M:generateComboList()
 		if t.display_entity then t.display_entity:getMapObjects(game.uiset.hotkeys_display_icons.tiles, {}, 1) end
 		comboCategories[idx].char = ((t.display_entity and t.display_entity:getDisplayString() or "")):toTString()
 	end
-		
+
+	-- remove talents you no longer know
+	for idx, combo in pairs(self.actor.rec_combo) do
+		comboTalents[idx] = {}
+		for order, tid in ipairs(combo) do
+			if not self.actor:knowTalent(tid) then
+				self:deselectTalent({
+					talent=tid,
+					comboN = order,
+					comboIdx = idx,
+				})
+			end
+		end
+	end
+	
 	-- Generate lists of all talents by category
 	for idx, combo in pairs(self.actor.rec_combo) do
 		comboTalents[idx] = {}
