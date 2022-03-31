@@ -10,6 +10,6 @@ tags = {"talents", "weapon", "bump"} -- tags MUST immediately follow description
 
 hooks = true
 overload = true
-superload = false
+superload = true
 data = true
 
