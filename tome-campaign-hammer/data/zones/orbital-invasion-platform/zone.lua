@@ -178,5 +178,7 @@ return {
 			core.display.glDepthTest(false)
 		end
 	end,
-
+	on_enter = function(lev, old_lev, newzone)
+		game.player:attr("planetary_orbit", 1)
+	end,
 }
