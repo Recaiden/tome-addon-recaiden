@@ -81,6 +81,7 @@ function win(self, how)
 	game:playAndStopMusic("Lords of the Sky.ogg")
 	
 	local p = game:getPlayer(true)
+	if p.hammer_timemark then p.hammer_timecrash = true end
 	p:inventoryApplyAll(function(inven, item, o) o:check("on_win") end)
 	self:triggerHook{"Winner", how=how, kind="tolak"}
 

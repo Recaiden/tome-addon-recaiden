@@ -60,7 +60,13 @@ newEffect{
 		end
 		return cb.value
 	end,
-
-
-	
 }
+
+
+local activate = TemporaryEffects.tempeffect_def.EFF_RECALL.activate
+TemporaryEffects.tempeffect_def.EFF_RECALL.activate = function(self, eff)
+	activate(self, eff)
+
+	if not self.hammer_timecrash then return end
+	eff.where = "campaign-hammer+edge-of-eternity"
+end

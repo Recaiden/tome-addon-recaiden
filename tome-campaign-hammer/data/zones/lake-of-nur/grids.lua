@@ -1,5 +1,9 @@
 load("/data/general/grids/basic.lua")
-load("/data/general/grids/malrok_walls.lua")
+load("/data/general/grids/malrok_walls.lua",
+		 function(e)
+			 if e.define_as == "MALROK_WALL" then e.dig = "WATER_FLOOR" end
+		 end
+)
 load("/data/general/grids/forest.lua")
 load("/data/general/grids/water.lua")
 load("/data/general/grids/sand.lua")
@@ -15,7 +19,7 @@ newEntity{
 	block_sight = true,
 	is_door = true,
 	door_opened = "MALROK_WATER_DOOR_OPEN",
-	dig = "FLOOR",
+	dig = "WATER_FLOOR",
 	can_pass = {pass_wall=1},
 }
 newEntity{

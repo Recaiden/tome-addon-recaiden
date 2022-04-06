@@ -29,10 +29,10 @@ return {
 			zoom = 4,
 			sqrt_percent = 45,
 			noise = "fbm_perlin",
-			floor = "BURNT_GROUND",
+			floor = "LAVA_FLOOR",
 			wall = "BURNT_TREE",
-			up = "BURNT_UP4",
-			down = "BURNT_DOWN6",
+			up = "BURNT_GROUND",
+			down = "PORTAL_NEXT",
 			do_ponds =  {
 				nb = {0, 2},
 				size = {w=25, h=25},
@@ -78,14 +78,14 @@ return {
 		[3] = {
 			generator = {
 				map = {
-					floor = {"GRASS", "BURNT_GROUND", "BURNT_GROUND"},
-					wall = {"TREE", "BURNT_TREE"},
-					up = "BURNT_GROUND",
-					down = "GRASS_DOWN6",
+					floor = {"FLOATING_ROCKS", "FLOATING_ROCKS", "FLOATING_ROCKS"},
+					wall = {"BURNT_TREE", "BURNT_TREE", "BURNT_TREE", "LAVA_FLOOR"},
+					up = "FLOATING_ROCKS",
+					down = "PORTAL_NEXT",
 					do_ponds =  {
-						nb = {0, 2},
+						nb = {2, 4},
 						size = {w=25, h=25},
-						pond = {{0.6, "LAVA"}, {0.8, "WATER"}},
+						pond = {{0.3, "LAVA"}, {0.4, "LAVA_FLOOR"}, {0.8, "VOID"}},
 					},
 				},
 			},
@@ -93,15 +93,14 @@ return {
 		[4] = {
 			generator = {
 				map = {
-					floor = "GRASS",
-					wall = "TREE",
-					up = "GRASS",
-					down = "GRASS_DOWN6",
-					do_ponds =  {
-						nb = {0, 2},
-						size = {w=25, h=25},
-						pond = {{0.6, "WATER"}, {0.8, "WATER"}},
-					},
+					class = "engine.generator.map.Building",
+					wall = "MALROK_WALL",
+					door = "MALROK_DOOR",
+					floor = "MALROK_FLOOR",
+					margin_w = 0, margin_h = 0,
+					max_block_w = 15, max_block_h = 15,
+					max_building_w = 5, max_building_h = 5,
+					down = "PORTAL_NEXT",
 				},
 			},
 		},
@@ -110,7 +109,7 @@ return {
 			generator = {
 				map = {
 					class = "engine.generator.map.Static",
-					map = "campaign-hammer+zones/hope-city",
+					map = "campaign-hammer+zones/fearscape-castle-outside",
 				},
 				actor = {
 					class = "mod.class.generator.actor.Random",
@@ -126,7 +125,7 @@ return {
 			generator = {
 				map = {
 					class = "engine.generator.map.Static",
-					map = "campaign-hammer+zones/hope-castle",
+					map = "campaign-hammer+zones/fearscape-castle-inside",
 				},
 				actor = {
 					class = "mod.class.generator.actor.Random",

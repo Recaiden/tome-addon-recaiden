@@ -112,6 +112,9 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 			self.female = true
 			self:doEmote(_t"Brother, can you not see that your changes are ruining the project!?", 100)
 			self.emote_random = {chance=3, _t"Finally, the king is silent.", _t"All of this will be undone!", _t"At last, I live again!"}
+			if game and game.player then
+				game.player.hammer_timemark = true
+			end
 		end
 		if self.died == 1 then --first death
 			self:learnTalent(self.T_FEED, true, tlevel)
@@ -142,6 +145,9 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 
 	on_die = function(self, who)
 		self:doEmote(_t"This is not the end!", 500)
+		if game and game.player then
+			game.player.hammer_timemark = nil
+		end
 		if not game.player:resolveSource():hasQuest("campaign-hammer+demon-ruins") then
 			game.player:resolveSource():grantQuest("campaign-hammer+demon-ruins")
 		end 
