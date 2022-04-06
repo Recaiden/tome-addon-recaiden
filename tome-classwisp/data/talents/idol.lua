@@ -368,7 +368,7 @@ newTalent{
 	points = 5,
 	on_learn = function(self, t) self:learnTalent(self.T_REK_GLR_IDOL_STARPOWER, true) end,
 	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_GLR_IDOL_STARPOWER) end,
-	getPrice = function(self, t) return math.floor(self:combatTalentScale(t, 6, 2)) end,
+	getPrice = function(self, t) return math.floor(self:combatTalentLimit(t, 2, 6, 2.8)) end,
 	getThresh = function(self, t) return self:combatTalentLimit(t, 0.10, 0.33, 0.16) end,
 	callbackPriorities = {callbackOnTakeDamage = -100},
 	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
