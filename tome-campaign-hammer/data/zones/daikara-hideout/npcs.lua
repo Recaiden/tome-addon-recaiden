@@ -154,6 +154,9 @@ newEntity{ define_as = "SHASSY_ABOMINATION",
 	on_die = function(self, who)
 		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-allies", engine.Quest.COMPLETED, "help-s")
 		require("engine.ui.Dialog"):simplePopup(_t"Back to the Present", _t"As you kill the temporally-displaced demon, the edges of the rift snap, and the anomaly loses its anchor in your timeline.  The rift overhead begins to vanish, receding in a direction that you can't quite see, and the mountaintops begin to reemerge from the otherworldly morass.")
+		game.level.turn_counter = 12 * 10
+		game.level.max_turn_counter = 12 * 10
+		game.level.turn_counter_desc = _t"Time is returning to normal.  Don't worry about it."
 	end,
 }
 

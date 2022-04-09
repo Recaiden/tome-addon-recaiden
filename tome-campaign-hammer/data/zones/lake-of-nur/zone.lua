@@ -17,7 +17,7 @@ return {
 	ambient_music = "Woods of Eremae.ogg",
 	min_material_level = 2,
 	max_material_level = 3,
-	is_flooded = true,
+	underwater = true,
 	generator =  {
 		map = {
 			class = "engine.generator.map.Roomer",
@@ -46,7 +46,6 @@ return {
 	levels =
 	{
 		[1] = {
-			underwater = true,
 			effects = {"EFF_ZONE_AURA_UNDERWATER"},
 			generator = {
 				map =  {
@@ -60,7 +59,6 @@ return {
 			},
 		},
 		[2] = {
-			underwater = is_flooded,
 			effects = {"EFF_ZONE_AURA_UNDERWATER"},
 			generator =  {
 				map = {
@@ -75,7 +73,7 @@ return {
 			},
 		},
 		[3] = {
-			underwater = is_flooded,
+			effects = {"EFF_ZONE_AURA_UNDERWATER"},
 			generator =  {
 				map = {
 					rooms = {"random_room",{"lesser_vault",5}},
@@ -83,7 +81,7 @@ return {
 					['.'] = {"WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR","WATER_FLOOR_BUBBLE"},
 					['#'] = {"MALROK_WALL"},
 					door = {"MALROK_WATER_DOOR"},
-					effects = {"EFF_ZONE_AURA_UNDERWATER"},
+					
 				},
 				actor = {
 					filters = {{special_rarity="water_rarity"},{special_rarity="horror_water_rarity"}},
@@ -109,8 +107,11 @@ return {
 	end,
 
 	on_enter = function(lev)
-		if game and game.player and lev == 1 and not game.level.data.hammer_visited_nur then
-			game.player:setEffect(game.player.EFF_HAMMER_DEMONIC_WATERBREATHING, 5, {})
+		if game and game.player and game.party and lev == 1 and not game.level.data.hammer_visited_nur then
+			for act, def in pairs(game.party.members) do
+				act:setEffect(act.EFF_HAMMER_DEMONIC_WATERBREATHING, 5, {})
+			end
+			--game.player:setEffect(game.player.EFF_HAMMER_DEMONIC_WATERBREATHING, 5, {})
 			game.level.data.hammer_visited_nur = true
 		end
 	end,

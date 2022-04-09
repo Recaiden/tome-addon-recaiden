@@ -24,6 +24,9 @@ desc = function(self, who)
 		desc[#desc+1] = _t"#LIGHT_GREEN#Shassy'Kaish will help you.  Probably.#WHITE#"
 	else
 		desc[#desc+1] = _t"#LIGHT_GREY#Seek out the ancient explorer Shassy'Kaish among her cultists in the Daikara mountains.#WHITE#"
+		if self:isCompleted("daikara-gate-open") then
+			desc[#desc+1] = _t"#LIGHT_GREY# - Head into the mountains beyond her sanctum and resolve the situation with the missing cultists.#WHITE#"
+		end
 	end
 	
 	if self:isCompleted("death-w") then
@@ -32,6 +35,10 @@ desc = function(self, who)
 		desc[#desc+1] = _t"#LIGHT_GREEN#Walrog has agreed to aid you in destroying the Allied Kingdoms.#WHITE#"
 	else
 		desc[#desc+1] = _t"#LIGHT_GREY#Seek out the ancient necromancer Walrog along the ocean shore.#WHITE#"
+	end
+	local wand_o, wand_item, wand_inven_id = game.player:findInAllInventoriesBy("define_as", "WAND_WALROG_QUEST")
+	if wand_o and wand_inven_id and wand_item then
+		desc[#desc+1] = ("#LIGHT_GREY# - Use Walrog's wand to drain the life from aquatic creatures (%d / 10)#WHITE#"):tformat((self.walrog_victims or 0))
 	end
 	
 	-- if self:isCompleted("death-m") then

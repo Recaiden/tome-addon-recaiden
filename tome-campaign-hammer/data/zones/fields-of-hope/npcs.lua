@@ -375,12 +375,18 @@ newEntity{
 		[Talents.T_DEMON_BLADE]=5,
 		[Talents.T_JUGGERNAUT]=20,
 		[Talents.T_UNBREAKABLE_WILL]=2,
+		[Talents.T_SECOND_LIFE]=-20,
 	},
 
 	resolvers.auto_equip_filters("Bulwark"),
 	auto_classes={
 		{class="Bulwark", start_level=77, level_rate=50},
-		{class="Sun Paladin", start_level=77, level_rate=50},
+		{class="Sun Paladin", start_level=77, level_rate=50,
+		 banned_talents = {
+			 T_SUNCLOAK=true,
+			 T_WEAPON_OF_WRATH=true,
+		 },
+		}
 	},
 
 	inc_damage = {all=50},

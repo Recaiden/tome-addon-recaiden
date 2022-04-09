@@ -29,6 +29,16 @@ newEntity{
 }
 
 newEntity{
+	define_as = "SPACETIME_RIFT_BELOW",
+	type = "wall", subtype = "rift",
+	name = "crack in spacetime",
+	display = '#', color=colors.YELLOW, image="terrain/rift/rift_inner_05_01.png",
+	always_remember = true,
+	does_block_move = true,
+	_noalpha = false,
+}
+
+newEntity{
 	define_as = "CAVE_LADDER_ON",
 	type = "floor", subtype = "cave",
 	name = "way up into the mountains", image = "terrain/cave/cave_floor_1_01.png", add_displays = {class.new{image="terrain/cave/cave_stairs_up_1_02.png"}},

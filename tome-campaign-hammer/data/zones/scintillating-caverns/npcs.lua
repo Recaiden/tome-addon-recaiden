@@ -7,8 +7,13 @@ alter = function(add, mult)
 			if e.type ~= "dragon" then e.name = rng.table{_t"crystalline ", _t"glimmering ", _t"scintillating "}..e:getName() end
 			e.make_escort = e.make_escort or {}
 			e.make_escort[#e.make_escort+1] = {
-				type="immovable", subtype="crystal", number=2, no_subescort=true
+				type="immovable", subtype="crystal", number=1, no_subescort=true
 			}
+			if rng.chance(3) then
+				e.make_escort[#e.make_escort+1] = {
+					type="immovable", subtype="crystal", number=1, no_subescort=true
+				}
+			end
 			e.faction = "rhalore"
 			e.bonus_loot = resolvers.drops{chance=45, nb=1, {}}
 			e.bonus_arts = resolvers.drops{chance=1, nb=1, {tome_drops="boss"}}

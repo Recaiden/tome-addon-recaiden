@@ -26,7 +26,7 @@ return {
 			lesser_vaults_list = {"snow-giant-camp", "perilous-cliffs"},
 			['.'] = {"ROCKY_GROUND", "SAND", "ROCKY_GROUND"},
 			['T'] = "ROCKY_SNOWY_TREE",
-			['#'] = {"MOUNTAIN_WALL", "SPACETIME_RIFT"},
+			['#'] = {"MOUNTAIN_WALL", "SPACETIME_RIFT_BELOW"},
 			up = "ROCKY_UP2",
 			down = "ROCKY_DOWN8",
 			door = "ROCKY_GROUND",
@@ -72,6 +72,58 @@ return {
 			},
 		},
 	},
+
+	on_turn = function(self)
+		if game.level.turn_counter then
+			game.level.turn_counter = game.level.turn_counter - 1
+			game.player.changed = true
+			
+			if game.level.turn_counter % 10 == 0 then
+				local Zone = require "engine.Zone"
+				local Map = require "engine.Map"
+				
+				local w = game.level.map.w
+				local locsRift = {}
+				local locsSand = {}
+
+				core.fov.calc_circle(
+					27, 27, game.level.map.w, game.level.map.h, 3*(13-math.floor(game.level.turn_counter/10)),
+					function(_, lx, ly)
+						if not game.level.map:isBound(lx, ly) then return true end
+					end,
+					function(_, tx, ty)
+						local oe = game.level.map(tx, ty, Map.TERRAIN)
+						if oe.define_as == "SPACETIME_RIFT_BELOW" then
+							locsRift[#locsRift+1] = {x=tx,y=ty,oe=oe}
+						elseif oe.define_as == "SAND" then
+							locsSand[#locsSand+1] = {x=tx,y=ty,oe=oe}
+						end
+					end,
+					nil)
+				
+				while #locsRift > 0 do
+					local l = rng.tableRemove(locsRift)
+					
+					local e = game.zone:makeEntityByName(game.level, "terrain", "MOUNTAIN_WALL")
+					game.zone:addEntity(game.level, e, "terrain", l.x, l.y)
+				end
+				while #locsSand > 0 do
+					local l = rng.tableRemove(locsSand)
+					
+					local e = game.zone:makeEntityByName(game.level, "terrain", "ROCKY_GROUND")
+					game.zone:addEntity(game.level, e, "terrain", l.x, l.y)
+				end
+				
+				game.level.map:cleanFOV()
+				game.level.map.changed = true
+				game.level.map:redisplay()
+			end
+		
+			if game.level.turn_counter < 0 then
+				game.level.turn_counter = nil
+			end
+		end
+	end,
 
 	on_enter = function(lev)
 		if game and game.player and lev == 2 and not game.level.data.hammer_visited_rift then

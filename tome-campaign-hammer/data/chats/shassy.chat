@@ -746,7 +746,7 @@
         "name": "chat",
         "data": {
             "chatid": "chat23",
-            "chat": "\"-it will take some time to take effect, but during the battle, see, the lives volunteered by my cult will protect you should the worst should happen.\"\n\"We wouldn't want to lose such a *delightful* bringer of doom.\"",
+            "chat": "\"-it will take some time to take effect, but during the battle, see, the lives volunteered by my cult will protect you should the worst happen.\"\n\"We wouldn't want to lose such a *delightful* bringer of doom.\"",
             "answer1": ""
         },
         "class": "chat",
