@@ -1,0 +1,621 @@
+{
+    "2": {
+        "id": 2,
+        "name": "birth-descriptor",
+        "data": {
+            "not": false,
+            "what": "subclass",
+            "value": "Dreamdiver"
+        },
+        "class": "birth-descriptor",
+        "html": "birth-descriptor",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "4",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "18",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 345,
+        "pos_y": -488
+    },
+    "3": {
+        "id": 3,
+        "name": "birth-descriptor",
+        "data": {
+            "not": false,
+            "what": "race",
+            "value": "Demon"
+        },
+        "class": "birth-descriptor",
+        "html": "birth-descriptor",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "4",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "16",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 436.25,
+        "pos_y": -300.25
+    },
+    "4": {
+        "id": 4,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "welcome",
+            "code": ""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector3",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": []
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "2",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "3",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "16",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -27,
+        "pos_y": 246
+    },
+    "9": {
+        "id": 9,
+        "name": "lua-code",
+        "data": {
+            "code": "for _, act in pairs(game.level.entities) do\n    if act.define_as == \"BELL_ARCHON\" then\n        act:checkAngered(game.player, false, -200)\n    end\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "16",
+                        "input": "output_4"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 884,
+        "pos_y": 793
+    },
+    "11": {
+        "id": 11,
+        "name": "chat",
+        "data": {
+            "chatid": "chat4",
+            "chat": "The haze around the elf shines in a brilliant pattern: clear, unforgettable, and utterly incomprehensible.",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "16",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "16",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 917.8888888888889,
+        "pos_y": 336
+    },
+    "12": {
+        "id": 12,
+        "name": "chat",
+        "data": {
+            "chatid": "chat5",
+            "chat": "((Vehicle, machine))\n((Fun, adventure, experience))\n((Us-and-not-you))",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "16",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "16",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 849.5,
+        "pos_y": 567
+    },
+    "13": {
+        "id": 13,
+        "name": "unique",
+        "data": {
+            "store": "player",
+            "id": "campaign-hammer+bell-archon:13"
+        },
+        "class": "unique",
+        "html": "unique",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "14",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1006.75,
+        "pos_y": -124
+    },
+    "14": {
+        "id": 14,
+        "name": "entry-selector",
+        "data": {
+            "chatid": "chat6",
+            "code": ""
+        },
+        "class": "entry-selector",
+        "html": "entry-selector2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "16",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "13",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "15",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 695.75,
+        "pos_y": 16.5
+    },
+    "15": {
+        "id": 15,
+        "name": "chat",
+        "data": {
+            "chatid": "chat7",
+            "chat": "((Bell-Station))\n((State-of-enjoyment?))\n",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "14",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1279,
+        "pos_y": 111
+    },
+    "16": {
+        "id": 16,
+        "name": "chat",
+        "data": {
+            "chatid": "chat2",
+            "chat": "((Visitor?))\n((Curiousity))\n((Mistake))",
+            "answer1": "Where am I?",
+            "answer2": "Who are you?",
+            "answer3": "What is this place?",
+            "answer4": "Die, monster!",
+            "answer5": "Goodbye"
+        },
+        "class": "chat",
+        "html": "chat5",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "4",
+                        "input": "output_3"
+                    },
+                    {
+                        "node": "11",
+                        "input": "output_1"
+                    },
+                    {
+                        "node": "12",
+                        "input": "output_1"
+                    },
+                    {
+                        "node": "3",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "14",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "11",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "12",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_4": {
+                "connections": [
+                    {
+                        "node": "9",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_5": {
+                "connections": []
+            }
+        },
+        "pos_x": 405,
+        "pos_y": 413
+    },
+    "18": {
+        "id": 18,
+        "name": "lua-code",
+        "data": {
+            "code": "--todo set out of suit effect\n--drop phsy stats to 10\n"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "2",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 766.25,
+        "pos_y": -794
+    },
+    "20": {
+        "id": 20,
+        "name": "chat",
+        "data": {
+            "chatid": "dive-end",
+            "chat": "The archon welcomes you back warmly, and you hand over pattern-trinkets from the world of soul.\nThen, finally, you disconnect from your exo and return to comforting familiarity.",
+            "answer1": "Reconfigure your Exo",
+            "answer2": "Wait here a while",
+            "answer3": "Head back in"
+        },
+        "class": "chat",
+        "html": "chat3",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "18",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "24",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": []
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "22",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1273,
+        "pos_y": -740
+    },
+    "22": {
+        "id": 22,
+        "name": "lua-code",
+        "data": {
+            "code": "game:changeLevel(3, \"campaign-hammer+derthfields-landing-site\")\n"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "input": "output_3"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1713.25,
+        "pos_y": -480
+    },
+    "23": {
+        "id": 23,
+        "name": "lua-code",
+        "data": {
+            "code": "game:setAllowedBuild(\"hammer_class_diver\", true)"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1710.75,
+        "pos_y": -14.25
+    },
+    "24": {
+        "id": 24,
+        "name": "lua-code",
+        "data": {
+            "code": "--todo reset exo talents\ngame.player:gainExp(0)"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1698,
+        "pos_y": -731
+    },
+    "25": {
+        "id": 25,
+        "name": "chat",
+        "data": {
+            "chatid": "chat3",
+            "chat": "((Bell-Station))\n((Do-not-belong))\nThe elf hands you...something. You can't quite see it.\n((Try))",
+            "answer1": "*Accept*",
+            "answer2": "*Refuse*"
+        },
+        "class": "chat",
+        "html": "chat2",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "13",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "23",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "26",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": 1326.25,
+        "pos_y": -175
+    },
+    "26": {
+        "id": 26,
+        "name": "chat",
+        "data": {
+            "chatid": "unlock-rejected",
+            "chat": "The elf shrugs slowly and looks away.",
+            "answer1": ""
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "25",
+                        "input": "output_2"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1649,
+        "pos_y": 174
+    }
+}

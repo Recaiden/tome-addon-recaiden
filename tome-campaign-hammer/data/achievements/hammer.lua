@@ -62,6 +62,13 @@ newAchievement{
 }
 
 newAchievement{
+	name = "Getting the Band Back Together", id = "HAMMER_OLD_ONES", category = "Hammer of Urh'Rok",
+	show = "full",
+	desc = [[Help all the ancient demons]],
+	mode = "player",
+}
+
+newAchievement{
 	name = "You Were Not Supposed to See That Either!", id = "HAMMER_BELL_OPEN", category = "Hammer of Urh'Rok",
 	show = "none",
 	desc = [[Escape through the bell]],
@@ -69,8 +76,29 @@ newAchievement{
 }
 
 newAchievement{
-	name = "Getting the Band Back Together", id = "HAMMER_OLD_ONES", category = "Hammer of Urh'Rok",
+	name = "Won't Handle the Truth", id = "HAMMER_NO_LIGHT", category = "Hammer of Urh'Rok",
 	show = "full",
-	desc = [[Help all the ancient demons]],
+	desc = [[Look away from the threads in the Buried Kingdom.]],
+	mode = "player",
+}
+
+newAchievement{
+	name = "Broken Clock", id = "HAMMER_GODSLAYER", category = "Hammer of Urh'Rok",
+	show = "full",
+	desc = [[Free the prisoner in the Buried Kingdom, win the game, and then kill her.]],
+	mode = "player",
+}
+
+newAchievement{
+	name = "Beyond Eternity", id = "HAMMER_DEMIGOD", category = "Hammer of Urh'Rok",
+	show = "full",
+	desc = [[Free the prisoner in the Buried Kingdom, win the game, and then escape with her.]],
+	mode = "player",
+}
+
+newAchievement{
+	name = "One Way Trip", id = "HAMMER_NO_RECALL", category = "Hammer of Urh'Rok",
+	show = "full",
+	desc = [[Go somewhere with no exit, no boss, and no rod of recall.]],
 	mode = "player",
 }

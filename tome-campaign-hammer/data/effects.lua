@@ -70,3 +70,31 @@ TemporaryEffects.tempeffect_def.EFF_RECALL.activate = function(self, eff)
 	if not self.hammer_timecrash then return end
 	eff.where = "campaign-hammer+edge-of-eternity"
 end
+
+
+newEffect{
+	name = "HAMMER_ZONE_AURA_VERGE", image = "effects/zero_gravity.png",
+	desc = _t"Spatial Abstraction",
+	no_stop_enter_worlmap = true,
+	long_desc = function(self, eff) return (_t"There is no gravity or friction here; you travel -indeed exist- only with an act of will. Movement is five times as fast and pinning is impossible. Maximum encumbrance is greatly increased.") end,
+	decrease = 0, no_remove = true,
+	type = "other",
+	subtype = { spacetime=true, aura=true },
+	status = "detrimental",
+	zone_wide_effect = true,
+	parameters = {},
+	on_merge = function(self, old_eff, new_eff)
+		return old_eff
+	end,
+	activate = function(self, eff)
+		eff.encumb = self:addTemporaryValue("max_encumber", self:getMaxEncumbrance() * 20)
+		self:effectTemporaryValue(eff, "pin_immune", 8.0)
+		self:effectTemporaryValue(eff, "movement_speed", 4)
+		self:checkEncumbrance()
+		game.logPlayer(self, "#LIGHT_BLUE#You enter zone where space behaves differently, beware!")
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("max_encumber", eff.encumb)
+		self:checkEncumbrance()
+	end,
+}
