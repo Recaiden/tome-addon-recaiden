@@ -117,10 +117,17 @@ on_status_change = function(self, who, status, sub)
 			-- 	local e = game.level.e_array[i]
 			-- 	if game.player:reactionToward(e) < 0 then game.level:removeEntity(e) end
 			-- end
-			--game:setAllowedBuild("hammer_race_demon", true)
+			if game:isAddonActive("campaign-hammer-characters") then
+				game:setAllowedBuild("hammer_race_demon", true)
+			end
 			
 			local Chat = require"engine.Chat"
-			local chat = Chat.new("campaign-hammer+doombringer-end", {name=_t"Endgame", image="portrait/win.png"}, game:getPlayer(true))
+			local chat
+			if who.race == "demon" then
+				chat = Chat.new("campaign-hammer+demon-end", {name=_t"Endgame", image="portrait/win.png"}, game:getPlayer(true))
+			else
+				chat = Chat.new("campaign-hammer+doombringer-end", {name=_t"Endgame", image="portrait/win.png"}, game:getPlayer(true))
+			end
 			chat:invoke()
 
 		end
