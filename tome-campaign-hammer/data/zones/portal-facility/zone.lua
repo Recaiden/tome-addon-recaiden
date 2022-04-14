@@ -85,6 +85,16 @@ return {
 				map = {
 					['.'] = "LAVA_FLOOR",
 					['#'] = "MALROK_WALL",
+					v = "PORTAL_WIDGET_1",
+					required_rooms = {"!widget"},
+				},
+			},
+		},
+		[4] = {
+			generator =  {
+				map = {
+					v = "PORTAL_WIDGET_2",
+					required_rooms = {"!widget"},
 				},
 			},
 		},
@@ -93,6 +103,8 @@ return {
 				map = {
 					force_last_stair = true,
 					down = "PORTAL_EXIT",
+					v = "PORTAL_WIDGET_1",
+					required_rooms = {"!widget"},
 				},
 			},
 		},

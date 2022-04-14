@@ -9,10 +9,10 @@ desc = function(self, who)
 	else
 		desc[#desc+1] = _t"#SLATE#* Stage an attack on the beachhead to force Khulmanar to retreat from his offensive.#WHITE#"
 	end
-	if self:isCompleted("portals") then
+	if self:isCompleted("portals-1") and self:isCompleted("portals-2") and self:isCompleted("portals-3") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#* The primary portal facilty is in ruins - stopping any further assaults for now.#WHITE#"
 	else
-		desc[#desc+1] = _t"#SLATE#* Shut down the portal facility to stop the demons resuming the invasion.#WHITE#"
+		desc[#desc+1] = _t"#SLATE#* Shut down the portal stabilizers to stop the demons resuming the invasion.#WHITE#"
 	end
 	if self:isCompleted("khulmanar-talk") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#* Khulmanar has accepted your proof and ordered the armies of the fearscape to stand down.#WHITE#"

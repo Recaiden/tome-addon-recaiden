@@ -29,8 +29,8 @@
                 ]
             }
         },
-        "pos_x": -1312,
-        "pos_y": 375.42857142857144
+        "pos_x": -1342.111111111111,
+        "pos_y": 378
     },
     "34": {
         "id": 34,
@@ -200,57 +200,6 @@
         "pos_x": -2007,
         "pos_y": -256.3333333333333
     },
-    "43": {
-        "id": 43,
-        "name": "chat",
-        "data": {
-            "chatid": "unlucky",
-            "chat": "\"You've come here to ask for my help?  After all the test subjects I sent?  All the people I corrupted? You want more?  That seems downright greedy.\"",
-            "answer1": "(Agree that she's done enough)",
-            "answer2": "(Ignore her self-serving nonsense)",
-            "answer3": "\"You've been helping Eyalites escape their punishment.  You won't get away with this.\""
-        },
-        "class": "chat",
-        "html": "chat3",
-        "typenode": true,
-        "inputs": {
-            "input_1": {
-                "connections": [
-                    {
-                        "node": "45",
-                        "input": "output_1"
-                    },
-                    {
-                        "node": "50",
-                        "input": "output_6"
-                    }
-                ]
-            }
-        },
-        "outputs": {
-            "output_1": {
-                "connections": []
-            },
-            "output_2": {
-                "connections": [
-                    {
-                        "node": "47",
-                        "output": "input_1"
-                    }
-                ]
-            },
-            "output_3": {
-                "connections": [
-                    {
-                        "node": "44",
-                        "output": "input_1"
-                    }
-                ]
-            }
-        },
-        "pos_x": -1391,
-        "pos_y": 653.5714285714286
-    },
     "44": {
         "id": 44,
         "name": "lua-cond",
@@ -265,7 +214,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "43",
+                        "node": "65",
                         "input": "output_3"
                     }
                 ]
@@ -275,14 +224,14 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "45",
+                        "node": "64",
                         "output": "input_1"
                     }
                 ]
             }
         },
-        "pos_x": -849,
-        "pos_y": 953
+        "pos_x": -799.1111111111111,
+        "pos_y": 961
     },
     "45": {
         "id": 45,
@@ -299,7 +248,7 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "44",
+                        "node": "64",
                         "input": "output_1"
                     }
                 ]
@@ -309,14 +258,14 @@
             "output_1": {
                 "connections": [
                     {
-                        "node": "43",
+                        "node": "65",
                         "output": "input_1"
                     }
                 ]
             }
         },
-        "pos_x": -310,
-        "pos_y": 1044
+        "pos_x": -30.22222222222222,
+        "pos_y": 1037.111111111111
     },
     "46": {
         "id": 46,
@@ -372,8 +321,12 @@
             "input_1": {
                 "connections": [
                     {
-                        "node": "43",
+                        "node": "65",
                         "input": "output_2"
+                    },
+                    {
+                        "node": "66",
+                        "input": "output_1"
                     }
                 ]
             }
@@ -396,8 +349,8 @@
                 ]
             }
         },
-        "pos_x": -763.25,
-        "pos_y": 587
+        "pos_x": -699.8888888888889,
+        "pos_y": 570
     },
     "48": {
         "id": 48,
@@ -521,7 +474,7 @@
             "output_6": {
                 "connections": [
                     {
-                        "node": "43",
+                        "node": "65",
                         "output": "input_1"
                     }
                 ]
@@ -916,5 +869,132 @@
         },
         "pos_x": -225,
         "pos_y": -350.25
+    },
+    "64": {
+        "id": 64,
+        "name": "unique",
+        "data": {
+            "store": "npc",
+            "id": "campaign-hammer+shassy:64"
+        },
+        "class": "unique",
+        "html": "unique",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "44",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "45",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -272.8888888888889,
+        "pos_y": 1028
+    },
+    "65": {
+        "id": 65,
+        "name": "chat",
+        "data": {
+            "chatid": "unlucky",
+            "chat": "\"You've come here to ask for my help?  After all the test subjects I sent?  All the people I corrupted? You want more?  That seems downright greedy.\"",
+            "answer1": "(Agree that she's done enough)",
+            "answer2": "(Ignore her self-serving nonsense)",
+            "answer3": "\"You've been helping Eyalites escape their punishment.  You won't get away with this.\"",
+            "answer4": "\"You've been helping Eyalites escape their punishment.  How about we stop the entire war?\""
+        },
+        "class": "chat",
+        "html": "chat4",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "45",
+                        "input": "output_1"
+                    },
+                    {
+                        "node": "50",
+                        "input": "output_6"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            },
+            "output_2": {
+                "connections": [
+                    {
+                        "node": "47",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_3": {
+                "connections": [
+                    {
+                        "node": "44",
+                        "output": "input_1"
+                    }
+                ]
+            },
+            "output_4": {
+                "connections": [
+                    {
+                        "node": "66",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -1391,
+        "pos_y": 653.5714285714286
+    },
+    "66": {
+        "id": 66,
+        "name": "quest-has",
+        "data": {
+            "not": false,
+            "quest": "campaign-hammer+hero-main",
+            "state": "has"
+        },
+        "class": "quest-has",
+        "html": "quest-has",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "65",
+                        "input": "output_4"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": [
+                    {
+                        "node": "47",
+                        "output": "input_1"
+                    }
+                ]
+            }
+        },
+        "pos_x": -1382.888888888889,
+        "pos_y": 1070.888888888889
     }
 }

@@ -15,12 +15,13 @@ load("/data/general/npcs/horror-undead.lua", rarityWithLoot(2))
 local Talents = require("engine.interface.ActorTalents")
 
 newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
-	subtype = "temporal",
+  type = "undead",
+	subtype = "ghost",
 	allow_infinite_dungeon = true,
 	unique = true,
 	name = "The Forgotten King",
 	display = "q", color=colors.VIOLET,
-	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/horror_eldritch_dreaming_horror.png", display_h=2, display_y=-1}}},
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/undead_ghost_forgotten_king.png", display_h=2, display_y=-1}}},
 	desc = _t[[Once upon a time there was a storyteller, and he said-]],
 	killer_message = _t"and was made to endlessly relive the kingdom's final moments.",
 	level_range = {40, nil}, exp_worth = 2,
@@ -110,6 +111,11 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 			self.inc_damage.all = self.inc_damage.all + 24
 			self.rank = 10
 			self.female = true
+
+			self.replace_display = mod.class.Actor.new{image="npc/undead_ghost_freed_god.png",}
+      self:removeAllMOs()
+      game.level.map:updateMap(self.x, self.y)
+			
 			self:doEmote(_t"Brother, can you not see that your changes are ruining the project!?", 100)
 			self.emote_random = {chance=3, _t"Finally, the king is silent.", _t"All of this will be undone!", _t"At last, I live again!"}
 			if game and game.player then

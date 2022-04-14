@@ -28,3 +28,12 @@ newEntity{
 	change_level = -1,
 }
 
+newEntity{
+	define_as = "MALROK_DOWN2",
+	type = "floor", subtype = "floor",
+	name = "way to the next level", image = "terrain/red_floating_rocks05_01.png", add_mos = {{image="terrain/way_next_2.png"}},
+	display = '>', color_r=255, color_g=255, color_b=0,
+	notice = true,
+	always_remember = true,
+	change_level = 1,
+}

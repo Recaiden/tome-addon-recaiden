@@ -41,3 +41,37 @@ newEntity{
 	always_remember = true,
 	change_level = 1, change_zone = "campaign-hammer+fearscape-heart",
 }
+
+newEntity{ base = "MALROK_FLOOR",
+	define_as = "PORTAL_WIDGET",
+	name = "portal stabilizer", image = "terrain/red_floating_rocks05_01.png", add_displays={class.new{z=6, image="terrain/pedestal_orb_03.png"}},
+	display = '+', color=colors.RED,
+	grow = table.NIL_MERGE,
+	force_clone = true,
+	always_remember = true,
+	notice = true,
+	special = true,
+	special_minimap = colors.CRIMSON,
+	block_move = function(self, x, y, who, act, couldpass)
+		if not who or not who.player or not act then return false end
+		self.add_displays[1] = self.add_displays[1]:cloneFull()
+		self.add_displays[1].image = "terrain/pedestal_01.png"
+		self:removeAllMOs()
+		game.level.map:updateMap(x, y)
+		game.player:resolveSource():setQuestStatus("campaign-hammer+hero-main", engine.Quest.COMPLETED, self.quest_tag)
+		game.log("#PURPLE#You smash the portal stabilizer!")
+	end,
+}
+
+newEntity{ base = "PORTAL_WIDGET",
+	define_as = "PORTAL_WIDGET_1",
+	quest_tag = "portals-1",
+}
+newEntity{ base = "PORTAL_WIDGET",
+	define_as = "PORTAL_WIDGET_2",
+	quest_tag = "portals-2",
+}
+newEntity{ base = "PORTAL_WIDGET",
+	define_as = "PORTAL_WIDGET_3",
+	quest_tag = "portals-3",
+}

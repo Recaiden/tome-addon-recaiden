@@ -43,6 +43,10 @@ desc = function(self, who)
 	-- 	desc[#desc+1] = _t"#SLATE#* On the shores of the Sea of Sash is a town of antimagic adherents.  Destroy them.#WHITE#"
 	-- end
 
+	if who:hasQuest("campaign-hammer+hero-main") then
+		desc[#desc+1] = _t"#LIGHT_RED#You have abandoned your holy quest in order to pursue a new path.#WHITE#"
+	end
+
 	local statusRuins = who:hasQuest("campaign-hammer+demon-ruins") and who:hasQuest("campaign-hammer+demon-ruins"):isCompleted()
 	if self:isCompleted("last-hope") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#* The Allied Kingdom leadership is destroyed.  Victory is certain.#WHITE#"

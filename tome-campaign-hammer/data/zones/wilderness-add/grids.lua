@@ -134,7 +134,8 @@ newEntity{
 							elseif self.level % 3 == 0 then
 								self.unused_generics = self.unused_generics + 1
 							end
-						end,
+						end
+						game.player.exp = math.min(game.player.exp, game.player:getExpChart(game.player.level+1))
 						game:changeLevel(math.ceil(game.player.level * 1.5), "infinite-dungeon")
 					end
 			end)

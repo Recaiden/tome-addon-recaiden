@@ -105,7 +105,8 @@ return {
 			},
 		},
 		[5] = {
-			width = 196, height = 80,
+			width = 50, height = 50,
+			--width = 196, height = 80,
 			generator = {
 				map = {
 					class = "engine.generator.map.Static",

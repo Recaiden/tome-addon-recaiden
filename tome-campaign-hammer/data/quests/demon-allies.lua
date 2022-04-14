@@ -1,7 +1,12 @@
 name = "The Old Ones"
 desc = function(self, who)
 	local desc = {}
-	desc[#desc+1] = "Three demons have been trapped on Eyal since the disaster.  They could be useful to our cause.  Seek them out."
+
+	if who:hasQuest("campaign-hammer+hero-main") then
+		desc[#desc+1] = "Three demons have been trapped on Eyal since the disaster.  They may be less than loyal to the current campaign of genocide.  Seek them out."
+	else
+		desc[#desc+1] = "Three demons have been trapped on Eyal since the disaster.  They could be useful to our cause.  Seek them out."
+	end
 	
 	if self:isCompleted("death-k") and self:isCompleted("death-s") then
 		desc[#desc+1] = _t"#LIGHT_RED#Kryl-Feijan's resurrection failed, and without Shassy'Kaish, he has died his final death.#WHITE#"
@@ -11,7 +16,7 @@ desc = function(self, who)
 			desc[#desc+1] = _t"#LIGHT_GREEN#However, Melinda may still be of use.#WHITE#"
 		end
 	elseif self:isCompleted("help-k") then
-		desc[#desc+1] = _t"#LIGHT_GREEN#Kryl-Feijan is reborn, and has pledged to aid you in taking revenge.#WHITE#"
+		desc[#desc+1] = _t"#LIGHT_GREEN#Kryl-Feijan is reborn, and has pledged to aid you.#WHITE#"
 	else
 		desc[#desc+1] = _t"#LIGHT_GREY#Seek out the wounded ancient Kryl-Feijan in his isolated crypt.#WHITE#"
 	end

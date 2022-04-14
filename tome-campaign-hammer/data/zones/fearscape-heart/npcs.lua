@@ -14,328 +14,91 @@ alter = function(add, mult)
 		if e.rarity then
 			e.rarity = math.ceil(e.rarity * mult + add)
 			if e.faction ~= "fearscape" then
-				if e.faction ~= "allied-kingdoms" then
-					e.desc = (e.desc or "").._t[[ This creature has put aside its normal concerns in the face of demonic invasion.]]
-				end
-				e.faction = "allied-kingdoms"
+				e.desc = (e.desc or "").._t[[ This creature is completely in thrall to the demonic invaders.]]
+				e.faction = "fearscape"
 			end
-			e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
-			e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
 		end
+		e.bonus_loot = resolvers.drops{chance=85, nb=1, {}}
+		e.bonus_arts = resolvers.drops{chance=2, nb=1, {tome_drops="boss"}}
 	end
 end
 
-load("/data/general/npcs/demon-major.lua", rarity(1))
-load("/data/general/npcs/demon-minor.lua", rarity(0))
-load("/data/general/npcs/plant.lua", alter(50))
+load("/data/general/npcs/major-demon.lua", rarity(1))
+load("/data/general/npcs/minor-demon.lua", rarity(0))
 load("/data/general/npcs/all.lua", alter(20, 50))
 
 local Talents = require("engine.interface.ActorTalents")
 
 newEntity{
-	define_as = "BASE_NPC_LAST_HOPE",
-	type = "humanoid", subtype = "human",
-	display = "p", color=colors.WHITE,
-	faction = "allied-kingdoms",
-	exp_worth = 1,
-	combat = { dam=resolvers.rngavg(1,2), atk=2, apr=0, dammod={str=0.4} },
+	define_as = "KHULMANAR_HAMMER",
+	type = "demon", subtype = "major",
+	name = "General Khulmanar",
+	display = "D",
+	color=colors.DARK_RED, unique=true,
+	faction = "fearscape",
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/demon_major_general_of_urh_rok.png", display_h=2, display_y=-1}}},
 
-	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, QUIVER=1 },
-	lite = 3,
-
-	life_rating = 10,
-	rank = 2,
-	size_category = 3,
-
-	open_door = true,
-
-	resolvers.racial(),
-	resolvers.inscriptions(1, "infusion"),
-
-	autolevel = "warrior",
-	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=1, },
-	stats = { str=12, dex=8, mag=6, con=10 },
-	resolvers.drops{chance=85, nb=1, {}}
-}
-
-newEntity{ base = "BASE_NPC_LAST_HOPE",
-	name = "last hope guard", color=colors.LIGHT_UMBER,
-	desc = _t[[A stern-looking guard, he will not let you disturb the town.]],
-	level_range = {1, nil}, exp_worth = 0,
-	rarity = 1,
-	max_life = resolvers.rngavg(70,80),
-	resolvers.equip{
-		{type="weapon", subtype="longsword", not_properties={"unique"}, autoreq=true},
-		{type="armor", subtype="shield", not_properties={"unique"}, autoreq=true},
-	},
-	combat_armor = 2, combat_def = 0,
-	resolvers.talents{ [Talents.T_RUSH]=1, [Talents.T_PERFECT_STRIKE]=1, },
-	make_escort = {
-		{name="human citizen", number=1},
-		{name="halfling citizen", number=1},
-	},
-}
-
-newEntity{ base = "BASE_NPC_LAST_HOPE",
-	name = "halfling guard", color=colors.UMBER,
-	subtype = "halfling",
-	desc = _t[[A Halfling, with a sling. Beware.]],
-	level_range = {1, nil}, exp_worth = 0,
-	rarity = 3,
-	max_life = resolvers.rngavg(50,60),
-	resolvers.talents{ [Talents.T_SHOOT]=1, },
-	ai_state = { talent_in=2, },
-	autolevel = "slinger",
-	resolvers.equip{
-		{type="weapon", subtype="sling", not_properties={"unique"}, autoreq=true}, 
-		{type="ammo", subtype="shot", not_properties={"unique"}, autoreq=true}
-	},
-	make_escort = {
-		{name="human citizen", number=1},
-		{name="halfling citizen", number=1},
-	},
-}
-
-newEntity{ base = "BASE_NPC_LAST_HOPE",
-	name = "shadowblade", color_r=resolvers.rngrange(0, 10), color_g=resolvers.rngrange(0, 10), color_b=resolvers.rngrange(100, 120),
-	desc = _t[[These rogues are not who you'd usually expect to save the kingdom.  But having everyone dragged to hell is bad for business.]],
-	level_range = {14, nil}, exp_worth = 1,
-	rarity = 4,
-	combat_armor = 3, combat_def = 50,
-	combat_critical_power = 50,
-	resolvers.auto_equip_filters("Rogue"),
-	resolvers.equip{
-		{type="weapon", subtype="dagger", autoreq=true},
-		{type="weapon", subtype="dagger", autoreq=true},
-		{type="armor", subtype="light", autoreq=true}
-	},
-	resolvers.talents{
-		[Talents.T_LETHALITY]={base=1, every=6, max=5},
-		[Talents.T_KNIFE_MASTERY]={base=0, every=6, max=6},
-		[Talents.T_WEAPON_COMBAT]={base=0, every=6, max=6},
-		[Talents.T_STEALTH]={base=3, every=5, max=8},
-		[Talents.T_DUAL_WEAPON_MASTERY]={base=2, every=6, max=6},
-		[Talents.T_TEMPO]={base=2, every=6, max=6},
-		[Talents.T_DUAL_STRIKE]={base=1, every=6, max=6},
-		[Talents.T_SHADOWSTEP]={base=2, every=6, max=6},
-		[Talents.T_LETHALITY]={base=5, every=6, max=8},
-		[Talents.T_SHADOW_LEASH]={base=1, every=6, max=6},
-		[Talents.T_SHADOW_AMBUSH]={base=1, every=6, max=6},
-		[Talents.T_SHADOW_COMBAT]={base=1, every=6, max=6},
-		[Talents.T_SHADOW_VEIL]={last=20, base=0, every=6, max=6},
-		[Talents.T_INVISIBILITY]={last=30, base=0, every=6, max=6},
-	},
-	max_life = resolvers.rngavg(120,140),
-
-	resolvers.sustains_at_birth(),
-	autolevel = "rogue",
-	power_source = {technique=true, arcane=true},
-}
-
--- bonus shalore
-newEntity{
-	define_as = "BASE_NPC_ELVEN_HERO",
-	type = "humanoid", subtype = "shalore",
-	display = "p", color=colors.UMBER,
-	faction = "allied-kingdoms",
-
-	combat = { dam=resolvers.rngavg(5,12), atk=2, apr=6, physspeed=2 },
-
-	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, QUIVER=1 },
-	resolvers.drops{chance=20, nb=1, {} },
-	resolvers.drops{chance=10, nb=1, {type="money"} },
-	infravision = 10,
-	lite = 1,
-
-	life_rating = 15,
-	rank = 2,
-	size_category = 3,
-
-	open_door = true,
-
-	resolvers.racial(),
-	resolvers.talents{ [Talents.T_ARMOUR_TRAINING]=3, [Talents.T_WEAPON_COMBAT]={base=1, every=10, max=5}, [Talents.T_WEAPONS_MASTERY]={base=0, every=10, max=5} },
-
-	autolevel = "warrior",
-	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=3, },
-	stats = { str=20, dex=8, mag=6, con=16 },
-	power_source = {technique=true},
-}
-
-newEntity{ base = "BASE_NPC_ELVEN_HERO",
-	name = "scarred elven warrior", color=colors.UMBER,
-	desc = _t[[A elven refugee from Elvala, taking any opportunity to fight back against the demon hordes.]],
-	level_range = {15, nil}, exp_worth = 1,
-	rarity = 5,
-	rank = 3,
-	ai = "tactical",
-	ai_tactic = resolvers.tactic"melee",
-	max_life = resolvers.rngavg(100,110),
-	resolvers.equip{
-		{type="weapon", subtype="waraxe", autoreq=true},
-		{type="armor", subtype="shield", autoreq=true},
-		{type="armor", subtype="heavy", autoreq=true},
-	},
-	combat_armor = 20, combat_def = 26,
-	resolvers.talents{
-		[Talents.T_SHIELD_PUMMEL]={base=2, every=10, max=7},
-		[Talents.T_ASSAULT]={base=3, every=7, max=7},
-		[Talents.T_BLEEDING_EDGE]={base=3, every=7, max=7},
-	},
-	resolvers.inscriptions(1, "rune"),
-	resolvers.inscriptions(2, {"heroism infusion", "biting gale rune"}),
-}
-
--- bonus thalore
-newEntity{
-	define_as = "BASE_NPC_THALORE_HERO",
-	type = "humanoid", subtype = "thalore",
-	display = "p", color=colors.WHITE,
-	faction = "allied-kingdoms",
-	exp_worth = 0,
-	combat = { dam=resolvers.rngavg(1,2), atk=2, apr=0, dammod={str=0.4} },
-
-	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, QUIVER=1 },
-	lite = 3,
-
-	life_rating = 10,
-	rank = 2,
-	size_category = 3,
-
-	open_door = true,
-
-	resolvers.racial(),
-	resolvers.inscriptions(1, "rune"),
-
-	autolevel = "warrior",
-	ai = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=3, },
-	stats = { str=12, dex=8, mag=6, con=10 },
-
-	resolvers.drops{chance=85, nb=1, {}}
-}
-
-newEntity{ base = "BASE_NPC_THALORE_HERO",
-	name = "thalore hunter", color=colors.LIGHT_UMBER,
-	desc = _t[[An elven refugee from Shatur, taking any opportunity to fight back againt the demon hordes.]],
-	level_range = {15, nil}, exp_worth = 0,
-	rarity = 5,
-	max_life = resolvers.rngavg(70,80),
-	resolvers.talents{
-		[Talents.T_MASTER_MARKSMAN]={base=1, every=10, max=5},
-		[Talents.T_FLARE]={base=1, every=10, max=5},
-		[Talents.T_STEADY_SHOT]={base=1, every=10, max=5},
-		[Talents.T_PIN_DOWN]={base=1, every=10, max=5},
-		[Talents.T_HEADSHOT]={base=1, every=10, max=5},
-		[Talents.T_SHOOT]=1,
-	},
-	ai_state = { talent_in=1, },
-
-	autolevel = "archer",
-	resolvers.inscriptions(1, "infusion"),
-	resolvers.equip{
-		{type="weapon", subtype="longbow", not_properties={"unique"}, autoreq=true},
-		{type="ammo", subtype="arrow", not_properties={"unique"}, autoreq=true},
-	},
-	resolvers.racial(),
-
-	make_escort = {
-		{name="thalore hunter", number=1, no_subescort=true},
-	},
-}
-
-newEntity{ base = "BASE_NPC_THALORE_HERO",
-	name = "thalore wilder", color=colors.GREEN,
-	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_thalore_thalore_wilder.png", display_h=2, display_y=-1}}},
-	desc = _t[[An elven refugee from Shatur, taking any opportunity to fight to save Eyal.]],
-	level_range = {1, nil}, exp_worth = 0,
-	rarity = 3,
-	max_life = resolvers.rngavg(50,60),
-	ai_state = { talent_in=1, },
-	autolevel = "wildcaster",
-	resolvers.talents{
-		[Talents.T_RIMEBARK]={base=1, every=5, max=10},
-		[Talents.T_WAR_HOUND]={base=1, every=5, max=10},
-	},
-	resolvers.inscriptions(3, "infusion"),
-	resolvers.racial(),
-	make_escort = {
-		{name="thalore hunter", number=1, no_subescort=true},
-		{name="treant", number=2, no_subescort=true},
-	},
-}
-
--- civilians
-newEntity{ base = "BASE_NPC_LAST_HOPE",
-	name = "human citizen", color=colors.WHITE,
-	desc = _t[[A clean-looking Human resident of Last Hope.]],
-	level_range = {1, nil}, exp_worth = 0,
-	rarity = false,
-	max_life = resolvers.rngavg(30,40),
-	combat_armor = 2, combat_def = 0,
-}
-
-newEntity{ base = "BASE_NPC_LAST_HOPE",
-	name = "halfling citizen", color=colors.WHITE,
-	subtype = "halfling",
-	desc = _t[[A clean-looking Halfling resident of Last Hope.]],
-	level_range = {1, nil}, exp_worth = 0,
-	rarity = false,
-	max_life = resolvers.rngavg(30,40),
-}
-
-newEntity{
-	define_as = "TOLAK",
-	type = "humanoid", subtype = "human",
-	name = "King Tolak the Fair",
-	display = "@", color=colors.BROWN,
-	faction = "allied-kingdoms",
-	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_human_tolak.png", display_h=2, display_y=-1}}},
-
-	desc = _t[[This Higher man is the ruler of the Allied Kingdoms and a symbol of unity to the people of Maj'Eyal.  Though he ruled in a time of relative peace, he has decades of experience and the best equipment dwarves could forge.]],
+	desc = _t[[A towering demonic war-mech, custom made for the greatest tactical mind of the age.  The general stands tall above a legion of lesser demons, holding his signature blackened flaming battleaxe.  He does not appear to be in a mood for calm discussion.]],
 	level_range = {75, nil}, exp_worth = 15,
 	max_life = 1000, life_rating = 42, fixed_rating = true,
 	max_stamina = 1000,
-	stamina_regen = 15,
-	vim_regen = 15,
+	stamina_regen = 50,
+	vim_regen = 50,
+	mana_regen = 50,
 	rank = 5,
-	size_category = 3,
-	stats = { str=80, dex=45, con=50, cun=60, mag=30, wil=40 },
+	size_category = 5,
+	stats = { str=80, dex=45, con=50, cun=60, mag=50, wil=40 },
+
+	combat_armor = 50, combat_def = 40, combat_atk=50,
 
 	see_invisible = 100,
 	instakill_immune = 1,
 	
 	confusion_immune = 0.5,
 	blind_immune = 1,
+	knockback_immune = 1,
 
 	combat_def = 20,
 
 	no_auto_resists = true,
-	resists = { all = 45, },
+	resists = { all = 45, [DamageType.FIRE] = 70},
 
 	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, FEET=1, HEAD=1, HANDS=1 },
-	resolvers.auto_equip_filters("Bulwark"),
-	resolvers.auto_equip_filters{
-		BODY = {type="armor", special=function(e) return e.subtype=="massive" end},
-	},
-	resolvers.equip{
-		{type="weapon", subtype="longsword", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
-		{type="armor", subtype="shield", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
-		{type="armor", subtype="massive", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
-		{type="armor", subtype="feet", name="pair of voratun boots", force_drop=true, forbid_power_source={antimagic=true}, tome_drops="boss", autoreq=true},
-		{type="armor", subtype="head", defined="CROWN_TOLAK", autoreq=true},
-		{type="armor", subtype="hands", name="voratun gauntlets", forbid_power_source={antimagic=true}, force_drop=true, tome_drops="boss", autoreq=true},
-	},
+	resolvers.auto_equip_filters{MAINHAND = {properties = {"twohanded"}}, },
+	resolvers.equip{ {type="weapon", subtype="battleaxe", defined="KHULMANAR_WRATH", random_art_replace={chance=30}, autoreq=true, force_drop=true}, },
+
+	on_melee_hit = {[DamageType.FIRE]=resolvers.mbonus(25, 25)},
+	melee_project = {[DamageType.FIRE]=resolvers.mbonus(50, 35)},
+	
 	resolvers.drops{chance=100, nb=5, {tome_drops="boss"} },
 
+	summon = {
+		{type="demon", number=5, hasxp=false},
+	},
+	make_escort = {
+		{type="demon", no_subescort=true, number=resolvers.mbonus(4, 4)},
+	},
+
+	--todo resolver.racial for onyx
 	resolvers.talents{
-		[Talents.T_HIGHER_HEAL]=5,
-		[Talents.T_OVERSEER_OF_NATIONS]=5,
-		[Talents.T_BORN_INTO_MAGIC]=5,
-		[Talents.T_HIGHBORN_S_BLOOM]=5,
-		[Talents.T_HALFLING_LUCK]=5,
-		[Talents.T_DUCK_AND_DODGE]=5,
-		[Talents.T_MILITANT_MIND]=5,
-		[Talents.T_INDOMITABLE]=5,
+		[Talents.T_SUMMON]=1,
+		
+		[Talents.T_WEAPON_COMBAT]={base=8, every=5, max=12},
+		[Talents.T_WEAPONS_MASTERY]={base=8, every=8, max=12},
+		[Talents.T_RUSH]={base=5, every=7, max=8},
+		[Talents.T_BATTLE_CRY]={base=4, every=5, max=9},
+		[Talents.T_BATTLE_CALL]={base=2, every=3, max=8},
+		[Talents.T_STUNNING_BLOW]={base=5, every=8, max=7},
+		[Talents.T_KNOCKBACK]={base=4, every=4, max=8},
+		
+		[Talents.T_FIRE_STORM]={base=4, every=6, max=8},
+		[Talents.T_WILDFIRE]={base=3, every=8, max=6},
+		[Talents.T_FLAME]={base=5, every=8, max=10},
+		
+		[Talents.T_INFERNAL_BREATH]={base=3, every=5, max=7},
+
+		[Talents.T_ELEMENTAL_SURGE]=1,
+		[Talents.T_SPELL_FEEDBACK]=1,
 		
 		[Talents.T_WEAPON_COMBAT]={base=5, every=10},
 		[Talents.T_ARMOUR_TRAINING]={base=5, every=5},
@@ -343,29 +106,8 @@ newEntity{
 		
 		[Talents.T_RUSH]={base=5, every=6},
 
-		[Talents.T_SHIELD_PUMMEL]={base=4, every=6, max=20},
-		[Talents.T_SHIELD_SLAM]={base=4, every=6, max=20},
-		[Talents.T_RIPOSTE]={base=4, every=6, max=20},
-		[Talents.T_ASSAULT]={base=3, every=6, max=20},
-		[Talents.T_SHIELD_WALL]={base=5, every=6},
-		[Talents.T_SHIELD_EXPERTISE]={base=5, every=6},
-		[Talents.T_OVERPOWER]={base=5, every=6},
-		
-		[Talents.T_BATTLE_CALL]={base=5, every=6},
-		[Talents.T_SHATTERING_SHOUT]={base=5, every=6},
-		[Talents.T_BATTLE_CRY]={base=5, every=6},
-		[Talents.T_SHATTERING_IMPACT]={base=5, every=6},
-		[Talents.T_JUGGERNAUT]={base=5, every=6},
-		
-		[Talents.T_UNSTOPPABLE]={base=5, every=6},
-		[Talents.T_MORTAL_TERROR]={base=3, every=6},
-		[Talents.T_BLOODBATH]={base=5, every=6},
-
 		[Talents.T_DEMON_BLADE]={base=5, every=6},
-		[Talents.T_SHATTERED_MIND]={base=5, every=6},
-		[Talents.T_BLIGHTED_SHIELD]={base=5, every=6},
 		
-		[Talents.T_ETERNAL_GUARD]=1,
 		[Talents.T_UNBREAKABLE_WILL]=1,
 		[Talents.T_GIANT_LEAP]=1,
 	},
@@ -373,14 +115,11 @@ newEntity{
 
 	talent_cd_reduction = {
 		[Talents.T_DEMON_BLADE]=5,
-		[Talents.T_JUGGERNAUT]=20,
 		[Talents.T_UNBREAKABLE_WILL]=2,
 	},
 
-	resolvers.auto_equip_filters("Bulwark"),
 	auto_classes={
-		{class="Bulwark", start_level=77, level_rate=50},
-		{class="Sun Paladin", start_level=77, level_rate=50},
+		{class="Doombringer", start_level=77, level_rate=100},
 	},
 
 	inc_damage = {all=50},
@@ -388,94 +127,15 @@ newEntity{
 	autolevel = "warriormage",
 	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", sense_radius=25, ai_target="target_simple_or_player_radius" },
 	ai_tactic = resolvers.tactic"melee",
-	resolvers.inscriptions(5, {"healing infusion", "stormshield rune", "heroism infusion", "movement infusion", "wild infusion"}),
+	resolvers.inscriptions(5, {"healing infusion", "stormshield rune", "acid wave rune", "movement infusion", "shatter afflictions rune"}),
 
 	on_die = function(self, who)
-		if not game.player:resolveSource():hasQuest("campaign-hammer+demon-main") then
-			game.player:resolveSource():grantQuest("campaign-hammer+demon-main")
+		if not game.player:resolveSource():hasQuest("campaign-hammer+hero-main") then
+			game.player:resolveSource():grantQuest("campaign-hammer+hero-main")
 		end
-		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-main", engine.Quest.COMPLETED, "last-hope")
+		game.player:resolveSource():setQuestStatus("campaign-hammer+hero-main", engine.Quest.COMPLETED, "khulmanar-dead")
 		game.level.data.no_worldport = nil
-		game.player:hasQuest("campaign-hammer+demon-main"):win("tolak")
-	end,
-}
-
-newEntity{
-	define_as = "MERENAS", type = "humanoid", subtype =	"human",
-	name = "Herald Meranas", display = "p", color=colors.RED,
-	faction = "angolwen", resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_human_meranas__herald_of_angolwen.png"}}},
-	desc = _t[[The herald of Angolwen, a mage sent here to aid the Kingdom in its fight for survival.]],
-	level_range = {75, nil}, exp_worth = 15,
-	max_life = 1000, life_rating = 36, fixed_rating = true,
-	max_mana = 5000,
-	mana_regen = 10,
-	rank = 4,
-	size_category = 3,
-	stats = { str=40, dex=30, con=30, cun=30, mag=60, wil=40 },
-
-	see_invisible = 100,
-	instakill_immune = 1,
-	stun_immune = 0.5,
-	confusion_immune = 0.5,
-	blind_immune = 1,
-
-	combat_def = 20,
-
-	no_auto_resists = true,
-	resists = { all = 40, },
-
-	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, HEAD=1, FEET=1 },
-	resolvers.auto_equip_filters("Archmage", true),
-	resolvers.equip{
-		{type="weapon", subtype="staff", force_drop=true, tome_drops="boss", autoreq=true},
-		{type="armor", subtype="cloth", forbid_power_source={antimagic=true}, force_drop=true, tome_drops="boss", autoreq=true},
-		{type="armor", subtype="head", forbid_power_source={antimagic=true}, force_drop=true, tome_drops="boss", autoreq=true},
-		{type="armor", subtype="feet", forbid_power_source={antimagic=true}, force_drop=true, tome_drops="boss", autoreq=true},
-	},
-	resolvers.drops{chance=100, nb=5, {tome_drops="boss"} },
-
-	resolvers.talents{
-		[Talents.T_STAFF_MASTERY]={base=5, every=8},
-		[Talents.T_ARMOUR_TRAINING]=1,
-		[Talents.T_STONE_SKIN]={base=7, every=6},
-		[Talents.T_SPELLCRAFT]={base=7, every=6},
-		[Talents.T_ARCANE_POWER]={base=7, every=6},
-		[Talents.T_ESSENCE_OF_SPEED]={base=7, every=6},
-
-		[Talents.T_FLAME]={base=7, every=6},
-		[Talents.T_FREEZE]={base=5, every=6},
-		[Talents.T_LIGHTNING]={base=7, every=6},
-		[Talents.T_MANATHRUST]={base=7, every=6},
-		[Talents.T_FLAMESHOCK]={base=7, every=6},
-		[Talents.T_STRIKE]={base=7, every=6},
-		[Talents.T_HEAL]={base=7, every=6},
-		[Talents.T_REGENERATION]={base=7, every=6},
-		[Talents.T_ILLUMINATE]={base=7, every=6},
-		[Talents.T_METAFLOW]={base=7, every=6},
-		[Talents.T_PHASE_DOOR]={base=7, every=6},
-
-		[Talents.T_CAUSTIC_MIRE]={base=7, every=6},
-		[Talents.T_FIRE_STORM]={base=7, every=6},
-		[Talents.T_FLASH_FREEZE]={base=7, every=6},
-	},
-	resolvers.sustains_at_birth(),
-
-	auto_classes={
-		{class="Archmage", start_level=77, level_rate=100,
-			max_talent_types = 1,  -- Don't waste points on extra elemental trees or learn 20000 sustains
-			banned_talents = {
-				T_INVISIBILITY=true,
-				T_PROBABILITY_TRAVEL=true,
-				T_DISRUPTION_SHIELD=true,
-			},
-		},
-	},
-	autolevel = "caster",
-	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", sense_radius=25, ai_target="target_simple_or_player_radius" },
-	ai_tactic = resolvers.tactic"ranged",
-	resolvers.inscriptions(4, {"regeneration infusion", "shielding rune", "stormshield rune", "wild infusion"}),
-
-	on_die = function(self, who)
+		game.player:hasQuest("campaign-hammer+hero-main"):win("khulmanar")
 	end,
 }
 
