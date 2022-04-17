@@ -203,6 +203,13 @@ But that doesn't mean he's giving up!]],
 		end
 		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-caravan", engine.Quest.COMPLETED)
 
+		-- kind of a hack but the other routine is in the imiddle of :die()
+		local p = game.player
+		local o, item, inven = p:findInAllInventoriesBy("define_as", "ROD_RECALL")
+		if not o or not item or not inven then
+			world:gainAchievement("HAMMER_FIRST_BOSS_CARAVAN", p)
+		end
+
 		local Chat = require "engine.Chat"
 		local chat = Chat.new("campaign-hammer+caravan-power", {name=_t"Memory Crystals"}, game.player)
 		chat:invoke()

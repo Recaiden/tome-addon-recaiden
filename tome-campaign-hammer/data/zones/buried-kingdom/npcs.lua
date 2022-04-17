@@ -121,6 +121,9 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 			if game and game.player then
 				game.player.hammer_timemark = true
 			end
+			local Chat = require "engine.Chat"
+			local chat = Chat.new("campaign-hammer+horror-power", {name=_t"Power Behind the Throne"}, game.player)
+			chat:invoke()
 		end
 		if self.died == 1 then --first death
 			self:learnTalent(self.T_FEED, true, tlevel)
@@ -158,9 +161,6 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 			game.player:resolveSource():grantQuest("campaign-hammer+demon-ruins")
 		end 
 		game.player:resolveSource():setQuestStatus("campaign-hammer+demon-ruins", engine.Quest.COMPLETED)
-		local Chat = require "engine.Chat"
-		local chat = Chat.new("campaign-hammer+horror-power", {name=_t"Power Behind the Throne"}, game.player)
-		chat:invoke()
 	end,
 }
 

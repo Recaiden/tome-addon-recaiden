@@ -71,7 +71,7 @@ newAchievement{
 newAchievement{
 	name = "You Were Not Supposed to See That Either!", id = "HAMMER_BELL_OPEN", category = "Hammer of Urh'Rok",
 	show = "none",
-	desc = [[Escape through the bell]],
+	desc = [[Escape through the bell.]],
 	mode = "player",
 }
 
@@ -100,5 +100,12 @@ newAchievement{
 	name = "One Way Trip", id = "HAMMER_NO_RECALL", category = "Hammer of Urh'Rok",
 	show = "full",
 	desc = [[Go somewhere with no exit, no boss, and no rod of recall.]],
+	mode = "player",
+}
+
+newAchievement{
+	name = "The One Who's Not To Blame", id = "HAMMER_FIRST_BOSS_CARAVAN", category = "Hammer of Urh'Rok",
+	show = "full", huge=true,
+	desc = [[Cause the caravan master to drop the rod of recall.]],
 	mode = "player",
 }

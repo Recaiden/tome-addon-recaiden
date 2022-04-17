@@ -85,6 +85,7 @@ In her six hands she holds the history of the world, and all possible futures ar
 		[Talents.T_ECHOES_FROM_THE_PAST]={base=5, every=6},
 	},
 	resolvers.sustains_at_birth(),
+	can_pass = {pass_void=1},
 
 	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", },
 	ai_tactic = resolvers.tactic"ranged",
@@ -96,8 +97,25 @@ In her six hands she holds the history of the world, and all possible futures ar
 	end,
 }
 
+local takeHitFloatingPillar = function(self, value, src)
+	value = mod.class.Actor.onTakeHit(self, value, src)
+	distance = math.ceil(value / 1000)
+	if src then
+		target:knockback(src.x, src.y, distance)
+	end
+
+	local oe = game.level.map(self.x, self.y, Map.TERRAIN)
+	if oe.define_as == "TIMESHELL" then
+		self.energy.value = self.energy.value - 10000
+		game.bignews:saySimple(50, "#PINK#The %s crashes against the edge of the time bubble and grows still for now.", self:getName())
+		game.log("#PINK#The %s crashes against the edge of the time bubble and grows still for now.", self:getName())
+	end
+	
+	return value
+end
+
 newEntity{
-	define_as = "PILLAR",
+	define_as = "TIME_PILLAR",
 	type = "immovable", subtype = "crystal",
 	name = "Obelisk of Crystallized Time",
 	display = "I", color=colors.GRAY,
@@ -139,6 +157,8 @@ newEntity{
 
 	body = { INVEN = 10 },
 	resolvers.drops{chance=100, nb=1, {tome_drops="boss"} },
+	
+	can_pass = {pass_void=1},
 
 	resolvers.talents{
 		[Talents.T_DUST_TO_DUST]=10,
@@ -149,4 +169,14 @@ newEntity{
 
 	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", },
 	ai_tactic = resolvers.tactic"ranged",
+
+	onTakeHit = takeHitFloatingPillar,
+	on_act = function(self)
+			local oe = game.level.map(self.x, self.y, Map.TERRAIN)
+			if oe.define_as == "TIMESHELL" then
+				game.bignews:saySimple(50, "#PINK#The %s rejoins your time thread.", self:getName())
+		game.log("#PINK#The %s rejoins your time thread.", self:getName())
+				self:teleportRandom(game.player.x, game.player.y, 8)
+			end
+	end,
 }
