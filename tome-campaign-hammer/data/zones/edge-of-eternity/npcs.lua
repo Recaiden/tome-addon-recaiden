@@ -8,10 +8,11 @@ newEntity{
 	name = "Quekorja, Goddess of Time",
 	display = "@", color=colors.GRAY,
 	faction = "enemies",
-	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/humanoid_human_tolak.png", display_h=2, display_y=-1}}},
-	desc = _t[[How sad it must have been, to be the deity of time in an era before timetravel.  No longer.
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/undead_ghost_freed_god.png", display_h=2, display_y=-1}}},
+	desc = _t[[How sad it must have been, to be the deity of time in an era before timetravel.
+Luckily that time is over.
 
-In her six hands she holds the history of the world, and all possible futures are reflected in her single all-seeing eye.]],
+In her six set of claws she holds the history of the world, and all possible futures are reflected in her single all-seeing eye.]],
 	level_range = {100, nil}, exp_worth = 20,
 	max_life = 1000, life_rating = 100, fixed_rating = true,
 	rank = 10,
@@ -91,24 +92,37 @@ In her six hands she holds the history of the world, and all possible futures ar
 	ai_tactic = resolvers.tactic"ranged",
 
 	on_die = function(self, who)
-		--world:gainAchievement("HAMMER_GODSLAYER", who)
+
+		for uid, e in pairs(game.level.entities) do
+			if e.define_as == "TIME_PILLAR" then
+				e:die()
+			end
+		end
+		
+		world:gainAchievement("HAMMER_GODSLAYER", who)
 		game.level.data.no_worldport = nil
 		game.zone.no_worldport = nil
+		game.player.hammer_timecrash = nil
+		game.player.hammer_timecrashed = true
 	end,
 }
 
 local takeHitFloatingPillar = function(self, value, src)
 	value = mod.class.Actor.onTakeHit(self, value, src)
-	distance = math.ceil(value / 1000)
-	if src then
-		target:knockback(src.x, src.y, distance)
-	end
+	local Map = require "engine.Map"
+	local original_terrain = game.level.map(self.x, self.y, Map.TERRAIN)
+	if original_terrain.define_as == "TIMESHELL" then
+		distance = math.ceil(value / 1000)
+		if src then
+			self:knockback(src.x, src.y, distance)
+		end
 
-	local oe = game.level.map(self.x, self.y, Map.TERRAIN)
-	if oe.define_as == "TIMESHELL" then
-		self.energy.value = self.energy.value - 10000
-		game.bignews:saySimple(50, "#PINK#The %s crashes against the edge of the time bubble and grows still for now.", self:getName())
-		game.log("#PINK#The %s crashes against the edge of the time bubble and grows still for now.", self:getName())
+		local oe = game.level.map(self.x, self.y, Map.TERRAIN)
+		if oe.define_as == "TIMESHELL" then
+			self.energy.value = self.energy.value - 10000
+			game.bignews:saySimple(50, "#PINK#The %s crashes against the edge of the time bubble and grows still for now.", self:getName())
+			game.log("#PINK#The %s crashes against the edge of the time bubble and grows still for now.", self:getName())
+		end
 	end
 	
 	return value
@@ -124,7 +138,7 @@ newEntity{
 	desc = _t[[A vast piece of raw time-stuff, turned into a weapon.  It is nigh-indestructible, but looks weightless, easy to push around.]],
 	level_range = {100, nil}, exp_worth = 1,
 	max_life = 1000000, life_rating = 10000, fixed_rating = true,
-	life_regen = 10000
+	life_regen = 10000,
 	rank = 5,
 	size_category = 4,
 	
@@ -172,11 +186,12 @@ newEntity{
 
 	onTakeHit = takeHitFloatingPillar,
 	on_act = function(self)
-			local oe = game.level.map(self.x, self.y, Map.TERRAIN)
-			if oe.define_as == "TIMESHELL" then
-				game.bignews:saySimple(50, "#PINK#The %s rejoins your time thread.", self:getName())
-		game.log("#PINK#The %s rejoins your time thread.", self:getName())
-				self:teleportRandom(game.player.x, game.player.y, 8)
-			end
+		local Map = require "engine.Map"
+		local oe = game.level.map(self.x, self.y, Map.TERRAIN)
+		if oe.define_as == "TIMESHELL" then
+			game.bignews:saySimple(50, "#PINK#The %s rejoins your time thread.", self:getName())
+			game.log("#PINK#The %s rejoins your time thread.", self:getName())
+			self:teleportRandom(game.player.x, game.player.y, 8)
+		end
 	end,
 }

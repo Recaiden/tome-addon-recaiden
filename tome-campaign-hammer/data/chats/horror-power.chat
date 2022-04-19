@@ -441,7 +441,7 @@
         "id": 26,
         "name": "lua-code",
         "data": {
-            "code": "game.logPlayer(game.player, \"#STEEL_BLUE#You've moved to another time thread.\")\ngame.player.stats[7] = game.player.stats[7] + 20\ngame.logPlayer(game.player, \"You feel luckier.\")\nworld:gainAchievement(\"HAMMER_NO_LIGHT\", game.player)"
+            "code": "game.logPlayer(game.player, \"#STEEL_BLUE#You've moved to another time thread.\")\ngame.player.stats[7] = game.player.stats[7] + 20\ngame.logPlayer(game.player, \"You feel luckier.\")\nworld:gainAchievement(\"HAMMER_NO_LIGHT\", game.player)\ngame.logPlayer(game.player, \"You feel very certain that you need to kill this thing.\")\ngame.player.hammer_luck = true"
         },
         "class": "lua-code",
         "html": "lua-code",

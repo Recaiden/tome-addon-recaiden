@@ -51,4 +51,14 @@ return {
 	post_process = function(level)
 		game:placeRandomLoreObject("NOTE"..level.level)	
 	end
+	on_enter = function(lev)
+		-- if you fought the superboss, remove their earlier form here.
+		if lev == 5 and game and game.player and game.palyer.hammer_timecrashed then
+			for uid, e in pairs(game.level.entities) do
+				if e.define_as == "BURIED_FORGOTTEN" then
+					e:die()
+				end
+			end
+		end
+	end,
 }

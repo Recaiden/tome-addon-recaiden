@@ -112,8 +112,10 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 			self.rank = 10
 			self.female = true
 
-			self.replace_display = mod.class.Actor.new{image="npc/undead_ghost_freed_god.png",}
+			self.replace_display = mod.class.Actor.new{image="npc/undead_ghost_freed_god.png", display_h=2, display_y=-1}
       self:removeAllMOs()
+			--resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/undead_ghost_forgotten_king.png", display_h=2, display_y=-1}}},
+
       game.level.map:updateMap(self.x, self.y)
 			
 			self:doEmote(_t"Brother, can you not see that your changes are ruining the project!?", 100)

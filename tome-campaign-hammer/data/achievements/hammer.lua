@@ -92,7 +92,7 @@ newAchievement{
 newAchievement{
 	name = "Beyond Eternity", id = "HAMMER_DEMIGOD", category = "Hammer of Urh'Rok",
 	show = "full",
-	desc = [[Free the prisoner in the Buried Kingdom, win the game, and then escape with her.]],
+	desc = [[Free the prisoner in the Buried Kingdom, win the game, and then go with her.]],
 	mode = "player",
 }
 

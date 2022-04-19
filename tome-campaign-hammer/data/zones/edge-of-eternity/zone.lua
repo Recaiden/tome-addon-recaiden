@@ -24,15 +24,18 @@ return {
 	},
 	post_process = function(level)
 		local Map = require "engine.Map"
-		--if core.shader.allow("volumetric") then
-		--level.starfield_shader = require("engine.Shader").new("entropic_starfield", {size={Map.viewport.width, Map.viewport.height}})
-		--else
 		level.background_particle = require("engine.Particles").new("starfield", 1, {width=Map.viewport.width, height=Map.viewport.height})
-		--end
 	end,
 	
 	on_enter = function()
 		--game.party:learnLore("campaign-hammer-goddess-arrives")
+		for uid, e in pairs(game.level.entities) do
+			if e.define_as == "QUEKORJA" then
+				local Chat = require "engine.Chat"
+				local chat = Chat.new("campaign-hammer+time-talk", e, game:getPlayer(true))
+				chat:invoke()
+			end
+		end
 	end,
 	
 	background = function(level, x, y, nb_keyframes)
