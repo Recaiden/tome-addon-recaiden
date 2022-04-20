@@ -1,6 +1,7 @@
 local _M = loadPrevious(...)
 
 local UI = require "engine.ui.Base"
+local Dialog = require "engine.ui.Dialog"
 
 shat = _M.shat
 
