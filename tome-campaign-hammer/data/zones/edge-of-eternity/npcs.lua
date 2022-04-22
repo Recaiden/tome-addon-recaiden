@@ -5,15 +5,16 @@ local Talents = require("engine.interface.ActorTalents")
 newEntity{
 	define_as = "QUEKORJA",
 	type = "god", subtype = "eyal",
-	name = "Quekorja, Goddess of Time",
+	name = "Quekorja",
 	display = "@", color=colors.GRAY,
 	faction = "enemies",
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/undead_ghost_freed_god.png", display_h=2, display_y=-1}}},
 	desc = _t[[How sad it must have been, to be the deity of time in an era before timetravel.
 Luckily that time is over.
 
-In her six set of claws she holds the history of the world, and all possible futures are reflected in her single all-seeing eye.]],
-	level_range = {100, nil}, exp_worth = 20,
+In her many of claws she holds the history of the world, and all possible futures are reflected in her single all-seeing eye.]],
+  female = true,
+  level_range = {100, nil}, exp_worth = 20,
 	max_life = 1000, life_rating = 100, fixed_rating = true,
 	rank = 10,
 	size_category = 6,
@@ -26,9 +27,9 @@ In her six set of claws she holds the history of the world, and all possible fut
 	no_auto_saves = true,
 	no_auto_resists = true,
 
-	resists = { all = 80, },
+	resists = { all = 75, },
 	resists_pen = {all = 50},
-
+	inc_damage = {all=92},
 	
 	combat_physresist = 160,
 	combat_mentalresist = 130, -- for mind damage users, sigh.
@@ -52,19 +53,23 @@ In her six set of claws she holds the history of the world, and all possible fut
 
 	
 	resolvers.talents{
-		[Talents.T_ANOMALY_TEMPORAL_BUBBLE]=1,
-		[Talents.T_ANOMALY_TEMPORAL_SHIELD]=1,
-		[Talents.T_ANOMALY_FLAWED_DESIGN]=1,
-		[Talents.T_ANOMALY_EVIL_TWIN]=1,
-		[Talents.T_ANOMALY_TEMPORAL_STORM]=1,
+		-- [Talents.T_ANOMALY_TEMPORAL_BUBBLE]=1,
+		-- [Talents.T_ANOMALY_TEMPORAL_SHIELD]=1,
+		-- [Talents.T_ANOMALY_FLAWED_DESIGN]=1,
+		-- [Talents.T_ANOMALY_EVIL_TWIN]=1,
+		-- [Talents.T_ANOMALY_TEMPORAL_STORM]=1,
 
-		[Talents.T_PRECOGNITION]=15,
-		[Talents.T_FORESIGHT]=15,
+		[Talents.T_INDUCE_ANOMALY]={base=5, every=5},
+		[Talents.T_TWIST_FATE]={base=5, every=5},
+		-- [Talents.T_REALITY_SMEARING]={base=5, every=5},
+
+		[Talents.T_PRECOGNITION]=10,
+		[Talents.T_FORESIGHT]=10,
 		[Talents.T_SPACETIME_STABILITY]=15,
 		[Talents.T_DIMENSIONAL_STEP]=5,
 
-		[Talents.T_HIDDEN_RESOURCES]=5,
-		[Talents.T_UNBREAKABLE_WILL]=5,
+		[Talents.T_HIDDEN_RESOURCES]=1,
+		[Talents.T_UNBREAKABLE_WILL]=1,
 		
 		[Talents.T_WEAPON_COMBAT]={base=5, every=10},
 		[Talents.T_ARMOUR_TRAINING]={base=5, every=5},
@@ -90,6 +95,11 @@ In her six set of claws she holds the history of the world, and all possible fut
 
 	ai = "tactical", ai_state = { talent_in=1, ai_move="move_astar", },
 	ai_tactic = resolvers.tactic"ranged",
+
+	talent_cd_reduction = {
+		[Talents.T_ECHOES_FROM_THE_PAST]=9,
+		[Talents.T_TEMPORAL_WAKE]=5,
+	},
 
 	on_die = function(self, who)
 
@@ -139,7 +149,7 @@ newEntity{
 	level_range = {100, nil}, exp_worth = 1,
 	max_life = 1000000, life_rating = 10000, fixed_rating = true,
 	life_regen = 10000,
-	rank = 5,
+	rank = 4,
 	size_category = 4,
 	
 	stats = { str=10, dex=10, con=10, cun=100, mag=100, wil=100 },

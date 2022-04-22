@@ -190,7 +190,7 @@
   </data>
  </layer>
  <objectgroup color="#55ff7f" id="3" name="addSpot#spots">
-  <object id="40" x="37.8278" y="324.573" width="22" height="22">
+  <object id="40" x="101.343" y="326" width="22" height="22">
    <properties>
     <property name="end" value=""/>
     <property name="start" value=""/>

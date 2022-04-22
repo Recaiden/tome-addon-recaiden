@@ -145,7 +145,7 @@
         "data": {
             "not": false,
             "what": "race",
-            "value": "demon"
+            "value": "Demon"
         },
         "class": "birth-descriptor",
         "html": "birth-descriptor",
@@ -170,8 +170,8 @@
                 ]
             }
         },
-        "pos_x": 1258.6666666666667,
-        "pos_y": 1152
+        "pos_x": 1345,
+        "pos_y": 1133
     },
     "16": {
         "id": 16,
@@ -204,8 +204,8 @@
                 ]
             }
         },
-        "pos_x": 1551.25,
-        "pos_y": 1107
+        "pos_x": 1793,
+        "pos_y": 1071
     },
     "17": {
         "id": 17,

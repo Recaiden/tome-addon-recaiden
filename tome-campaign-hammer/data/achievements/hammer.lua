@@ -85,20 +85,20 @@ newAchievement{
 newAchievement{
 	name = "Broken Clock", id = "HAMMER_GODSLAYER", category = "Hammer of Urh'Rok",
 	show = "full",
-	desc = [[Free the prisoner in the Buried Kingdom, win the game, and then kill her.]],
+	desc = [[Free the lost soul in the Buried Kingdom, win the game, and then kill her.]],
 	mode = "player",
 }
 
 newAchievement{
 	name = "Beyond Eternity", id = "HAMMER_DEMIGOD", category = "Hammer of Urh'Rok",
 	show = "full",
-	desc = [[Free the prisoner in the Buried Kingdom, win the game, and then go with her.]],
+	desc = [[Free the lost soul in the Buried Kingdom, win the game, and then accept her offer.]],
 	mode = "player",
 }
 
 newAchievement{
 	name = "One Way Trip", id = "HAMMER_NO_RECALL", category = "Hammer of Urh'Rok",
-	show = "full",
+	show = "none",
 	desc = [[Go somewhere with no exit, no boss, and no rod of recall.]],
 	mode = "player",
 }
