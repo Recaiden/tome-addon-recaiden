@@ -153,6 +153,7 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 
 	resolvers.inscriptions(2, "rune"),
 	resolvers.inscriptions(1, "infusion"),
+	resolvers.sustains_at_birth(),
 
 	on_die = function(self, who)
 		self:doEmote(_t"This is not the end!", 500)
