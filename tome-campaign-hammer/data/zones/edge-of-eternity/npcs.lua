@@ -102,7 +102,6 @@ In her many of claws she holds the history of the world, and all possible future
 	},
 
 	on_die = function(self, who)
-
 		for uid, e in pairs(game.level.entities) do
 			if e.define_as == "TIME_PILLAR" then
 				e:die()

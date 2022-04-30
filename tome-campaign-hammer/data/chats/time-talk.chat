@@ -4,7 +4,7 @@
         "name": "chat",
         "data": {
             "chatid": "intro",
-            "chat": "It happens just as you return, triumphant, to the wider world of Eyal.  All across the world, time stands still.  And yet things change. You glimpse, in the shifting time threads, how it came to this.\n-----------------------\nOnce upon a time, there was a goddess.\n\nThe sher'tul hunted her down, and she died.\n\nA wave of necromancy sweeps the land and a fragment of spirit awakes, bound to other broken souls.\n\nThe Spellblaze cracks reality, the weave of time flowers into countless threads, and the spirit's powers begin to grow.\n\nMortals come and disturb the goddess's grave, and she remembers who she was.\n\nA demonic invader strikes down the other spirit fragments.  They had only been holding her back.\n\nThe goddess bends time into a circle and lives again.",
+            "chat": "It happens just as you return, triumphant, to the wider world of Eyal.  All across the world, time stands still.  And yet things change. You glimpse, in the shifting time threads, how it came to this.\n-----------------------\nOnce upon a time, there was a goddess.\n\nThe sher'tul hunted her down.\n\nA wave of necromancy sweeps.\n\nThe Spellblaze cracks reality.\n\nMortals come disturb the goddess's grave.\n\nAn demonic invader unknowingly interferes.\n\nThe goddess bends time into a circle and lives again.",
             "answer1": ""
         },
         "class": "chat",
@@ -565,8 +565,8 @@
         "name": "chat",
         "data": {
             "chatid": "weirdend",
-            "chat": "The goddess holds out a claw, and time unfolds before you.\n\nWhat follows is an adventure too strange to be fully described: history written and rewritten, countless alternate versions of you and her and everything else, whole civilizations folded into single instants, desperate escapes from sher'tul chrono-assassins...\n\nYou find a little time to meddle in parallel universes, just for fun.",
-            "answer1": ""
+            "chat": "The goddess holds out a claw, and time unfolds before you.\n\nWhat follows is an adventure too strange to be fully described: history written and rewritten, countless alternate versions of you and her and everything else, whole civilizations folded into single instants, desperate escapes from sher'tul chrono-assassins...\n\nBut first, you go back to wrap up your original timeline...",
+            "answer1": "*rewind*"
         },
         "class": "chat",
         "html": "chat1",
