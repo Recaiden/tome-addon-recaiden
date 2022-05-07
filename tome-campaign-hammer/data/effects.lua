@@ -21,6 +21,18 @@ newEffect{
 		self:effectTemporaryValue(eff, "can_breath", {water = 1})
 	end,
 	deactivate = function(self, eff) end,
+	on_timeout = function(self, eff)
+		local e = game.level.map(self.x, self.y, Map.TERRAIN)
+		if e.define_as == "WATER_FLOOR_BUBBLE" then
+			eff.dur = eff.dur + 1
+			e.nb_charges = e.nb_charges - 1
+			if e.nb_charges <= 0 then
+				game.logSeen(self, "#AQUAMARINE#The air bubbles are depleted!")
+				local g = game.zone:makeEntityByName(game.level, "terrain", "WATER_FLOOR")
+				game.zone:addEntity(game.level, g, "terrain", self.x, self.y)
+			end
+		end
+	end,
 }
 
 newEffect{

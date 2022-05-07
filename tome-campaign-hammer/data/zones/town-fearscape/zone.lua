@@ -29,9 +29,9 @@ return {
 		},
 		actor = {
 			class = "mod.class.generator.actor.Random",
-			filters = {{max_ood=2}},
 			nb_npc = {10, 10},
-			rate = 0.27,
+			filters = {{max_ood=25}},
+			randelite = 0, randboss = 0,
 		},
 		object = {
 			class = "engine.generator.object.Random",

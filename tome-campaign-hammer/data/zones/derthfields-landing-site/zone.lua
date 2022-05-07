@@ -26,7 +26,7 @@ return {
 			floor = function() if rng.chance(20) then return "FLOWER" else return "GRASS" end end,
 			wall = "BOGTREE",
 			up = "GRASS",
-			down = "GRASS_DOWN6",
+			down = "GRASS_DOWN6_LANDING",
 			door = "BOGWATER",
 			road = "GRASS_ROAD_DIRT",
 			add_road = true,
@@ -69,7 +69,7 @@ return {
 					['#'] = "AUTUMN_TREE",
 					['.'] = "AUTUMN_GRASS",
 					up = "AUTUMN_GRASS_UP4",
-					down = "AUTUMN_GRASS_DOWN6",
+					down = "AUTUMN_GRASS_DOWN6_LANDING",
 				},
 				actor = {
 					class = "mod.class.generator.actor.Random",
@@ -151,7 +151,28 @@ return {
 		if nb_keyframes > 0 and rng.chance(400 / nb_keyframes) then local s = game:playSound("ambient/horror/ambient_horror_sound_0"..rng.range(1, 6)) if s then s:volume(s:volume() * 1.5) end end
 	end,
 
-	on_enter = function(lev, old_lev, newzone) end,
+	on_enter = function(lev, old_lev, newzone)
+		if game then
+			if lev == 1 and not game.zone.hammer_visited_summer then
+				require("engine.ui.Dialog"):simplePopup(_t"Onward!", _t"You made it to Eyal! Now you must clear this area, which will be the beachhead for the demon invasion.  Kill everything you find.")
+				game.zone.hammer_visited_summer = true
+				if game.player then
+					game.level.map:particleEmitter(game.player.x, game.player.y, 1, "demon_teleport")
+					game.player:grantQuest("campaign-hammer+demon-landing")
+				end
+			end
+			if lev == 3 and not game.zone.hammer_visited_winter then
+				if game.zone.hammer_visited_autumn then
+					game:changeLevel(2, "campaign-hammer+derthfields-landing-site", {x=1})
+				else
+					game:changeLevel(1, "campaign-hammer+derthfields-landing-site", {x=1})
+				end
+			end
+			if lev == 2 and not game.zone.hammer_visited_autumn then
+				game:changeLevel(1, "campaign-hammer+derthfields-landing-site", {x=1})
+			end
+		end
+	end,
 
 	on_leave = function(lev, old_lev, newzone)
 		if not newzone then return end

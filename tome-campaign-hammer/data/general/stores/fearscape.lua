@@ -3,7 +3,7 @@ newEntity{
 	name = "armory",
 	display = '2', color=colors.UMBER,
 	store = {
-		nb_fill = 45,
+		nb_fill = 33,
 		purse = 25,
 		empty_before_restock = false,
 		filters = {
@@ -27,7 +27,7 @@ newEntity{
 	name = "forge",
 	display = '3', color=colors.UMBER,
 	store = {
-		nb_fill = 45,
+		nb_fill = 33,
 		purse = 25,
 		empty_before_restock = false,
 		filters = {
@@ -40,9 +40,8 @@ newEntity{
 			{type="weapon", subtype="mindstar", id=true, tome_drops="store"},
 			{type="weapon", subtype="staff", id=true, tome_drops="store"},
 			{type="weapon", subtype="dagger", id=true, tome_drops="store"},
-			{type="weapon", subtype="longbow", id=true, tome_drops="boss"},
-			{type="weapon", subtype="sling", id=true, tome_drops="boss"},
-			{type="ammo", id=true, tome_drops="boss"},
+			{type="weapon", subtype="longbow", id=true, tome_drops="store"},
+			{type="weapon", subtype="sling", id=true, tome_drops="store"},
 			{type="ammo", id=true, tome_drops="store"},
 		},
 	},
@@ -97,12 +96,14 @@ newEntity{
 	name = "salvaged treasures",
 	display = '7', color=colors.BLUE,
 	store = {
-		nb_fill = 20,
-		purse = 35,
+		nb_fill = 15,
+		purse = 25,
 		empty_before_restock = false,
-		sell_percent = 190,
+		sell_percent = 175,
+		ignore_material_levels = true,
 		filters = function()
-			return {id=true, ignore={type="money"}, add_levels=12, force_tome_drops=true, tome_drops="boss", tome_mod={money=0, basic=0}, special=function(o) return o.type ~= "scroll" end}
+			local kind = rng.table{"uvault", "gvault"}
+			return {id=true, ignore={type="money"}, add_levels=12, force_tome_drops=true, tome_drops="boss", tome_mod=kind, special=function(o) return o.type ~= "scroll" end}
 		end,
 	},
 }

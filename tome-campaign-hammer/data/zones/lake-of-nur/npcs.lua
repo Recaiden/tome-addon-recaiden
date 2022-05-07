@@ -21,7 +21,7 @@ load(
 		if e.name == "water imp" then
 			e.name = "devolved water imp"
 			e.corrupt_talents = resolvers.talents{ [Talents.T_TENTACLE_GRAB]=3 }
-			e.desc = e.desc.._t"You're fairly sure it's not supposed to look like that."
+			e.desc = e.desc.._t" You're fairly sure it's not supposed to look like that."
 		end
 	end
 )

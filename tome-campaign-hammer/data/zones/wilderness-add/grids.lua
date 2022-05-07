@@ -4,11 +4,11 @@
 
 newEntity{
 	base="CHARRED_SCAR", define_as = "TOWN_FEARSCAPE",
-	name = "Return to the Fearscape",
+	name = "Return to Orbit (Town)",
 	--add_displays = {class.new{z=7, image="terrain/worldmap/worldmap.png"}},
 	add_displays = {
 		class.new{z=3, image="terrain/planar_demon_portal_ground_down.png", display_x=-0.5, display_y=-0.5, display_w=2, display_h=2},
-		class.new{z=16, image="terrain/planar_demon_portal_ground_up.png", display_x=-0.5, display_y=-0.5, display_w=2, display_h=2},
+		class.new{z=16, image="terrain/panar_demon_portal_ground_up.png", display_x=-0.5, display_y=-0.5, display_w=2, display_h=2},
 	},
 	desc = "A portal back to your home",
 	change_zone="campaign-hammer+town-fearscape",
@@ -24,8 +24,8 @@ newEntity{
 }
 
 newEntity{ base="ZONE_PLAINS", define_as = "DERTH_INVASION",
-	name="Town of Derth",  add_mos = {{image="terrain/village_01.png"}},
-	desc = _t"A quiet town at the crossroads of the north",
+	name="Attack on Derth",  add_mos = {{image="terrain/village_01.png"}},
+	desc = _t"A formerly quiet town at the crossroads of the north",
 	change_zone="campaign-hammer+derth-invasion",
 }
 
@@ -92,7 +92,7 @@ newEntity{
 
 newEntity{
 	base="ZONE_PLAINS", define_as = "ANGOLWEN_BATTLE",
-	name = "Demonic Teleportation Gate - Attack on Angolwen",
+	name = "Attack on Angolwen",
 	add_displays = {
 		class.new{z=3, image="terrain/planar_demon_portal_ground_down.png", display_x=-0.5, display_y=-0.5, display_w=2, display_h=2},
 		class.new{z=16, image="terrain/planar_demon_portal_ground_up.png", display_x=-0.5, display_y=-0.5, display_w=2, display_h=2},

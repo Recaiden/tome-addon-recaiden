@@ -3,11 +3,12 @@ rarityWithoutXP = function(add, mult)
 	return function(e)
 		e.exp_worth = 0
 		e.no_drops = true
+		if e.rarity then e.rarity = math.ceil(e.rarity * mult + add) end
 	end
 end
 
-load("/data/general/npcs/major-demon.lua")
-load("/data/general/npcs/minor-demon.lua")
+load("/data/general/npcs/minor-demon.lua", rarityWithoutXP(0))
+load("/data/general/npcs/major-demon.lua", rarityWithoutXP(0))
 
 local Talents = require("engine.interface.ActorTalents")
 
@@ -133,7 +134,6 @@ newEntity{ base = "BASE_NPC_MAJOR_DEMON", define_as = "SMITH",
 	desc = _t[[A burning biomechanical giant wielding a forge hammer of Urh-Rok in each hand.  Disturb them at your peril.]],
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/demon_major_forge_giant_talkative.png", display_h=2, display_y=-1}}},
 	level_range = {47, nil}, exp_worth = 0,	no_drops = true,
-	rarity = 8,
 	rank = 3,
 	global_speed_base = 1,
 	size_category = 5,
@@ -174,6 +174,36 @@ newEntity{ base = "BASE_NPC_MAJOR_DEMON", define_as = "SMITH",
 	resolvers.sustains_at_birth(),
 
 	can_talk = "campaign-hammer+forge-giant",
+}
+
+newEntity{ base = "BASE_NPC_FEARSCAPE_TOWN", define_as = "JEWELSMITH",
+	name = "Ruby Jewelsmith", color=colors.WHITE,
+	desc = _t[[A small ruby, tasked with supplying magic gems to the demonic invaders.]],
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/demon_minor_clerk_talkative.png", }}},
+	level_range = {47, nil}, exp_worth = 0,	no_drops = true,
+	rank = 3,
+	global_speed_base = 1,
+	size_category = 1,
+	autolevel = "warriormage",
+	life_rating = 10,
+	combat_armor = 5, combat_def = 20,
+	mana_regen = 1, positive_regen = 1, negative_regen = 1, equilibrium_regen = -1, vim_regen = 1, stamina_regen = 1,
+
+	ai = "tactical",
+
+	resolvers.equip{ {type="weapon", subtype="dagger", forbid_power_source={antimagic=true}, autoreq=true}, },
+	resolvers.equip{ {type="weapon", subtype="dagger", forbid_power_source={antimagic=true}, autoreq=true}, },
+
+	combat = {damtype=DamageType.FIRE},
+	
+	slow_projectiles_outgoing = 50,
+	
+	resolvers.talents{
+		[Talents.T_FLAME]={base=1, every=3, max=8},
+		[Talents.T_PHASE_DOOR]=2,
+	},
+
+	can_talk = "campaign-hammer+demon-jeweler",
 }
 
 newEntity{ define_as="TRAINING_DUMMY",

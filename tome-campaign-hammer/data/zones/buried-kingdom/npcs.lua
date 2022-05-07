@@ -22,6 +22,7 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 	name = "The Forgotten King",
 	display = "q", color=colors.VIOLET,
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/undead_ghost_forgotten_king.png", display_h=2, display_y=-1}}},
+	chat_display_entity = engine.Entity.new{name=_t"Buried Power", image="npc/undead_ghost_freed_god.png"},
 	desc = _t[[Once upon a time there was a storyteller, and he said-]],
 	killer_message = _t"and was made to endlessly relive the kingdom's final moments.",
 	level_range = {40, nil}, exp_worth = 2,
@@ -122,10 +123,10 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 			self.emote_random = {chance=3, _t"Finally, the king is silent.", _t"All of this will be undone!", _t"At last, I live again!"}
 			if game and game.player then
 				game.player.hammer_timemark = true
+				local Chat = require "engine.Chat"
+				local chat = Chat.new("campaign-hammer+horror-power", self, game.player)
+				chat:invoke()
 			end
-			local Chat = require "engine.Chat"
-			local chat = Chat.new("campaign-hammer+horror-power", {name=_t"Power Behind the Throne"}, game.player)
-			chat:invoke()
 		end
 		if self.died == 1 then --first death
 			self:learnTalent(self.T_FEED, true, tlevel)
@@ -309,6 +310,7 @@ newEntity{ base = "BASE_NPC_HORROR",
 
 	resolvers.sustains_at_birth(),
 	power_source = {arcane=true},
+	not_power_source = {technique=true, technique_ranged=true},
 
 	make_escort = {
 		{type="horror", subtype="eldritch", name="luminous horror", number=2, no_subescort=true},

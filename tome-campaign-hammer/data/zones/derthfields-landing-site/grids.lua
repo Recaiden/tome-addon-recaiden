@@ -91,3 +91,34 @@ for i = 1, 30 do
 	newEntity(class:makeNewTrees({base="EXO_TREE", define_as = "EXO_TREE"..i, image = "terrain/snowy_grass.png", nice_tiler = false}, treesdef, nil, "terrain/mushrooms/"))
 	
 end
+
+
+newEntity{
+	define_as = "GRASS_DOWN6_LANDING",
+	type = "floor", subtype = "grass",
+	name = "way to the next level", image = "terrain/grass.png", add_mos = {{image="terrain/way_next_6.png"}},
+	display = '>', color_r=255, color_g=255, color_b=0,
+	notice = true,
+	always_remember = true,
+	change_level = 1,
+	nice_editer = grass_editer,
+	change_level_check = function(self)
+		game.zone.hammer_visited_autumn = true
+		return false
+	end,
+}
+
+newEntity{
+	define_as = "AUTUMN_GRASS_DOWN6_LANDING",
+	type = "floor", subtype = "autumn_grass",
+	name = "way to the next level", image = "terrain/grass/autumn_grass_main_01.png", add_mos = {{image="terrain/way_next_6.png"}},
+	display = '>', color_r=255, color_g=255, color_b=0,
+	notice = true,
+	always_remember = true,
+	change_level = 1,
+	nice_editer = autumn_grass_editer,
+	change_level_check = function(self)
+		game.zone.hammer_visited_winter = true
+		return false
+	end,
+}

@@ -1,4 +1,5 @@
 load("/data/general/grids/malrok_walls.lua")
+load("/data/general/grids/lava.lua")
 load("/data/general/grids/void.lua", function(e) if e.image then e.image = e.image:gsub("^terrain/floating_rocks", "terrain/red_floating_rocks") end end)
 load("/data/general/grids/burntland.lua", function(e) if e.image == "terrain/grass_burnt1.png" then e.image = "terrain/red_floating_rocks05_01.png" end end)
 

@@ -48,35 +48,9 @@ newEntity{
 	display = '>', color_r=255, color_g=255, color_b=0,
 	notice = true,
 	always_remember = true,
-	change_level = 1, change_zone = "wilderness",
+	change_level = 1, change_zone = "campaign-hammer+derthfields-landing-site",
 	change_level_check = function(self)
 		local player = game:getPlayer(true)
-	
-		game:changeLevel(1, ("campaign-hammer+derthfields-landing-site"), {direct_switch=true})
-		player:grantQuest("campaign-hammer+demon-landing")
-
-		local a = require("engine.Astar").new(game.level.map, player)
-
-		local sx, sy = util.findFreeGrid(player.x, player.y, 20, true, {[engine.Map.ACTOR]=true})
-		while not sx do
-			sx, sy = rng.range(0, game.level.map.w - 1), rng.range(0, game.level.map.h - 1)
-			if game.level.map(sx, sy, engine.Map.ACTOR) or not a:calc(player.x, player.y, sx, sy) then sx, sy = nil, nil end
-		end
-
-		game.level.map:particleEmitter(player.x, player.y, 1, "demon_teleport")
-
-		game:onLevelLoad("wilderness-1", function(zone, level, data)
-			local list = {}
-			for i = 0, level.map.w - 1 do for j = 0, level.map.h - 1 do
-				local idx = i + j * level.map.w
-				if level.map.map[idx][engine.Map.TERRAIN] and level.map.map[idx][engine.Map.TERRAIN].change_zone == data.from then
-					list[#list+1] = {i, j}
-				end
-			end end
-			if #list > 0 then
-				game.player.wild_x, game.player.wild_y = unpack(rng.table(list))
-			end
-		end, {from=game.zone.short_name})
 
 		if player.hammer_killed_dolleg then
 			player.hammer_killed_dolleg = nil
@@ -84,7 +58,6 @@ newEntity{
 			world:gainAchievement("HAMMER_SAVE_DOLLEG", player)
 		end
 		
-		require("engine.ui.Dialog"):simplePopup(_t"Onward!", _t"You made it to Eyal! Now you must clear this area, which will be the beachhead for the demon invasion.  Kill everything you find.")
-		return true
+		return false
 	end,
 }
