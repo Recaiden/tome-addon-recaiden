@@ -42,7 +42,7 @@ load("/data/general/npcs/bear.lua", alter(30))
 load("/data/general/npcs/elven-warrior.lua", alter(0))
 load("/data/general/npcs/elven-caster.lua", alter(0))
 
-load("/data/general/npcs/all.lua", rarity(4, 35))
+load("/data/general/npcs/all.lua", alter(4, 35))
 
 local Talents = require("engine.interface.ActorTalents")
 

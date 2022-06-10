@@ -161,7 +161,8 @@ return {
 
 		-- If you haven't taken the time to beat buried kingdom, fight 5/6/7/8/9 extra randbosses.
 		if game and lev < 6 then
-			if not game.player:isQuestStatus("campaign-hammer+demon-ruins", engine.Quest.DONE) then
+			game.level.data.hammer_visits = game.level.data.hammer_visits or {}
+			if not game.player:isQuestStatus("campaign-hammer+demon-ruins", engine.Quest.DONE) and not game.level.data.hammer_visit[lev] then
 				-- remove any demons that showed up
 				for uid, e in pairs(game.level.entities) do
 					if e.faction == "fearscape" and not game.party:hasMember(e) then
@@ -185,6 +186,7 @@ return {
 					end
 				end
 			end
+			game.level.data.hammer_visit[lev] = true
 		end
 		
 		if game and game.player and lev == 6 then

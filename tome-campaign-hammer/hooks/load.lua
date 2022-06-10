@@ -2,6 +2,7 @@ local class = require"engine.class"
 local DamageType = require "engine.DamageType"
 local Shader = require "engine.Shader"
 local UIBase = require "engine.ui.Base"
+local Textzone = require "engine.ui.Textzone"
 
 class:bindHook(
 	"ToME:load",
@@ -105,3 +106,34 @@ class:bindHook(
 		end
 	end
 )
+
+
+-- class:bindHook(
+-- 	"GameOptions:generateList",
+-- 	function(self, data)
+-- 		if data.kind == "ui" then
+-- 			local optShort = "Hammer"
+			
+-- 			local optTitle = "Hide Stick-figure Backgrounds"
+-- 			local optText = [[Allows you to hide the original Hammer loading screen with its stick-figure demons and bright white background.]]
+-- 			data.list[#data.list+1] = { 
+-- 				zone=Textzone.new{
+-- 					width=self.c_desc.w, 
+-- 					height=self.c_desc.h,
+-- 					text=string.toTString("#GOLD#"..optTitle.."\n\n#WHITE#"..optText.."#WHITE#")
+-- 				},
+				
+-- 				name=string.toTString(("#GOLD##{bold}#[%s] %s#WHITE##{normal}#"):format(optShort, optTitle)),
+				
+-- 				status=function(item) 
+-- 					return config.settings.censor_stick_figures and _t"enabled" or _t"disabled"
+-- 				end, 
+				
+-- 				fct=function(item)
+-- 					config.settings.censor_stick_figures = not config.settings.censor_stick_figures
+-- 					game:saveSettings("censor_stick_figures", ("censor_stick_figures = %s\n"):format(tostring(config.settings.censor_stick_figures)))					
+-- 					self.c_list:drawItem(item)
+-- 				end,
+-- 			}
+--     end
+-- end)

@@ -96,14 +96,14 @@ newEntity{
 	name = "salvaged treasures",
 	display = '7', color=colors.BLUE,
 	store = {
-		nb_fill = 15,
+		nb_fill = 7,
 		purse = 25,
 		empty_before_restock = false,
 		sell_percent = 175,
 		ignore_material_levels = true,
 		filters = function()
 			local kind = rng.table{"uvault", "gvault"}
-			return {id=true, ignore={type="money"}, add_levels=12, force_tome_drops=true, tome_drops="boss", tome_mod=kind, special=function(o) return o.type ~= "scroll" end}
+			return {id=true, ignore={type="money"}, add_levels=6, force_tome_drops=true, tome_drops="boss", tome_mod=kind, special=function(o) return o.type ~= "scroll" end}
 		end,
 	},
 }

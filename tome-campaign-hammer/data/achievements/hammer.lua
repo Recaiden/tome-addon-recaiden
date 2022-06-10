@@ -14,21 +14,21 @@ newAchievement{
 
 newAchievement{
 	name = "Darkness Endures", id = "HAMMER_WIN_KRYL", category = "Hammer of Urh'Rok",
-	show = "name",
+	show = "name", huge=true,
 	desc = [[Kryl'Feijan survived the final battle.]],
 	mode = "player",
 }
 
 newAchievement{
 	name = "Very Lucky Girl", id = "HAMMER_WIN_MELINDA", category = "Hammer of Urh'Rok",
-	show = "name",
+	show = "name", huge=true,
 	desc = [[Melinda survived the final battle.]],
 	mode = "player",
 }
 
 newAchievement{
 	name = "Last Doombringer Standing", id = "HAMMER_WIN_ALONE", category = "Hammer of Urh'Rok",
-	show = "name",
+	show = "name", huge=true,
 	desc = [[Won the final battle without bringing an ally into the battle.]],
 	mode = "player",
 }
@@ -84,7 +84,7 @@ newAchievement{
 
 newAchievement{
 	name = "Broken Clock", id = "HAMMER_GODSLAYER", category = "Hammer of Urh'Rok",
-	show = "full",
+	show = "full", huge=true,
 	desc = [[Free the lost soul in the Buried Kingdom, win the game, and then kill her.]],
 	mode = "player",
 }

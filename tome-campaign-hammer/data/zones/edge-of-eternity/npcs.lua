@@ -13,6 +13,7 @@ newEntity{
 Luckily that time is over.
 
 In her many of claws she holds the history of the world, and all possible futures are reflected in her single all-seeing eye.]],
+  killer_message = _t"and frozen for eternity at the moment of death.",
   female = true,
   level_range = {100, nil}, exp_worth = 20,
 	max_life = 1000, life_rating = 100, fixed_rating = true,
@@ -32,9 +33,9 @@ In her many of claws she holds the history of the world, and all possible future
 	inc_damage = {all=92},
 	
 	combat_physresist = 160,
-	combat_mentalresist = 130, -- for mind damage users, sigh.
+	combat_mentalresist = 160, -- fuck mind damage users, actually
 	combat_spellresist = 160,
-	combat_def = 120,
+	combat_def = 60,
 
 	combat_armor_hardiness = 100,
 	combat_armor = 50,
@@ -51,6 +52,7 @@ In her many of claws she holds the history of the world, and all possible future
 	body = { INVEN = 10 },
 	resolvers.drops{chance=100, nb=5, {tome_drops="boss"} },
 
+	slow_projectiles_incoming = -50, --
 	
 	resolvers.talents{
 		-- [Talents.T_ANOMALY_TEMPORAL_BUBBLE]=1,
