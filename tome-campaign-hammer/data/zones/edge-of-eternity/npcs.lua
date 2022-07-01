@@ -7,7 +7,7 @@ newEntity{
 	type = "god", subtype = "eyal",
 	name = "Quekorja",
 	display = "@", color=colors.GRAY,
-	faction = "enemies",
+	faction = "unaligned",
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/undead_ghost_freed_god.png", display_h=2, display_y=-1}}},
 	desc = _t[[How sad it must have been, to be the deity of time in an era before timetravel.
 Luckily that time is over.
@@ -133,6 +133,12 @@ local takeHitFloatingPillar = function(self, value, src)
 			self.energy.value = self.energy.value - 10000
 			game.bignews:saySimple(50, "#PINK#The %s crashes against the edge of the time bubble and grows still for now.", self:getName())
 			game.log("#PINK#The %s crashes against the edge of the time bubble and grows still for now.", self:getName())
+			game.log("#PINK#Destructive temporal energies rebound on Quekorja.")
+			for uid, e in pairs(game.level.entities) do
+				if e.define_as == "QUEKORJA" then
+					e:takeHit(e.max_life*0.04, self)
+				end
+			end
 		end
 	end
 	
@@ -144,7 +150,7 @@ newEntity{
 	type = "immovable", subtype = "crystal",
 	name = "Obelisk of Crystallized Time",
 	display = "I", color=colors.GRAY,
-	faction = "enemies",
+	faction = "unaligned",
 	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/immovable_crystal_golden_crystal.png", display_h=2, display_y=-1}}},
 	desc = _t[[A vast piece of raw time-stuff, turned into a weapon.  It is nigh-indestructible, but looks weightless, easy to push around.]],
 	level_range = {100, nil}, exp_worth = 1,

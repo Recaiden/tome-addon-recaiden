@@ -4,7 +4,7 @@
         "name": "chat",
         "data": {
             "chatid": "intro",
-            "chat": "It happens just as you return, triumphant, to the wider world of Eyal.  All across the world, time stands still.  And yet things change. You glimpse, in the shifting time threads, how it came to this.\n-----------------------\nOnce upon a time, there was a goddess.\n\nThe sher'tul hunted her down.\n\nA wave of necromancy sweeps.\n\nThe Spellblaze cracks reality.\n\nMortals come disturb the goddess's grave.\n\nA demonic invader unknowingly interferes.\n\nThe goddess bends time into a circle and lives again.",
+            "chat": "It happens just as you return, triumphant, to the wider world of Eyal.  All across the world, time stands still.  And yet things change. You glimpse, in the shifting time threads, how it came to this.\n-----------------------\nOnce upon a time, there was a goddess.\n\nThe sher'tul hunted her down.\n\nA wave of necromancy sweeps across the land.\n\nThe Spellblaze cracks reality.\n\nMortals come disturb the goddess's grave.\n\nA demonic invader unknowingly interferes.\n\nThe goddess bends time into a circle and lives again.",
             "answer1": ""
         },
         "class": "chat",
@@ -56,7 +56,12 @@
         },
         "outputs": {
             "output_1": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "35",
+                        "output": "input_1"
+                    }
+                ]
             }
         },
         "pos_x": 1408.25,
@@ -335,7 +340,12 @@
                 ]
             },
             "output_2": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "35",
+                        "output": "input_1"
+                    }
+                ]
             }
         },
         "pos_x": 1924.25,
@@ -373,7 +383,12 @@
                 ]
             },
             "output_2": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "35",
+                        "output": "input_1"
+                    }
+                ]
             }
         },
         "pos_x": 2061,
@@ -411,7 +426,12 @@
                 ]
             },
             "output_2": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "35",
+                        "output": "input_1"
+                    }
+                ]
             }
         },
         "pos_x": 1929,
@@ -422,7 +442,7 @@
         "name": "chat",
         "data": {
             "chatid": "elf",
-            "chat": "\"I suppose I should be grateful.  For shearing away the king and all those other spirits, giving me this chance.\"\n\"Thank you.\"\n\"Oh, and look, you have a tiny spark of my power in you all along.\"",
+            "chat": "\"I suppose I should be grateful.  For shearing away the king and all those other spirits, giving me this chance.\"\n\"Thank you.\"\n\"Oh, and look, you had a tiny spark of my power in you all along.\"",
             "answer1": "Go on.",
             "answer2": "*attack*"
         },
@@ -453,7 +473,12 @@
                 ]
             },
             "output_2": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "35",
+                        "output": "input_1"
+                    }
+                ]
             }
         },
         "pos_x": 1831,
@@ -464,7 +489,7 @@
         "name": "chat",
         "data": {
             "chatid": "offer",
-            "chat": "\"How interesting.\"\n\"Say, why don't you join me?\"\n\"We can visit all of history, liberate other worlds from linear time.  We'll have to do something about the sher'tul, but we have all the time in the universe.\"",
+            "chat": "\"How interesting.\"\n\"Say, why don't you join me?\"\n\"We can visit all of history, liberate other worlds from linear existence.  We'll have to do something about the sher'tul, but we have all the time in the universe.\"",
             "answer1": "\"Agreed.\"",
             "answer2": "\"No, just send me back to a normal timeline.\"",
             "answer3": "\"Everything from Eyal must be destroyed.\" *attack*",
@@ -514,13 +539,28 @@
                 ]
             },
             "output_3": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "35",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_4": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "35",
+                        "output": "input_1"
+                    }
+                ]
             },
             "output_5": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "35",
+                        "output": "input_1"
+                    }
+                ]
             }
         },
         "pos_x": 2572,
@@ -788,7 +828,62 @@
                 "connections": []
             }
         },
-        "pos_x": 2686,
-        "pos_y": -238
+        "pos_x": 2778,
+        "pos_y": -166
+    },
+    "35": {
+        "id": 35,
+        "name": "lua-code",
+        "data": {
+            "code": "for _, act in pairs(game.level.entities) do\n    if act.define_as == \"QUEKORJA\" or act.define_as == \"TIME_PILLAR\" then\n        act:checkAngered(game.player, false, -200)\n    end\nend"
+        },
+        "class": "lua-code",
+        "html": "lua-code",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "20",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "19",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "18",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "25",
+                        "input": "output_5"
+                    },
+                    {
+                        "node": "25",
+                        "input": "output_3"
+                    },
+                    {
+                        "node": "25",
+                        "input": "output_4"
+                    },
+                    {
+                        "node": "17",
+                        "input": "output_2"
+                    },
+                    {
+                        "node": "2",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 3118,
+        "pos_y": -530
     }
 }

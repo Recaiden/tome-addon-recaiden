@@ -58,7 +58,6 @@ return {
 						wall = "MALROK_WALL",
 						floor = "FLOATING_ROCKS",
 						up = "PORTAL_PREV",
-						down = "PORTAL_NEXT",
 						door = "MALROK_DOOR",
 						margin_w = 0, margin_h = 0,
 						max_block_w = 15, max_block_h = 15,
