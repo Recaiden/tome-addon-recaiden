@@ -13,8 +13,9 @@ newEntity{
 Luckily that time is over.
 
 In her many of claws she holds the history of the world, and all possible futures are reflected in her single all-seeing eye.]],
-  killer_message = _t"and frozen for eternity at the moment of death.",
+  killer_message = _t"and frozen for eternity at the moment of death",
   female = true,
+	unique = true,
   level_range = {100, nil}, exp_worth = 20,
 	max_life = 1000, life_rating = 100, fixed_rating = true,
 	rank = 10,
@@ -52,7 +53,7 @@ In her many of claws she holds the history of the world, and all possible future
 	body = { INVEN = 10 },
 	resolvers.drops{chance=100, nb=5, {tome_drops="boss"} },
 
-	slow_projectiles_incoming = -50, --
+	slow_projectiles = -30,
 	
 	resolvers.talents{
 		-- [Talents.T_ANOMALY_TEMPORAL_BUBBLE]=1,
@@ -122,10 +123,13 @@ local takeHitFloatingPillar = function(self, value, src)
 	value = mod.class.Actor.onTakeHit(self, value, src)
 	local Map = require "engine.Map"
 	local original_terrain = game.level.map(self.x, self.y, Map.TERRAIN)
-	if original_terrain.define_as == "TIMESHELL" then
+	if original_terrain.define_as ~= "TIMESHELL" then
 		distance = math.ceil(value / 1000)
 		if src then
+			local onm = self.never_move
+			self.never_move = nil
 			self:knockback(src.x, src.y, distance)
+			self.never_move = onm
 		end
 
 		local oe = game.level.map(self.x, self.y, Map.TERRAIN)
@@ -151,12 +155,13 @@ newEntity{
 	name = "Obelisk of Crystallized Time",
 	display = "I", color=colors.GRAY,
 	faction = "unaligned",
-	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/immovable_crystal_golden_crystal.png", display_h=2, display_y=-1}}},
+	resolvers.nice_tile{image="invis.png", add_mos = {{image="npc/immovable_crystal_time_obelisk.png", display_h=2, display_y=-1}}},
 	desc = _t[[A vast piece of raw time-stuff, turned into a weapon.  It is nigh-indestructible, but looks weightless, easy to push around.]],
 	level_range = {100, nil}, exp_worth = 1,
 	max_life = 1000000, life_rating = 10000, fixed_rating = true,
 	life_regen = 10000,
 	rank = 4,
+	no_difficulty_random_class = true,
 	size_category = 4,
 	
 	stats = { str=10, dex=10, con=10, cun=100, mag=100, wil=100 },

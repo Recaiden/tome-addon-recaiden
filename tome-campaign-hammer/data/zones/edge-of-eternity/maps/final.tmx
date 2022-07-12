@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="41">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="50" height="26" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="41">
  <tileset firstgid="1" name="dg_dungeon32" tilewidth="32" tileheight="32" tilecount="90" columns="9">
   <image source="../../../../../../../tiled-maps/gfx/dg_dungeon32.gif" width="288" height="320"/>
   <tile id="0">
@@ -179,18 +179,18 @@
    </properties>
   </tile>
  </tileset>
- <layer id="1" name="Terrain" width="20" height="20">
+ <layer id="1" name="Terrain" width="50" height="26">
   <data encoding="base64" compression="zlib">
-   eJxzZ2BgcKczNkHDlOrHh6llDiEzyTULl5nY5Mk1jxQ5dDWExIh1H6nmURKGo+bRxjxS7CI2z5NjFr40SIyZpJQHxKZrSsuYgSpLKcUAxGdcrw==
+   eJzt07kRACAMA0EXRQ/03xE5A8aGQPKgQPktTzezrmkaZG0auue22xu69bWf1XJrYLOsuqo5vKZTN5Nl1xk5f3ZHxT8ihxxy5B0ZI9qws2TuCt1+upOoBd0etVQyZN4Rc3/Uhe7RtF83AEb6Vlo=
   </data>
  </layer>
- <layer id="2" name="Actor" width="20" height="20">
+ <layer id="2" name="Actor" width="50" height="26">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFtAYcjAPtgoEBI9HffCPQz4Mtngebe4YzAACfswA0
+   eJzt1MEJADAIA0D9+er+43YKEcLdBCGEVAGQZPo6Acnsiy3Ptljit27pHyDTBwy9ADQ=
   </data>
  </layer>
  <objectgroup color="#55ff7f" id="3" name="addSpot#spots">
-  <object id="40" x="101.343" y="326" width="22" height="22">
+  <object id="40" x="581.343" y="422" width="22" height="22">
    <properties>
     <property name="end" value=""/>
     <property name="start" value=""/>

@@ -349,8 +349,8 @@
         "name": "chat",
         "data": {
             "chatid": "chat5",
-            "chat": "It is done.\nOnce again you can only see what *is*.\nBut you remember.  You are different now.",
-            "answer1": "*Leave, but do not forget*"
+            "chat": "It is done.\nOnce again you can only see what *is*.\nBut you remember.  You are different now.\n\nThe monstrous ghost stands before you.  Surely this is its final form?",
+            "answer1": "*Do not forget*"
         },
         "class": "chat",
         "html": "chat1",
@@ -386,7 +386,7 @@
         "name": "chat",
         "data": {
             "chatid": "welcome",
-            "chat": "You see glowing threads of blue stretched out all around you.  They remind you of your Father.  They are yours to take.",
+            "chat": "The ghost is dispersed - again. And it reforms - again, this time without a single hint of humanity.  A tremendous power fills the air, overwhelming your senses.  You see glowing threads of blue stretched out all around you.  They remind you of your Father.  They are yours to take.",
             "answer1": "Take it (+2 Class Talent points)",
             "answer2": "Take it (+2 Generic Talent points)",
             "answer3": "Take it (+10 Stat points)",
@@ -441,7 +441,7 @@
         "id": 26,
         "name": "lua-code",
         "data": {
-            "code": "game.logPlayer(game.player, \"#STEEL_BLUE#You've moved to another time thread.\")\ngame.player.stats[7] = game.player.stats[7] + 20\ngame.logPlayer(game.player, \"You feel luckier.\")\nworld:gainAchievement(\"HAMMER_NO_LIGHT\", game.player)\ngame.logPlayer(game.player, \"You feel very certain that you need to kill this thing.\")\ngame.player.hammer_luck = true"
+            "code": "game.logPlayer(game.player, \"#STEEL_BLUE#You've moved to another time thread.\")\ngame.player.stats[7] = game.player.stats[7] + 20\ngame.logPlayer(game.player, \"You feel luckier.\")\nworld:gainAchievement(\"HAMMER_NO_LIGHT\", game.player)\ngame.player.hammer_luck = true"
         },
         "class": "lua-code",
         "html": "lua-code",
@@ -458,10 +458,44 @@
         },
         "outputs": {
             "output_1": {
-                "connections": []
+                "connections": [
+                    {
+                        "node": "27",
+                        "output": "input_1"
+                    }
+                ]
             }
         },
         "pos_x": 1191,
         "pos_y": 1017.75
+    },
+    "27": {
+        "id": 27,
+        "name": "chat",
+        "data": {
+            "chatid": "chat6",
+            "chat": "You get a feeling that if you don't defeat this creature now, you will be in grave danger.",
+            "answer1": "*Attack*"
+        },
+        "class": "chat",
+        "html": "chat1",
+        "typenode": true,
+        "inputs": {
+            "input_1": {
+                "connections": [
+                    {
+                        "node": "26",
+                        "input": "output_1"
+                    }
+                ]
+            }
+        },
+        "outputs": {
+            "output_1": {
+                "connections": []
+            }
+        },
+        "pos_x": 1787.25,
+        "pos_y": 1021
     }
 }
