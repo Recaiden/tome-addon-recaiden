@@ -133,7 +133,7 @@ newTalent{
 				e:heal(healed, self)
 				e:attr("allow_on_heal", -1)
 			end
-			if isMyEye(self, e) then
+			if isMyEye(self, e) and (not e.summon_time or e.summon_time > 0) then
 				e:attr("allow_on_heal", 1)
 				e:heal(healed / 3, self)
 				e:attr("allow_on_heal", -1)

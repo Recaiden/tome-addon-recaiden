@@ -202,3 +202,19 @@ newDamageType{
 		return DamageType:get(DamageType.PHYSICAL).projector(src, x, y, DamageType.PHYSICAL, dam.dam * amp, state)
 	end,
 }
+
+-- Arcane/Darkness damage
+newDamageType{
+	name = _t("magical darkness", "damage type"), type = "REK_HEKA_OUBLIETTE", text_color = "#GREY#",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target then
+			if src:reactionToward(target) <= 0 then	
+				DamageType:get(DamageType.ARCANE).projector(src, x, y, DamageType.ARCANE, dam / 2, state)
+				DamageType:get(DamageType.DARKNESS).projector(src, x, y, DamageType.DARKNESS, dam / 2, state)
+			end
+		end
+	end,
+}

@@ -1,16 +1,18 @@
 local Astar = require "engine.Astar"
 local DamageType = require "engine.DamageType"
 
--- Eye Action Priority
+-- Eye Action Priority --
+-------------------------
 -- Teleport back within range of summoner
 -- If summoner is resting, rest
 -- Get bored after 10 turns fighting the same enemy
 -- Confront an enemy if you have one
 -- Move towards a location if you have one
 -- 65% Chance to pick a new enemy within range 8 and confront them
--- Pick a new location withing range 4 and move towards it.
+-- Pick a new location within range 4 and move towards it.
 
--- Confronting-an-enemy
+-- Confronting-an-enemy--
+-------------------------
 -- Chance to bite an enemy to heal self, 10% @ 75% life, guaranteed at 30% life or les
 -- 15% chance to bite even if not hurt
 -- variable chance to Stagger
@@ -139,21 +141,21 @@ local function eyeChooseLocationTarget(self)
 
 	for i = x - range, x + range do
 		for j = y - range, y + range do
-			if game.level.map:isBound(i, j)
-					and core.fov.distance(x, y, i, j) <= range
-					and self:canMove(i, j) then
+	 		if game.level.map:isBound(i, j)
+				--and core.fov.distance(x, y, i, j) <= range
+				and self:canMove(i, j) then
 				locations[#locations+1] = {i,j}
 			end
 		end
 	end
-
+	
 	if #locations > 0 then
 		local location = locations[rng.range(1, #locations)]
 		self.ai_target.x, self.ai_target.y = location[1], location[2]
 
 		return true
 	end
-
+	
 	return false
 end
 
@@ -210,15 +212,13 @@ end
 newAI("heka_eye", function(self)
 	--game.logPlayer(self.summoner, "#PINK#%s BEGINS.", self.name:capitalize())
 
-	-- eyes don't time out, but they can still be set to 0 as a shorthand for getting rid of them
-	if self.summon_time <= 0 or self.summoner.dead then
+	-- most eyes don't time out, but they can still be set to 0 as a shorthand for getting rid of them
+	if (self.summon_time and self.summon_time <= 0) or self.summoner.dead then
 		--game.logPlayer(self.summoner, "#PINK#%s vanishes.", self.name:capitalize())
 		self:die()
 	end
 	if self.temporary then
 		self.summon_time = self.summon_time - 1
-	else
-		self.summon_time = math.min(999, self.summon_time + 1)
 	end
 
 	-- make sure no one has turned us against our summoner
@@ -227,7 +227,7 @@ newAI("heka_eye", function(self)
 	end
 
 	if self.eyelement and not self.in_combat then
-		self:removeEffect(self.REK_HEKA_EYELEMENT_EYE)
+		self:removeEffect(self.EFF_REK_HEKA_EYELEMENT_EYE)
 		self.eyelement = nil
 	end
 	if self.in_combat and self.eyelemental and not self.eyelement then

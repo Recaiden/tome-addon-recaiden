@@ -21,7 +21,7 @@ newTalent{
 		-- Add a lasting map effect
 		game.level.map:addEffect(self,
 														 x, y, t.getDuration(self, t),
-														 DamageType.VOID, t.getDamage(self, t),
+														 DamageType.REK_HEKA_OUBLIETTE, t.getDamage(self, t),
 														 1,
 														 5, nil,
 														 MapEffect.new{color_br=30, color_bg=60, color_bb=100, effect_shader="shader_images/water_effect1.png"},

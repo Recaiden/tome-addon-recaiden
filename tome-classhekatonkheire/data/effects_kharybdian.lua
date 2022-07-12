@@ -101,7 +101,7 @@ newEffect{
 newEffect{
 	name = "REK_HEKA_SPEARED", image = "talents/rek_heka_intrusion_hellyfish.png",
 	desc = _t"Numbed",
-	long_desc = function(self, eff) return ("The target is weakened by painful stinging, all damage it does is reduced by %d%%."):tformat(eff.power) end,
+	long_desc = function(self, eff) return ("The target is weakened by painful stinging, all damage it does is reduced by %d%%."):tformat(eff.power*100) end,
 	type = "physical",
 	subtype = { hands=true,},
 	status = "detrimental",

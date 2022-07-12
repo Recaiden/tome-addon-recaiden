@@ -1,6 +1,6 @@
 newTalent{
 	name = "Carnigenesis", short_name = "REK_HEKA_PAGE_REGEN",
-	type = {"spell/other-page", 1}, require = mag_req1, points = 5,
+	type = {"spell/other-page", 1}, require = mag_req_slow, points = 5,
 	cooldown = 6,
 	tactical = { RESOURCE = 1 },
 	getSpellpower = function(self, t) return self:combatTalentScale(t, 10, 50, 1.0) end,

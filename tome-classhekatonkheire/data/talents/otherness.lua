@@ -152,7 +152,7 @@ newTalent{
 			self.talents_cd[tid] = nil
 		end
 		game.level.map:particleEmitter(self.x, self.y, 1, "otherside_sunrise", nil, nil, 5)
-		self:setEffect(self.EFF_REK_HEKA_METAFOLD, t:_getDur(self), {power=1})
+		self:setEffect(self.EFF_REK_HEKA_METAFOLD, t:_getDur(self), {power=2})
 		self.changed = true
 		game:playSoundNear(self, "talents/spell_generic")
 		return true

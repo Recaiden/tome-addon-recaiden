@@ -605,12 +605,14 @@ newEffect{
 		if self.summoner then
 			eff.summonerid = self.summoner:addTemporaryValue("resists", {[eff.element] = eff.resist/2})
 		end
+		eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=1, oversize=0.5, a=200, appear=8, y=-0.05, speed=0, img="eyelement_"..eff.element, radius=0.3}))
 	end,
 	deactivate = function(self, eff)
 		self:removeTemporaryValue("resists", eff.tmpid)
 		if eff.summonerid and self.summoner then
 			self.summoner:removeTemporaryValue("resists", eff.summonerid)
 		end
+		self:removeParticles(eff.particle)
 	end,
 }
 

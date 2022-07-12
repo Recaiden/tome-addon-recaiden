@@ -445,7 +445,7 @@ local function createEye(self, level, tCallEyes, tPhylactery, tBlink, tStagger, 
 			end
 		end
 	}
-	self:attr("summoned_times", 1)
+	self:attr("summoned_times", 10)
 	return npc
 end
 
@@ -519,7 +519,7 @@ newTalent{
 		local tPhylactery = self:knowTalent(self.T_REK_HEKA_HEADLESS_SHIELD) and self:getTalentFromId(self.T_REK_HEKA_HEADLESS_SHIELD) or nil
 		local tStagger = self:knowTalent(self.T_REK_HEKA_HEADLESS_ADAPT) and self:getTalentFromId(self.T_REK_HEKA_HEADLESS_ADAPT) or nil
 		
-		local eye = createEye(self, level, t, tPhylactery, tBlink, tStagger, 1000, nil)
+		local eye = createEye(self, level, t, tPhylactery, tBlink, tStagger, nil, nil)
 		
 		eye:resolve()
 		eye:resolve(nil, true)

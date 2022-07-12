@@ -53,7 +53,7 @@ newTalent{
 	cooldown = 3,
 	hands = 20,
 	tactical = { ATTACK = {PHYSICAL = 1, BLIGHT = 1} },
-	range = 10,
+	range = 7,
 	direct_hit = true,
 	requires_target = true,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
@@ -133,6 +133,7 @@ newTalent{
 		local _ _, x, y = self:canProject(tg, x, y)
 		local target = game.level.map(x, y, Map.ACTOR)
 		if not target then return end
+		if target and target:reactionToward(self) >= 0 then return nil end
 		local dam = t:_getDamage(self)*getKharybdianTempo(self, t.id)
 		local damEnd = t:_getDamageEnd(self)*getKharybdianTempo(self, t.id)
 		if self:knowTalent(self.T_REK_HEKA_POLYP_SPREAD) then
