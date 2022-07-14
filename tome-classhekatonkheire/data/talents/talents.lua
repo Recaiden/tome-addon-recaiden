@@ -181,70 +181,70 @@ end
 
 -- shared
 if not Talents.talents_types_def["technique/helping-hands"] then
-   newTalentType{ allow_random=true, type="technique/helping-hands", name = _t("Helping Hands", "talent type"), description = _t"Many hands make light work." }
-   load("/data-classhekatonkheire/talents/helping-hands.lua")
+	newTalentType{ allow_random=true, type="technique/helping-hands", name = _t("Helping Hands", "talent type"), description = _t"Many hands make light work." }
+	load("/data-classhekatonkheire/talents/helping-hands.lua")
 end
 
 if not Talents.talents_types_def["spell/headless-horror"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/headless-horror", name = _t("Headless Horror", "talent type"), description = _t"More eyes, bigger eyes, better eyes." }
-   load("/data-classhekatonkheire/talents/headless-horror.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/headless-horror", name = _t("Headless Horror", "talent type"), description = _t"More eyes, bigger eyes, better eyes." }
+	load("/data-classhekatonkheire/talents/headless-horror.lua")
 end
 
 if not Talents.talents_types_def["spell/otherness"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, generic=true, type="spell/otherness", name = _t("Otherside", "talent type"), description = _t"Look over and see through." }
-   load("/data-classhekatonkheire/talents/otherness.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, generic=true, type="spell/otherness", name = _t("Otherside", "talent type"), description = _t"Look over and see through." }
+	load("/data-classhekatonkheire/talents/otherness.lua")
 end
 
 if not Talents.talents_types_def["spell/eyesight"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/eyesight", name = _t("Eyesight", "talent type"), min_lev = 10, description = _t"If you look hard enough, that alone is enough to kill." }
-   load("/data-classhekatonkheire/talents/eyesight.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/eyesight", name = _t("Eyesight", "talent type"), min_lev = 10, description = _t"If you look hard enough, that alone is enough to kill." }
+	load("/data-classhekatonkheire/talents/eyesight.lua")
 end
 
 -- hekatonkhiere
 if not Talents.talents_types_def["spell/shambler"] then
-   newTalentType{ allow_random=true, is_spell=true, type="spell/shambler", name = _t("Shambler", "talent type"), description = _t"Walk steadily forward.  Don't worry; they will come to you.  These are spells, but can be used while silenced." }
-   load("/data-classhekatonkheire/talents/shambler.lua")
+	newTalentType{ allow_random=true, is_spell=true, type="spell/shambler", name = _t("Shambler", "talent type"), description = _t"Walk steadily forward.  Don't worry; they will come to you.  These are spells, but can be used while silenced." }
+	load("/data-classhekatonkheire/talents/shambler.lua")
 end
 
 if not Talents.talents_types_def["technique/titanic-blows"] then
-   newTalentType{ allow_random=true, type="technique/titanic-blows", name = _t("Titanic Blows", "talent type"), description = _t"Crush your enemies with slow heavy hits." }
-   load("/data-classhekatonkheire/talents/titanic.lua")
+	newTalentType{ allow_random=true, type="technique/titanic-blows", name = _t("Titanic Blows", "talent type"), description = _t"Crush your enemies with slow heavy hits." }
+	load("/data-classhekatonkheire/talents/titanic.lua")
 end
 
 if not Talents.talents_types_def["technique/harming-hands"] then
-   newTalentType{ allow_random=true, type="technique/harming-hands", name = _t("Harming Hands", "talent type"), description = _t"Grab, choke, and smash." }
-   load("/data-classhekatonkheire/talents/harming-hands.lua")
+	newTalentType{ allow_random=true, type="technique/harming-hands", name = _t("Harming Hands", "talent type"), description = _t"Grab, choke, and smash." }
+	load("/data-classhekatonkheire/talents/harming-hands.lua")
 end
 
 if not Talents.talents_types_def["technique/splintered-lord"] then
-   newTalentType{ allow_random=true, is_spell=true, type="technique/splintered-lord", name = _t("Splintered Lord", "talent type"), min_lev = 10, description = _t"Separate yourself into ever more pieces and fully attend to the battle." }
-   load("/data-classhekatonkheire/talents/splintered-lord.lua")
+	newTalentType{ allow_random=true, is_spell=true, type="technique/splintered-lord", name = _t("Splintered Lord", "talent type"), min_lev = 10, description = _t"Separate yourself into ever more pieces and fully attend to the battle." }
+	load("/data-classhekatonkheire/talents/splintered-lord.lua")
 end
 
 if not Talents.talents_types_def["spell/mountainshaper"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/mountainshaper", name = _t("Mountainshaper", "talent type"), description = _t"With his every step, the earth trembles.  With his every word, the land awakes." }
-   load("/data-classhekatonkheire/talents/mountainshaper.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/mountainshaper", name = _t("Mountainshaper", "talent type"), description = _t"With his every step, the earth trembles.  With his every word, the land awakes." }
+	load("/data-classhekatonkheire/talents/mountainshaper.lua")
 end
 
 --argosine
 if not Talents.talents_types_def["spell/hale-hands"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/hale-hands", name = _t("Hale Hands", "talent type"), description = _t"Many hands make light work." }
-   load("/data-classhekatonkheire/talents/argosine-hale-hands.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/hale-hands", name = _t("Hale Hands", "talent type"), description = _t"Many hands make light work." }
+	load("/data-classhekatonkheire/talents/argosine-hale-hands.lua")
 end
 
 if not Talents.talents_types_def["spell/sybarite"] then
 	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/sybarite", name = _t("Sybarite", "talent type"), description = _t"At her passage, the people kneel, and with her word, they rise to dance." }
-   load("/data-classhekatonkheire/talents/argosine-sybarite.lua")
+	load("/data-classhekatonkheire/talents/argosine-sybarite.lua")
 end
 
 if not Talents.talents_types_def["spell/watcher"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/watcher", name = _t("Watcher", "talent type"), description = _t"You've got to keep an eye on your eyes if you want them to succeed." }
-   load("/data-classhekatonkheire/talents/argosine-watcher.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/watcher", name = _t("Watcher", "talent type"), description = _t"You've got to keep an eye on your eyes if you want them to succeed." }
+	load("/data-classhekatonkheire/talents/argosine-watcher.lua")
 end
 
 if not Talents.talents_types_def["spell/veiled-shepherd"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/veiled-shepherd", name = _t("Veiled Shepherd", "talent type"), description = _t"You stand between this place and the other place, controlling the flow of eyes." }
-   load("/data-classhekatonkheire/talents/argosine-veiled.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/veiled-shepherd", name = _t("Veiled Shepherd", "talent type"), description = _t"You stand between this place and the other place, controlling the flow of eyes." }
+	load("/data-classhekatonkheire/talents/argosine-veiled.lua")
 end
 
 -- if not Talents.talents_types_def["spell/oubliette"] then
@@ -253,62 +253,68 @@ end
 -- end
 
 if not Talents.talents_types_def["spell/eyebite"] then
-   newTalentType{ allow_random=true, is_spell=true, type="spell/eyebite", name = _t("Eyebite", "talent type"), min_lev = 10, description = _t"Your stare alone can reduce foes to dust." }
-   load("/data-classhekatonkheire/talents/argosine-eyebite.lua")
+	newTalentType{ allow_random=true, is_spell=true, type="spell/eyebite", name = _t("Eyebite", "talent type"), min_lev = 10, description = _t"Your stare alone can reduce foes to dust." }
+	load("/data-classhekatonkheire/talents/argosine-eyebite.lua")
 end
 
 if not Talents.talents_types_def["spell/oubliette"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/oubliette", name = _t("Oubliette", "talent type"), description = _t"Isn't it terrible, to die imprisoned and alone?" }
-   load("/data-classhekatonkheire/talents/argosine-oubliette.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/oubliette", name = _t("Oubliette", "talent type"), description = _t"Isn't it terrible, to die imprisoned and alone?" }
+	load("/data-classhekatonkheire/talents/argosine-oubliette.lua")
 end
 
 -- kharybdian
 if not Talents.talents_types_def["spell/bloodtide"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/bloodtide", name = _t("Bloodtide", "talent type"), description = _t"In and out, high and low, as steady as can be." }
-   load("/data-classhekatonkheire/talents/kharyb-bloodtide.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/bloodtide", name = _t("Bloodtide", "talent type"), description = _t"In and out, high and low, as steady as can be." }
+	load("/data-classhekatonkheire/talents/kharyb-bloodtide.lua")
 end
 
 if not Talents.talents_types_def["spell/intrusion"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/intrusion", name = _t("Intrusion", "talent type"), description = _t"Breach the Paths  and wreak destruction upon the world." }
-   load("/data-classhekatonkheire/talents/kharyb-intrusion.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/intrusion", name = _t("Intrusion", "talent type"), description = _t"Breach the Paths  and wreak destruction upon the world." }
+	load("/data-classhekatonkheire/talents/kharyb-intrusion.lua")
 end
 
 if not Talents.talents_types_def["spell/oceansong"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/oceansong", name = _t("Oceansong", "talent type"), description = _t"Call out from under the sea, and they will return." }
-   load("/data-classhekatonkheire/talents/kharyb-oceansong.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/oceansong", name = _t("Oceansong", "talent type"), description = _t"Call out from under the sea, and they will return." }
+	load("/data-classhekatonkheire/talents/kharyb-oceansong.lua")
 end
 
 if not Talents.talents_types_def["spell/polyp"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/polyp", name = _t("Polyps", "talent type"), description = _t"A reef, or army, are both built up body by body." }
-   load("/data-classhekatonkheire/talents/kharyb-polyp.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/polyp", name = _t("Polyps", "talent type"), description = _t"A reef, or army, are both built up body by body." }
+	load("/data-classhekatonkheire/talents/kharyb-polyp.lua")
 end
 
 if not Talents.talents_types_def["spell/chronorium"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/chronorium", name = _t("Chronorium", "talent type"), description = _t"A broken clock is still right whenever you want it to be." }
-   load("/data-classhekatonkheire/talents/kharyb-chronorium.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="spell/chronorium", name = _t("Chronorium", "talent type"), description = _t"A broken clock is still right whenever you want it to be." }
+	load("/data-classhekatonkheire/talents/kharyb-chronorium.lua")
 end
 
 if not Talents.talents_types_def["spell/other-page"] then
-   newTalentType{ allow_random=true, is_spell=true, no_silence=true, generic=true, type="spell/other-page", name = _t("Other Page", "talent type"), description = _t"Look forward and back, it's all here." }
-   load("/data-classhekatonkheire/talents/page.lua")
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, generic=true, type="spell/other-page", name = _t("Other Page", "talent type"), description = _t"Look forward and back, it's all here." }
+	load("/data-classhekatonkheire/talents/page.lua")
 end
 
 
 if not Talents.talents_types_def["spell/moon-wurm"] then
-   newTalentType{ allow_random=true, is_spell=true, type="spell/moon-wurm", name = _t("Moon Wurm", "talent type"), min_lev = 10, description = _t"Eyal was not the only place with long-gone life.  These are spells, but can be used while silenced." }
-   load("/data-classhekatonkheire/talents/kharyb-wurm.lua")
+	newTalentType{ allow_random=true, is_spell=true, type="spell/moon-wurm", name = _t("Moon Wurm", "talent type"), min_lev = 10, description = _t"Eyal was not the only place with long-gone life.  These are spells, but can be used while silenced." }
+	load("/data-classhekatonkheire/talents/kharyb-wurm.lua")
 end
 
 if not Talents.talents_types_def["spell/null-vizier"] then
-   newTalentType{ allow_random=true, is_spell=true, type="spell/null-vizier", name = _t("Null Vizier", "talent type"), min_lev = 10, no_silence=true, description = _t"The mightiest of gods were forced to kneel, but were no less mighty for doing so." }
-   load("/data-classhekatonkheire/talents/kharyb-vizier.lua")
+	newTalentType{ allow_random=true, is_spell=true, type="spell/null-vizier", name = _t("Null Vizier", "talent type"), min_lev = 10, no_silence=true, description = _t"The mightiest of gods were forced to kneel, but were no less mighty for doing so." }
+	load("/data-classhekatonkheire/talents/kharyb-vizier.lua")
 end
 
 if not Talents.talents_types_def["spell/marching-sea"] then
-   newTalentType{ allow_random=true, is_spell=true, type="spell/marching-sea", name = _t("Marching Sea", "talent type"), no_silence=true, description = _t"The ocean and the desert are two sides of the same coin." }
-   load("/data-classhekatonkheire/talents/kharyb-march.lua")
+	newTalentType{ allow_random=true, is_spell=true, type="spell/marching-sea", name = _t("Marching Sea", "talent type"), no_silence=true, description = _t"The ocean and the desert are two sides of the same coin." }
+	load("/data-classhekatonkheire/talents/kharyb-march.lua")
 end
 
+-- Evolutions
+if not Talents.talents_def["REK_EVOLUTION_HEKA_HEKA_HIT"] then
+	load("/data-classhekatonkheire/talents/uber.lua")
+end
+
+-- khimeral
 if not Talents.talents_def.T_REK_HEKA_CHIMERA_UNLOCK then
 newTalent{
   name = "Design Vessel", short_name = "REK_HEKA_CHIMERA_UNLOCK", image = "talents/rek_heka_moonwurm_summon.png",
@@ -319,7 +325,7 @@ newTalent{
   no_npc_use = true,
 	getOptions = function(self, t)
 		local o = {}
-
+		
 		local Birther = require "engine.Birther"
 		local classes = Birther.birth_descriptor_def.subclass
 		local class = classes["Khimeral"]

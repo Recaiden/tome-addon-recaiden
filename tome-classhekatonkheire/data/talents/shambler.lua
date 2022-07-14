@@ -35,6 +35,15 @@ Learning this talent increases your size category, and activating it temporarily
 	end,
 }
 class:bindHook(
+	"Combat:attackTargetWith",
+	function(self, hd)
+		-- remove in the normal case ,after the attack but before the on-hit effects.
+		if self:hasEffect(self.EFF_REK_HEKA_TOWERING_WRATH) then
+			self:removeEffect(self.EFF_REK_HEKA_TOWERING_WRATH)
+		end
+		return hd
+	end)
+class:bindHook(
 	"Combat:attackTargetWith:attackerBonuses",
 	function(self, hd)
 		-- check for buff
@@ -46,7 +55,7 @@ class:bindHook(
 
 		-- power up
 		hd.mult = hd.mult * (1 + wrath.power * wrath.stacks)
-		game:onTickEnd(function()
+		game:onTickEnd(function() -- remove anyway if something goes wrong with the attack flow
 										 if self:hasEffect(self.EFF_REK_HEKA_TOWERING_WRATH) then
 											 self:removeEffect(self.EFF_REK_HEKA_TOWERING_WRATH)
 										 end
