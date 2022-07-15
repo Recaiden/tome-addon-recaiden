@@ -317,8 +317,9 @@ end
 -- khimeral
 if not Talents.talents_def.T_REK_HEKA_CHIMERA_UNLOCK then
 newTalent{
-  name = "Design Vessel", short_name = "REK_HEKA_CHIMERA_UNLOCK", image = "talents/rek_heka_moonwurm_summon.png",
+  name = "Design Anchor", short_name = "REK_HEKA_CHIMERA_UNLOCK", image = "talents/rek_heka_moonwurm_summon.png",
   type = {"spell/other", 1},
+	no_unlearn_last = true,
   points = 1,
   cooldown = 0,
   no_energy = true,

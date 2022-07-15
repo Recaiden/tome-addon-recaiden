@@ -19,9 +19,9 @@ newBirthDescriptor{
 	not_on_random_boss = true,
 	talents_types = {
 		-- titanic talents
-		["spell/marching-sea"]={true, 0.3},
-		["spell/oubliette"]={true, 0.3},
-		["spell/mountainshaper"]={true, 0.3},
+		["spell/marching-sea"]={false, 0.3},
+		["spell/oubliette"]={false, 0.3},
+		["spell/mountainshaper"]={false, 0.3},
 
 		-- base talents
 		["spell/bloodtide"]={false, 0.3},
@@ -60,9 +60,9 @@ newBirthDescriptor{
 		end,
 	},
 	talents = {
-		[ActorTalents.T_REK_HEKA_MOUNTAIN_EARTHDRUM] = 1,
-		[ActorTalents.T_REK_HEKA_MARCH_HEART] = 1,
-		[ActorTalents.T_REK_HEKA_TENTACLE_WAVE] = 1,
+		-- [ActorTalents.T_REK_HEKA_MOUNTAIN_EARTHDRUM] = 1,
+		-- [ActorTalents.T_REK_HEKA_MARCH_HEART] = 1,
+		-- [ActorTalents.T_REK_HEKA_TENTACLE_WAVE] = 1,
 		
 		[ActorTalents.T_REK_HEKA_OTHERNESS_HIDDEN_PATHS] = 1,
 		
@@ -72,7 +72,9 @@ newBirthDescriptor{
 	copy = {
 		class_start_check = start_zone,
 		max_life = 100,
-		heka_chimera_points = 4,
+		heka_chimera_points = 6,
+		unused_talents = 3,
+		unused_generics = 1,
 		mage_equip_filters,
 		resolvers.inventorybirth{ id=true, transmo=true,
 			{type="weapon", subtype="longsword", name="iron longsword", ego_chance=-1000, ego_chance=-1000},
