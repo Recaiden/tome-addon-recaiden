@@ -59,7 +59,7 @@ function _M:combatGetResistPen(type, straight)
 				highest = math.max(highest, inc)
 			end
 		end
-		local mult = self.summoner:callTalent(self.summoner.T_REK_HEKA_WATCHER_HATCHERY,"getInherit") / 100
+		local mult = self.summoner:callTalent(self.summoner.T_REK_HEKA_WATCHER_HATCHERY, "getInherit") / 100
 		pen = math.min(70, pen + highest*mult)
 	end
 	return pen

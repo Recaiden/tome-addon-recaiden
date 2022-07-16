@@ -354,6 +354,7 @@ local function createEye(self, level, tCallEyes, tPhylactery, tBlink, tStagger, 
 			cun=math.floor(self:combatScale(level, 5, 0, 40, 50, 0.75)),
 			con=math.floor(self:combatScale(level, 10, 0, 40, 50, 0.75)),
 		},
+		combat_spellpower = tStagger and tStagger.getSP(self, tStagger) or 0,
 		combat_armor = 0, combat_def = 3,
 		combat = {
 			dam=math.floor(self:combatScale(level, 1.5, 1, 75, 50, 0.75)),
@@ -695,7 +696,7 @@ newTalent{
 	type = {"spell/headless-horror", 4}, require = mag_req4, points = 5,
 	mode = "passive",
 	getStaggerLevel = function(self, t) return self:getTalentLevelRaw(t) end,
-	getSP = function(self, t) return self.level + self:combatTalentScale(t, 10, 50) end,
+	getSP = function(self, t) return self.level + self:combatTalentScale(t, 5, 25) end,
 	getSelfSP = function(self, t) return math.floor((self.level + self:combatTalentScale(t, 10, 50))/8) end,
 	getKnockChance = function(self, t) return self:combatTalentScale(t, 25, 45) end,
 	info = function(self, t)
