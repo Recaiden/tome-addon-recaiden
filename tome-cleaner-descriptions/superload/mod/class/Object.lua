@@ -321,12 +321,12 @@ function _M:getTextualDesc(compare_with, use_actor)
 		if ret then desc:merge(ret) end
 	end
 	
-	local talent_on_hit_desc = function( s_power, s_desc_pwr )
+	local talent_on_ability_desc = function( s_power, s_desc_pwr )
 		local talents = {}
 		local ret = tstring{}
 		if self[s_power] then
-			if data and data.talent then
-				for _, data in ipairs(self[s_power]) do
+			for _, data in ipairs(self[s_power]) do
+				if data and data.talent then	
 					talents[data.talent] = {data.chance, data.level}
 				end
 			end
@@ -336,7 +336,7 @@ function _M:getTextualDesc(compare_with, use_actor)
 				local tid = data.talent
 				if not talents[tid] or talents[tid][1]~=data.chance or talents[tid][2]~=data.level then
 					ret:add({"color","RED"}, "On ", s_desc_pwr,
-						(" #LIGHT_GREEN#%d%%#LAST# %s #LIGHT_GREEN#%d#LAST#"):format(data.chance, self:getTalentFromId(tid).name, data.level), 
+						(" #LIGHT_GREEN#%d%%#LAST# %s level #LIGHT_GREEN#%d#LAST#"):format(data.chance, self:getTalentFromId(tid).name, data.level), 
 						{"color","WHITE"}, true)
 				else
 					talents[tid][3] = true
@@ -345,7 +345,7 @@ function _M:getTextualDesc(compare_with, use_actor)
 		end
 		for tid, data in pairs(talents) do
 			ret:add(talents[tid][3] and {"color","WHITE"} or {"color","GREEN"}, "On ", s_desc_pwr,
-							(" #LIGHT_GREEN#%d%%#LAST# %s #LIGHT_GREEN#%d#LAST#"):format(talents[tid][1],self:getTalentFromId(tid).name, talents[tid][2]), 
+							(" #LIGHT_GREEN#%d%%#LAST# %s level #LIGHT_GREEN#%d#LAST#"):format(talents[tid][1],self:getTalentFromId(tid).name, talents[tid][2]), 
 							{"color","WHITE"}, true)
 		end
 		return ret
@@ -902,7 +902,7 @@ function _M:getTextualDesc(compare_with, use_actor)
 			end
 		end
 		
-		-- cooldawn reduction
+		-- cooldown reduction
 		local any_cd_reduction = 0
 		local cd_reductions = {}
 		for i, v in ipairs(compare_with or {}) do
@@ -1082,9 +1082,9 @@ function _M:getTextualDesc(compare_with, use_actor)
 		end
 	end
 	
-	desc:merge( talent_on_hit_desc( "talent_on_spell", "#PURPLE#Spell#LAST# Hit:" ) )
-	desc:merge( talent_on_hit_desc( "talent_on_wild_gift", "#LIGHT_GREEN#Nature#LAST# Hit:" ) )
-	desc:merge( talent_on_hit_desc( "talent_on_mind", "#YELLOW#Mind#LAST# Hit:" ) )
+	desc:merge( talent_on_ability_desc( "talent_on_spell", "#PURPLE#Spell#LAST# Hit:" ) )
+	desc:merge( talent_on_ability_desc( "talent_on_wild_gift", "#LIGHT_GREEN#Nature#LAST# Hit:" ) )
+	desc:merge( talent_on_ability_desc( "talent_on_mind", "#YELLOW#Mind#LAST# Hit:" ) )
 	
 	if self.special_desc then
 		local d = self:special_desc(use_actor)
@@ -1206,7 +1206,7 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
 			for tid, data in pairs(v[field] and (v[field][s_power] or {})or {}) do
 				if not talents[tid] or talents[tid][1]~=data.chance or talents[tid][2]~=data.level then
 					ret:add({"color","RED"}, "On ", s_desc_pwr,
-						(" #LIGHT_GREEN#%d%%#LAST# %s #LIGHT_GREEN#%d#LAST#"):format(data.chance, self:getTalentFromId(tid).name, data.level), 
+						(" #LIGHT_GREEN#%d%%#LAST# %s level #LIGHT_GREEN#%d#LAST#"):format(data.chance, self:getTalentFromId(tid).name, data.level), 
 						{"color","WHITE"}, true)
 				else
 					talents[tid][3] = true
@@ -1215,7 +1215,7 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
 		end
 		for tid, data in pairs(talents) do
 			ret:add(talents[tid][3] and {"color","WHITE"} or {"color","GREEN"}, "On ", s_desc_pwr,
-							(" #LIGHT_GREEN#%d%%#LAST# %s #LIGHT_GREEN#%d#LAST#"):format(talents[tid][1],self:getTalentFromId(tid).name, talents[tid][2]), 
+							(" #LIGHT_GREEN#%d%%#LAST# %s level #LIGHT_GREEN#%d#LAST#"):format(talents[tid][1],self:getTalentFromId(tid).name, talents[tid][2]), 
 							{"color","WHITE"}, true)
 		end
 		return ret
