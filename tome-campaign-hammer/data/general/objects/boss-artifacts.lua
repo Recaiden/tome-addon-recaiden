@@ -31,8 +31,61 @@ newEntity{ base = "BASE_KNIFE",
 	},
 }
 
--- Norgos's Pelt T1
--- Weirdling Wraps gloves T2 
+newEntity{ base = "BASE_LIGHT_ARMOR",
+	power_source = {technique=true},
+	unique = true,
+	name = "Norgos's Pelt", image = "object/artifact/behemoth_skin.png",
+	moddable_tile = "special/behemoth_skin",
+	unided_name = _t"bear-hide armor",
+	desc = _t[[A barbarian's garb, made from the hide of a giant bear.  Despite the fur, it remains constantly cool to the touch.]],
+	color = colors.BROWN,
+	level_range = {5, 18},
+	rarity = 230,
+	require = { stat = { str=14 }, },
+	cost = 250,
+	material_level = 1,
+	wielder = {
+		inc_stats = { [Stats.STAT_STR] = 5, [Stats.STAT_CON] = 15 },
+
+		resists = {[DamageType.COLD] = 15},
+
+		combat_armor = 5,
+		combat_def = 3,
+		combat_def_ranged = 10,
+
+		max_encumber = 20,
+		stamina_regen = 1,
+		fatigue = 10,
+		max_stamina = 45,
+		talent_on_hit = { [Talents.T_STUN] = {level=1, chance=10} },
+	},
+}
+
+newEntity{ base = "BASE_GLOVES",
+	power_source = {unknown=true},
+	unique = true,
+	name = "Weirdling Wraps", image = "object/artifact/gloves_of_the_firm_hand.png",
+	unided_name = _t"heavy gloves",
+	desc = _t[[Less a pair of gloves, and more a tangle of tentacles that you wrap over your hands to cushion them; when you touch these hand-wraps, you feel like they are deliberately touching you back.]],
+	level_range = {10, 25},
+	rarity = 210,
+	cost = 150,
+	material_level = 2,
+	wielder = {
+		inc_stats = { [Stats.STAT_CON] = 10},
+		resists = { all = 10, },
+		combat_armor = 5,
+		stun_immune = 0.2,
+		combat = {
+			dam = 18,
+			apr = 1,
+			physcrit = 10,
+			talent_on_hit = { T_TENTACLE_GRAB = {level=3, chance=20}, T_MAIM = {level=3, chance=10}, T_TAKE_DOWN = {level=3, chance=10} },
+			dammod = {dex=0.3, str=-0.7, cun=0.3, con=0.4 },
+		},
+	},
+}
+
 
 newEntity{ base = "BASE_LONGSWORD",
 	power_source = {arcane=true},
@@ -63,7 +116,39 @@ newEntity{ base = "BASE_LONGSWORD",
 }
 
 -- The Blank Book tool T3
--- <urkis> T3
--- <rod of annulment> + crystal core
--- <rope belt of thaloren>
--- Turtle's Robe - flat DR and ice, bit of lightning T5
+newEntity{ base = "BASE_CLOTH_ARMOR",
+	power_source = {arcane=true},
+	unique = true,
+	name = "Turthel's Robe", color = colors.RED, image = "object/artifact/robe_of_the_archmage.png",
+	unided_name = _t"ancient robe",
+	desc = _t[[A plain wool robe, rustling with energy, still as perfect as the day it was made, thousands of years ago.]],
+	level_range = {40, 50},
+	rarity = 290,
+	cost = resolvers.rngrange(500,750),
+	material_level = 5,
+	moddable_tile = "special/robe_of_the_archmage",
+	moddable_tile_big = true,
+	wielder = {
+		inc_damage = {all=15},
+		combat_def = 10,
+		combat_armor = 10,
+		inc_stats = { [Stats.STAT_MAG] = 10, [Stats.STAT_WIL] = 10},
+		combat_spellpower = 15,
+		combat_spellresist = 20,
+		combat_spellcrit = -10,
+		combat_critical_power = 50,
+		resists={[DamageType.LIGHTNING] = 25,[DamageType.COLD] = 15},
+		resists_pen = {[DamageType.LIGHTNING]=20}
+		mana_regen = 2,
+	},
+	talents_add_levels_filters = {
+		{desc=_t"+1 to all lightning damage spells", filter=function(who, t, lvl)
+			if t.is_spell and t.tactical and (
+				table.has(t.tactical, "attack", "LIGHTNING") or
+				table.has(t.tactical, "attackarea", "LIGHTNING")
+			) then
+				return lvl + 1
+			end
+		end},
+	},
+}
