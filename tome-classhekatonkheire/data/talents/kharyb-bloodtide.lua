@@ -97,16 +97,45 @@ newTalent{
 	name = "Relentless Waters", short_name = "REK_HEKA_BLOODTIDE_WATERS",
 	type = {"spell/bloodtide", 3}, require = mag_req3, points = 5,
 	mode = "passive",
-	cooldown = function(self, t) return math.floor(self:combatTalentLimit(t, 8, 20, 10)) end,
+	cooldown = function(self, t) return math.floor(20 / math.sqrt(self:getTalentLevel(t))) end,
+	getSpeedup = function(self, t) return self:combatTalentScale(t, 10, 20) end,
+	on_learn = function(self, t)
+		if self:getTalentLevelRaw(t) == 1 then
+			if self.player then
+				if self == game:getPlayer(true) then
+					position = self:findQuickHotkey("Player: Specific", "talent", t.id)
+					if not position then
+						local global_hotkeys = engine.interface.PlayerHotkeys.quickhotkeys["Player: Global"]
+						if global_hotkeys and global_hotkeys["talent"] then position = global_hotkeys["talent"][t.id] end
+					end
+				else
+					position = self:findQuickHotkey(self.name, "talent", t.id)
+				end
+			end
+
+			if position and not self.hotkey[position] then
+				self.hotkey[position] = {"talent", t.id}
+			else
+				for i = 1, 12 * (self.nb_hotkey_pages or 5) do
+					if not self.hotkey[i] then
+						self.hotkey[i] = {"talent", t.id}
+						break
+					end
+				end
+			end
+		end
+	end,
 	callbackOnTemporaryEffectAdd = function(self, t, eff_id, e, p)
 		if e.subtype and e.subtype.stun and not self:isTalentCoolingDown(t) then
 			self:removeEffect(eff_id)
 			self:startTalentCooldown(t, math.ceil(self:getTalentCooldown(t) * (1 - (self.stun_immune or 0))))
+			if (self.stun_immune or 0) >= 1 then
+				self:setEffect(self.EFF_REK_HEKA_RELENTLESS, 1, {power=t:_getSpeedup(self), src=self})
+			end
 		end
 	end,
 	info = function(self, t)
-		return ([[If you are stunned while this talent is ready, the stun is removed and this talent goes on cooldown.  Your stun immunity reduces the effective cooldown of this talent instead of having its normal effect.
-]]):tformat()
+		return ([[If you are stunned while this talent is ready, the stun is removed and this talent goes on cooldown.  Your stun immunity reduces the effective cooldown of this talent instead of having its normal effect. If your stun immunity was already 100%%, you get %d%% faster for one turn upon avoiding a stun this way.]]):tformat(t:_getSpeedup(self))
 	end,
 }
 

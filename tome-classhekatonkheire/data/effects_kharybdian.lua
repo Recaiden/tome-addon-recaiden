@@ -497,3 +497,17 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+newEffect{
+	name = "REK_HEKA_RELENTLESS", image = "talents/rek_heka_bloodtide_waters.png",
+	desc = "Relentless Waters",
+	long_desc = function(self, eff) return ("Increased effective speed by %d%%"):format(eff.power) end,
+	type = "physical",
+	subtype = { hands=true, arcane = true },
+	status = "beneficial",
+	parameters = { power=5 },
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "global_speed_add", eff.power/100)
+	end,
+	deactivate = function(self, eff)  end,
+}

@@ -111,7 +111,7 @@ function _M:spellCrit(dam, add_chance, crit_power_add)
 		end
 	end
 
-	return base_spellCrit(self, dam, (add_chance or 0)+boost, (crit_power_add or 0) + boost)
+	return base_spellCrit(self, dam, (add_chance or 0)+boost, (crit_power_add or 0) + boost/100)
 end
 
 

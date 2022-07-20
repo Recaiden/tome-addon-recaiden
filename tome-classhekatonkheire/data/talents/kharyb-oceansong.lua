@@ -34,7 +34,7 @@ newTalent{
 			self:startTalentCooldown(self.T_REK_HEKA_OCEANSONG_HARMONY)
 			game:playSoundNear(self, "talents/chant_one")
 		else
-			self:project(tg, x, y, DamageType.MIND, self:spellCrit(t.getDamage(self, t)))
+			self:project(tg, x, y, DamageType.REK_HEKA_MIND_CRIPPLE, self:spellCrit(t.getDamage(self, t)))
 		end
 	end,
 	info = function(self, t)

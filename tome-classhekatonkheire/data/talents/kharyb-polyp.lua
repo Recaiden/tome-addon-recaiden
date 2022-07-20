@@ -81,7 +81,7 @@ newTalent{
 			exp_worth = 0,
 			minion_be_nice = 1,
 			
-			max_life = 20, life_rating = 7, life_regen = 1,
+			max_life = 20, life_rating = 6, life_regen = 1,
 			stats = {
 				str=stat, dex=stat, mag=stat, wil=stat, cun=stat, con=stat,
 			},

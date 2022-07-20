@@ -46,7 +46,7 @@ newTalent{
 		self:unlearnTalent(self.T_REK_HEKA_CHRONORIUM_TELEPORT)
 	end,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), nolock=true, talent=t} end,
-	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 6, 10)) end,
+	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 4, 10)) end,
 	createPylon = function(self, t, x, y)
 		local img = "zodiac_0"..((game.calendar:getDayOfYear(game.turn) % 7) + 1)
 		game.level.map:addEffect(self,
