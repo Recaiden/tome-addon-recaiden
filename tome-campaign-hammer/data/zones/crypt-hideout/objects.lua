@@ -1,4 +1,4 @@
-load("/data/general/objects/objects-maj-eyal.lua")
+load("/data-campaign-hammer/general/objects/objects.lua")
 
 local Stats = require "engine.interface.ActorStats"
 local Talents = require "engine.interface.ActorTalents"

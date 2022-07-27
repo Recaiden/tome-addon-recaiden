@@ -1,4 +1,4 @@
-load("/data/general/objects/objects-maj-eyal.lua")
+load("/data-campaign-hammer/general/objects/objects.lua")
 
 for i = 1, 3 do
 	newEntity{ base = "BASE_LORE",

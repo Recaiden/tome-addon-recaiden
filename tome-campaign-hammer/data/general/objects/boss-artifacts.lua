@@ -115,7 +115,31 @@ newEntity{ base = "BASE_LONGSWORD",
 	},
 }
 
--- The Blank Book tool T3
+newEntity{ base = "BASE_TOOL_MISC",
+	power_source = {psionic=true},
+	unique=true, rarity=240,
+	type = "charm", subtype="wand",
+	name = "Blank Book", image = "object/spellbook.png",
+	unided_name = _t"leather-bound tome",desc = _t[[An untitled book, bound in leather, stained now with blood of men, elves, and dogs.  There are no markings on any of the pages, but just remembering the feel of the paper is intoxicating.]],
+	color = colors.SLATE,
+	level_range = {15, 30},
+	encumber = 5,
+	not_in_stores = true,
+	cost = 500,
+	material_level = 3,
+	wielder = {
+		resists={[DamageType.MIND] = 20,},
+		inc_damage={[DamageType.MIND] = 25,},
+		combat_mindpower=15,
+		combat_atk=15,
+		fear_immune=-0.5,
+	},
+	max_power = 20, power_regen = 1,
+	use_no_energy = true,
+	use_talent = { id = Talents.T_MENTAL_SHIELDING, level = 3, power = 20 },
+}
+
+
 newEntity{ base = "BASE_CLOTH_ARMOR",
 	power_source = {arcane=true},
 	unique = true,

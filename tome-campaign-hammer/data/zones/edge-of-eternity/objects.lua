@@ -1,1 +1,1 @@
-load("/data/general/objects/objects.lua")
+load("/data-campaign-hammer/general/objects/objects.lua")
