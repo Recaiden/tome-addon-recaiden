@@ -1,72 +1,62 @@
 newTalent{
-   short_name="REK_WIGHT_CYCLE_ELEMENT",
-   name = "Alter Fury Element",
-   type = {"undead/other", 1},
-   require = undeads_req1,
-   points = 1,
-   no_energy = true,
-   cooldown = 0,
-   action = function(self, t)
-      if self.rek_wight_damage == DamageType.FIRE then
-         self.rek_wight_damage = DamageType.LIGHTNING
-      elseif self.rek_wight_damage == DamageType.LIGHTNING  then
-         self.rek_wight_damage = DamageType.COLD
-      else
-         self.rek_wight_damage = DamageType.FIRE
+	name = "Alter Fury Element", short_name="REK_WIGHT_CYCLE_ELEMENT",
+	type = {"undead/other", 1}, require = undeads_req1, points = 1,
+	no_energy = true,
+	cooldown = 0,
+	action = function(self, t)
+		if self.rek_wight_damage == DamageType.FIRE then
+			self.rek_wight_damage = DamageType.LIGHTNING
+		elseif self.rek_wight_damage == DamageType.LIGHTNING  then
+			self.rek_wight_damage = DamageType.COLD
+		else
+			self.rek_wight_damage = DamageType.FIRE
+		end
+		return true
+	end,
+	info = function(self, t)
+		local damtype = DamageType.FIRE
+		if self.rek_wight_damage then
+			damtype = self.rek_wight_damage
       end
-      return true
-   end,
-   info = function(self, t)
-      local damtype = DamageType.FIRE
-      if self.rek_wight_damage then
-         damtype = self.rek_wight_damage
-      end
-      
-      local str = DamageType:get(damtype).name
-      return ([[Rotate the type of damage you do with Fury of the Wilds between Fire, Lightning, and Cold.  Currently: %s
-]]):tformat(str)
-   end,
+		
+		local str = DamageType:get(damtype).name
+		return ([[Rotate the type of damage you do with Fury of the Wilds between Fire, Lightning, and Cold.  Currently: %s]]):tformat(str)
+	end,
 }
 
 newTalent{
-   short_name="REK_WIGHT_FURY",
-   name = "Fury of the Wild",
-   type = {"undead/wight", 1},
-   require = undeads_req1,
-   points = 5,
-   no_energy = true,
-   cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 45, 25)) end,
-   tactical = { ATTACK = 2 },
-   on_learn = function(self, t)
-      self:learnTalent(self.T_REK_WIGHT_CYCLE_ELEMENT, 1)
-      if self.rek_wight_damage == nil then
-         self.rek_wight_damage = DamageType.FIRE
-      end
-   end,
-   on_unlearn = function(self, t)
-      self:unlearnTalent(self.T_REK_WIGHT_CYCLE_ELEMENT, 1)
-   end,
-   getDamage = function(self, t)
-      return math.min(200, self:combatStatScale(math.max(self:getMag(), self:getWil()), 10, 100, 2.0))
-   end,
-   action = function(self, t)
-      self:setEffect(self.EFF_REK_WIGHT_FURY, 5, {power=t.getDamage(self,  t)})
-      return true
-   end,
-   info = function(self, t)
-      return ([[For the next 5 turns, whenever you damage an enemy, you will unleash a radius 1 burst of %d elemental damage (once per enemy per turn).
+	name = "Fury of the Wild", short_name="REK_WIGHT_FURY",
+	type = {"undead/wight", 1}, require = undeads_req1, points = 5,
+	no_energy = true,
+	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 45, 25)) end,
+	tactical = { ATTACK = 2 },
+	on_learn = function(self, t)
+		self:learnTalent(self.T_REK_WIGHT_CYCLE_ELEMENT, 1)
+		if self.rek_wight_damage == nil then
+			self.rek_wight_damage = DamageType.FIRE
+		end
+	end,
+	on_unlearn = function(self, t)
+		self:unlearnTalent(self.T_REK_WIGHT_CYCLE_ELEMENT, 1)
+	end,
+	getDamage = function(self, t)
+		return math.min(200, self:combatStatScale(math.max(self:getMag(), self:getWil()), 10, 100, 2.0))
+	end,
+	action = function(self, t)
+		self:setEffect(self.EFF_REK_WIGHT_FURY, 5, {power=t.getDamage(self,  t)})
+		return true
+	end,
+	info = function(self, t)
+		return ([[For the next 5 turns, whenever you damage an enemy, you will unleash a radius 1 burst of %d elemental damage (once per enemy per turn).
 The damage improves with the stronger of your magic or willpower.
 
 #{italic}#Death and destruction, we must admit, are part of nature...#{normal}#]]):tformat(t.getDamage(self, t))
-   end,
+	end,
 }
 
 newTalent{
-	short_name = "REK_WIGHT_DRAIN",
-	name = "Draining Presence",
-	type = {"undead/wight", 2},
-	require = undeads_req2,
-	points = 5,
+	name = "Draining Presence", short_name = "REK_WIGHT_DRAIN",
+	type = {"undead/wight", 2}, require = undeads_req2, points = 5,
 	mode = "passive",
 	on_learn = function(self, t)
 		if not game:isCampaign("Maj'Eyal") then return end
@@ -126,20 +116,18 @@ The depth of their despair improves with the stronger of your magic or willpower
 }
 
 newTalent{
-   short_name = "REK_WIGHT_DODGE",
-   name = "Ephemeral",
-   type = {"undead/wight", 3},
-   require = undeads_req3,
-   points = 5,
-   mode = "passive",
-   getEvasion = function(self, t)
-      return math.min(self:combatTalentScale(t, 4, 18, 0.75), 30)
-   end,
-   passives = function(self, t, p)
-      self:talentTemporaryValue(p, "cancel_damage_chance", t.getEvasion(self, t))
-   end,
-   info = function(self, t)
-      return ([[You have a %d%% chance to reduce any incoming damage to 0.
+	name = "Ephemeral", short_name = "REK_WIGHT_DODGE",
+	type = {"undead/wight", 3}, require = undeads_req3, points = 5,
+	mode = "passive",
+	no_unlearn_last = true,
+	getEvasion = function(self, t)
+		return math.min(self:combatTalentScale(t, 4, 18, 0.75), 30)
+	end,
+	passives = function(self, t, p)
+		self:talentTemporaryValue(p, "cancel_damage_chance", t.getEvasion(self, t))
+	end,
+	info = function(self, t)
+		return ([[You have a %d%% chance to reduce any incoming damage to 0.
 
 Learning this talent regrows a fragment of your connection to nature, allowing you to use a single Infusion.
 
