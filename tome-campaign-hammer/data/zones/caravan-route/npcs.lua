@@ -160,8 +160,9 @@ But that doesn't mean he's giving up!]],
 
 	body = { INVEN = 10, MAINHAND=1, OFFHAND=1, BODY=1, NECK=1, HEAD=1, },
 	resolvers.auto_equip_filters("Bulwark"),
+	resolvers.equip{ {type="weapon", subtype="longsword", defined="HAMMER_CAPTAIN_SWORD", random_art_replace={chance=75}, autoreq=true}, },
 	equipment = resolvers.equip{
-		{type="weapon", subtype="mace", force_drop=true, tome_drops="boss", autoreq=true},
+		--{type="weapon", subtype="mace", force_drop=true, tome_drops="boss", autoreq=true},
 		{type="armor", subtype="shield", force_drop=true, tome_drops="boss", autoreq=true},
 		{type="armor", subtype="head", autoreq=true},
 		{type="armor", subtype="massive", force_drop=true, tome_drops="boss", autoreq=true},

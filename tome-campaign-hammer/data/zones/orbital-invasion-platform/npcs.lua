@@ -72,7 +72,8 @@ newEntity{
 	equipment = resolvers.equip{
 		{defined="VOID_STAR", autoreq=true},
 	},
-	resolvers.drops{chance=100, nb=10, {tome_drops="boss"} },
+	resolvers.drops{chance=100, nb=9, {tome_drops="boss"} },
+	resolvers.drops{chance=100, nb=1, {defined="HAMMER_CRYSTAL_DAGGER", random_art_replace={chance=75}}, },
 
 	resolvers.talents{
 		[Talents.T_VOID_BLAST]={base=1, every=7, max=7},

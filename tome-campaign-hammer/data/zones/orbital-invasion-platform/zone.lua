@@ -101,6 +101,7 @@ return {
 
 	on_enter = function(level)
 		game.player:resolveSource().faction = "fearscape"
+		game.player:resolveSource():attr("planetary_orbit", 1)
 	end,
 	
 	post_process = function(level)
@@ -123,7 +124,6 @@ return {
 			game.zone.cloud_sphere_rot = (game.zone.world_cloud_rot or 0)
 		end
 	end,
-
 
 	background = function(level, x, y, nb_keyframes)
 		if core.renderer then
@@ -176,8 +176,5 @@ return {
 			core.display.glMatrix(false)
 			core.display.glDepthTest(false)
 		end
-	end,
-	on_enter = function(lev, old_lev, newzone)
-		game.player:attr("planetary_orbit", 1)
 	end,
 }

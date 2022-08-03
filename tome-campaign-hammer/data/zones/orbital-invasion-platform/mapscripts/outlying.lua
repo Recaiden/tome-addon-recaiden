@@ -26,6 +26,7 @@ local exclusionPointsRoom = {}
 for i=rng.range(1,3),5 do
 	local lx, ly
 	local collision = false
+	local count = 0
 	repeat
 		collision = false
 		lx = rng.range(2, 40)
@@ -36,7 +37,8 @@ for i=rng.range(1,3),5 do
 		for _, point in pairs(exclusionPointsRoom) do
 			if math.abs(point.x-lx) <= 8 and math.abs(point.y-ly) <= 8 then collision = true end
 		end
-	until collision == false
+		count = count + 1
+	until (collision == false or count >= 100)
 	exclusionPointsRoom[i] = {x=lx, y=ly}
 	local room = Static.new(self:getFile("!room.tmx", "samples"))
 	if rng.percent(50) then local flip = rng.table{"x", "y"} room = room:flip(flip) end
@@ -63,7 +65,7 @@ for i=rng.range(1,15),30 do
 			if math.abs(point.x-lx) <= 1 and math.abs(point.y-ly) <= 1 then collision = true end
 		end
 		count = count + 1
-	until collision == false or count >= 100
+	until (collision == false or count >= 100)
 	exclusionPointsHole[i] = {x=lx, y=ly}
 	tm:put({x=lx,y=ly}, ';')
 end
