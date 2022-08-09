@@ -37,16 +37,13 @@ function _M:use(item)
 			else style = ("#LIGHT_RED#You have no more lives left."):tformat() end
 			game.log(style)
 			
-			local is_exploration = game.permadeath == game.PERMADEATH_INFINITE
 			self:cleanActor(self.actor)
 			self:resurrectBasic(self.actor, "eidolon_plane")
 			for e, _ in pairs(game.party.members) do if e ~= self.actor then
 					self:cleanActor(e)
 			end end
 			for uid, e in pairs(game.level.entities) do
-				if not is_exploration or game.party:hasMember(e) then
-					self:restoreResources(e)
-				end
+				self:restoreResources(e)
 			end
 
 			game.party:goToEidolon(self.actor)
@@ -79,8 +76,36 @@ function _M:use(item)
 		 if not config.settings.cheat then game:onTickEnd(function() game:saveGame() end) end
 		 
 		 self.actor:checkTwoHandedPenalty()
+	 elseif act == "adventure_refill" then
+		 self.actor.easy_mode_lifes = self.actor.easy_mode_lifes + 5
+		 self.actor.flag_false_exploration = true
+
+		 self.actor:attr("easy_mode_lifes", -1)
+		 local nb = self.actor:attr("easy_mode_lifes") and self.actor:attr("easy_mode_lifes") or 0
+		 local style
+		 if(nb > 0) then style = ("#LIGHT_RED#You have %d life(s) left."):tformat(nb)
+		 else style = ("#LIGHT_RED#You have no more lives left."):tformat() end
+		 game.log(style)
+		 
+		 self:cleanActor(self.actor)
+		 self:resurrectBasic(self.actor, "eidolon_plane")
+		 for e, _ in pairs(game.party.members) do if e ~= self.actor then
+				 self:cleanActor(e)
+		 end end
+		 for uid, e in pairs(game.level.entities) do
+			 self:restoreResources(e)
+		 end
+		 
+		 game.party:goToEidolon(self.actor)
+		 
+		 game.log("#LIGHT_RED#From the brink of death you seem to be yanked to another plane.")
+		 game.player:updateMainShader()
+		 if not config.settings.cheat then game:onTickEnd(function() game:saveGame() end) end
+		 
+		 self.actor:checkTwoHandedPenalty()
+ 
    else
-      return base_use(self, item)
+		 return base_use(self, item)
    end
 end
 
@@ -94,6 +119,12 @@ function _M:generateList()
          list[i+1] = list[i]
       end
       list[1] = {name="Beg the Eidolon to save you (Go to Exploration mode)", action="drop_to_explore"}
+   end
+	 if game.permadeath == game.PERMADEATH_MANY and profile:isDonator(1) then
+      for i=#list,1,-1 do
+         list[i+1] = list[i]
+      end
+      list[1] = {name="Ask the Eidolon for more time (Extra lives, Exp achievements)", action="adventure_refill"}
    end
    if game.permadeath == game.PERMADEATH_ONE then
       for i=#list,1,-1 do
