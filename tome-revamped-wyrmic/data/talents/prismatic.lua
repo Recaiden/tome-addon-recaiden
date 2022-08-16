@@ -168,7 +168,10 @@ newTalent{
     if self:knowTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY) then
       local dam_inc = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY, "getDamageIncrease")
       local resists_pen = self:callTalent(self.T_REK_WYRMIC_MULTICOLOR_FURY, "getResistPen")
-      local aspect = self.rek_wyrmic_dragon_damage
+      local aspect = self.rek_wyrmic_dragon_damage or
+			{
+				damtype=DamageType.PHYSICAL,
+			}
       self:talentTemporaryValue(p, "inc_damage", {[aspect.damtype] = dam_inc})
       self:talentTemporaryValue(p, "resists_pen", {[aspect.damtype] = resists_pen})
     end

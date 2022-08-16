@@ -270,9 +270,9 @@ newDamageType{
    end,
 }
 
--- Fire only
+-- Physical only
 newDamageType{
-	name = "fire", type = "REK_WYRMIC_NULL", text_color = "#WHITE#",
+	name = "soft sand", type = "REK_WYRMIC_NULL", text_color = "#WHITE#",
 	projector = function(src, x, y, type, dam, state)
 		state = initState(state)
 		useImplicitCrit(src, state)
