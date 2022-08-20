@@ -759,7 +759,7 @@ function _M:getTextualDesc(compare_with, use_actor)
 
 		compare_fields(w, compare_with, field, "see_stealth", "%+d", mod_align_stat( "See Stealth"))
 
-		compare_fields(w, compare_with, field, "see_invisible", "%+d", mod_align_stat( "See Invis"))
+		compare_fields(w, compare_with, field, "see_invisible", "%+d", mod_align_stat( "See Invisibility"))
 		compare_table_fields(w, compare_with, field, "wards", "%+d", mod_align_stat( "Wards" ), function(item)
 													 local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
 													 return col[2], (" %s"):format(item == "all" and "all" or (DamageType.dam_def[item] and DamageType.dam_def[item].name or "??")), {"color","LAST"}
@@ -1496,7 +1496,7 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
 	)
 
 	compare_list(
-		"On Crit:",
+		"On Critical:",
 		function(combat)
 			if not combat then return {} end
 			return get_special_list(combat, 'special_on_crit')
@@ -1576,7 +1576,7 @@ function _M:descAccuracyBonus(desc, weapon, use_actor)
 	elseif kind == "mace" then
 		desc:add( mod_align_stat( "Accuracy Bonus" ), {"color","LIGHT_GREEN"}, showpct(0.2, m), {"color","LAST"}, " base damage (max 20%)", true)
 	elseif kind == "staff" then
-		desc:add( mod_align_stat( "Accuracy Bonus" ), {"color","LIGHT_GREEN"}, showpct(2.5, m), {"color","LAST"}, " proc damage (max 250%)", true)
+		desc:add( mod_align_stat( "Accuracy Bonus" ), {"color","LIGHT_GREEN"}, showpct(2.0, m), {"color","LAST"}, " proc damage (max 200%)", true)
 	elseif kind == "knife" then
 		desc:add( mod_align_stat( "Accuracy Bonus" ), {"color","LIGHT_GREEN"}, showpct(0.5, m), {"color","LAST"}, " Ignore Armor (max 50%)", true)
 	end
