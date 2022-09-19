@@ -2,8 +2,13 @@ local _M = loadPrevious(...)
 
 local base_combatMovementSpeed = _M.combatMovementSpeed
 function _M:combatMovementSpeed(x, y)
-   if self:knowTalent(self.T_REK_HEKA_SHAMBLER_STEADY_GAIT) then
-		 return math.max(1, 1 * (self.global_speed or 1))
+	if self:knowTalent(self.T_REK_HEKA_SHAMBLER_STEADY_GAIT) then
+		local speed = (self.global_speed or 1)
+		if speed >= 1 then
+			return math.max(1, speed)
+		else
+			return math.min(1, speed)
+		end
 	 end
 
    return base_combatMovementSpeed(self, x, y)

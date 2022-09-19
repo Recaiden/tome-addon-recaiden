@@ -8,7 +8,7 @@ newTalent{
 	getHandRegen = function(self, t) return 5 end,
 	-- superloaded in /mod/class/interface/Combat.lua
 	info = function(self, t)
-		return ([[You approach at a constant, unimpeded pace.  Your movement speed is always exactly 100%%, and you gain %d%% resistance to knockbacks and %d%% resistance to hostile teleports.  If your global speed is less than 100%%, your movement speed is increased to compensate.
+		return ([[You approach at a constant, unimpeded pace.  Your movement speed is always exactly 100%%, and you gain %d%% resistance to knockbacks and %d%% resistance to hostile teleports.  If your global speed is not 100%%, your movement speed is changed to compensate.
 When an enemy becomes adjacent to you, you immediately recover %d hands.
 
 #{italic}#You are never late nor early.  Rather, things begin when you arrive.#{normal}#]]):tformat(t.getResistKnockback(self, t)*100, t.getResistTeleport(self, t)*100, t.getHandRegen(self, t))
@@ -37,7 +37,10 @@ Learning this talent increases your size category, and activating it temporarily
 class:bindHook(
 	"Combat:attackTargetWith",
 	function(self, hd)
-		-- remove in the normal case ,after the attack but before the on-hit effects.
+		-- check unarmed
+		if hd.weapon == self.combat then return hd end
+		
+		-- remove in the normal case, after the attack but before the on-hit effects.
 		if self:hasEffect(self.EFF_REK_HEKA_TOWERING_WRATH) then
 			self:removeEffect(self.EFF_REK_HEKA_TOWERING_WRATH)
 		end

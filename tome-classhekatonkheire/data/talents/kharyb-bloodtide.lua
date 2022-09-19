@@ -111,15 +111,15 @@ newTalent{
 				else
 					position = self:findQuickHotkey(self.name, "talent", t.id)
 				end
-			end
 
-			if position and not self.hotkey[position] then
-				self.hotkey[position] = {"talent", t.id}
-			else
-				for i = 1, 12 * (self.nb_hotkey_pages or 5) do
-					if not self.hotkey[i] then
-						self.hotkey[i] = {"talent", t.id}
-						break
+				if position and self.hotkey and not self.hotkey[position] then
+					self.hotkey[position] = {"talent", t.id}
+				else
+					for i = 1, 12 * (self.nb_hotkey_pages or 5) do
+						if not self.hotkey[i] then
+							self.hotkey[i] = {"talent", t.id}
+							break
+						end
 					end
 				end
 			end
