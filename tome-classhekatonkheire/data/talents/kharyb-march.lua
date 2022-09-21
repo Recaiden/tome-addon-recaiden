@@ -94,7 +94,7 @@ newTalent{
 		end
 	},
 	direct_hit = true,
-	requires_target = function(self, t) return self:getTalentLevel(t) >= 3 and (self.player or t.tactical.cure(self, t) <= 0) end,
+	requires_target = true,
 	range = 7,
 	getRemoveCount = function(self, t) return math.floor(self:combatTalentScale(t, 1, 5, "log")) end,
 	action = function(self, t)

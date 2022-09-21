@@ -167,12 +167,11 @@ newTalent{
 			target:crossTierEffect(target.EFF_BRAINLOCKED, self:combatSpellpower(1, t.getPowerBonus(self, t)))
 		end
 	end,
+	-- minion damage implemented in hook below
 	callbackOnDealDamage = function(self, t, val, target, dead, death_note)
 		if val <= 0 then return end
 		if self.summoner and self:reactionToward(target) < 0 then
-			if rng.percent(self.summoner:callTalent("T_TERROR_FRENZY", "getChance")) then
-				self.summoner:callTalent("T_TERROR_FRENZY", "doReset")
-			end
+			t.kill(self, t, target)
 		end
 	end,
 	info = function(self, t)
@@ -180,3 +179,15 @@ newTalent{
 Spellpower: increases damage.]]):tformat(t.getPowerBonus(self, t), damDesc(self, DamageType.MIND, t.getDamage(self, t)))
 	end,
 }
+class:bindHook("DamageProjector:final", function(self, hd)
+	local src = hd.src
+	local dam = hd.dam
+	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
+	if not target or not src or dam <= 0 then return hd end
+
+	if src.summoner and src.summoner.knowTalent and src.summoner:knowTalent(src.T_REK_HEKA_TENTACLE_EXECUTE) then
+		src.summoner:callTalent(src.T_REK_HEKA_TENTACLE_EXECUTE, "kill", target)
+	end
+	return hd
+end)
+
