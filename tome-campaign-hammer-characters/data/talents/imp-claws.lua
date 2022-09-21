@@ -97,58 +97,63 @@ Learning this talent passively adds %d fire damage to your attacks.]]):tformat(t
 }
 
 newTalent{
-	name = "Cinder Power", short_name = "REK_IMP_FLAME_FRENZY",
+	name = "Flame Frenzy", short_name = "REK_IMP_FLAME_FRENZY",
 	type = {"corruption/imp-claws", 3}, require = racial_req3,	points = 5,
 	mode = "passive",
-	critPower = function(self, t) return self:combatTalentScale(t, 5, 20, 0.75) end,
-	spellCDR = function(self, t) return self:combatTalentScale(t, 5, 15, 0.75) end,
-	passives = function(self, t, p)
-		self:talentTemporaryValue(p, "combat_critical_power", t.critPower(self, t))
-		self:talentTemporaryValue(p, "spell_cooldown_reduction", t.spellCDR(self, t)/100)
-	end,
+	autolearn_talent = "T_VIM_POOL",
+	getDamage = function(self, t) return self:combatTalentScale(t, 0.10, 0.20) end,
 	info = function(self, t)
-		return ([[Increases critical strike power by %d%% and spell cooldown reduction by %d%%.
+		return ([[You deal more damage as your vim decreases, up to %d%% at 0 vim.
 
-#{italic}#More than any other demons, the children of ruby still feel the unstable magic of the Spellblaze.#{normal}#]]):tformat(t.critPower(self, t), t.spellCDR(self, t))
+#{italic}#As you burn through your supplies of stolen vim, your flames grow hotter and hotter.#{normal}#]]):tformat(t:_getDamage(self)*100)
 	end,
 }
+class:bindHook("DamageProjector:beforeResists", function(self, hd)
+	local src = hd.src
+	local dam = hd.dam
+	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
+	if not target or not src then return hd end
+
+	if src.knowTalent and src:knowTalent(src.T_REK_IMP_FLAME_FRENZY) then
+		local max = (src:maxVim() or 1)
+		hd.dam = dam * (1 + ((max - (src:getVim() or 1))/max) * self:callTalent(self.T_REK_IMP_FLAME_FRENZY, "getDamage"))
+	end
+	return hd
+end)
 
 newTalent{
-	name = "Daelach Hross", short_name = "REK_IMP_DANCING_FLAME",
+	name = "Dancing Flame", short_name = "REK_IMP_DANCING_FLAME",
 	type = {"corruption/imp-claws", 4}, require = racial_req4, points = 5,
-	no_energy = true,
-	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 5, 45, 25)) end,
-	tactical = { DISABLE = 2, ATTACKAREA = 1 },
-	range = 5,
-	target = function(self, t) return {type="ball", range=0, friendlyfire=false, selffire=false, radius=self:getTalentRange(t), talent=t}
+	mode = "passive",
+	getFatiguedDefense = function(self, t)
+		local def = self:combatDefense(fake)
+		local ftg = math.max(0, combatFatigue() - t:_getAllowedFatigue(self))
+		return def / ( 1 + ftg / 5)
 	end,
-	getDamage = function(self, t)
-		return math.max(self:combatStatScale("mag", 20, 60), self:combatStatScale("wil", 20, 80))
-	end,
-	getDuration = function(self, t) return 5 end,
-	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t, friendlyfire=false} end,
-	action = function(self, t)
-		local tg = self:getTalentTarget(t)
-		self:project({type="ball", range=0, radius=self:getTalentRange(t), talent=t, friendlyfire=false}, self.x, self.y, DamageType.BLIND_ALLPOWER, t.getDuration(self, t))
-		self:project({type="ball", range=0, radius=self:getTalentRange(t), talent=t, friendlyfire=false}, self.x, self.y, DamageType.BLIND_ALLPOWER, t.getDuration(self, t))
+	getThresholdDodge = function(self, t) return self:combatTalentScale(t, 20, 45) + self:combatDefense(fake) - 20 end,
+	getThresholdHurt = function(self, t) return return self:combatTalentScale(t, 20, 45) + self:combatDefense(fake) + 20 end,
+	getMinReduction = function(self, t) return 0.1 end,
+	getAllowedFatigue = function(self, t) return self:getTalentLevel(t)	end,
+	calcReduction = function(self, t, dam)
+		local dodge = t:_getThresholdDodge(self)
+		--100% dodged
+		if dam >= t:_getThresholdDodge(self) then return dam end
+		
+		local hurt = t:_getThresholdHurt(self)
+		--50% to 100% dodged
+		if dam <= hurt then return dam*(1.0 - (dam-dodge)*0.0125) end 
 
-		local ef = game.level.map:addEffect(
-			self, self.x, self.y, t.getDuration(self, t),
-			DamageType.SHADOWFLAME_FRIENDS, self:spellCrit(t.getDamage(self, t)),
-			3,
-			5, nil,
-			{type="firestorm", only_one=true},
-			function(e) e.x = e.src.x  e.y = e.src.y  return true end,
-			0, 0
-		)
-		ef.name = _t"shadowflame surge"
-		game:playSoundNear(self, "talents/fire")
-		return true
+		-- minimum to 50% dodged
+		local count = 0
+		local amount = dam
+		while amount > 40 do
+			count = count + 1
+			amount = amount / 2
+		end
+		local base = 0.5 / (2^count)
+		return math.max(t:_getMinReduction(self), base) * dam*(1.0 - (dam-dodge)*0.0125)
 	end,
 	info = function(self, t)
-		return ([[Conjure a storm of corrupted ash and blazing coals around you in a radius of %d, blinding enemies (#SLATE#Highest power vs Physical#LAST#) and dealing %0.1f fire and %0.1f darkness damage each turn for %d turns.  
-Magic or Willpower: increases damage.
-
-#{italic}#After tormenting them for countless years, the power of the dust mages has come into the demons' hands.#{normal}#]]):format(self:getTalentRange(t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)/2), damDesc(self, DamageType.DARKNESS, t.getDamage(self, t)/2), t:_getDuration(self))
+		return ([[You move with the grace of the flame, reducing the damage you take from non-attack sources.  Damage less than %d is completely negated.  Damage over %d is reduced by only %d%%.  These thresholds are improved by defense and decrease sharply if you exceed %d fatigue.]]):format(self:_getThresholdDodge(t), self:_getThresholdHurt(t), self:_getMinReduction(t), self:_getAllowedFatigue(t))
 	end,
 }
