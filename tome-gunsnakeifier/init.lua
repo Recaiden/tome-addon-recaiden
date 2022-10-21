@@ -1,0 +1,13 @@
+long_name = "Return of the Gunsnake"
+short_name = "gunsnakeifier"
+for_module = "tome"
+version = {1,7,0}
+addon_version = {0, 1, 1}
+weight = 2162
+author = { 'Recaiden' }
+description = [[Creatures without hands are allowed to be tinker classes again.]]
+tags = {'rare','randboss','elite','enemy','gun','gunsnake','tinker'} -- tags MUST immediately follow description
+hooks = true
+overload = false
+superload = false
+data = true
