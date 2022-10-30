@@ -65,6 +65,17 @@ newBirthDescriptor{
    copy_add = {
       life_rating = -5,
    },
+	 cosmetic_options = {
+		 steel_rider = {
+			{name=_t"Classic Buggy", on_actor=function(actor) actor.deml_ride_style = "classic" end},
+			{name=_t"Heavy Buggy", on_actor=function(actor) actor.deml_ride_style = "tread_bright" end},
+			{name=_t"Heavy Buggy (dark)", on_actor=function(actor) actor.deml_ride_style = "classic" end},
+		 },
+		 drones = {
+			{name=_t"Rotor Drones", on_actor=function(actor) actor.deml_drone_style = "classic" end},
+			{name=_t"Beetle Drones", on_actor=function(actor) actor.deml_drone_style = "beetle" end},
+		 },
+	},
 }
 
 -- Add to metaclass

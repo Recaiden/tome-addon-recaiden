@@ -101,9 +101,11 @@ newEffect{
 
 		local selfbase = self.replace_display or self
 		if not selfbase.moddable_tile then
-			eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=1, oversize=1.0, a=225, appear=1, speed=0, img="demolisher_ride", radius=0}))
+			local img = self.deml_ride_style or "classic"
+			eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=1, y=-0.01, oversize=0.8, a=225, appear=1, speed=0, img="demolisher_ride_"..img, radius=0}))
 		end		
 		self:updateModdableTile()
+		game.level.map:updateMap(self.x, self.y)
 	end,
 	deactivate = function(self, eff)
 		if eff.particle then

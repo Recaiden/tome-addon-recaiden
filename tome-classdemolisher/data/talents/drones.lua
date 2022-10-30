@@ -112,8 +112,13 @@ newTalent{
 
 		if core.shader.active() then
 			-- custom size-scaling shader
-			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1.7, img="rotating_gunner_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderRadius=0.50, cylinderVerticalPos=-0.06, cylinderRotationSpeed=2.0, appearTime=0.2}})
-			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1.7, img="rotating_gunner_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderRadius=0.50, cylinderVerticalPos=-0.06, cylinderRotationSpeed=2.0, appearTime=0.2}})
+			if self.deml_drone_style and self.deml_drone_style == "beetle" then
+				self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1.7, img="rotating_gunbeetle_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderRadius=0.50, cylinderVerticalPos=-0.06, cylinderRotationSpeed=2.0, appearTime=0.2}})
+				self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1.7, img="rotating_gunbeetle_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderRadius=0.50, cylinderVerticalPos=-0.06, cylinderRotationSpeed=2.0, appearTime=0.2}})
+			else
+				self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1.7, img="rotating_gunner_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderRadius=0.50, cylinderVerticalPos=-0.06, cylinderRotationSpeed=2.0, appearTime=0.2}})
+				self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1.7, img="rotating_gunner_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderRadius=0.50, cylinderVerticalPos=-0.06, cylinderRotationSpeed=2.0, appearTime=0.2}})
+			end
 		end
 
 		return ret
@@ -205,7 +210,7 @@ newTalent{
 		local m = NPC.new{
 			type = "construct", subtype = "drone",
 			display = "*", color=colors.GREEN,
-			name = "hurricane drone", faction = self.faction, image = "npc/hurricane_drone.png",
+			name = "hurricane drone", faction = self.faction, image = (self.deml_drone_style and self.deml_drone_style == "beetle") and "npc/hurricane_beetle_drone.png" or "npc/hurricane_drone.png",
 			desc = _t[[A strange hovering device of whirling blades. Your hair stands on end when you approach.]],
 			autolevel = "none",
 			ai = "summoned", ai_real = "dumb_talented", ai_state = { talent_in=1, },
@@ -269,8 +274,13 @@ newTalent{
 			value = t.getShrug(self, t) * 5,
 		}
 		if core.shader.active() then
-			self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1.2, img="rotating_guardian_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderRadius=0.42, cylinderHeight = 0.3, cylinderVerticalPos=-0.17, cylinderRotationSpeed=1.5, appearTime=0.2}})
-			self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1.2, img="rotating_guardian_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderRadius=0.42, cylinderHeight = 0.3, cylinderVerticalPos=-0.17, cylinderRotationSpeed=1.5, appearTime=0.2}})
+			if self.deml_drone_style and self.deml_drone_style == "beetle" then
+				self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1.2, img="rotating_beetle_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderRadius=0.42, cylinderHeight = 0.3, cylinderVerticalPos=-0.17, cylinderRotationSpeed=1.5, appearTime=0.2}})
+				self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1.2, img="rotating_beetle_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderRadius=0.42, cylinderHeight = 0.3, cylinderVerticalPos=-0.17, cylinderRotationSpeed=1.5, appearTime=0.2}})
+			else
+				self:talentParticles(ret, {type="shader_shield", args={toback=true,  size_factor=1.2, img="rotating_guardian_drone_centered"}, shader={type="orbitting_drone", noup=2.0, cylinderRadius=0.42, cylinderHeight = 0.3, cylinderVerticalPos=-0.17, cylinderRotationSpeed=1.5, appearTime=0.2}})
+				self:talentParticles(ret, {type="shader_shield", args={toback=false, size_factor=1.2, img="rotating_guardian_drone_centered"}, shader={type="orbitting_drone", noup=1.0, cylinderRadius=0.42, cylinderHeight = 0.3, cylinderVerticalPos=-0.17, cylinderRotationSpeed=1.5, appearTime=0.2}})
+			end
 		end
 		return ret
 	end,
@@ -353,7 +363,7 @@ newTalent{
 		local m = NPC.new{
 			type = "construct", subtype = "drone",
 			display = "*", color=colors.GREEN,
-			name = "shroud drone", faction = self.faction, image = "npc/smoke_drone.png",
+			name = "shroud drone", faction = self.faction, image = (self.deml_drone_style and self.deml_drone_style == "beetle") and "npc/smoke_beetle_drone.png" or "npc/smoke_drone.png",
 			desc = _t[[A strange hovering device of hissing smoke, nearly impossible to see.]],
 			autolevel = "none",
 			ai = "summoned", ai_real = "dumb_talented", ai_state = { talent_in=1, },

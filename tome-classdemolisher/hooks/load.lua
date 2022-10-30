@@ -82,26 +82,96 @@ end)
 -- end)
 
 
-function hookupdateModdableTileBack(self, data)
+function hook_updateModdableTileBack(self, data)
 	local base = data.base or {}
 	local add = data.add or {}
-	print("DEBUG moddable tile")
-	print(self.name)
-	print(#add)
 	if self:hasEffect(self.EFF_REK_DEML_RIDE) then
-		add[#add+1] = {image = "demolisher_ride_back.png", auto_tall=1}
+		local img = self.deml_ride_style or "classic"
+		add[#add+1] = {image = "demolisher_ride_"..img.."_back.png", auto_tall=1}
 	end
 	data.add = add
 end
 
-function hookupdateModdableTileFront(self, data)
+function hook_updateModdableTileSkin(self, data)
 	local base = data.base or {}
 	local add = data.add or {}
 	if self:hasEffect(self.EFF_REK_DEML_RIDE) then
-		add[#add+1] = {image = "demolisher_ride_front.png", auto_tall=1}
+	
+		local masked = add[#add]
+
+		masked.image_alter="sdm"
+		masked.sdm_double="dynamic"
+		masked.shader="alpha_shader"
+		masked.shader_args={}
+		masked.textures={{"image", masked.image}, {"image", "particles_images/masks/mask_pants.png"}}
+		masked.auto_tall=1
+		
+		add[#add] = masked
 	end
 	data.add = add
 end
 
-class:bindHook("Actor:updateModdableTile:back", hookupdateModdableTileBack)
-class:bindHook("Actor:updateModdableTile:front", hookupdateModdableTileFront)
+function hook_updateModdableTileFront(self, data)
+	local base = data.base or {}
+	local add = data.add or {}
+	if self:hasEffect(self.EFF_REK_DEML_RIDE) then
+		-- go through and apply a masked shader to legs and lower body, if they exist
+		local base = "player/"..self.moddable_tile:gsub("#sex#", self.female and "female" or "male").."/"
+		local i = self:getObjectModdableTile(self.INVEN_FEET)
+		local j = self:getObjectModdableTile(self.INVEN_BODY)
+		local jfile =  base..(j and j.moddable_tile2 or "nosuchlayer")..".png"
+		for idx, mos in ipairs(add) do
+			if mos.bodyplace and mos.bodyplace == "feet" then
+				local masked = add[idx]
+				masked.image_alter="sdm"
+				masked.sdm_double="dynamic"
+				masked.shader="alpha_shader"
+				masked.shader_args={}
+				if masked.textures then
+					masked.textures[#masked.textures+1] = {"image", "particles_images/masks/mask_boots.png"}
+				else
+					masked.textures={{"image", base..(i.moddable_tile)..".png"}, {"image", "particles_images/masks/mask_boots.png"}}
+				end
+				masked.auto_tall=1
+				add[idx] = masked
+			end
+			if mos.bodyplace and mos.bodyplace == "body" then
+				if mos.image == jfile then
+					local  masked = add[idx]
+					masked.image_alter="sdm"
+					masked.sdm_double="dynamic"
+					masked.shader="alpha_shader"
+					masked.shader_args={}
+					if masked.textures then
+						masked.textures[#masked.textures+1] = {"image", "particles_images/masks/mask_pants.png"}
+					else
+						masked.textures={{"image", base..(j.moddable_tile2)..".png"}, {"image", "particles_images/masks/mask_pants.png"}}
+					end
+					masked.auto_tall=1
+					add[idx] = masked
+				elseif string.find(mos.image, "lower_body") or string.find(mos.image, "upper_body") then
+					local  masked = add[idx]
+					masked.image_alter="sdm"
+					masked.sdm_double="dynamic"
+					masked.shader="alpha_shader"
+					masked.shader_args={}
+					if masked.textures then
+						masked.textures[#masked.textures+1] = {"image", "particles_images/masks/mask_pants.png"}
+					else
+						masked.textures={{"image", mos.image}, {"image", "particles_images/masks/mask_pants.png"}}
+					end
+					masked.auto_tall=1
+					add[idx] = masked
+				end
+			end
+		end
+		
+		local img = self.deml_ride_style or "classic"
+		add[#add+1] = {image = "demolisher_ride_"..img.."_front.png", auto_tall=1}
+	end
+	data.add = add
+end
+
+class:bindHook("Actor:updateModdableTile:back", hook_updateModdableTileBack)
+class:bindHook("Actor:updateModdableTile:skin", hook_updateModdableTileSkin)
+class:bindHook("Actor:updateModdableTile:front", hook_updateModdableTileFront)

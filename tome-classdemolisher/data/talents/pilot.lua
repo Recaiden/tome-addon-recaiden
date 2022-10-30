@@ -40,6 +40,10 @@ newTalent{
 		return not self:hasEffect(self.EFF_REK_DEML_RIDE)
 	end,
 	on_learn = function(self, t)
+		if not self.deml_ride_style then
+			self.deml_ride_style = "classic" -- rng.table({"classic", "tread_bright", "tread_dark"})
+			self.deml_auto_style = true
+		end
 		local level = self:getTalentLevelRaw(t)
 		if level == 1 then
 			self.hull_rating = 5
@@ -255,7 +259,7 @@ newTalent{
 			function(px, py)
 				local target = game.level.map(px, py, engine.Map.ACTOR)
 				if not target then return end
-				DamageType:get(DamageType.FIRE).projector(self, px, py, DamageType.FIRE, t.getDamage(self, t))
+				DamageType:get(DamageType.REK_DEML_FIRE_DAZE).projector(self, px, py, DamageType.REK_DEML_FIRE_DAZE, t.getDamage(self, t))
 			end)
 		game:playSoundNear(self, "talents/fire")
 
@@ -266,7 +270,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Set a short fuse leading to your ride's fuel tank and jump out.  If you target an adjacent creature, you jump back up to %d grids from your target, leaving your ride behind.  If you target an empty space, your ride moves to the target location while you stay behind. 
-Either way, your ride then explodes, dealing %d fire damage in radius %d and putting Steel Rider on a 10 turn cooldown.
+Either way, your ride then explodes, dazing (#SLATE#Steampower vs Physical#LAST#) and dealing %d fire damage in radius %d and putting Steel Rider on a 10 turn cooldown.
 
 #{italic}#When the worst comes to worst, your ride can serve as a final weapon.#{normal}#]]):tformat(self:getTalentRange(t), damDesc(self, DamageType.FIRE, t.getDamage(self, t)), self:getTalentRadius(t))
 	end,

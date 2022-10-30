@@ -6,6 +6,10 @@ newTalent{
 	on_learn = function(self, t)
 		local level = self:getTalentLevelRaw(t)
 		if level == 1 then
+			if not self.deml_ride_style or self.deml_auto_style then
+				self.deml_ride_style = "tread_dark"
+				self.deml_auto_style = true
+			end
 			for inven_id, inven in pairs(self.inven) do
 				if inven.worn then
 					for item, o in ipairs(inven) do
@@ -21,6 +25,9 @@ newTalent{
 	on_unlearn = function(self, t)
 		local level = self:getTalentLevelRaw(t)
 		if level == 0 then
+			if self.deml_auto_style then
+				self.deml_ride_style = "classic"
+			end
 			for inven_id, inven in pairs(self.inven) do
 				if inven.worn then
 					for item, o in ipairs(inven) do
@@ -46,7 +53,8 @@ newTalent{
 		--rewear it with new stats
 		local _, _, inven_id = self and self:findInAllInventoriesByObject(o)
 		self:onTakeoff(o, inven_id, true)
-		o.wielder.max_hull = math.ceil(amt * 0.75)
+		o.wielder.max_hull = (o.wielder.max_hull or 0) + math.ceil(amt * 0.75)
+		o.hull_converted = math.ceil(amt * 0.75)
 		o.wielder.max_life = math.floor(amt * 0.25)
 		self:onWear(o, inven_id, true)
 	end,
@@ -54,9 +62,10 @@ newTalent{
 		if not o then return end
 		if not o.wielder then return end
 		if not o.wielder.max_life then return end
-		if not o.wielder.max_hull then return end
-		o.wielder.max_life = o.wielder.max_life + o.wielder.max_hull
-		o.wielder.max_hull = nil
+		if not o.hull_converted then return end
+		o.wielder.max_life = o.wielder.max_life + o.hull_converted
+		o.wielder.max_hull = o.wielder.max_hull - o.hull_converted
+		if o.wielder.max_hull < 1 then o.wielder.max_hull = nil end
 	end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "max_hull", t.getHullBoost(self,t))
