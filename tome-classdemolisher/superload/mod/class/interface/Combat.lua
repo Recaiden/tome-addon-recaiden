@@ -13,8 +13,7 @@ function _M:bumpInto(target, x, y)
 		if not game.level.map:checkAllEntities(self.x+dx*2, self.y+dy*2, "block_move", self) then
 			self:move(self.x+dx*2, self.y+dy*2, true)
 			if self:isTalentActive(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
-				local damageFlame = self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "getDamage")
-				game.level.map:addEffect(self, target.x, target.y, 4, engine.DamageType.FIRE, damageFlame, 0, 5, nil, {type="inferno"}, nil, true)
+				self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "applyFlames", target.x, target.y)
 			end
 		end
 		local energy = game.energy_to_act * self:combatMovementSpeed(x, y)

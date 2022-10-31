@@ -266,7 +266,7 @@ t("You must land in an empty space.", "你必须着陆于空地。", "logPlayer"
 t("Your jump was partially blocked.", "你的脱离部分受阻.", "logPlayer")
 t("You are not able to jump in that direction.", "你不能往那个方向跳.", "logPlayer")
 t([[Set a short fuse leading to your ride's fuel tank and jump out.  If you target an adjacent creature, you jump back up to %d grids from your target, leaving your ride behind.  If you target an empty space, your ride moves to the target location while you stay behind. 
-Either way, your ride then explodes, dealing %d fire damage in radius %d and putting Steel Rider on a 10 turn cooldown.
+Either way, your ride then explodes, dazing (#SLATE#Steampower vs Physical#LAST#) and dealing %d fire damage in radius %d and putting Steel Rider on a 10 turn cooldown.
 
 #{italic}#When the worst comes to worst, your ride can serve as a final weapon.#{normal}#]], [[点燃引线，引到车子的油箱，然后跳出车外。如果你的目标是一个邻近的生物，你会脱离你的目标到 %d 格远的地方，把你的战车留在原地。如果你瞄准了一个空地，你的战车就会移动到目标位置，而你则留在原地。
 任何一种方式，你的战车将爆炸，在半径 %d 格内 造成 %d 火焰伤害 并使钢铁座驾冷却10个回合。

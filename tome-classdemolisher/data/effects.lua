@@ -182,8 +182,13 @@ newEffect{
 	parameters = { dir=1 },
 	cancel_on_level_change = true,
 	activate = function(self, eff)
+		eff.particle = self:addParticles(Particles.new("circle", 1, {base_rot=-1*util.dirToAngle(eff.dir)+90, y=0, oversize=0.6, a=100, appear=1, toback=true, speed=0, img="deml_drift_indicator", radius=1}))
 	end,
-	
+	deactivate = function(self, eff)
+		if eff.particle then
+			self:removeParticles(eff.particle)
+		end
+	end,
 	-- Method 2
 	on_timeout = function(self, eff)
 		if self.running then return end -- not in autoexplore or run
@@ -193,8 +198,7 @@ newEffect{
 		
 		if not game.level.map:checkAllEntities(self.x+dx, self.y+dy, "block_move", self) then
 			if self:isTalentActive(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
-				local damageFlame = self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "getDamage")
-				game.level.map:addEffect(self, self.x, self.y, 4, engine.DamageType.FIRE, damageFlame, 0, 5, nil, {type="inferno"}, nil, true)
+				self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "applyFlames", self.x, self.y)
 			end
 			self:move(self.x+dx, self.y+dy, true)
 		end

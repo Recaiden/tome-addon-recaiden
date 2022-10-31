@@ -11,9 +11,12 @@ newTalent{
 	on_unlearn = function(self, t) updateSteelRider(self) end,
 	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 10, 50) end,
 	getMovement = function(self, t) return self:combatTalentScale(t, 0.18, 0.5, 0.75) end,
+	applyFlames = function(self, t, x, y)
+		game.level.map:addEffect(self, x, y, 4, engine.DamageType.FIRE, t.getDamage(self, t), 0, 5, nil, {type="inferno"}, nil, true)
+	end,
 	callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
 		if moved and not force and self:getSteam() > 0 then
-			game.level.map:addEffect(self, ox, oy, 4, engine.DamageType.FIRE, t.getDamage(self, t), 0, 5, nil, {type="inferno"}, nil, true)
+			t.applyFlames(self, t, ox, oy)
 		end
 	end,
 	activate = function(self, t)
@@ -47,10 +50,11 @@ newTalent{
 		if game.zone.wilderness then return end -- not on the world map
 		if not ox or not oy then return end
 		if not x or not y then return end
-		if not moved or force then return end
+		if (not moved) or force then return end
 		local dx, dy = (self.x - ox), (self.y - oy)
 		if dx ~= 0 then dx = dx / math.abs(dx) end
 		if dy ~= 0 then dy = dy / math.abs(dy) end
+		if (dy == 0) and (dx == 0) then return end
 		local dir = util.coordToDir(dx, dy, 0)
 		self:setEffect(self.EFF_REK_DEML_DRIFTING, 2, {dir=dir, src=self})
 	end,
@@ -115,11 +119,10 @@ newTalent{
 
 		-- set the ground we cover on fire
 		if self:isTalentActive(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
-			local damageFlame = self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "getDamage")
 			local sub_tg = {type="beam", range=self:getTalentRange(t), talent=t}
 			self:project(sub_tg, tx, ty, function(px, py)
-										 game.level.map:addEffect(self, px, py, 4, engine.DamageType.FIRE, damageFlame, 0, 5, nil, {type="inferno"}, nil, true)
-																	 end)
+										 self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "applyFlames", px, py)
+			end)
 		end
 		
 		self:move(tx, ty, true)
@@ -133,8 +136,7 @@ newTalent{
 		if core.fov.distance(self.x, self.y, x, y) == 1 then
 			DamageType:get(DamageType.PHYSICAL).projector(self, target.x, target.y, DamageType.PHYSICAL, did_crit * t.getCrashDamage(self, t))
 			if self:isTalentActive(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
-				local damageFlame = self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "getDamage")
-				game.level.map:addEffect(self, target.x, target.y, 4, engine.DamageType.FIRE, damageFlame, 0, 5, nil, {type="inferno"}, nil, true)
+				self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "applyFlames", talent.x, talent.y)
 			end
 			target:attr("knockback_immune", 1)
 			local blast = {type="ball", range=0, radius=3, friendlyfire=false}
