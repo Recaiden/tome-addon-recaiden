@@ -40,7 +40,7 @@ newTalent{
 		return not self:hasEffect(self.EFF_REK_DEML_RIDE)
 	end,
 	on_learn = function(self, t)
-		if not self.deml_ride_style then
+		if self.deml_ride_style == nil then
 			self.deml_ride_style = "classic" -- rng.table({"classic", "tread_bright", "tread_dark"})
 			self.deml_auto_style = true
 		end

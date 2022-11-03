@@ -21,6 +21,11 @@ tome-classwitchdoctor
 tome-classtrooper
 tome-tides
 
+# old mods
+tome-gunsnakeifier
+tome-weapontech
+tome-tinkervtinker
+
 # ToME files
 *.teaa
 *.teaac

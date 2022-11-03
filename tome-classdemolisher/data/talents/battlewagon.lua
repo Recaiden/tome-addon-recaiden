@@ -63,6 +63,7 @@ newTalent{
 		if not o.wielder then return end
 		if not o.wielder.max_life then return end
 		if not o.hull_converted then return end
+		if not o.wielder.max_hull then return end
 		o.wielder.max_life = o.wielder.max_life + o.hull_converted
 		o.wielder.max_hull = o.wielder.max_hull - o.hull_converted
 		if o.wielder.max_hull < 1 then o.wielder.max_hull = nil end

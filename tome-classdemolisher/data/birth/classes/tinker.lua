@@ -67,13 +67,72 @@ newBirthDescriptor{
    },
 	 cosmetic_options = {
 		 steel_rider = {
-			{name=_t"Classic Buggy", on_actor=function(actor) actor.deml_ride_style = "classic" end},
-			{name=_t"Heavy Buggy", on_actor=function(actor) actor.deml_ride_style = "tread_bright" end},
-			{name=_t"Heavy Buggy (dark)", on_actor=function(actor) actor.deml_ride_style = "classic" end},
+			 {
+				 name=_t"Classic Buggy",
+				 on_actor=function(actor)
+					 actor.deml_ride_style = "classic"
+					 actor.deml_auto_style = false
+				 end,
+				 preview_particles = {
+					 {
+						 particle = "circle",
+						 args = {base_rot=1, oversize=0.8, a=225, appear=1, speed=0,
+										 img="demolisher_ride_classic", radius=1}
+					 }
+				 }
+			 },
+			 {
+				 name=_t"Heavy Buggy",
+				 on_actor=function(actor)
+					 actor.deml_ride_style = "tread_bright"
+					 actor.deml_auto_style = false
+				 end,
+				 preview_particles = {
+					 {
+						 particle = "circle",
+						 args = {base_rot=1, oversize=0.8, a=225, appear=1, speed=0,
+										 img="demolisher_ride_tread_bright", radius=1}
+					 }
+				 }
+			 },
+			 {
+				 name=_t"Heavy Buggy (dark)",
+				 on_actor=function(actor)
+					 actor.deml_ride_style = "tread_dark"
+					 actor.deml_auto_style = false
+				 end,
+				 preview_particles = {
+					 {
+						 particle = "circle",
+						 args = {base_rot=1, oversize=0.8, a=225, appear=1, speed=0,
+										 img="demolisher_ride_tread_dark", radius=1}
+					 }
+				 }
+			 },
 		 },
 		 drones = {
-			{name=_t"Rotor Drones", on_actor=function(actor) actor.deml_drone_style = "classic" end},
-			{name=_t"Beetle Drones", on_actor=function(actor) actor.deml_drone_style = "beetle" end},
+			 {
+				 name=_t"Rotor Drones",
+				 on_actor=function(actor) actor.deml_drone_style = "classic" end,
+				 preview_particles = {
+					 {
+						 particle = "circle",
+						 args = {base_rot=1, oversize=1.0, a=225, appear=1, speed=0,
+										 img="deml_rotor_guard_drone", radius=1}
+					 }
+				 }
+			 },
+			 {
+				 name=_t"Beetle Drones",
+				 on_actor=function(actor) actor.deml_drone_style = "beetle" end,
+				 preview_particles = {
+					 {
+						 particle = "circle",
+						 args = {base_rot=1, oversize=1.0, a=225, appear=1, speed=0,
+										 img="deml_beetle_guard_drone", radius=1}
+					 }
+				 }
+			 },
 		 },
 	},
 }

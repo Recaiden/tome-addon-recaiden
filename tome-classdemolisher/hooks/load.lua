@@ -92,19 +92,37 @@ function hook_updateModdableTileBack(self, data)
 	data.add = add
 end
 
-function hook_updateModdableTileSkin(self, data)
+function hook_updateModdableTileSkin(self, data)	
 	local base = data.base or {}
 	local add = data.add or {}
 	if self:hasEffect(self.EFF_REK_DEML_RIDE) then
 	
 		local masked = add[#add]
 
+		-- check for ogres
+		local is_tall = self.deml_tall_tiles or nil
+		if is_tall == nil then
+			local Map = require "engine.Map"
+			if Map.tiles then
+				local _, _, _, w, h = Map.tiles:get('', 0, 0, 0, 0, 0, 0, masked.image)
+				is_tall = h > w
+				self.deml_tall_tiles = is_tall
+			else
+				is_tall = false
+			end
+		end
+
 		masked.image_alter="sdm"
-		masked.sdm_double="dynamic"
+		masked.sdm_double=is_tall and "dynamic" or false
 		masked.shader="alpha_shader"
 		masked.shader_args={}
-		masked.textures={{"image", masked.image}, {"image", "particles_images/masks/mask_pants.png"}}
+		masked.textures={
+			{"image", masked.image},
+			{"image", is_tall and "particles_images/masks/mask_pants_giant.png" or "particles_images/masks/mask_pants.png"}
+		}
 		masked.auto_tall=1
+		masked.display_h=(is_tall and 2 or nil)
+		masked.display_y=(is_tall and -1 or nil)
 		
 		add[#add] = masked
 	end
@@ -115,6 +133,8 @@ function hook_updateModdableTileFront(self, data)
 	local base = data.base or {}
 	local add = data.add or {}
 	if self:hasEffect(self.EFF_REK_DEML_RIDE) then
+		local is_tall = self.deml_tall_tiles or false
+		
 		-- go through and apply a masked shader to legs and lower body, if they exist
 		local base = "player/"..self.moddable_tile:gsub("#sex#", self.female and "female" or "male").."/"
 		local i = self:getObjectModdableTile(self.INVEN_FEET)
@@ -124,13 +144,14 @@ function hook_updateModdableTileFront(self, data)
 			if mos.bodyplace and mos.bodyplace == "feet" then
 				local masked = add[idx]
 				masked.image_alter="sdm"
-				masked.sdm_double="dynamic"
+				masked.sdm_double=is_tall and "dynamic" or false
 				masked.shader="alpha_shader"
 				masked.shader_args={}
 				if masked.textures then
 					masked.textures[#masked.textures+1] = {"image", "particles_images/masks/mask_boots.png"}
 				else
-					masked.textures={{"image", base..(i.moddable_tile)..".png"}, {"image", "particles_images/masks/mask_boots.png"}}
+					masked.textures={{"image", base..(i.moddable_tile)..".png"},
+						{"image", "particles_images/masks/mask_boots.png"}}
 				end
 				masked.auto_tall=1
 				add[idx] = masked
@@ -139,7 +160,7 @@ function hook_updateModdableTileFront(self, data)
 				if mos.image == jfile then
 					local  masked = add[idx]
 					masked.image_alter="sdm"
-					masked.sdm_double="dynamic"
+					masked.sdm_double=is_tall and "dynamic" or false
 					masked.shader="alpha_shader"
 					masked.shader_args={}
 					if masked.textures then
@@ -149,10 +170,10 @@ function hook_updateModdableTileFront(self, data)
 					end
 					masked.auto_tall=1
 					add[idx] = masked
-				elseif string.find(mos.image, "lower_body") or string.find(mos.image, "upper_body") then
-					local  masked = add[idx]
+				elseif string.find(mos.image, "lower_body") then
+					local masked = add[idx]
 					masked.image_alter="sdm"
-					masked.sdm_double="dynamic"
+					masked.sdm_double=false
 					masked.shader="alpha_shader"
 					masked.shader_args={}
 					if masked.textures then
@@ -161,6 +182,30 @@ function hook_updateModdableTileFront(self, data)
 						masked.textures={{"image", mos.image}, {"image", "particles_images/masks/mask_pants.png"}}
 					end
 					masked.auto_tall=1
+					add[idx] = masked
+				elseif string.find(mos.image, "upper_body") then
+					local masked = add[idx]
+
+					-- keep ogres' bras on their chests
+					local is_tall_clothes = false
+					local Map = require "engine.Map"
+					if Map.tiles then
+						local _, _, _, w, h = Map.tiles:get('', 0, 0, 0, 0, 0, 0, masked.image)
+						is_tall_clothes = h > w
+					end
+					
+					masked.image_alter="sdm"
+					masked.sdm_double=is_tall_clothes and "dynamic" or false
+					masked.shader="alpha_shader"
+					masked.shader_args={}
+					if masked.textures then
+						masked.textures[#masked.textures+1] = {"image", is_tall and "particles_images/masks/mask_pants_giant.png" or "particles_images/masks/mask_pants.png"}
+					else
+						masked.textures={{"image", mos.image}, {"image", is_tall and "particles_images/masks/mask_pants_giant.png" or "particles_images/masks/mask_pants.png"}}
+					end
+					masked.auto_tall=1
+					masked.display_h=(is_tall and 2 or nil)
+					masked.display_y=(is_tall and -1 or nil)
 					add[idx] = masked
 				end
 			end
