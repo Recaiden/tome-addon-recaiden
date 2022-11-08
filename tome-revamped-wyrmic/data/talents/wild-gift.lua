@@ -208,18 +208,19 @@ end
 
 -- If you unlearn your last level of your last aspect, remove your element.
 function onUnLearnAspect(self)
-   self:unlearnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY)
-   local level = self:getTalentLevelRaw(self.T_REK_WYRMIC_FIRE)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_COLD)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_ELEC)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_SAND)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_ACID)
-      + self:getTalentLevelRaw(self.T_REK_WYRMIC_VENM)
-      + self:getTalentLevelRaw(self.T_RAZE)
-      + self:getTalentLevelRaw(self.T_TENTACLED_WINGS)
-   if level == 0 then
-      self.rek_wyrmic_dragon_damage = nil
-   end
+	self:unlearnTalent(self.T_REK_WYRMIC_COLOR_PRIMARY)
+	local level = self:getTalentLevelRaw(self.T_REK_WYRMIC_FIRE)
+		+ self:getTalentLevelRaw(self.T_REK_WYRMIC_COLD)
+		+ self:getTalentLevelRaw(self.T_REK_WYRMIC_ELEC)
+		+ self:getTalentLevelRaw(self.T_REK_WYRMIC_SAND)
+		+ self:getTalentLevelRaw(self.T_REK_WYRMIC_ACID)
+		+ self:getTalentLevelRaw(self.T_REK_WYRMIC_VENM)
+		+ self:getTalentLevelRaw(self.T_RAZE)
+		+ self:getTalentLevelRaw(self.T_TENTACLED_WINGS)
+		+ self:getTalentLevelRaw(self.T_FAETOUCHED_FAE_WINGS)
+	if level == 0 then
+		self.rek_wyrmic_dragon_damage = nil
+	end
 end
 
 if not Talents.talents_types_def["wild-gift/draconic-energy"] then

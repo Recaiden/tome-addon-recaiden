@@ -155,6 +155,16 @@ newTalent{
         talent=self.T_REK_TENTACLED_WINGS
       }
     end
+		if self:knowTalent(self.T_FAETOUCHED_FAE_WINGS) then
+      possibles[#possibles+1] = {
+				name="Light",
+				nameDrake=DamageType:get(DamageType.LIGHT).text_color.."Fae Drake#LAST#",
+				nameStatus="Sparkled",
+				damtype=DamageType.LIGHT,
+				status=DamageType.LUCKY_FAE_STATUS_LIGHT,
+				talent=self.T_FAETOUCHED_FAE_WINGS
+			}
+    end
     return possibles
   end,
 

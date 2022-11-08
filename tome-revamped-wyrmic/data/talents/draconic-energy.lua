@@ -239,6 +239,8 @@ newTalent{
 			part_wings = "lightningwings"
 		elseif vistype == DamageType.ACID then
 			part_wings = "acidwings"
+		elseif vistype == DamageType.LIGHT then
+			part_breath = "faetouched/breath_faerie"
 		end
 		
 		if core.shader.active() and vistype == DamageType.LIGHTNING then

@@ -520,3 +520,73 @@ newDamageType{
       end
    end,
 }
+
+-- light with random spell/mind debuffs
+newDamageType{
+	name = "sparkling mist", type = "LUCKY_FAE_STATUS_LIGHT",
+	projector = function(src, x, y, type, dam, state)
+		state = initState(state)
+		useImplicitCrit(src, state)
+		
+		if _G.type(dam) == "number" then
+			dam = {dam=dam}
+		end
+
+		local luck = src:getLck() - 50
+		local luckiness = 1
+		if luck ~= 0 then	
+			local negative = false
+			if (luck < 0) then
+				negative = true
+				luck = -luck
+			end
+			
+			local luck_mult = (luck/50) ^ .5
+			
+			if not negative then
+				luckiness = 1 + add
+			else
+				luckiness = 1/(1+add)
+			end
+		end
+			
+		local chance = 30 * luckiness
+		
+		local target = game.level.map(x, y, Map.ACTOR)
+		if target and not state[target] then
+			local debuffs = {
+				{'EFF_STUNNED', {}, 'stun'},
+				{'EFF_PINNED', {}, 'pin'},
+				{'EFF_SILENCED', {}, 'silence'},
+				{'EFF_DISARMED', {}, 'disarm'},
+				{'EFF_BLINDED', {}, 'blind'},
+				{'EFF_CONFUSED', {power=50}, 'confuse'},
+			}
+			state[target] = true
+
+			for i = 1, #debuffs do
+				if rng.percent(chance) then
+					if debuffs[i][3] and target:canBe(debuffs[i][3]) or not debuffs[i][3] then
+						local args = table.clone(debuffs[i][2])
+						args.apply_power=math.max(src:combatMindpower(), src:combatSpellpower())
+						args.no_ct_effect = true
+						target:setEffect(debuffs[i][1], 3, args)
+					end
+				end
+			end
+			
+			if target then
+				rekWyrmicElectrocute(src, target)
+			end
+
+			local dam_applied = dam.dam
+			if src.getCaprice and src:getCaprice() >= 40 then
+				dam_applied = dam_applied * 2
+			end
+			
+			local realdam = DamageType:get(DamageType.LIGHT).projector(src, x, y, DamageType.LIGHT, dam_applied, state)
+			return realdam
+			
+		end
+	end,
+}
