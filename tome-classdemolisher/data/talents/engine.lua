@@ -12,7 +12,11 @@ newTalent{
 	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 10, 50) end,
 	getMovement = function(self, t) return self:combatTalentScale(t, 0.18, 0.5, 0.75) end,
 	applyFlames = function(self, t, x, y)
-		game.level.map:addEffect(self, x, y, 4, engine.DamageType.FIRE, t.getDamage(self, t), 0, 5, nil, {type="inferno"}, nil, true)
+		game.level.map:addEffect(self, x, y, 4, engine.DamageType.FIRE, t.getDamage(self, t),
+														 0, 5, nil, -- radius, direction, angle
+														 {type="inferno"}, nil,
+														 false --selffire, friendlyfire
+		)
 	end,
 	callbackOnMove = function(self, t, moved, force, ox, oy, x, y)
 		if moved and not force and self:getSteam() > 0 then
@@ -136,7 +140,7 @@ newTalent{
 		if core.fov.distance(self.x, self.y, x, y) == 1 then
 			DamageType:get(DamageType.PHYSICAL).projector(self, target.x, target.y, DamageType.PHYSICAL, did_crit * t.getCrashDamage(self, t))
 			if self:isTalentActive(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
-				self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "applyFlames", talent.x, talent.y)
+				self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "applyFlames", target.x, target.y)
 			end
 			target:attr("knockback_immune", 1)
 			local blast = {type="ball", range=0, radius=3, friendlyfire=false}
