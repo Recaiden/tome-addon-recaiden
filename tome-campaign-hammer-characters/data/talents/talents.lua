@@ -94,3 +94,8 @@ if not Talents.talents_types_def["corruption/imp-claws"] then
 	newTalentType{ allow_random=true, is_spell=true, is_unarmed = true, generic=true, type="corruption/imp-claws", name = _t("Imp Claws", "talent type"), description = "Kindle your hands with everburning flames.  Although these are spells, Flame Thrower can be used while silenced." }
 	load("/data-campaign-hammer-characters/talents/imp-claws.lua")
 end
+
+if not Talents.talents_types_def["corruption/fearscape-formation"] then
+	newTalentType{ allow_random=true, is_spell=true, no_silence=true, type="corruption/fearscape-formation", name = _t("Fearscape Formation", "talent type"), description = "Burn the ground itself and everythingupon it." }
+	load("/data-campaign-hammer-characters/talents/imp-fearscape-formation.lua")
+end

@@ -4,7 +4,7 @@ newBirthDescriptor{
    locked = function() return profile.mod.allow_build.corrupter_corruptor end,
    locked_desc = "Let our vengeance burn bright and everlasting.",
    desc = {
-      "Infused with the everburnnig flames of the fearscape, the impling sets the entire battlefield ablaze and rains down fireballs on their enemies.",
+      "Infused with the everburning flames of the fearscape, the impling sets the entire battlefield ablaze and rains down fireballs on their enemies.",
       "Their most important stats are Magic and Dexterity.",
       "#GOLD#Stat modifiers:",
       "#LIGHT_BLUE# * +3 Dexterity, -2 Constitution",

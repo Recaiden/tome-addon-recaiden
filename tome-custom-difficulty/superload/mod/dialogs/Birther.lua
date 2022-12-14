@@ -80,40 +80,40 @@ function _M:passesStandardDifficulty(name)
 	if not self.c_rek_dif_zone_mul then return true end
 
 	if (tonumber(self.c_rek_dif_zone_mul.text) or 1) < tonumber(preset.zone_mul) then
-		print("CNFG zone mul too low")
+		print("[BIRTHER] [CNFG] zone mul too low for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_zone_add.text) or 1) < tonumber(preset.zone_add) then
-		print("CNFG zone add too low")
+		print("[BIRTHER] [CNFG] zone add too low for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_talent.text) or 1) < tonumber(preset.talent) then
-		print("CNFG talent fail")
+		print("[BIRTHER] [CNFG] talent fail for ", name)
 		return false end
 	if self.c_rek_dif_randrare.value < preset.randrare then
-		print("CNFG randrare")
+		print("[BIRTHER] [CNFG] randrare for ", name)
 		return false end
 	if self.c_rek_dif_randboss.value < preset.randboss then
-		print("CNFG randboss")
+		print("[BIRTHER] [CNFG] randboss for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_health.text) or 1) < tonumber(preset.health) then
-		print("CNFG life mult")
+		print("[BIRTHER] [CNFG] life mult for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_stairwait.text) or 1) < tonumber(preset.stairwait) then
-		print("CNFG stairwait")
+		print("[BIRTHER] [CNFG] stairwait for ", name)
 		return false end
 	if preset.hunted and not self.c_rek_dif_hunted.checked then
-		print("CNFG hunted")
+		print("[BIRTHER] [CNFG] hunted for ", name)
 		return false end
 	if self.c_rek_dif_ezstatus.checked and not preset.ezstatus then
-		print("CNFG checked")
+		print("[BIRTHER] [CNFG] checked for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_life_bonus.text) or 0) > tonumber(preset.start_life) then
-		print("CNFG excess life")
+		print("[BIRTHER] [CNFG] excess life for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_gold.text) or 0) > tonumber(preset.start_gold) then
-		print("CNFG excess gold")
+		print("[BIRTHER] [CNFG] excess gold for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_level.text) or 0) > tonumber(preset.start_level) then
-		print("CNFG excess level")
+		print("[BIRTHER] [CNFG] excess level for ", name)
 		return false end
 	return true
 end
@@ -138,7 +138,7 @@ function updateDifficulties(self)
    --TODO, Unique vs Boss is handled in the boss generation routine
    -- currently hardcoded to 30%
    if randboss > 0 then
-      state["default_random_boss_chance"] = math.floor(100 / (randboss))
+      state["default_random_boss_chance"] = math.floor(100 / randboss)
    end
    --Limitations
    if randboss + randrare > 100 then
@@ -209,7 +209,7 @@ function updateDifficulties(self)
       copy["__game_difficulty"] = 2
       d["name"] = "Normal"
 	 else
-		 copy["__game_difficulty"] = 1
+		 copy["__game_difficulty"] = 1.5 --don't set to 1 because then rares disappear whoops
 		 d["name"] = "Easy"
    end
 
@@ -308,7 +308,6 @@ local function getConfig(str)
 end
 
 function _M:loadSavedDifficulty()
-	print("CNFIG", config.settings.tome.rek_dif, config.settings.tome.rek_dif.zone_mul, getConfig("zone_mul"))
 	self.c_rek_dif_zone_mul:setText(getConfig("zone_mul") or "1.0")
 	self.c_rek_dif_zone_add:setText(getConfig("zone_add") or "0")
 	self.c_rek_dif_talent:setText(getConfig("talent") or "0")
