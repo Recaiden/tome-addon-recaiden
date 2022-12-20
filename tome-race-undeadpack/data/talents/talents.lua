@@ -141,6 +141,7 @@ if Talents.talents_def["T_RAKSHOR_CUNNING"] then
 		end
 	
 	Talents.talents_def["T_RAKSHOR_CUNNING"].callbackOnDeathbox = function(self, t, dialog, list)
+		if self.rakshor_resurrected then return end
 		list[#list+1] = {name=_t"Rak'Shor's Cunning (Wight)", action=function() make_undead(self, "wight", dialog) end, force_choice=true}
 		list[#list+1] = {name=_t"Rak'Shor's Cunning (Banshee)", action=function() make_undead(self, "banshee", dialog) end, force_choice=true}
 		base_cbodb(self, t, dialog, list)
