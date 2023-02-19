@@ -3,7 +3,7 @@ local _M = loadPrevious(...)
 local base_gainAchievement = _M.gainAchievement
 function _M:gainAchievement(id, src, ...)
 	local pd = game.permadeath
-	if src.flag_false_exploration then
+	if src and src.flag_false_exploration then
 		game.permadeath = game.PERMADEATH_INFINITE
 	end
 

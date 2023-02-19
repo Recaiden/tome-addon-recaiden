@@ -97,49 +97,53 @@ function _M:displayTurntracker(scale, bx, by)
 	local player = game.player
 	if not game.level then
 		self.turntracker = {}
-	elseif game.player.changed and next(self.turntracker) then
-		for a, d in pairs(self.turntracker) do if not game.party:hasMember(a) and (not player:hasLOS(a.x, a.y) and player:canSee(a)) then game.mouse:unregisterZone(d[2]) end end
-			self.turntracker = {}
-	end
-
-	-- Calculate time till next turn based off global speed and energy
-	local cutoff = 2.2 * game.energy_to_act / game.energy_per_tick
-	local entities = {}
-	local letter = 1
-	if game.level then
-		for uid, act in pairs(game.level.entities) do
-			if game.party and (game.party:hasMember(act) or (player:hasLOS(act.x, act.y) and player:canSee(act))) and act.global_speed then
-				
-				-- assign each creature a letter tag
-				act.turntracker_marker = letter <= 26 and string.char(letter+96) or "?"
-				letter = letter + 1
-				
-				local thresh, tick = game.energy_to_act, game.energy_per_tick
-				local eRemaining = thresh - act.energy.value
-				local ticksRemaining = (eRemaining / 100) / act.global_speed
-				entities[#entities+1] = {a=act, t=ticksRemaining}
-
-				local first = true
-				while ticksRemaining < cutoff do
-					if first and act == game.player and self.turntracker_selected_tid then
-						eRemaining = eRemaining + player:getTalentSpeed(player:getTalentFromId(self.turntracker_selected_tid)) * game.energy_to_act
-						ticksRemaining = math.max(0, (eRemaining / 100) / act.global_speed)
-						entities[#entities+1] = {a=act, t=ticksRemaining}
-						first = false
-					else
-						eRemaining = eRemaining + game.energy_to_act
-						ticksRemaining = math.max(0, (eRemaining / 100) / act.global_speed)
-						entities[#entities+1] = {a=act, t=ticksRemaining}
+	elseif player.changed then
+		for a, d in pairs(self.turntracker) do
+			if not game.party:hasMember(a) and (not player:hasLOS(a.x, a.y) and player:canSee(a))
+			then game.mouse:unregisterZone(d[2])
+			end
+		end
+		self.turntracker = {}
+		
+		-- Calculate time till next turn based off global speed and energy
+		local cutoff = 2.2 * game.energy_to_act / game.energy_per_tick
+		local entities = {}
+		local letter = 1
+		if game.level then
+			for uid, act in pairs(game.level.entities) do
+				if game.party and (game.party:hasMember(act) or (player:hasLOS(act.x, act.y) and player:canSee(act))) and act.global_speed then
+					
+					-- assign each creature a letter tag
+					act.turntracker_marker = letter <= 26 and string.char(letter+96) or "?"
+					letter = letter + 1
+					
+					local thresh, tick = game.energy_to_act, game.energy_per_tick
+					local eRemaining = thresh - act.energy.value
+					local ticksRemaining = (eRemaining / 100) / act.global_speed
+					entities[#entities+1] = {a=act, t=ticksRemaining}
+					
+					local first = true
+					while ticksRemaining < cutoff do
+						if first and act == player and self.turntracker_selected_tid then
+							eRemaining = eRemaining + player:getTalentSpeed(player:getTalentFromId(self.turntracker_selected_tid)) * game.energy_to_act
+							ticksRemaining = math.max(0, (eRemaining / 100) / act.global_speed)
+							entities[#entities+1] = {a=act, t=ticksRemaining}
+							first = false
+						else
+							eRemaining = eRemaining + game.energy_to_act
+							ticksRemaining = math.max(0, (eRemaining / 100) / act.global_speed)
+							entities[#entities+1] = {a=act, t=ticksRemaining}
+						end
 					end
 				end
 			end
 		end
+		table.sort(entities, function(a, b) return a.t < b.t end)
+		-- cap list
+		local count = #entities
+		for i=11, count do entities[i]=nil end
+		player.turn_tracker_entities = entities
 	end
-	table.sort(entities, function(a, b) return a.t < b.t end)
-	-- cap list
-	local count = #entities
-	for i=11, count do entities[i]=nil end
-	
 	-- Draw list	
 	local orient = self.sizes.turntracker and self.sizes.turntracker.orient or "down"
 	local hs = portrait[7] + 3
@@ -147,10 +151,11 @@ function _M:displayTurntracker(scale, bx, by)
 	local is_first = true
 
 	local tooltip_drawn = {}
-	for i = 1, #entities do
-		local a = entities[i].a
+	local ents = player.turn_tracker_entities or {}
+	for i = 1, #ents do
+		local a = ents[i].a
 		if not self.turntracker[a] then
-			a.turntracker_ticks = entities[i].t
+			a.turntracker_ticks = ents[i].t
 			
 			local text = ("#GOLD##{bold}#%s\n#WHITE##{normal}#Life: %d%%\nMove  Speed: %d%%\nAttck Speed: %d%%\nSpell Speed: %d%%\nMind  Speed: %d%%"):tformat(a:getName(), math.floor(100 * a.life / a.max_life), 100/a:getSpeed("movement"), 100/a:getSpeed("weapon"), 100/a:getSpeed("spell"), 100/a:getSpeed("mind"))
 			if a.summon_time then text = text..("\nTurns remaining: %s"):tformat(a.summon_time) end
@@ -259,7 +264,7 @@ function _M:displayTurntracker(scale, bx, by)
 			tooltip_drawn["turntracker"..i] = true
 		end
 		--call function
-		self.turntracker[a][3](x, y, entities[i].t)
+		self.turntracker[a][3](x, y, ents[i].t)
 		is_first = false
 		x, y = self:partyOrientStep(orient, bx, by, scale, x, y, hs, hs)
 	end

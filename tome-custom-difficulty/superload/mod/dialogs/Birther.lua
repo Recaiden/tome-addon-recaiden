@@ -617,9 +617,9 @@ function _M:on_focus(id, ui)
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_level then
       self.c_desc:switchItem(self.c_rek_dif_level, "The level the player starts at.\nRaising it disqualifies you from achievements")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_life_bonus then
-      self.c_desc:switchItem(self.c_rek_dif_life_bonus, "The level the player starts at.\nRaising it disqualifies you from achievements unless you also qualify for Madness")
+      self.c_desc:switchItem(self.c_rek_dif_life_bonus, "Starts the player with additional maximum life.\nRaising it disqualifies you from achievements unless you also qualify for Madness (which gives 100)")
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_gold then
-      self.c_desc:switchItem(self.c_rek_dif_gold, "The gold the player starts with.\nRaising it disqualifies you from achievements unless you also qualify for Madness")
+      self.c_desc:switchItem(self.c_rek_dif_gold, "The gold the player starts with.\nRaising it disqualifies you from achievements unless you also qualify for Madness (which gives 500)")
    end
 end
 
