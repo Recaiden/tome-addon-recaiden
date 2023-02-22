@@ -111,7 +111,7 @@ function _M:displayTurntracker(scale, bx, by)
 		local letter = 1
 		if game.level then
 			for uid, act in pairs(game.level.entities) do
-				if game.party and (game.party:hasMember(act) or (player:hasLOS(act.x, act.y) and player:canSee(act))) and act.global_speed then
+				if game.party and (game.party:hasMember(act) or (player:hasLOS(act.x, act.y) and player:canSee(act)) and (game.level.map.seens[act.x + act.y*game.level.map.w] ~= nil)) and act.global_speed then
 					
 					-- assign each creature a letter tag
 					act.turntracker_marker = letter <= 26 and string.char(letter+96) or "?"
