@@ -1,3 +1,4 @@
+local _M = loadPrevious(...)
 require "engine.class"
 local Dialog = require "engine.ui.Dialog"
 local Birther = require "engine.Birther"
@@ -24,8 +25,6 @@ local OptionTree = require "mod.dialogs.OptionTree"
 
 local Actor = require "mod.class.Actor"
 local Talents = require "engine.interface.ActorTalents"
-
-local _M = loadPrevious(...)
 
 standardDifficulties = {
 	["Easy"] = {
