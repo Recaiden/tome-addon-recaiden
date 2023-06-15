@@ -510,7 +510,7 @@ tiles["npc/temp_hound_09.png"] = { base = 64,
   head = {x=10, y=34},
 }
 tiles["npc/summoner_ritch.png"] = { base = 64,
-  head = {x=26, y=15,
+  head = {x=26, y=15},
 }
 tiles["npc/summoner_turtle.png"] = { base = 64,
   head = {x=8, y=37},
@@ -979,330 +979,330 @@ tiles["npc/horror_temporal_temporal_stalker.png"] = { base = 64,
 
 
 -- ashes
-tiles["demon_major_planar_controller.png"] = { base = 64,
+tiles["npc/demon_major_planar_controller.png"] = { base = 64,
   head = {x=26, y=28},
 }
-tiles["demon_major_rogroth__eater_of_souls.png"] = { base = 64,
+tiles["npc/demon_major_rogroth__eater_of_souls.png"] = { base = 64,
   head = {x=32, y=2},
 }
-tiles["demon_major_wretch_titan.png"] = { base = 64,
+tiles["npc/demon_major_wretch_titan.png"] = { base = 64,
   head = {x=36, y=-13},
 }
-tiles["demon_minor_demonic_clerk.png"] = { base = 64,
+tiles["npc/demon_minor_demonic_clerk.png"] = { base = 64,
   head = {x=38, y=18},
 }
-tiles["demon_minor_investigator.png"] = { base = 64,
+tiles["npc/demon_minor_investigator.png"] = { base = 64,
   head = {x=32, y=32},
 }
-tiles["demon_minor_mutilator.png"] = { base = 64,
+tiles["npc/demon_minor_mutilator.png"] = { base = 64,
   head = {x=37, y=-26},
 }
-tiles["demon_minor_quasit_squad_leader.png"] = { base = 64,
+tiles["npc/demon_minor_quasit_squad_leader.png"] = { base = 64,
   head = {x=31, y=19},
 }
 
 
 -- embers EoR
-tiles["immovable_plants_crystalbark.png"] = { base = 64,
+tiles["npc/immovable_plants_crystalbark.png"] = { base = 64,
   head = {x=27, y=-27},
 }
-tiles["immovable_plants_sawtree.png"] = { base = 64,
+tiles["npc/immovable_plants_sawtree.png"] = { base = 64,
   head = {x=32, y=30},
 }
-tiles["insect_ritch_larvae_bloated_ritch_mother.png"] = { base = 64,
+tiles["npc/insect_ritch_larvae_bloated_ritch_mother.png"] = { base = 64,
   head = {x=19, y=34},
 }
-tiles["insect_ritch_ritch_centipede.png"] = { base = 64,
+tiles["npc/insect_ritch_ritch_centipede.png"] = { base = 64,
   head = {x=23, y=-2},
 }
-tiles["mechanical_arachnid_automated_defense_system_one.png"] = { base = 64,
+tiles["npc/mechanical_arachnid_automated_defense_system_one.png"] = { base = 64,
   head = {x=33, y=52},
 }
-tiles["mechanical_arachnid_automated_defense_system_three.png"] = { base = 64,
+tiles["npc/mechanical_arachnid_automated_defense_system_three.png"] = { base = 64,
   head = {x=13, y=12},
 }
-tiles["mechanical_arachnid_automated_defense_system_two.png"] = { base = 64,
+tiles["npc/mechanical_arachnid_automated_defense_system_two.png"] = { base = 64,
   head = {x=15, y=2},
 }
-tiles["mechanical_arachnid_mecharachnid_destroyer.png"] = { base = 64,
+tiles["npc/mechanical_arachnid_mecharachnid_destroyer.png"] = { base = 64,
   head = {x=22, y=28},
 }
-tiles["mechanical_arachnid_mecharachnid_flame_thrower.png"] = { base = 64,
+tiles["npc/mechanical_arachnid_mecharachnid_flame_thrower.png"] = { base = 64,
   head = {x=12, y=34},
 }
-tiles["mechanical_arachnid_mecharachnid_repairbot.png"] = { base = 64,
+tiles["npc/mechanical_arachnid_mecharachnid_repairbot.png"] = { base = 64,
   head = {x=15, y=35},
 }
-tiles["mechanical_arachnid_mecharachnid_warrior.png"] = { base = 64,
+tiles["npc/mechanical_arachnid_mecharachnid_warrior.png"] = { base = 64,
   head = {x=29, y=36},
 }
-tiles["mechanical_drone_mind_drone.png"] = { base = 64,
+tiles["npc/mechanical_drone_mind_drone.png"] = { base = 64,
   head = {x=24, y=39},
 }
-tiles["reptile_alligator_basaligator.png"] = { base = 64,
+tiles["npc/reptile_alligator_basaligator.png"] = { base = 64,
   head = {x=16, y=38},
 }
-tiles["reptile_alligator_giant_alligator.png"] = { base = 64,
+tiles["npc/reptile_alligator_giant_alligator.png"] = { base = 64,
   head = {x=20, y=34},
 }
-tiles["reptile_alligator_sewer_alligator.png"] = { base = 64,
+tiles["npc/reptile_alligator_sewer_alligator.png"] = { base = 64,
   head = {x=18, y=50},
 }
-tiles["steamgun_turret1.png"] = { base = 64,
+tiles["npc/steamgun_turret1.png"] = { base = 64,
   head = {x=33, y=13},
 }
-tiles["steamgun_turret2.png"] = { base = 64,
+tiles["npc/steamgun_turret2.png"] = { base = 64,
   head = {x=33, y=13},
 }
-tiles["undead_dragon_undead_drake_hatchling.png"] = { base = 64,
+tiles["npc/undead_dragon_undead_drake_hatchling.png"] = { base = 64,
   head = {x=21, y=15},
 }
-tiles["undead_dragon_undead_drake.png"] = { base = 64,
+tiles["npc/undead_dragon_undead_drake.png"] = { base = 64,
   head = {x=19, y=-41},
 }
-tiles["undead_dragon_undead_wyrm.png"] = { base = 64,
+tiles["npc/undead_dragon_undead_wyrm.png"] = { base = 64,
   head = {x=19, y=1},
 }
-tiles["undead_dragon_ureslak_the_eternal.png"] = { base = 64,
+tiles["npc/undead_dragon_ureslak_the_eternal.png"] = { base = 64,
   head = {x=16, y=-17},
 }
-tiles["undead_ghost_guardian_psi_ghost.png"] = { base = 64,
+tiles["npc/undead_ghost_guardian_psi_ghost.png"] = { base = 64,
   head = {x=28, y=14},
 }
-tiles["undead_ghost_necropsych_s_ghost.png"] = { base = 64,
+tiles["npc/undead_ghost_necropsych_s_ghost.png"] = { base = 64,
   head = {x=24, y=18},
 }
-tiles["undead_minotaur_nektosh_the_one_horned.png"] = { base = 64,
+tiles["npc/undead_minotaur_nektosh_the_one_horned.png"] = { base = 64,
   head = {x=21, y=-22},
 }
-tiles["undead_minotaur_whitehoof_ghoul.png"] = { base = 64,
+tiles["npc/undead_minotaur_whitehoof_ghoul.png"] = { base = 64,
   head = {x=17, y=-20},
 }
-tiles["undead_minotaur_whitehoof_hailstorm.png"] = { base = 64,
+tiles["npc/undead_minotaur_whitehoof_hailstorm.png"] = { base = 64,
   head = {x=33, y=-19},
 }
-tiles["undead_minotaur_whitehoof_invoker.png"] = { base = 64,
+tiles["npc/undead_minotaur_whitehoof_invoker.png"] = { base = 64,
   head = {x=17, y=-11},
 }
-tiles["undead_minotaur_whitehoof_maulotaur.png"] = { base = 64,
+tiles["npc/undead_minotaur_whitehoof_maulotaur.png"] = { base = 64,
   head = {x=23, y=-17},
 }
-tiles["animal_snake_gunsnake.png"] = { base = 64,
+tiles["npc/animal_snake_gunsnake.png"] = { base = 64,
   head = {x=21, y=14},
 }
-tiles["construct_mechanical_arcane_amplification_drone.png"] = { base = 64,
+tiles["npc/construct_mechanical_arcane_amplification_drone.png"] = { base = 64,
   head = {x=30, y=17},
 }
-tiles["construct_mechanical_steam_defence_turret.png"] = { base = 64,
+tiles["npc/construct_mechanical_steam_defence_turret.png"] = { base = 64,
   head = {x=32, y=-4},
 }
-tiles["elemental_vapour_greater_hethugoroth.png"] = { base = 64,
+tiles["npc/elemental_vapour_greater_hethugoroth.png"] = { base = 64,
   head = {x=21, y=-8},
 }
-tiles["elemental_vapour_hethugoroth.png"] = { base = 64,
+tiles["npc/elemental_vapour_hethugoroth.png"] = { base = 64,
   head = {x=35, y=24},
 }
-tiles["elemental_vapour_ultimate_hethugoroth.png"] = { base = 64,
+tiles["npc/elemental_vapour_ultimate_hethugoroth.png"] = { base = 64,
   head = {x=24, y=-24},
 }
-tiles["flame_turret1.png"] = { base = 64,
+tiles["npc/flame_turret1.png"] = { base = 64,
   head = {x=22, y=20},
 }
-tiles["flame_turret2.png"] = { base = 64,
+tiles["npc/flame_turret2.png"] = { base = 64,
   head = {x=22, y=20},
 }
-tiles["giant_steam_arch_merchant_kaltor.png"] = { base = 64,
+tiles["npc/giant_steam_arch_merchant_kaltor.png"] = { base = 64,
   head = {x=18, y=-45},
 }
-tiles["giant_steam_commander_fralor.png"] = { base = 64,
+tiles["npc/giant_steam_commander_fralor.png"] = { base = 64,
   head = {x=16, y=-8},
 }
-tiles["giant_steam_council_member_nashal.png"] = { base = 64,
+tiles["npc/giant_steam_council_member_nashal.png"] = { base = 64,
   head = {x=18, y=-25},
 }
-tiles["giant_steam_council_member_palaquie.png"] = { base = 64,
+tiles["npc/giant_steam_council_member_palaquie.png"] = { base = 64,
   head = {x=23, y=-39},
 }
-tiles["giant_steam_council_member_pendor.png"] = { base = 64,
+tiles["npc/giant_steam_council_member_pendor.png"] = { base = 64,
   head = {x=25, y=-38},
 }
-tiles["giant_steam_council_member_tormak.png"] = { base = 64,
+tiles["npc/giant_steam_council_member_tormak.png"] = { base = 64,
   head = {x=27, y=-52},
 }
-tiles["giant_steam_haze_commander_parmor.png"] = { base = 64,
+tiles["npc/giant_steam_haze_commander_parmor.png"] = { base = 64,
   head = {x=27, y=-41},
 }
-tiles["giant_steam_high_guard_talosis.png"] = { base = 64,
+tiles["npc/giant_steam_high_guard_talosis.png"] = { base = 64,
   head = {x=29, y=-35},
 }
-tiles["giant_steam_retaliator_of_atmos.png"] = { base = 64,
+tiles["npc/giant_steam_retaliator_of_atmos.png"] = { base = 64,
   head = {x=29, y=-37},
 }
-tiles["giant_steam_steam_giant_berserker.png"] = { base = 64,
+tiles["npc/giant_steam_steam_giant_berserker.png"] = { base = 64,
   head = {x=33, y=-45},
 }
-tiles["giant_steam_steam_giant_blood_carver.png"] = { base = 64,
+tiles["npc/giant_steam_steam_giant_blood_carver.png"] = { base = 64,
   head = {x=23, y=-44},
 }
-tiles["giant_steam_steam_giant_commoner_female.png"] = { base = 64,
+tiles["npc/giant_steam_steam_giant_commoner_female.png"] = { base = 64,
   head = {x=25, y=-40},
 }
-tiles["giant_steam_steam_giant_commoner_worker_male.png"] = { base = 64,
+tiles["npc/giant_steam_steam_giant_commoner_worker_male.png"] = { base = 64,
   head = {x=20, y=-52},
 }
-tiles["giant_steam_steam_giant_flameshot.png"] = { base = 64,
+tiles["npc/giant_steam_steam_giant_flameshot.png"] = { base = 64,
   head = {x=31, y=-38},
 }
-tiles["giant_steam_steam_giant_guard.png"] = { base = 64,
+tiles["npc/giant_steam_steam_giant_guard.png"] = { base = 64,
   head = {x=27, y=-47},
 }
-tiles["giant_steam_steam_giant_gunner.png"] = { base = 64,
+tiles["npc/giant_steam_steam_giant_gunner.png"] = { base = 64,
   head = {x=31, y=-37},
 }
-tiles["giant_steam_steam_giant_gunslinger.png"] = { base = 64,
+tiles["npc/giant_steam_steam_giant_gunslinger.png"] = { base = 64,
   head = {x=33, y=-25},
 }
-tiles["giant_steam_steam_giant_necropsych.png"] = { base = 64,
+tiles["npc/giant_steam_steam_giant_necropsych.png"] = { base = 64,
   head = {x=23, y=-48},
 }
-tiles["giant_steam_steam_giant_shopkeeper.png"] = { base = 64,
+tiles["npc/giant_steam_steam_giant_shopkeeper.png"] = { base = 64,
   head = {x=26, y=-49},
 }
-tiles["giant_titan_gargantuan_sher_tan.png"] = { base = 64,
+tiles["npc/giant_titan_gargantuan_sher_tan.png"] = { base = 64,
   head = {x=28, y=-54},
 }
-tiles["giant_titan_sher_tan.png"] = { base = 64,
+tiles["npc/giant_titan_sher_tan.png"] = { base = 64,
   head = {x=32, y=-10},
 }
-tiles["giant_titan_titan_battlesmasher.png"] = { base = 64,
+tiles["npc/giant_titan_titan_battlesmasher.png"] = { base = 64,
   head = {x=21, y=-33},
 }
-tiles["giant_titan_titan_dreadnought.png"] = { base = 64,
+tiles["npc/giant_titan_titan_dreadnought.png"] = { base = 64,
   head = {x=21, y=-49},
 }
-tiles["giant_titan_titanic_horror.png"] = { base = 64,
+tiles["npc/giant_titan_titanic_horror.png"] = { base = 64,
   head = {x=30, y=-29},
 }
-tiles["giant_titan_titan_searing_seer.png"] = { base = 64,
+tiles["npc/giant_titan_titan_searing_seer.png"] = { base = 64,
   head = {x=27, y=-53},
 }
-tiles["giant_titan_titan_vile_spewer.png"] = { base = 64,
+tiles["npc/giant_titan_titan_vile_spewer.png"] = { base = 64,
   head = {x=16, y=-53},
 }
-tiles["giant_treant_crystallized_primal_root.png"] = { base = 64,
+tiles["npc/giant_treant_crystallized_primal_root.png"] = { base = 64,
   head = {x=34, y=-7},
 }
-tiles["giant_troll_admiral_korbek.png"] = { base = 64,
+tiles["npc/giant_troll_admiral_korbek.png"] = { base = 64,
   head = {x=30, y=-34},
 }
-tiles["giant_troll_troll_aquamancer.png"] = { base = 64,
+tiles["npc/giant_troll_troll_aquamancer.png"] = { base = 64,
   head = {x=36, y=-16},
 }
-tiles["giant_troll_troll_captain.png"] = { base = 64,
+tiles["npc/giant_troll_troll_captain.png"] = { base = 64,
   head = {x=20, y=-18},
 }
-tiles["giant_troll_troll_guard.png"] = { base = 64,
+tiles["npc/giant_troll_troll_guard.png"] = { base = 64,
   head = {x=29, y=-2},
 }
-tiles["giant_troll_troll_marauder.png"] = { base = 64,
+tiles["npc/giant_troll_troll_marauder.png"] = { base = 64,
   head = {x=31, y=-6},
 }
-tiles["giant_troll_troll_pirate.png"] = { base = 64,
+tiles["npc/giant_troll_troll_pirate.png"] = { base = 64,
   head = {x=29, y=-7},
 }
-tiles["giant_yeti_astral_infused_yeti.png"] = { base = 64,
+tiles["npc/giant_yeti_astral_infused_yeti.png"] = { base = 64,
   head = {x=21, y=-17},
 }
-tiles["giant_yeti_attack_yeti.png"] = { base = 64,
+tiles["npc/giant_yeti_attack_yeti.png"] = { base = 64,
   head = {x=26, y=-29},
 }
-tiles["giant_yeti_captured_yeti_behemoth.png"] = { base = 64,
+tiles["npc/giant_yeti_captured_yeti_behemoth.png"] = { base = 64,
   head = {x=25, y=-28},
 }
-tiles["giant_yeti_guard_yeti.png"] = { base = 64,
+tiles["npc/giant_yeti_guard_yeti.png"] = { base = 64,
   head = {x=32, y=-43},
 }
-tiles["giant_yeti_half_mechanized_yeti.png"] = { base = 64,
+tiles["npc/giant_yeti_half_mechanized_yeti.png"] = { base = 64,
   head = {x=9, y=2},
 }
-tiles["giant_yeti_pet_yeti.png"] = { base = 64,
+tiles["npc/giant_yeti_pet_yeti.png"] = { base = 64,
   head = {x=34, y=-35},
 }
-tiles["giant_yeti_yeti_cub.png"] = { base = 64,
+tiles["npc/giant_yeti_yeti_cub.png"] = { base = 64,
   head = {x=31, y=6},
 }
-tiles["giant_yeti_yeti_demolisher.png"] = { base = 64,
+tiles["npc/giant_yeti_yeti_demolisher.png"] = { base = 64,
   head = {x=35, y=-22},
 }
-tiles["giant_yeti_yeti_patriarch.png"] = { base = 64,
+tiles["npc/giant_yeti_yeti_patriarch.png"] = { base = 64,
   head = {x=28, y=-19},
 }
-tiles["giant_yeti_yeti.png"] = { base = 64,
+tiles["npc/giant_yeti_yeti.png"] = { base = 64,
   head = {x=18, y=-4},
 }
-tiles["giant_yeti_yeti_warrior.png"] = { base = 64,
+tiles["npc/giant_yeti_yeti_warrior.png"] = { base = 64,
   head = {x=38, y=9},
 }
-tiles["guardian_turret1.png"] = { base = 64,
+tiles["npc/guardian_turret1.png"] = { base = 64,
   head = {x=25, y=17},
 }
-tiles["guardian_turret2.png"] = { base = 64,
+tiles["npc/guardian_turret2.png"] = { base = 64,
   head = {x=25, y=17},
 }
-tiles["healing_turret1.png"] = { base = 64,
+tiles["npc/healing_turret1.png"] = { base = 64,
   head = {x=26, y=47},
 }
-tiles["healing_turret2.png"] = { base = 64,
+tiles["npc/healing_turret2.png"] = { base = 64,
   head = {x=26, y=47},
 }
-tiles["humanoid_elf_elven_astromancer.png"] = { base = 64,
+tiles["npc/humanoid_elf_elven_astromancer.png"] = { base = 64,
   head = {x=30, y=-20},
 }
-tiles["humanoid_elf_star_gazer.png"] = { base = 64,
+tiles["npc/humanoid_elf_star_gazer.png"] = { base = 64,
   head = {x=39, y=-25},
 }
-tiles["humanoid_elf_sun_mage_recruit.png"] = { base = 64,
+tiles["npc/humanoid_elf_sun_mage_recruit.png"] = { base = 64,
   head = {x=31, y=8},
 }
-tiles["humanoid_elf_sunwall_vindicator.png"] = { base = 64,
+tiles["npc/humanoid_elf_sunwall_vindicator.png"] = { base = 64,
   head = {x=14, y=14},
 }
-tiles["humanoid_halfling_halfling_pyremaster.png"] = { base = 64,
+tiles["npc/humanoid_halfling_halfling_pyremaster.png"] = { base = 64,
   head = {x=29, y=17},
 }
-tiles["humanoid_halfling_mindwall.png"] = { base = 64,
+tiles["npc/humanoid_halfling_mindwall.png"] = { base = 64,
   head = {x=32, y=12},
 }
-tiles["humanoid_human_astral_conjurer.png"] = { base = 64,
+tiles["npc/humanoid_human_astral_conjurer.png"] = { base = 64,
   head = {x=17, y=11},
 }
-tiles["humanoid_human_crimson_templar_john.png"] = { base = 64,
+tiles["npc/humanoid_human_crimson_templar_john.png"] = { base = 64,
   head = {x=31, y=-5},
 }
-tiles["humanoid_human_human_sun_paladin_recruit.png"] = { base = 64,
+tiles["npc/humanoid_human_human_sun_paladin_recruit.png"] = { base = 64,
   head = {x=33, y=6},
 }
-tiles["humanoid_human_maltoth_the_mad.png"] = { base = 64,
+tiles["npc/humanoid_human_maltoth_the_mad.png"] = { base = 64,
   head = {x=27, y=10},
 }
-tiles["humanoid_human_outpost_leader_john.png"] = { base = 64,
+tiles["npc/humanoid_human_outpost_leader_john.png"] = { base = 64,
   head = {x=31, y=-5},
 }
-tiles["humanoid_human_sun_paladin_recruit.png"] = { base = 64,
+tiles["npc/humanoid_human_sun_paladin_recruit.png"] = { base = 64,
   head = {x=32, y=6},
 }
-tiles["humanoid_human_sunwall_guard.png"] = { base = 64,
+tiles["npc/humanoid_human_sunwall_guard.png"] = { base = 64,
   head = {x=27, y=9},
 }
-tiles["humanoid_orc_orc_guard.png"] = { base = 64,
+tiles["npc/humanoid_orc_orc_guard.png"] = { base = 64,
   head = {x=27, y=8},
 }
-tiles["humanoid_orc_orc_gunslinger.png"] = { base = 64,
+tiles["npc/humanoid_orc_orc_gunslinger.png"] = { base = 64,
   head = {x=29, y=13},
 }
-tiles["humanoid_shalore_shalore_liberator.png"] = { base = 64,
+tiles["npc/humanoid_shalore_shalore_liberator.png"] = { base = 64,
   head = {x=28, y=8},
 }
-tiles["immovable_pillar_mindcontrol_pillar.png"] = { base = 64,
+tiles["npc/immovable_pillar_mindcontrol_pillar.png"] = { base = 64,
   head = {x=28, y=39},
 }

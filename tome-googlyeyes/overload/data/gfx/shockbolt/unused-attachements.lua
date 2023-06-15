@@ -807,22 +807,11 @@ tiles["construct_mechanical_ancient_automated_archive.png"] = { base = 64,
 }
 
 --has 2 heads
-tiles["npc/vermin_worms_carrion_worm_mass.png"] = { base = 64,
-  head = {x=, y=},
-}
-tiles["npc/horror_corrupted_the_abomination.png"] = { base = 64,
-  head = {x=, y=},
-}
 
-    --eor
-tiles["giant_steam_steam_giant_yeti_rider.png"] = { base = 64,
-  head = {x=31, y=19},
-}
+
 
 -- has 3 heads
-tiles["npc/summoner_hydra.png"] = { base = 64,
-  head = {x=, y=},
-}
+
 
 --has only 1 eye
 tiles["npc/atamathon_broken.png"] = { base = 64,
@@ -831,80 +820,7 @@ tiles["npc/atamathon_broken.png"] = { base = 64,
 
 
 --shouldn't have eyes
-tiles["npc/horror_corrupted_dremling.png"] = { base = 64,
-  head = {x=31, y=-31},
-}
-tiles["npc/horror_corrupted_drem_master.png"] = { base = 64,
-  head = {x=, y=},
-}
-tiles["npc/horror_corrupted_drem.png"] = { base = 64,
-  head = {x=, y=},
-}
-tiles["npc/horror_corrupted_the_mouth.png"] = { base = 64,
-  head = {x=, y=},
-}
-tiles["npc/horror_eldritch_eldritch_eye.png"] = { base = 64,
-  head = {x=, y=},
-}
-tiles["npc/horror_eldritch_headless_horror.png"] = { base = 64,
-  head = {x=, y=},
-}
-tiles["npc/horror_eldritch_maelstrom.png"] = { base = 64,
-  head = {x=, y=},
-}
-tiles["npc/horror_eldritch_weirdling_beast.png"] = { base = 64,
-  head = {x=, y=},
-}
-tiles["npc/horror_sher_tul_caldizar.png"] = { base = 64,
-  head = {x=, y=},
-}
-tiles["npc/horror_sher_tul_fortress_shadow.png"] = { base = 64,
-  head = {x=, y=},
-}
 
-   -- eyeless in eor
-tiles["god_eyal_amakthel_s_eye_closed.png"] = { base = 64,
-  head = {x=31, y=19},
-}
-tiles["god_eyal_amakthel_s_eye.png"] = { base = 64,
-  head = {x=31, y=19},
-}
-tiles["god_eyal_amakthel_s_hand_closed.png"] = { base = 64,
-  head = {x=31, y=19},
-}
-tiles["god_eyal_amakthel_s_hand.png"] = { base = 64,
-  head = {x=31, y=19},
-}
-tiles["god_eyal_amakthel_s_mouth_closed.png"] = { base = 64,
-  head = {x=31, y=19},
-}
-tiles["god_eyal_amakthel_s_mouth.png"] = { base = 64,
-  head = {x=31, y=19},
-}
-tiles["horror_eldritch_eyed_tentacle.png"] = { base = 64,
-  head = {x=31, y=19},
-}
-tiles["horror_eldritch_oozing_tentacle.png"] = { base = 64,
-  head = {x=35, y=8},
-}
-tiles["horror_eldritch_saw_horror.png"] = { base = 64,
-  head = {x=33, y=-12},
-}
-tiles["horror_eldritch_spiked_tentacle.png"] = { base = 64,
-  head = {x=51, y=-55},
-}
-tiles["horror_shertul_shertul_high_priest_eye_infused.png"] = { base = 64,
-  head = {x=31, y=19},
-}
-tiles["horror_shertul_shertul_high_priest_hand_infused.png"] = { base = 64,
-  head = {x=31, y=19},
-}
-tiles["horror_shertul_shertul_high_priest_mouth_infused.png"] = { base = 64,
-  head = {x=31, y=19},
-}
-tiles["horror_shertul_sher_tul_high_priest.png"] = { base = 64,
-  head = {x=31, y=19},
-}
 
 --swarm of things
 tiles["npc/horror_eldritch_mass_of_parasitic_leeches.png"] = { base = 64,
