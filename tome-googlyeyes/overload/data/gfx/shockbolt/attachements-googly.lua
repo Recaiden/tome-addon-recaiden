@@ -76,7 +76,9 @@ tiles["npc/construct_golem_golem.png"] = { base = 64,
 tiles["npc/golem.png"] = { base = 64,
   head = {x=29, y=8},
 }
-
+tiles["player/runic_golem/base_shadow_01.png"] = { base = 64,
+  head = {x=32, y=13},
+}
 
 -- undead
 tiles["npc/emperor_wight.png"] = { base = 64,
@@ -1305,4 +1307,132 @@ tiles["npc/humanoid_shalore_shalore_liberator.png"] = { base = 64,
 }
 tiles["npc/immovable_pillar_mindcontrol_pillar.png"] = { base = 64,
   head = {x=28, y=39},
+}
+
+-- forbidden cults
+tiles["npc/black_monolith.png"] = { base = 64,
+  head = {x=26, y=-28},
+}
+tiles["npc/dragon_scourge_kroltar_the_horror.png"] = { base = 64,
+  head = {x=23, y=-48},
+}
+tiles["npc/dragon_scourge_kroltar_the_scourge.png"] = { base = 64,
+  head = {x=17, y=-13},
+}
+tiles["npc/dragon_scourge_scourge_drake_hatchling.png"] = { base = 64,
+  head = {x=19, y=21},
+}
+tiles["npc/dragon_scourge_scourge_drake.png"] = { base = 64,
+  head = {x=12, y=34},
+}
+tiles["npc/dragon_scourge_scourge_wyrm.png"] = { base = 64,
+  head = {x=41, y=-11},
+}
+tiles["npc/entropic_fiend.png"] = { base = 64,
+  head = {x=17, y=38},
+}
+tiles["npc/giant_krog_captive_krog.png"] = { base = 64,
+  head = {x=25, y=-50},
+}
+tiles["npc/giant_minotaur_minotaur_mindscrew.png"] = { base = 64,
+  head = {x=26, y=-9},
+}
+tiles["npc/horror_eldritch_bursting_entropic_shard.png"] = { base = 64,
+  head = {x=30, y=6},
+}
+tiles["npc/horror_eldritch_disfigured_creature.png"] = { base = 64,
+  head = {x=22, y=19},
+}
+tiles["npc/horror_eldritch_fearful_symmetry.png"] = { base = 64,
+  head = {x=33, y=6},
+}
+tiles["npc/horror_eldritch_giant_netherworm.png"] = { base = 64,
+  head = {x=18, y=15},
+}
+tiles["npc/horror_eldritch_hypostasis_of_entropy_awaken.png"] = { base = 64,
+  head = {x=32, y=-8},
+}
+tiles["npc/horror_eldritch_hypostasis_of_entropy.png"] = { base = 64,
+  head = {x=32, y=-8},
+}
+tiles["npc/horror_eldritch_ravaging_entropic_rip.png"] = { base = 64,
+  head = {x=28, y=39},
+}
+tiles["npc/horror_eldritch_searing_horror.png"] = { base = 64,
+  head = {x=30, y=-39},
+}
+tiles["npc/horror_eldritch_that_which_teaches_history.png"] = { base = 64,
+  head = {x=29, y=-23},
+}
+tiles["npc/horror_eldritch_the_conjointed.png"] = { base = 64,
+  head = {x=28, y=39},
+}
+tiles["npc/horror_eldritch_the_crawler.png"] = { base = 64,
+  head = {x=28, y=20},
+}
+tiles["npc/horror_eldritch_the_face_of_the_deep.png"] = { base = 64,
+  head = {x=18, y=-31},
+}
+tiles["npc/horror_eldritch_the_one_that_defends.png"] = { base = 64,
+  head = {x=32, y=-6},
+}
+tiles["npc/horror_eldritch_the_one_that_hunts.png"] = { base = 64,
+  head = {x=32, y=34},
+}
+tiles["npc/horror_eldritch_the_one_that_writes.png"] = { base = 64,
+  head = {x=28, y=13},
+}
+tiles["npc/humanoid_halfling_grung.png"] = { base = 64,
+  head = {x=32, y=15},
+}
+tiles["npc/humanoid_shalore_malyu.png"] = { base = 64,
+  head = {x=32, y=-12},
+}
+tiles["npc/undead_lich_grand_necromancer.png"] = { base = 64,
+  head = {x=28, y=-32},
+}
+tiles["npc/undead_vampire_chanting_necromancer.png"] = { base = 64,
+  head = {x=26, y=-10},
+}
+tiles["npc/vermin_blob_corrupted_acidic_digestor.png"] = { base = 64,
+  head = {x=30, y=46},
+}
+tiles["npc/vermin_blob_corrupted_dendritic_hemospinner.png"] = { base = 64,
+  head = {x=32, y=10},
+}
+tiles["npc/vermin_blob_corrupted_mastocytic_feeder.png"] = { base = 64,
+  head = {x=31, y=39},
+}
+tiles["npc/vermin_blob_corrupted_plasmic_disruptor.png"] = { base = 64,
+  head = {x=22, y=47},
+}
+tiles["npc/vermin_blob_corrupted_protoplasmic_controller.png"] = { base = 64,
+  head = {x=25, y=40},
+}
+tiles["npc/vermin_blob_corrupted_protosentient_globula.png"] = { base = 64,
+  head = {x=28, y=15},
+}
+tiles["npc/vermin_blob_dendritic_hemospinner.png"] = { base = 64,
+  head = {x=32, y=11},
+}
+tiles["npc/vermin_blob_mastocytic_feeder.png"] = { base = 64,
+  head = {x=35, y=27},
+}
+tiles["npc/vermin_blob_plasmic_disruptor.png"] = { base = 64,
+  head = {x=24, y=20},
+}
+tiles["npc/vermin_blob_protoplasmic_controller.png"] = { base = 64,
+  head = {x=29, y=7},
+}
+tiles["npc/vermin_blob_protosentient_globula.png"] = { base = 64,
+  head = {x=24, y=19},
+}
+tiles["npc/vermin_blob_the_divine_writhing_mass.png"] = { base = 64,
+  head = {x=32, y=36},
+}
+tiles["npc/void_annihilator.png"] = { base = 64,
+  head = {x=28, y=39},
+}
+tiles["npc/voidling_smaller.png"] = { base = 64,
+  head = {x=25, y=30},
 }

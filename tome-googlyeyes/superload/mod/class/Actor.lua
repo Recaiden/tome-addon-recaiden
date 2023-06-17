@@ -26,7 +26,20 @@ local eyeless = {
 		["npc/horror_shertul_shertul_high_priest_eye_infused.png"] = true,
 		["npc/horror_shertul_shertul_high_priest_hand_infused.png"] = true,
 		["npc/horror_shertul_shertul_high_priest_mouth_infused.png"] = true,
-		["npc/horror_shertul_sher_tul_high_priest.png"] = true
+		["npc/horror_shertul_sher_tul_high_priest.png"] = true,
+		["npc/ancient_shertul_berserker.png"] = true,
+		["npc/ancient_shertul_bulwark.png"] = true,
+		["npc/ancient_shertul_mage.png"] = true,
+		["npc/ancient_shertul_psion.png"] = true,
+		["npc/horror_corrupted_half_formed_drem.png"] = true,
+		["npc/horror_corrupted_the_amalgamation.png"] = true,
+		["npc/horror_eldritch_drem_cultist.png"] = true,
+		["npc/horror_eldritch_drem_seeker_of_knowledge_female.png"] = true,
+		["npc/horror_eldritch_drem_seeker_of_knowledge.png"] = true,
+		["npc/horror_eldritch_the_conjointed.png"] = true,
+		["npc/horror_eldritch_the_sightless_acolyte.png"] = true,
+		["npc/hungering_mouth.png"] = true,
+		["invis.png"] = true
 }
 
 local customEyes = {
@@ -55,6 +68,19 @@ local customEyes = {
 		{ x = 34, y = 8 },
 		{ x = 37, y = 26 },
 		{ x = 45, y = 25 },
+	},
+	["npc/horrific_display.png"] = {
+		{ x = 53, y = 10 },
+		{ x = 38, y = 22 },
+		{ x = 26, y = 20 },
+		{ x = 33, y = 11 },
+		{ x = 10, y = 48 },
+	},
+	["npc/unknown_unknown_the_teacher.png"] = {
+		{ x = 27, y = -23, scale = 0.3 },
+	},
+	["npc/void_annihilator.png"] = {
+		{ x = 27, y = -30, scale = 0.5 },
 	}
 }
 
@@ -70,7 +96,7 @@ function _M:updateGooglyEyes()
 		end
 		self.__googly_particles = {}
 		for _, location in pairs(customEyes[as]) do
-			self.__googly_particles[#self.__googly_particles+1] = self:addParticles(Particles.new("level_circle", 0.15, {x=(location.x) * (self._flipx and -1 or 1)-32, y=location.y-32, oversize=0.15, a=255, speed=0, img="googl", radius=0}))
+			self.__googly_particles[#self.__googly_particles+1] = self:addParticles(Particles.new("level_circle", 0.15, {x=(location.x) * (self._flipx and -1 or 1)-32, y=location.y-32, oversize=location.scale or 0.15, a=255, speed=0, img="googl", radius=0}))
 		end
 		
 		return
