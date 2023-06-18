@@ -96,7 +96,7 @@ function _M:updateGooglyEyes()
 		end
 		self.__googly_particles = {}
 		for _, location in pairs(customEyes[as]) do
-			self.__googly_particles[#self.__googly_particles+1] = self:addParticles(Particles.new("level_circle", 0.15, {x=(location.x) * (self._flipx and -1 or 1)-32, y=location.y-32, oversize=location.scale or 0.15, a=255, speed=0, img="googl", radius=0}))
+			self.__googly_particles[#self.__googly_particles+1] = self:addParticles(Particles.new("level_circle", 0.15, {x=(location.x - 32) * (self._flipx and -1 or 1), y=location.y-32, oversize=location.scale or 0.15, a=255, speed=0, img="googl", radius=0}))
 		end
 		
 		return
