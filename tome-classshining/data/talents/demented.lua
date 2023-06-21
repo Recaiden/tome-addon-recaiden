@@ -72,6 +72,12 @@ if not Talents.talents_types_def["demented/prism"] then
    load("/data-classshining/talents/prism.lua")
 end
 
+if not Talents.talents_types_def["demented/broken-prism"] then
+   newTalentType{ allow_random=true, no_silence=true, type="demented/broken-prism", name = "Broken Prism", description = "All sky's light unites in me-", is_spell=true }
+   load("/data-classshining/talents/broken-prism.lua")
+end
+
+
 if not Talents.talents_types_def["celestial/shining-mantras"] then
 	newTalentType{ allow_random=false, no_silence=true, type="celestial/shining-mantra-mantras", name = "Mantras", description = "Three truths of the sun", generic=true, is_spell=true }
 	newTalentType{ allow_random=true, no_silence=true, type="celestial/shining-mantras", name = "Mantras", description = "Simple sounds spoken over and over and over.", generic=true, is_spell=true, on_mastery_change = function(self, m, tt) self.talents_types_mastery["celestial/shining-mantra-mantras"] = self.talents_types_mastery[tt] end }

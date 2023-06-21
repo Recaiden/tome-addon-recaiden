@@ -297,7 +297,7 @@ newEffect{
 	type = "magical",
 	subtype = { fire=true },
 	status = "other",
-	charges = function(self, eff) return math.round(eff.power) end,
+	charges = function(self, eff) return math.round(eff.power * eff.stacks) end,
 	parameters = { power=5, stacks = 1, max_stacks = 5 },
 	on_merge = function(self, old_eff, new_eff)
 		return old_eff -- cannot be reapplied early

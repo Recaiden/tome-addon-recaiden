@@ -309,7 +309,12 @@ Learning this talent splits you into 3 reflections.]]):tformat(damDesc(self, Dam
 newTalent{
 	name = "Trinary", short_name = "REK_SHINE_PRISM_SYNCHRONY",
 	type = {"demented/prism", 2},	require = mag_req2, points = 5,
-	on_learn = function(self, t) self:learnTalent(self.T_REK_SHINE_PRISM_REFLECTIONS, true, nil, {no_unlearn=true}) end,
+	on_learn = function(self, t)
+		self:learnTalent(self.T_REK_SHINE_PRISM_REFLECTIONS, true, nil, {no_unlearn=true})
+		if self:knowTalent(self.T_REK_SHINE_PRISM_REMOVER) then
+			self:unlearnTalentFull(self.T_REK_SHINE_PRISM_REMOVER)
+		end
+	end,
 	on_unlearn = function(self, t) self:unlearnTalent(self.T_REK_SHINE_PRISM_REFLECTIONS) end,
 	mode = "passive",
 	getSpellpowerIncrease = function(self, t) return self:combatTalentScale(t, 5, 20, 1.0) end,

@@ -72,6 +72,8 @@ newBirthDescriptor{
 		[ActorTalents.T_REK_SHINE_PRISM_REFLECTIONS] = 1,
 		[ActorTalents.T_HEALING_LIGHT] = 1,
 		[ActorTalents.T_REK_SHINE_MANTRA_INITIATE] = 1,
+
+		[ActorTalents.T_REK_SHINE_PRISM_REMOVER] = 1,
 	},
 	
 	copy = {
