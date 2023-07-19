@@ -8,7 +8,8 @@ local DamageType = require "engine.DamageType"
 local load = function(self, data)
    ActorTalents:loadDefinition('/data-campaign-hammer-characters/talents/talents.lua')
    ActorTemporaryEffects:loadDefinition('/data-campaign-hammer-characters/effects.lua')
-   Birther:loadDefinition("/data-campaign-hammer-characters/birth/races.lua")
+   Birther:loadDefinition("/data-campaign-hammer-characters/birth/demon-races.lua")
+	 Birther:loadDefinition("/data-campaign-hammer-characters/birth/eyal-races.lua")
 	 Birther:loadDefinition("/data-campaign-hammer-characters/birth/classes.lua")
 	 DamageType:loadDefinition("/data-campaign-hammer-characters/damage_types.lua")
 end

@@ -38,6 +38,7 @@ newTalent{
 
 		-- remove the main talents
 		t.unlearnTalents(self, t, {["demented/prism"] = true})
+		self:unlearnTalentFull(self.T_REK_SHINE_PRISM_REFLECTIONS)
 
 		-- get the new talents
 		self:learnTalentType("demented/broken-prism", true)

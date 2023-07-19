@@ -1,41 +1,18 @@
 newTalent{
 	name = "Blackhooves", short_name="REK_BLACKHOOF_MOVEMENT",
 	type = {"race/blackhoof", 1}, require = racial_req1, points = 5,
-	tactical = { CURE = 1 },
+	tactical = { CLOSEIN = 1, ESCAPE = 1 },
 	no_energy = true,
 	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 40, 12)) end,
-	getRemoveCount = function(self, t) return math.floor(self:combatTalentScale(t, 2, 6, "log")) end,
-	getSteps = function(self, t) return math.floor(self:combatTalentScale(t, 1, 5, "log")) end,
+	getSteps = function(self, t) return math.floor(self:combatTalentScale(t, 2, 6, "log")) end,
 	action = function(self, t)
-		local effs = {}
-		-- remove movement-restricting effects
-		for eff_id, p in pairs(self.tmp) do
-			local e = self.tempeffect_def[eff_id]
-			if e.subtype.stun or e.subtype.pin then -- Daze is stun subtype
-				effs[#effs+1] = {"effect", eff_id}
-			end
-		end
-
-		for i = 1, t.getRemoveCount(self, t) do
-			if #effs == 0 then break end
-			local eff = rng.tableRemove(effs)
-
-			if eff[1] == "effect" then
-				self:removeEffect(eff[2])
-			end
-		end
-
 		-- move fast
-		self:setEffect(self.EFF_REK_BLACKHOOF_IMPULSE, 1, {steps=t.getSteps(self, t), src=self})
-
-		-- check talent 3
-		if self:knowTalent(self.T_REK_BLACKHOOF_TACTICAL) then
-			self.energy.value = self.energy.value + game.energy_to_act * self:callTalent(self.T_REK_BLACKHOOF_TACTICAL, "getEnergy")
-		end
+		self:setEffect(self.EFF_REK_BLACKHOOF_MOVEMENT, 2, {steps=t.getSteps(self, t), src=self})
+		
 		return true
 	end,
 	info = function(self, t)
-		return ([[Instantly generate motion and energy within yourself, removing up to %d stun, daze, or pin effects and allowing you to move %d times without taking a turn.]]):tformat(t:_getRemoveCount(self), t:_getSteps(self))
+		return ([[Begin charging as fast as possible, increasing your movement speed by +900%% for the next %d moves you make within 2 turns. with ech of these moves you will attempt to Daze adjacent enemies using your highest power.]]):tformat(t:_getSteps(self))
 	end,
 }
 

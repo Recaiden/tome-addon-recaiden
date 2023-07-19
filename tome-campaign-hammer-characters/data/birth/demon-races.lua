@@ -2,7 +2,7 @@ newBirthDescriptor{
 	type = "race",
 	name = "Demon",
 	locked = function() return profile.mod.allow_build.race_doomelf end,
-  locked_desc = [[A broken homeland, a father's command
+  locked_desc = [[A broken land, a father's command
 Brought to the edge, all that's left is revenge]],
 	desc = {
 		_t"Demons are the inhabitants of the world of Mal'Rok.  With their home devastated by the Spellblaze, they  have dedicated themselves to revenge, making themselves into monsters to better wage war on all things Sher'tul.",
@@ -56,7 +56,7 @@ newBirthDescriptor {
   type = 'subrace',
   name = 'Ruby',
   locked = function() return profile.mod.allow_build.race_doomelf end,
-  locked_desc = [[A broken homeland, a father's command
+  locked_desc = [[A broken land, a father's command
 Brought to the edge, all that's left is revenge]],
   desc = {
      "Bestial many-eyed demons, the children of Ruby are the most magically gifted of the Mal'Rokka.",
@@ -97,7 +97,7 @@ newBirthDescriptor {
   type = 'subrace',
   name = 'Emerald',
   locked = function() return profile.mod.allow_build.race_doomelf end,
-  locked_desc = [[A broken homeland, a father's command
+  locked_desc = [[A broken land, a father's command
 Brought to the edge, all that's left is revenge]],
   desc = {
      "Towering smooth-skinned demons, the children of Emerald are the most physically powerful of the Mal'Rokka.",
@@ -174,7 +174,7 @@ newBirthDescriptor {
 	type = 'subrace',
 	name = 'Onyx',
 	locked = function() return profile.mod.allow_build.race_doomelf end,
-	locked_desc = [[A broken homeland, a father's command
+	locked_desc = [[A broken land, a father's command
 Brought to the edge, all that's left is revenge]],
 	desc = {
 		"Strange stone-skinned demons, the children of Onyx are the most cunning of the Mal'Rokka.",

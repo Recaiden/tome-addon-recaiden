@@ -27,7 +27,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Surge your life force to heal %d life immediately and increase your life regeneration by %d for 8 turns.
+		return ([[Stoke your life force to heal %d life immediately and increase your life regeneration by %d for 8 turns.
 The life healed will increase with your Constitution.
 
 You also gain %d%% resistance and %d%% affinity to acid, based on your level.]]):tformat(t.getRegen(self,  t), t.getHealing(self, t), t:_getResist(self), t:_getAffinity(self))
