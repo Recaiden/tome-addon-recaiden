@@ -10,7 +10,6 @@ newTalent{
 	drain_steam = 3,
 	cooldown = 10,
 	tactical = { ATTACKAREA = { weapon = 2 }, },
-	range = steamgun_range,
 	getPower = function(self, t) return 30 end,
 	getPercentInc = function(self, t) return math.sqrt(self:getTalentLevel(t) / 5) / 1.5 end,
 	getDamage = function(self, t) return 0.25 + self:combatTalentWeaponDamage(t, 0.3, 0.7) end,
@@ -127,7 +126,7 @@ newTalent{
 		return true
 	end,
 	info = function(self, t)
-		return ([[Deploy a tiny autonomous machine to hovers around you and shoot at your enemies.  Each round, it uses your ammo to attack an enemy in range %d, dealing %d%% damage.  These attacks use your accuracy, will have %d increased Physical Power and %d%% more damage, and apply on-hit effects as if they were melee attacks.
+		return ([[Deploy a tiny autonomous machine to hover around you and shoot at your enemies.  Each round, it uses your ammo to attack an enemy in range %d, dealing %d%% damage.  These attacks use your accuracy, will have %d increased Physical Power and %d%% more damage, and apply on-hit effects as if they were melee attacks.
 If your ammo is depleted, it instead reloads (with %d extra ammunition reloaded).
 The shots will pass harmlessly through allies.
 
@@ -230,6 +229,7 @@ newTalent{
 
 			negative_status_effect_immune = 1,
 			cant_be_moved = 1,
+			bomb_drone = 1,
 
 			on_act = function(self)
 				local tg = {type="ball", range=0, friendlyfire=false, radius=3}	
@@ -383,6 +383,7 @@ newTalent{
 
 			negative_status_effect_immune = 1,
 			cant_be_moved = 1,
+			bomb_drone = 1,
 
 			on_act = function(self)
 				local tg = {type="ball", range=0, friendlyfire=false, radius=3}	

@@ -2,6 +2,8 @@ local DamageType = require "engine.DamageType"
 
 local _M = loadPrevious(...)
 
+_M:addCombatTraining("dronegun", "T_REK_DEML_DRONE_GUNNER")
+
 local base_bumpInto = _M.bumpInto
 function _M:bumpInto(target, x, y)
 	local reaction = self:reactionToward(target)

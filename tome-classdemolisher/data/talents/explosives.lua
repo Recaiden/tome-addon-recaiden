@@ -1,59 +1,63 @@
 local Trap = require "mod.class.Trap"
 local Object = require "mod.class.Object"
 
-
 newTalent{
-   name = "Detonator", short_name = "REK_DEML_EXPLOSIVE_DETONATE",
-   type = {"steamtech/other", 1},
-   require = steam_req1,
-   points = 5,
-   cooldown = 0,
-	 tactical = {
-		 ATTACKAREA = {
-			 FIRE = function(self, t, target)
-				 if not game or not game.level then return 0 end
-				 local count = 0
-				 local tg = {type="ball", range=0, radius=10, no_restrict=true}
-				 if not self:canProject(tg, self.x, self.y) then return 0 end
-				 self:project(
-					 tg, self.x, self.y,
-					 function(px, py)
-						 local trap = game.level.map(px, py, engine.Map.TRAP)
-						 if not trap then return end
-						 if trap.name ~= "remote explosive charge" then return end
-						 if trap.summoner ~= self then return end
-						 self:project(
-							 {type="ball", radius=self.radius, friendlyfire=false, x=px, y=py}, px, py,
-							 function(px, py)
-								 local target = game.level.map(px, py, engine.Map.ACTOR)
-								 if not target then return end
-								 if self:reactionToward(target) > 0 then return end
-								 count = count + 1
-							 end)
-					 end)
-				 return count * 0.75
-			 end },
-	 },
-	 on_pre_use = function(self, t, silent)
-		 local count = 0
-		 if not game or not game.level then return false end
-		 self:project(
-			 {type="ball", range=0, radius=10, no_restrict=true},
-			 self.x, self.y,
-			 function(px, py)
-				 local trap = game.level.map(px, py, engine.Map.TRAP)
-				 if not trap then return end
-				 if trap.name ~= "remote explosive charge" then return end
-				 if trap.summoner ~= self then return end
-				 count = count + 1
-			 end)
-		 if count == 0 and not silent then game.logPlayer(self, "You have nothing to detonate") end
-		 return count > 0
-	 end,
-	 action = function(self, t)
-		 local detonated = 0
-		 -- look for charges in a position to dig
-		 self:project(
+	name = "Detonator", short_name = "REK_DEML_EXPLOSIVE_DETONATE",
+	type = {"steamtech/other", 1},
+	require = steam_req1,
+	points = 5,
+	cooldown = 0,
+	tactical = {
+		ATTACKAREA = {
+			FIRE = function(self, t, target)
+				if not game or not game.level then return 0 end
+				local count = 0
+				local tg = {type="ball", range=0, radius=10, no_restrict=true}
+				if not self:canProject(tg, self.x, self.y) then return 0 end
+				self:project(
+					tg, self.x, self.y,
+					function(px, py)
+						local trap = game.level.map(px, py, engine.Map.TRAP)
+						if not trap then return end
+						if trap.name ~= "remote explosive charge" then return end
+						if trap.summoner ~= self then return end
+						self:project(
+							{type="ball", radius=self.radius, friendlyfire=false, x=px, y=py}, px, py,
+							function(px, py)
+								local target = game.level.map(px, py, engine.Map.ACTOR)
+								if not target then return end
+								if self:reactionToward(target) > 0 then return end
+								count = count + 1
+						end)
+				end)
+				return count * 0.75
+		end },
+	},
+	on_pre_use = function(self, t, silent)
+		local count = 0
+		if not game or not game.level then return false end
+		self:project(
+			{type="ball", range=0, radius=10, no_restrict=true},
+			self.x, self.y,
+			function(px, py)
+				local trap = game.level.map(px, py, engine.Map.TRAP)
+				if trap and trap.name == "remote explosive charge" and trap.summoner == self then
+					count = count + 1
+				end
+				if self:knowTalent(self.T_REK_EVOLUTION_DEML_DRONE) then
+					local drone = game.level.map(px, py, engine.Map.ACTOR)
+					if drone and drone.bomb_drone and drone.summoner == self then
+						count = count + 1
+					end
+				end
+		end)
+		if count == 0 and not silent then game.logPlayer(self, "You have nothing to detonate") end
+		return count > 0
+	end,
+	action = function(self, t)
+		local detonated = 0
+		-- look for charges in a position to dig
+		self:project(
 			 {type="ball", range=0, radius=10, no_restrict=true},
 			 self.x, self.y,
 			 function(px, py)
@@ -65,38 +69,90 @@ newTalent{
 				 self:project(
 					 {type="ball", radius=trap.radius, selffire=false, x=px, y=py}, px, py,
 					 function(px, py)
-						 local target = game.level.map(px, py, engine.Map.TRAP)
-						 if not target then return end
-						 if target.name ~= "remote explosive charge" then return end
-						 if not target.summoner or target.summoner ~= trap.summoner then return end
-						 count = count + 1
-					 end)
+						 local trap = game.level.map(px, py, engine.Map.TRAP)
+						 if trap and trap.name == "remote explosive charge" and trap.summoner == self then
+							 count = count + 1
+						 end
+						 if self:knowTalent(self.T_REK_EVOLUTION_DEML_DRONE) then
+							 local drone = game.level.map(px, py, engine.Map.ACTOR)
+							 if drone and drone.bomb_drone and drone.summoner == self then
+								 count = count + 1
+							 end
+						 end
+				 end)
 				 if count >= 3 then
 					 trap.digging = true
 				 end
-			 end)
-		 -- Blow them up for damage
-		 self:project(
-			 {type="ball", range=0, radius=10, no_restrict=true},
-			 self.x, self.y,
-			 function(px, py)
-				 local trap = game.level.map(px, py, engine.Map.TRAP)
-				 if not trap then return end
-				 if trap.name ~= "remote explosive charge" then return end
-				 if trap.summoner ~= self then return end
-				 trap:triggered(px, py, self)
-				 detonated = detonated + 1
-			 end)
-		 if self:knowTalent(self.T_REK_DEML_PYRO_BLASTRIDER) and detonated >= 3 then
-			 self:callTalent(self.T_REK_DEML_PYRO_BLASTRIDER, "gainSpeed")
-		 end
-		 return true
-   end,
-   info = function(self, t)
-      return ([[Detonate all of your explosive charges within range 10.
+		end)
+		-- Blow them up for damage
+		self:project(
+			{type="ball", range=0, radius=10, no_restrict=true},
+			self.x, self.y,
+			function(px, py)
+				local trap = game.level.map(px, py, engine.Map.TRAP)
+				if trap and trap.name == "remote explosive charge" and trap.summoner == self then
+					trap:triggered(px, py, self)
+					detonated = detonated + 1
+				end
+
+				-- detonate drones if rigged to explode
+				if self:knowTalent(self.T_REK_EVOLUTION_DEML_DRONE) then
+					local drone = game.level.map(px, py, engine.Map.ACTOR)
+					if drone and drone.bomb_drone and drone.summoner == self then
+						drone:die()
+						local t2 = self:getTalentFromId(self.T_REK_DEML_EXPLOSIVE_REMOTE_CHARGE)
+						local dam = self:steamCrit(t2.getDamage(self, t2))
+						local burn = 0
+						if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then
+							burn = self:callTalent(self.T_REK_DEML_PYRO_FLAMES, "getDamage")
+						end
+						local radius = self:getTalentRadius(t2)
+							-- Mayhem engine CDR
+						if self and self:knowTalent(self.T_REK_DEML_BATTLEWAGON_MAYHEM_ENGINE) and not self:hasProc("demolisher_mayhem") then
+							self:setProc("demolisher_mayhem", true, 1)
+							local cd = self:callTalent(self.T_REK_DEML_BATTLEWAGON_MAYHEM_ENGINE, "getCDReduce")
+							if self:isTalentCoolingDown(self.T_REK_DEML_ENGINE_RAMMING_SPEED) then
+								self:alterTalentCoolingdown(self.T_REK_DEML_ENGINE_RAMMING_SPEED, -cd)
+							end
+							if self:isTalentCoolingDown(self.T_REK_DEML_MG_MISSILE) then
+								self:alterTalentCoolingdown(self.T_REK_DEML_MG_MISSILE, -cd)
+							end
+							if self:isTalentCoolingDown(self.T_REK_DEML_MG_GAUSS) then
+								self:alterTalentCoolingdown(self.T_REK_DEML_MG_GAUSS, -cd)
+							end
+							if self:isTalentCoolingDown(self.T_REK_DEML_MG_HARPOON) then	 
+								self:alterTalentCoolingdown(self.T_REK_DEML_MG_HARPOON, -cd)
+							end
+						end
+						game.level.map:particleEmitter(px, py, radius, "fireflash", {radius=radius})
+
+						local tg = {type="ball", radius=radius, friendlyfire=false, x=px, y=py}
+						-- damage
+						self:project(
+							tg, px, py,
+							function(tx, ty)
+								local target = game.level.map(tx, ty, engine.Map.ACTOR)
+								if not target then return end
+								DamageType:get(DamageType.REK_DEML_FIRE_DIMINISHING).projector(self, tx, ty, DamageType.REK_DEML_FIRE_DIMINISHING, dam)
+						end)
+						if burn > 0 then
+							self:project(tg, px, py, DamageType.FIREBURN, {dam=burn, dur=4, initial=0})
+						end
+						game:playSoundNear(drone, "talents/fire")
+						detonated = detonated + 1
+					end
+				end
+		end)
+		if self:knowTalent(self.T_REK_DEML_PYRO_BLASTRIDER) and detonated >= 3 then
+			self:callTalent(self.T_REK_DEML_PYRO_BLASTRIDER, "gainSpeed")
+		end
+		return true
+	end,
+	info = function(self, t)
+		return ([[Detonate all of your explosive charges within range 10.
 
 If an explosive charge has two other explosive charges adjacent to it, the combined force will knock down walls.]]):tformat()
-   end,
+	end,
 }
 
 newTalent{

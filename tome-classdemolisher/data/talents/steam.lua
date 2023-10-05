@@ -113,3 +113,8 @@ updateSteelRider = function(self)
 	self:setEffect(self.EFF_REK_DEML_RIDE, 10, {src=self, pin=pin, armor=armor, speed=speed, def=def, knock=knock})
 	game:playSoundNear(self, "talents/clinking")
 end
+
+
+if not Talents.talents_def["REK_EVOLUTION_DEML_DRONE"] then
+	load("/data-classdemolisher/talents/uber.lua")
+end
