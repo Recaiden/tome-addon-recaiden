@@ -62,48 +62,46 @@ While Gunner Drone is sustained you count as wielding a steamgun with range equa
 
 
 
--- newTalent{
--- 	name = "Light as the Wind", short_name = "REK_EVOLUTION_GLR_PANOPLY",
--- 	type = {"uber/dexterity", 1},
--- 	uber = true,
--- 	require = {
--- 		stat = {cun = 35},
--- 		level = 25,
--- 		birth_descriptors={{"subclass", "Wisp"}},
--- 		special={
--- 			desc="No fatigue",
--- 			fct=function(self)
--- 				return self:combatFatigue() == 0
--- 			end
--- 		}
--- 	},
--- 	is_class_evolution = "Wisp",
--- 	cant_steal = true,
--- 	mode = "passive",
--- 	is_mind = true,
--- 	no_npc_use = true,	
--- 	callbackOnArcheryAttack = function(self, t, target, hitted, crit, weapon, ammo, damtype, mult, dam)
--- 		if not hitted then return end
--- 		if not target then return end
--- 		if core.fov.distance(self.x, self.y, target.x, target.y) < 4 then return end
--- 		if target:hasProc("rek_glr_storm_dash") then return end
--- 		-- zip to target 
--- 		if not self:teleportRandom(target.x, target.y, 0) then game.logSeen(self, "The storm can't reach the target!") return true end
--- 		-- trigger arrowtorm
--- 		self:callTalent(eff.src.T_REK_GLR_ARROWSTORM_KALMANKA, "doStorm", self, true)
--- 		target:setProc("rek_glr_storm_dash", 1)
--- 	end,
--- 	info = function(self, t)
--- 		return ([[#{italic}#Possessions come to possess their owner.#{normal}#
--- For each equipment slot you have empty, you gain powerful bonuses, which increase with your level.
--- No helmet ... confuse resist
--- No boots ... movespeed, stun resist
--- No gloves ...
--- No body armor (bikini counts but take away its resists) ... stronger silk armor rating, psi-regen
--- No lite ... telepathy all at increasing range, resists, healing factor
--- No belt ... crit power
--- No amulet ...
--- No rings ...
--- ]]):format()
--- 	end,
--- }
+newTalent{
+	name = "Death Race", short_name = "REK_EVOLUTION_DEML_RAM",
+	type = {"uber/cunning", 1},
+	uber = true,
+	require = {
+		stat = {dex = 35},
+		level = 25,
+		birth_descriptors={{"subclass", "Demolisher"}},
+		special={
+			desc="Know both Ramming Speed and Mecharachnid Mine",
+			fct=function(self)
+				return self:knowTalent(self.T_REK_DEML_EXPLOSIVE_SPIDER_MINE) and self:knowTalent(self.T_REK_DEML_ENGINE_RAMMING_SPEED)
+			end
+		}
+	},
+	is_class_evolution = "Demolisher",
+	cant_steal = true,
+	mode = "passive",
+	no_npc_use = true,
+
+	is_steam = true,
+	getMovement = function(self, t) return 0.4 end,
+	getSteamBonus = function(self, t) return self:combatStatScale("dex", 3, 15) end,
+	getFlameBonus = function(self, t) return self:combatStatScale(self:combatDefense(true), 5, 50) end,
+	callbackOnKill = function(self, t, victim, death_note)
+		self:incSteam(t:_getSteamBonus(self))
+	end,
+	callbackOnSummonKill = function(self, t, killer, victim, death_note)
+		self:incSteam(t:_getSteamBonus(self))
+	end,
+	passives = function(self, t, p)
+	end,
+	info = function(self, t)
+		return ([[#{italic}#You ride across the land - leaving a trail of devastation, consuming all in your path as fuel.#{normal}#
+
+When you use Ramming Speed, you automatically drop a mecharachnid mine at your starting position, stun the main target (#SLATE#Steampower#LAST#) for 3 turns, and reset the cooldown of Full Throttle.
+
+Your ride grants you an additional +%d%% movement speed, and Blazing Trail deals %d additional damage (based on your Defense).
+
+When you kill an enemy, you throw any combustible bits into the boiler, recovering %d steam (based on your Dexterity).
+]]):format(t:_getMovement(self)*100, t:_getFlameBonus(self), t:_getSteamBonus(self))
+	end,
+}

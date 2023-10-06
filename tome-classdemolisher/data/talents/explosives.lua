@@ -467,7 +467,13 @@ newTalent{
 		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then cost  = cost + 5 end
 		return cost
 	end,
-	range = 1,
+	range = function(self, t)
+		local range = 1
+		if self.death_race_active then
+			range = range + self:getTalentRange(self.T_REK_DEML_ENGINE_RAMMING_SPEED)
+		end
+		return range
+	end,
 	tactical = { ATTACK = { FIRE = 2 }, SURROUNDED = 0,  },
 	requires_target = true,
 	radius = 3,
@@ -476,19 +482,8 @@ newTalent{
 	end,
 	getMovementSpeed = function(self, t) return self:combatTalentScale(t, 2, 5) end,
 	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 40, 300) end,
-	action = function(self, t)
-		local tg = self:getTalentTarget(t)
-		local x, y = self:getTarget(tg)
-		if not x or not y then return nil end
-		local _ _, x, y = self:canProject(tg, x, y)
-		local act = game.level.map(x, y, Map.ACTOR)
-		local block = game.level.map:checkEntity(x, y, Map.TERRAIN, "block_move")
-		if block or act then return nil end
-
-		--local x, y = util.findFreeGrid(self.x, self.y, 1, true, {[Map.ACTOR]=true})
-		--if not x then return nil end
-		
-		local burn = 0
+	summonSpider = function(self, t, x, y)
+				local burn = 0
 		if self:isTalentActive(self.T_REK_DEML_PYRO_FLAMES) then
 			burn = self:callTalent(self.T_REK_DEML_PYRO_FLAMES, "getDamage")
 		end
@@ -512,7 +507,7 @@ newTalent{
 			rank = 2,
 			size_category = 1,
 			autolevel = "zerker",
-			max_life = 100,
+			max_life = 100*(1+self.level/20),
 			life_rating = 4,
 			life_regen = 4,
 			movement_speed = t.getMovementSpeed(self, t),
@@ -548,6 +543,21 @@ newTalent{
 														 title="Summon",
 															})
 		end
+	end,
+	action = function(self, t)
+		local tg = self:getTalentTarget(t)
+		local x, y = self:getTarget(tg)
+		if not x or not y then return nil end
+		local _ _, x, y = self:canProject(tg, x, y)
+		local act = game.level.map(x, y, Map.ACTOR)
+		local block = game.level.map:checkEntity(x, y, Map.TERRAIN, "block_move")
+		if block or act then return nil end
+
+		--local x, y = util.findFreeGrid(self.x, self.y, 1, true, {[Map.ACTOR]=true})
+		--if not x then return nil end
+
+		t.summonSpider(self, t, x, y)
+		
 		return true
 	end,
 	info = function(self, t)

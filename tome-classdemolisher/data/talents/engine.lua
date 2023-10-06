@@ -12,7 +12,12 @@ newTalent{
 	getDamage = function(self, t) return self:combatTalentSteamDamage(t, 10, 50) end,
 	getMovement = function(self, t) return self:combatTalentScale(t, 0.18, 0.5, 0.75) end,
 	applyFlames = function(self, t, x, y)
-		game.level.map:addEffect(self, x, y, 4, engine.DamageType.FIRE, t.getDamage(self, t),
+		local dam = t.getDamage(self, t)
+		if self:knowTalent(self.T_REK_EVOLUTION_DEML_RAM) then
+			dam = dam + self:callTalent(self.T_REK_EVOLUTION_DEML_RAM, "getFlameBonus")
+		end
+		dam = self:steamCrit(dam)
+		game.level.map:addEffect(self, x, y, 4, engine.DamageType.FIRE, dam,
 														 0, 5, nil, -- radius, direction, angle
 														 {type="inferno"}, nil,
 														 false --selffire, friendlyfire
@@ -134,11 +139,28 @@ newTalent{
 			self:resetMoveAnim()
 			self:setMoveAnim(ox, oy, 8, 5)
 		end
+
+		-- death race bonus mecha
+		if self:knowTalent(self.T_REK_EVOLUTION_DEML_RAM) then
+			self.death_race_active = true
+			self:callTalent(self.T_REK_DEML_EXPLOSIVE_SPIDER_MINE, "summonSpider", ox, oy)
+			self.talents_cd[self.T_REK_DEML_ENGINE_FULL_THROTTLE] = nil
+			self.death_race_active = nil
+		end
 		
 		local did_crit=self:steamCrit(1)
 
 		if core.fov.distance(self.x, self.y, x, y) == 1 then
 			DamageType:get(DamageType.PHYSICAL).projector(self, target.x, target.y, DamageType.PHYSICAL, did_crit * t.getCrashDamage(self, t))
+
+			if self:knowTalent(self.T_REK_EVOLUTION_DEML_RAM) then
+				local victim = game.level.map(x, y, Map.ACTOR)
+				if victim and victim:canBe("stun") then
+					victim:setEffect(victim.EFF_STUNNED, 3, {src=self, apply_power=self:combatSteampower()})
+				end
+			end
+
+			
 			if self:isTalentActive(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
 				self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "applyFlames", target.x, target.y)
 			end

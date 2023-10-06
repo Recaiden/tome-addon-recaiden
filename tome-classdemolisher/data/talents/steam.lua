@@ -104,6 +104,9 @@ updateSteelRider = function(self)
 	if self:knowTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL) then
 		speed = self:callTalent(self.T_REK_DEML_ENGINE_BLAZING_TRAIL, "getMovement")
 	end
+	if self:knowTalent(self.T_REK_EVOLUTION_DEML_RAM) then
+		speed = speed + self:callTalent(self.T_REK_EVOLUTION_DEML_RAM, "getMovement")
+	end	
 	if self:knowTalent(self.T_REK_DEML_ENGINE_DRIFT_NOZZLES) then
 		def = self:callTalent(self.T_REK_DEML_ENGINE_DRIFT_NOZZLES, "getDefense")
 	end
