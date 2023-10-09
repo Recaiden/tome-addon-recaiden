@@ -75,6 +75,21 @@ newEffect{
 			self:removeEffect(self.EFF_REK_DEML_RIDE)
 			self:startTalentCooldown(self.T_REK_DEML_PILOT_AUTOMOTOR)
 			game:playSoundNear(self, "talents/breaking")
+
+			-- Remove effect, start coolingdown
+			self:startTalentCooldown(self.T_REK_DEML_PILOT_AUTOMOTOR, 10)
+			self:removeEffect(self.EFF_REK_DEML_RIDE)
+			
+			if self:knowTalent(self.T_REK_EVOLUTION_DEML_SPARE) and not self:isTalentCoolingDown(self.T_REK_EVOLUTION_DEML_SPARE) then
+				self:callTalent(self.T_REK_EVOLUTION_DEML_SPARE, "trigger", true)
+				if cb.value > self:getHull() then
+					cb.value = cb.value - self:getHull()
+				else
+					cb.value = 0
+					self.hull = self.hull - cb.value
+				end
+			end
+			
 		else
 			self.hull = self.hull - cb.value
 			cb.value = 0
@@ -202,5 +217,21 @@ newEffect{
 			end
 			self:move(self.x+dx, self.y+dy, true)
 		end
+	end,
+}
+
+
+newEffect{
+	name = "REK_DEML_HULL_PENALTY", image = "talents/rek_evolution_deml_spare.png",
+	desc = _t"Getaway Drive",
+	long_desc = function(self, eff) return ("The target has %d less hull until they can rebuild their main vehicle."):tformat(eff.power) end,
+	type = "other",
+	subtype = { steam=true },
+	status = "detrimental",
+	parameters = { power=10 },
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "max_hull", -1 * eff.power)
+	end,
+	deactivate = function(self, eff)
 	end,
 }

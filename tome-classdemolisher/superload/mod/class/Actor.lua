@@ -14,7 +14,7 @@ function _M:regenLife(fake)
 				self.life_regen = self.life_regen - (hullRestored / (self.healing_factor or 1))
 				local rLife, rPsi = base_regenLife(self, false)
 				self.life_regen = old_regen
-				return rLife + hullRestored, rPsi
+				return (rLife or 0) + hullRestored, rPsi or 0
 			end
 		end
 	else

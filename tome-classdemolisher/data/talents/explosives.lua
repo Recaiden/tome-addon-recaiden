@@ -522,7 +522,7 @@ newTalent{
 				[Talents.T_REK_DEML_SPIDER_MINE_EXPLODE]=1,			
 											 },
 			
-			ai = "summoned", ai_real = "tactical", ai_state = { ai_move="move_complex", talent_in=1, ally_compassion=0 },
+			ai = "summoned", ai_real = "dumb_talented_simple", ai_state = { ai_move="move_complex", talent_in=1, ally_compassion=0 },
 			no_drops = true, keep_inven_on_death = false,
 			summoner = self,
 			summoner_gain_exp=true,

@@ -266,6 +266,11 @@ newTalent{
 		-- Remove effect, start coolingdown
 		self:startTalentCooldown(self.T_REK_DEML_PILOT_AUTOMOTOR, 10)
 		self:removeEffect(self.EFF_REK_DEML_RIDE)
+
+			if self:knowTalent(self.T_REK_EVOLUTION_DEML_SPARE) and not self:isTalentCoolingDown(self.T_REK_EVOLUTION_DEML_SPARE) then
+			self:callTalent(self.T_REK_EVOLUTION_DEML_SPARE, "trigger", false)
+		end
+		
 		return true
 	end,
 	info = function(self, t)
