@@ -184,6 +184,7 @@ function _M:newGame()
 												 self.creating_player = false
 												 
 												 birth_done()
+												 self.state:selectBonusZone()
 												 self.player:check("on_birth_done")
 												 self:setTacticalMode(self.always_target)
 												 self:triggerHook{"ToME:birthDone"}
@@ -233,6 +234,7 @@ function _M:newGame()
 					     self.player:inventoryApplyAll(function(inven, item, o) game:addEntity(o) end)
 					     
 					     birth_done()
+							 self.state:selectBonusZone()
 					     self.player:check("on_birth_done")
 					     self:setTacticalMode(self.always_target)
 					     self:triggerHook{"ToME:birthDone"}
