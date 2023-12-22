@@ -9,6 +9,8 @@ function _M:on_set_temporary_effect(eff_id, e, p)
    if game.difficulty ~= game.DIFFICULTY_EASY and game.rek_dif_easy_effects and self.player and e.status == "detrimental" then
       p.dur = math.ceil(p.dur / 2)
    end
+
+	 return retval
 end
 
 return _M
