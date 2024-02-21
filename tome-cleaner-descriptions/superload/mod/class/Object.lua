@@ -389,6 +389,7 @@ function _M:getTextualDesc(compare_with, use_actor)
 		end
 		compare_fields(w, compare_with, field, "combat_spellspeed", "%+d%%", mod_align_stat( "Spell Speed"), 100)
 		compare_fields(w, compare_with, field, "combat_mindspeed", "%+d%%", mod_align_stat( "Mind Speed"), 100)
+		compare_fields(w, compare_with, field, "damage_resonance", "%+d%%", mod_align_stat( "Resonance"))
 		
 		local dt_string = tstring{}
 		local found = false
@@ -625,7 +626,6 @@ function _M:getTextualDesc(compare_with, use_actor)
 		compare_fields(w, compare_with, field, "projectile_evasion", "%+d%%", mod_align_stat( "Deflect Projectile"))
 		compare_fields(w, compare_with, field, "evasion", "%+d%%", mod_align_stat( "Evasion"))
 		compare_fields(w, compare_with, field, "cancel_damage_chance", "%+d%%", mod_align_stat( "Damage Avoidance"))
-		compare_fields(w, compare_with, field, "damage_resonance", "%+d%%", mod_align_stat( "Resonance"))
 		compare_fields(w, compare_with, field, "shield_dur", "%+d", mod_align_stat( "Shield Duration"))
 		compare_fields(w, compare_with, field, "shield_factor", "%+d%%", mod_align_stat( "Shield Power"))
 		compare_fields(w, compare_with, field, "shield_windwall", "%+d", mod_align_stat("Windwall"))
