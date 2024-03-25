@@ -2,6 +2,7 @@
 newBirthDescriptor{
 	name = "Pugilist", type = "subclass", desc = "",
 	enemy_ego_point_cost = 2,
+	enemy_ego_equip_set = "unarmed",
 	power_source = {technique=true},
 	stats = { dex=3, str=3 },
 	talents_types = {
@@ -34,6 +35,7 @@ getBirthDescriptor("class", "Warrior").descriptor_choices.subclass["Pugilist"] =
 newBirthDescriptor{
 	name = "Grappler", type = "subclass", desc = "",
 	enemy_ego_point_cost = 2,
+	enemy_ego_equip_set = "unarmed",
 	power_source = {technique=true},
 	stats = { dex=3, str=3 },
 	talents_types = {
@@ -66,6 +68,7 @@ getBirthDescriptor("class", "Warrior").descriptor_choices.subclass["Grappler"] =
 newBirthDescriptor{
 	name = "Martial Artist", type = "subclass", desc = "",
 	enemy_ego_point_cost = 2,
+	enemy_ego_equip_set = "unarmed",
 	power_source = {technique=true},
 	stats = { dex=3, str=3 },
 	talents_types = {

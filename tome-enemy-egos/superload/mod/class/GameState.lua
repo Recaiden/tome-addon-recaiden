@@ -33,7 +33,15 @@ function _M:checkEquipFilters(base, newClass)
 		return true
 	end
 
-
+	-- predefined sets from this mod
+	if base.enemy_ego_equip_set and newClass.enemy_ego_equip_set then
+		if base.enemy_ego_equip_set == newClass.enemy_ego_equip_set then
+			return true
+		else
+			return false
+		end
+	end
+	
 	local filters = {}
 
 	-- in case creature is predefined with limited inventories
@@ -340,6 +348,11 @@ function _M:apply_enemy_ego(b, class, data)
 	b.descriptor = b.descriptor or {}
 	b.descriptor.classes = b.descriptor.classes or {}
 	table.append(b.descriptor.classes, {class.name})
+
+	-- mark compatible equipment
+	if class.enemy_ego_equip_set then
+		b.enemy_ego_equip_set = class.enemy_ego_equip_set
+	end
 	
 	-- build inherent power sources and forbidden power sources
 	-- b.forbid_power_source --> b.not_power_source used for classes

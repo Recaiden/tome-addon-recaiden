@@ -24,6 +24,7 @@ local copy_elemage = {
 newBirthDescriptor{
 	name = "Golemancer", type = "subclass", desc = "",
 	enemy_ego_point_cost = 2,
+	enemy_ego_equip_set = "staff",
 	power_source = {arcane=true},
 	stats = { mag=5 },
 	talents_types = {
@@ -54,6 +55,7 @@ getBirthDescriptor("class", "Mage").descriptor_choices.subclass["Golemancer"] = 
 newBirthDescriptor{
 	name = "Pyromancer", type = "subclass", desc = "",
 	enemy_ego_point_cost = 2,
+	enemy_ego_equip_set = "staff",
 	power_source = {arcane=true},
 	stats = { mag=5 },
 	talents_types = {
@@ -72,6 +74,7 @@ getBirthDescriptor("class", "Mage").descriptor_choices.subclass["Pyromancer"] = 
 newBirthDescriptor{
 	name = "Cryomancer", type = "subclass", desc = "",
 	enemy_ego_point_cost = 2,
+	enemy_ego_equip_set = "staff",
 	power_source = {arcane=true},
 	stats = { mag=5 },
 	talents_types = {
@@ -90,6 +93,7 @@ getBirthDescriptor("class", "Mage").descriptor_choices.subclass["Cryomancer"] = 
 newBirthDescriptor{
 	name = "Tempest", type = "subclass", desc = "",
 	enemy_ego_point_cost = 2,
+	enemy_ego_equip_set = "staff",
 	power_source = {arcane=true},
 	stats = { mag=5 },
 	talents_types = {
@@ -104,3 +108,108 @@ newBirthDescriptor{
 	copy_add = { life_rating = -1 },
 }
 getBirthDescriptor("class", "Mage").descriptor_choices.subclass["Tempest"] = "disallow"
+
+-- celestial
+newBirthDescriptor{
+	name = "Sunmage", type = "subclass", desc = "",
+	enemy_ego_point_cost = 2,
+	enemy_ego_equip_set = "staff",
+	power_source = {arcane=true},
+	stats = { mag=5 },
+	talents_types = {
+		["celestial/sunlight"]={true, 0.3},
+		["celestial/chants"]={false, 0.3},
+		["celestial/light"]={false, 0.3},
+	},
+	talents = {
+		[ActorTalents.T_SEARING_LIGHT] = 1,
+		[ActorTalents.T_BARRIER] = 1,
+	},
+	
+	copy = {
+		mage_equip_filters,
+		resolvers.equipbirth{ id=true,
+													{type="weapon", subtype="staff", name="elm staff", autoreq=true, ego_chance=-1000},
+													{type="armor", subtype="cloth", name="linen robe", autoreq=true, ego_chance=-1000}
+		}
+	},
+}
+getBirthDescriptor("class", "Celestial").descriptor_choices.subclass["Sunmage"] = "disallow"
+
+newBirthDescriptor{
+	name = "Moonmage", type = "subclass", desc = "",
+	enemy_ego_point_cost = 2,
+	enemy_ego_equip_set = "staff",
+	power_source = {arcane=true},
+	stats = { mag=5 },
+	talents_types = {
+		["celestial/star-fury"]={true, 0.3},
+		["celestial/hymns"]={false, 0.3},
+		["celestial/light"]={false, 0.3},
+	},
+	talents = {
+		[ActorTalents.T_MOONLIGHT_RAY] = 1,
+		[ActorTalents.T_BARRIER] = 1,
+	},
+	
+	copy = {
+		mage_equip_filters,
+		resolvers.equipbirth{ id=true,
+													{type="weapon", subtype="staff", name="elm staff", autoreq=true, ego_chance=-1000},
+													{type="armor", subtype="cloth", name="linen robe", autoreq=true, ego_chance=-1000}
+		}
+	},
+}
+getBirthDescriptor("class", "Celestial").descriptor_choices.subclass["Moonmage"] = "disallow"
+
+
+newBirthDescriptor{
+	name = "Eclipsed", type = "subclass", desc = "",
+	enemy_ego_point_cost = 4,
+	enemy_ego_equip_set = "staff",
+	power_source = {arcane=true},
+	stats = { mag=5 },
+	talents_types = {
+		["celestial/sunlight"]={true, 0.3},
+		["celestial/star-fury"]={true, 0.3},
+		["celestial/eclipse"]={true, 0.3},
+	},
+	talents = {
+		[ActorTalents.T_MOONLIGHT_RAY] = 1,
+		[ActorTalents.T_SEARING_LIGHT] = 1,
+		[ActorTalents.T_CORONA] = 1,
+		[ActorTalents.T_BLOOD_RED_MOON] = 1,
+		[ActorTalents.T_TWILIGHT_SURGE] = 1,
+		[ActorTalents.T_TWILIGHT] = 1,
+
+	},
+	
+	copy = {
+		mage_equip_filters,
+		resolvers.equipbirth{ id=true,
+													{type="weapon", subtype="staff", name="elm staff", autoreq=true, ego_chance=-1000},
+													{type="armor", subtype="cloth", name="linen robe", autoreq=true, ego_chance=-1000}
+		}
+	},
+}
+getBirthDescriptor("class", "Celestial").descriptor_choices.subclass["Eclipsed"] = "disallow"
+
+
+newBirthDescriptor{
+	name = "Starsinger", type = "subclass", desc = "",
+	enemy_ego_point_cost = 2,
+	power_source = {arcane=true},
+	stats = { mag=5 },
+	talents_types = {
+		["celestial/chants"]={true, 0.3},
+		["celestial/hymns"]={true, 0.3},
+	},
+	talents = {
+		[ActorTalents.T_CHANT_ACOLYTE] = 1,
+		[ActorTalents.T_HYMN_ACOLYTE] = 1,
+	},
+	
+	copy = {
+	},
+}
+getBirthDescriptor("class", "Celestial").descriptor_choices.subclass["Starsinger"] = "disallow"

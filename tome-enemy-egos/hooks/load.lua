@@ -8,7 +8,5 @@ local Zone = require "engine.Zone"
 local Map = require "engine.Map"
 
 class:bindHook("ToME:load", function(self, data)
-								 Birther:loadDefinition("/data-enemy-egos/birth/warriors.lua")
-								 Birther:loadDefinition("/data-enemy-egos/birth/unarmed.lua")
-								 Birther:loadDefinition("/data-enemy-egos/birth/mages.lua")
+								 Birther:loadDefinition("/data-enemy-egos/birth/classes.lua")
 end)
