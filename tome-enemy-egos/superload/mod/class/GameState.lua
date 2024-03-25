@@ -25,6 +25,74 @@ function _M:createRandomName(name_def, name_scheme, base_name, feminine, min, ma
 	return name
 end
 
+--- Checks equipment compatibility between two entities
+--	returns true if newClass is compatible with base, false otherwise
+function _M:checkEquipFilters(base, newClass)
+	if not base or not newClass then
+		print("  * * class", newClass.name, " passed equipment check deue to no existing restrictions")
+		return true
+	end
+
+
+	local filters = {}
+
+	-- in case creature is predefined with limited inventories
+	for idx, inven in pairs(base.inven) do
+		if inven.auto_equip_filter then
+			print("adding filter on slot ", inven.name)
+			filters[inven.name] = inven.auto_equip_filter
+		end
+	end
+
+	-- decompose class filters
+	base.descriptor = base.descriptor or {}
+	base.descriptor.classes = base.descriptor.classes or {}
+	for _, c_name in pairs(base.descriptor.classes) do
+		local cc = table.get(engine.Birther.birth_descriptor_def, "subclass", c_name, "copy")
+		if cc then
+			for i, res in ipairs(cc) do
+				if type(res) == "table" and res.__resolver == "auto_equip_filters" then
+					for slot, restriction in pairs(res[1]) do
+						if not filters[slot] then
+							print("adding filter on slot ", slot, " from class ", c_name)
+							filters[slot] = restriction
+						end
+					end
+				end
+			end
+		end
+	end
+
+	--todo account for special filters like Rogue's 'nonheavy armor'
+	local inc = newClass.copy
+	for i, resolver in ipairs(inc) do
+		if type(resolver) == "table" and resolver.__resolver == "auto_equip_filters" then
+			print("looking at class table")
+			for k, v in pairs(resolver) do
+				print(" * ", k, v)
+			end
+			print("doneing at class table") 
+			local restrictions = resolver[1]
+			for slot, res in pairs(restrictions) do
+				print(" * * ", slot, res, res.type, res.subtype)
+				if filters[slot] then
+					if filters[slot].type and filters[slot].type ~= res.type then
+						print("  * * class", newClass.name, " failed equipment check due to ", slot, filters[slot].type, "vs", res.type)
+						return false
+					end
+					if filters[slot].subtype and filters[slot].subtype ~= res.subtype then
+						print("  * * class", newClass.name, " failed equipment check due to ", slot, filters[slot].subtype, "vs", res.subtype)
+						return false
+					end
+				end
+			end
+		end
+	end
+
+	return true
+end
+
+
 function _M:bossApplyBasicPowers(b, forbid_equip)
 	b.max_life = b.max_life or 150
 	b.max_inscriptions = 5 -- Note:  This usually won't add inscriptions to NPC bases without them
@@ -564,22 +632,24 @@ function _M:applyRandomEnemyEgo(b, data)
 	end
 
 	-- apply random classes
-	local base_cost = 9 --4
+	local base_cost = 9 --4 todo
 	local to_apply = (data.nb_classes or 2)*4
 	while to_apply > 0 do
 		local c = rng.tableRemove(list)
-		if not c then break end --repeat attempts until list is exhausted
+		if not c then break end --give up if out of classes.
 		if not c.enemy_ego_point_cost then c.enemy_ego_point_cost = base_cost end
 		print("DEBUG [createRandomBoss] considering class ", c.name, c.enemy_ego_point_cost)
-		if c.enemy_ego_point_cost <= to_apply then 
-			if data.no_class_restrictions or self:checkPowers(b, c) then  -- recheck power restricts here to account for any previously picked classes
-				print("DEBUG [createRandomBoss] applying class ", c.name)
-				if self:apply_enemy_ego(b, table.clone(c, true), data) then
-					to_apply = to_apply - (c.enemy_ego_point_cost or 1)
-				end
-			else
-				print("  * class", c.name, " rejected due to power source")
-			end
+		if c.enemy_ego_point_cost > to_apply then
+			print("  * class", c.name, " rejected due to cost too high")
+		elseif (not self:checkPowers(b, c)) and (not data.no_class_restrictions) then
+			print("  * class", c.name, " rejected due to power source")
+		elseif (not self:checkEquipFilters(b, c)) then
+			print("  * class", c.name, " rejected due to equipment conflict")
+		else
+			print("DEBUG [createRandomBoss] applying class ", c.name)
+			if self:apply_enemy_ego(b, table.clone(c, true), data) then
+				to_apply = to_apply - (c.enemy_ego_point_cost or 1)
+			end	
 		end
 	end
 	if data.spend_points then -- spend any remaining unspent stat points
