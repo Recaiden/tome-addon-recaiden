@@ -213,3 +213,60 @@ newBirthDescriptor{
 	},
 }
 getBirthDescriptor("class", "Celestial").descriptor_choices.subclass["Starsinger"] = "disallow"
+
+-- defilers
+newBirthDescriptor{
+	name = "Plaguebearer", type = "subclass", desc = "",
+	enemy_ego_point_cost = 2,
+	enemy_ego_equip_set = "staff",
+	power_source = {arcane=true},
+	stats = { cun=5 },
+	talents_types = {
+		["corruption/plague"]={true, 0.3},
+		["corruption/blight"]={true, 0.3},
+		["corruption/vim"]={true, 0.3},
+		["corruption/torment"]={true, 0.3},
+	},
+	talents = {
+		[ActorTalents.T_VIRTULENT_DISEASE] = 1,
+		[ActorTalents.T_DARK_RITUAL] = 1,
+		[ActorTalents.T_SOUL_ROT] = 1,
+	},
+	
+	copy = {
+		mage_equip_filters,
+		resolvers.equipbirth{ id=true,
+													{type="weapon", subtype="staff", name="elm staff", autoreq=true, ego_chance=-1000},
+													{type="armor", subtype="cloth", name="linen robe", autoreq=true, ego_chance=-1000}
+		}
+	},
+}
+getBirthDescriptor("class", "Defiler").descriptor_choices.subclass["Plaguebearer"] = "disallow"
+
+newBirthDescriptor{
+	name = "Bloodmage", type = "subclass", desc = "",
+	enemy_ego_point_cost = 2,
+	enemy_ego_equip_set = "staff",
+	power_source = {arcane=true},
+	stats = { cun=5 },
+	talents_types = {
+		["corruption/plague"]={true, 0.3},
+		["corruption/blood"]={true, 0.3},
+		["corruption/bone"]={true, 0.3},
+		["corruption/torment"]={true, 0.3},
+	},
+	talents = {
+		[ActorTalents.T_VIRTULENT_DISEASE] = 1,
+		[ActorTalents.T_BLOOD_SPRAY] = 1,
+		[ActorTalents.T_BONE_SHIELD] = 1,
+	},
+	
+	copy = {
+		mage_equip_filters,
+		resolvers.equipbirth{ id=true,
+													{type="weapon", subtype="staff", name="elm staff", autoreq=true, ego_chance=-1000},
+													{type="armor", subtype="cloth", name="linen robe", autoreq=true, ego_chance=-1000}
+		}
+	},
+}
+getBirthDescriptor("class", "Defiler").descriptor_choices.subclass["Bloodmage"] = "disallow"

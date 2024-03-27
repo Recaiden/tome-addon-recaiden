@@ -41,6 +41,8 @@ function _M:checkEquipFilters(base, newClass)
 			return false
 		end
 	end
+
+	--todo allow cursed, wyrmic, and other any-melee miniclasses.
 	
 	local filters = {}
 

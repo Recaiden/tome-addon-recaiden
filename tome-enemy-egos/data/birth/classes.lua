@@ -13,6 +13,8 @@ local equip_sets = {
 	"staff",
 	"mindstars",
 	"daggers",
+	"saws",
+	"dual"
 }
 
 
@@ -25,4 +27,4 @@ load("/data-enemy-egos/birth/warriors.lua")
 load("/data-enemy-egos/birth/unarmed.lua")
 load("/data-enemy-egos/birth/mages.lua")
 load("/data-enemy-egos/birth/wilders.lua")
---load("/data-enemy-egos/birth/psionics.lua")
+load("/data-enemy-egos/birth/psionics.lua")
