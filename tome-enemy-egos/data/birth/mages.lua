@@ -118,8 +118,8 @@ newBirthDescriptor{
 	stats = { mag=5 },
 	talents_types = {
 		["celestial/sunlight"]={true, 0.3},
-		["celestial/chants"]={false, 0.3},
-		["celestial/light"]={false, 0.3},
+		["celestial/chants"]={true, 0.3},
+		["celestial/light"]={true, 0.3},
 	},
 	talents = {
 		[ActorTalents.T_SEARING_LIGHT] = 1,
@@ -144,8 +144,8 @@ newBirthDescriptor{
 	stats = { mag=5 },
 	talents_types = {
 		["celestial/star-fury"]={true, 0.3},
-		["celestial/hymns"]={false, 0.3},
-		["celestial/light"]={false, 0.3},
+		["celestial/hymns"]={true, 0.3},
+		["celestial/light"]={true, 0.3},
 	},
 	talents = {
 		[ActorTalents.T_MOONLIGHT_RAY] = 1,

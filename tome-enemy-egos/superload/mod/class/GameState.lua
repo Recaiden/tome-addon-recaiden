@@ -6,7 +6,6 @@ local NameGenerator2 = require "engine.NameGenerator2"
 
 local _M = loadPrevious(...)
 
-
 function _M:createRandomName(name_def, name_scheme, base_name, feminine, min, max)
 	local ngd, name
 	if not name_def and self.birth.world_base_random_name_def then name_def = self.birth.world_base_random_name_def end
