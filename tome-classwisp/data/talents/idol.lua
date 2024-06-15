@@ -374,6 +374,11 @@ newTalent{
 	callbackOnTakeDamage = function (self, t, src, x, y, type, dam, tmp, no_martyr)
 		local thresh = t.getThresh(self, t) * self.max_life
 		local threshShock = 0.25 * self.max_life
+
+		if self:getPsi() <= t.getPrice(self,t) and not self:attr("force_talent_ignore_ressources") then
+			return {dam=dam}
+		end
+		
 		if dam >= thresh then
 			local dmg_src = self
 			if src.__is_actor then dmg_src = src end

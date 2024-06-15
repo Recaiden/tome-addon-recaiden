@@ -1,16 +1,7 @@
 local ActorTalents = require "engine.interface.ActorTalents"
 
 archery_range = ActorTalents.main_env.archery_range
-
--- Not the best way to do this, might clean up later
-damDesc = function(self, type, dam)
-	-- Increases damage
-	if self.inc_damage then
-		local inc = (self.inc_damage.all or 0) + (self.inc_damage[type] or 0)
-		dam = dam + (dam * inc / 100)
-	end
-	return dam
-end
+damDesc = ActorTalents.main_env.damDesc
 
 incPsi2 = function(self, cost)
 	if not self:attr("zero_resource_cost") and not self:attr("force_talent_ignore_ressources") then 

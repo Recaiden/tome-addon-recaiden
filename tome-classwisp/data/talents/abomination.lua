@@ -35,7 +35,7 @@ newTalent{
 		if talent == self.T_REK_GLR_ARROWSTORM_KALMANKA then return end
 		local old_target_forced = game.target.forced
 		game.target.forced = {target.x, target.y, target}
-		local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy = true})
+		local targets = self:archeryAcquireTargets({type = "hit"}, {one_shot=true, no_energy=true})
 		if targets then --this mostly checks that we still have ammo
 			self:attr("instant_shot", 1)
 			self:archeryShoot(targets, t, {type = "bolt", start_x=target.x, start_y=target.y}, {mult=mult*t.getDamage(self, t) / (self.__global_accuracy_damage_bonus or 1), glr_pinpoint=true})
