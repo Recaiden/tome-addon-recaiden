@@ -544,9 +544,9 @@ newDamageType{
 			local luck_mult = (luck/50) ^ .5
 			
 			if not negative then
-				luckiness = 1 + add
+				luckiness = 1 + luck_mult
 			else
-				luckiness = 1/(1+add)
+				luckiness = 1/(1+luck_mult)
 			end
 		end
 			
