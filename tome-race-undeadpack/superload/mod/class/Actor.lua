@@ -47,7 +47,13 @@ function _M:canSeeNoCache(actor, def, def_pct)
 		return true, 100
 	end
 
-	return base_canSeeNoCache(self, actor, def, def_pct)
+	local seen, chance = base_canSeeNoCache(self, actor, def, def_pct)
+	if seen and actor ~= self and actor.knowTalent and actor:knowTalent(actor.T_REK_DREAD_STEALTH) and actor:isTalentActive(actor.T_REK_DREAD_STEALTH) and not (self.turn_procs and self.turn_procs.rek_dread_seen) and self:reactionToward(actor) < 0 then
+		self.turn_procs.rek_dread_seen = true
+		local t = actor:getTalentFromId(actor.T_REK_DREAD_STEALTH)
+		t.doHorribleSight(actor, t, self)
+	end
+	return seen, chance
 end
 
 return _M

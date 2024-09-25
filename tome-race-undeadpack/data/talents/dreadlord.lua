@@ -40,30 +40,29 @@ newTalent{
 		return true
 	end,
 
-	callbackOnActBase = function(self, t)
-		local tg = {type="ball", friendlyfire=false, range=0, radius=self:getTalentRadius(t), talent=t}
-		local has_targets = false
-		self:project(
-			tg, self.x, self.y,
-			function(tx, ty)
-				local target = game.level.map(tx, ty, Map.ACTOR)
-				if target then
-					has_targets = true
-				end
-		end)
-
-		if has_targets then
-			local damage = self:mindCrit(t.getDamage(self, t))
-      
-			self:project(
-				tg, self.x, self.y,
-				function(tx, ty)
-					local target = game.level.map(tx, ty, Map.ACTOR)
-					if target and not target:canSee(self) then
-						DamageType:get(DamageType.MIND).projector(self, target.x, target.y, DamageType.MIND, damage)
-					end
-			end)
+	doHorribleSight = function(self, t, target)
+		local damage
+		local state
+		if self.turn_procs and self.turn_procs.rek_horrible_sight then
+			damage = self.turn_procs.rek_horrible_sight.damage
+			state = {
+				crit_type = self.turn_procs.rek_horrible_sight.crit_type,
+				crit_power = self.turn_procs.rek_horrible_sight.crit_power
+			}
+		else
+			damage = self:mindCrit(t.getDamage(self, t))
+			self.turn_procs = self.turn_procs or {}
+			state = {
+				crit_type = self.turn_procs.is_crit,
+				crit_power = self.turn_procs.crit_power or 1
+			}
+			self.turn_procs.rek_horrible_sight = {
+				damage = damage,
+				crit_type = state.crit_type,
+				crit_power = state.crit_power
+			}
 		end
+		DamageType:get(DamageType.MIND).projector(self, target.x, target.y, DamageType.MIND, damage, state)
 	end,
 	info = function(self, t)
 		return ([[You are shrouded in unholy darkness, granting a %d bonus to Defense and placing you in stealth with %d power.  Actions that normally break stealth do #{bold}#not#{normal}# disrupt this effect.
