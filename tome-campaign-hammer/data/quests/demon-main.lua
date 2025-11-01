@@ -47,7 +47,7 @@ desc = function(self, who)
 		desc[#desc+1] = _t"#LIGHT_RED#You have abandoned your holy quest in order to pursue a new path.#WHITE#"
 	end
 
-	local statusRuins = who:hasQuest("campaign-hammer+demon-ruins") and who:hasQuest("campaign-hammer+demon-ruins"):isCompleted()
+	local statusRuins = who:hasQuest("campaign-hammer+demon-ruins") and who:hasQuest("campaign-hammer+demon-ruins"):isSuccess()
 	if self:isCompleted("last-hope") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#* The Allied Kingdom leadership is destroyed.  Victory is certain.#WHITE#"
 		desc[#desc+1] = _t"You have won the game!"
