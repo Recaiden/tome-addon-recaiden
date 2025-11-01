@@ -162,7 +162,6 @@ newTalent{
 		
 		return true
 	end,
-	end,
 	info = function(self, t)
 		local flavor = self.descriptor.race == "Dwarf" and _t"Overcharge your suit's maneuver system to briefly lift yourself off the ground." or _t"Adding these nozzles and handles to the harness allows you to throw yourself through the air at great speeds, and even land safely at the other end."
 		return ([[%s

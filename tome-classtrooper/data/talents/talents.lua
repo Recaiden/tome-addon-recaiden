@@ -128,6 +128,11 @@ if not Talents.talents_types_def["technique/trooper"] then
 	load("/data-classtrooper/talents/trooper.lua")
 end
 
+if not Talents.talents_types_def["technique/dwarven-legacy"] then
+	newTalentType{ allow_random=true, type="technique/dwarven-legacy", name = "Dwarven Legacy", description = "Fight with a pickaxe!." }
+	load("/data-classtrooper/talents/dwarven-legacy.lua")
+end
+
 
 -- if not Talents.talents_types_def["technique/psychic-shots"] then
 -- 	newTalentType{ allow_random=true, is_mind=true, type="technique/psychic-shots", name = "Psychic Shots", description = "Special Psi-aimed archery techniques" }
