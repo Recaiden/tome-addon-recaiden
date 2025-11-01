@@ -4,6 +4,23 @@ archery_range = ActorTalents.main_env.archery_range
 
 damDesc = Talents.main_env.damDesc
 
+str_req1 = {
+	stat = { str=function(level) return 12 + (level-1) * 2 end },
+	level = function(level) return 0 + (level-1)  end,
+}
+str_req2 = {
+	stat = { str=function(level) return 20 + (level-1) * 2 end },
+	level = function(level) return 4 + (level-1)  end,
+}
+str_req3 = {
+	stat = { str=function(level) return 28 + (level-1) * 2 end },
+	level = function(level) return 8 + (level-1)  end,
+}
+str_req4 = {
+	stat = { str=function(level) return 36 + (level-1) * 2 end },
+	level = function(level) return 12 + (level-1)  end,
+}
+
 wil_req1 = {
 	stat = { wil=function(level) return 12 + (level-1) * 2 end },
 	level = function(level) return 0 + (level-1)  end,
@@ -105,6 +122,12 @@ if not Talents.talents_types_def["occultech/voidsuit"] then
 	newTalentType{ allow_random=true, type="occultech/voidsuit", name = "Voidsuit", description = "Electro-technical defenses." }
 	load("/data-classtrooper/talents/voidsuit.lua")
 end
+
+if not Talents.talents_types_def["technique/trooper"] then
+	newTalentType{ allow_random=true, type="technique/trooper", name = "Trooper", description = "Tough-earned combat techniques." }
+	load("/data-classtrooper/talents/trooper.lua")
+end
+
 
 -- if not Talents.talents_types_def["technique/psychic-shots"] then
 -- 	newTalentType{ allow_random=true, is_mind=true, type="technique/psychic-shots", name = "Psychic Shots", description = "Special Psi-aimed archery techniques" }

@@ -24,3 +24,18 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+newEffect{
+	name = "REK_OCLT_MIGHT", image = "talents/rek_oclt_trooper_power.png",
+	desc = "Crushing Might",
+	long_desc = function(self, eff) return ("The target has %d additional physical power."):format(eff.power) end,
+	type = "physical",
+	subtype = { strength=true },
+	status = "beneficial",
+	parameters = { power=10 },
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "combat_dam", eff.power)
+	end,
+	deactivate = function(self, eff)
+	end,
+}

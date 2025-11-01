@@ -18,7 +18,7 @@ newBirthDescriptor{
 		 --new base talents
 		 ["occultech/carbine"]={true, 0.3},
 		 ["occultech/voidsuit"]={true, 0.3},
-		 --["technique/psychic-marksman"]={true, 0.3},
+		 ["technique/trooper"]={true, 0.3},
 		 --["technique/psychic-shots"]={true, 0.3},
 		 --old base talents
 		 ["wild-gift/dwarven-nature"]={true, 0.1},
