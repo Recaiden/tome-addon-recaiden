@@ -1,6 +1,7 @@
 newTalent{
 	name = "Cave-in Ambush", short_name = "REK_OCLT_TROOPER_AMBUSH",
 	type = {"technique/trooper", 1}, require = str_req1, points = 5,
+	tactical = { CLOSEIN = 2 },
 	cooldown = 10,
 	range = 6,
 	radius = function(self, t)
@@ -20,7 +21,7 @@ newTalent{
 									 local tx, ty = util.findFreeGrid(self.x, self.y, 5, true, {[Map.ACTOR]=true})
 									 if tx and ty and target:canBe("teleport") then
 										 target:move(tx, ty, true)
-										 game.logSeen(target, "%s is called to battle!", target:getName():capitalize())
+										 game.logSeen(target, "%s is lured into an ambush!", target:getName():capitalize())
 									 end
 		end)
 		return true

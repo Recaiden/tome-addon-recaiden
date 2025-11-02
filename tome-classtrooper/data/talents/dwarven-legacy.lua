@@ -57,12 +57,31 @@ Activate this talent to strike a crippling blow with your pickaxe for %d%% damag
 }
 
 newTalent{
-	name = "Earthquake Stance", short_name = "REK_OCLT_TOOL_FRENZY",
+	name = "Close-Quarters Combat Mode", short_name = "REK_OCLT_TOOL_FRENZY",
 	type = {"technique/dwarven-legacy", 2}, require = str_req2, points = 5,
-	cooldown = 12,
-	
+	cooldown = 18,
+	getDur = function(self, t) return 6 end,
+	getAcc = function(self, t) return return self:combatTalentScale(t, 10, 50, 1.0) end,
+	getSpeed = function(self, t) return 0.18 end,
+	getStr = function(self, t) return self:combatTalentScale(t, 10, 30, 1.0) end,
+	dofrenzy = function(self, t)
+		self:setEffect(self.EFF_REK_OCLT_TOOL_FRENZY, t:_getDur(self), {src=self, acc=t:_getDur(self), speed=t:_getSpeed(self), power=t:_getStr(self)})
+	end,
+	action = function(self, t)
+		t.doFrenzy(self, t)
+		return true
+	end,
+	callbackOnTalentPost = function(self, t, ab)
+		if not ab.battery then return end
+		if self:getBattery() < 1 then
+			t.doFrenzy(self, t)
+			self:startTalentCooldown(t)
+		end
+	end,
 	info = function(self, t)
-		return ([[Fight with wild strikes that land less heavily, but are more likely to strike a weak point.  While sustained you lose %d physical power but gain +%d%% physical critical rate.  The benefit will increase with your Dexterity.]]):format(t_:getPenalty(self), t:_getCritBoost(self))
+		return ([[Ready yourself for hand-to-hand combat, granting you +%d accuracy, +%d%% global speed, and +%d strength for %d turns.
+
+This talent activates automatically when your carbine battery becomes empty.]]):format(t_:getAcc(self), t:_getSpeed(self), t:_getStr(self), t:_getDur(self))
 	end,
 }
 
@@ -103,7 +122,7 @@ newTalent{
 		-- todo whirring noise
 		if hit then
 			if target:canBe("disarm") then
-				target:setEffect(target.EFF_DISARMED, t.getDur(self, t), {apply_power=self:combatAttackStr()})
+				target:setEffect(target.EFF_DISARMED, t.getDur(self, t), {src=self, apply_power=self:combatAttackStr()})
 			else
 				game.logSeen(target, "%s resists the disarm!", target:getName():capitalize())
 			end
@@ -118,33 +137,64 @@ You may activate this talent to mangle an enemy's weapon with the sharpener, doi
 }
 
 newTalent{
-	name = "Crushing Might", short_name = "REK_OCLT_TOOL_DEMOLITION",
+	name = "Demolition Protocol", short_name = "REK_OCLT_TOOL_DEMOLITION",
 	type = {"technique/dwarven-legacy", 4}, points = 5, require = str_req4,
-	cooldown = 30,
-	getDamageAmp = function(self, t)
-		local weapon = nil
-		if self:getInven("MAINHAND") then
-			weapon = self:getInven("MAINHAND")[1]
-		end
-
-		local val = 30
-		if weapon then
-			val = val + self:combatDamage(weapon) * self:combatTalentScale(t, 0.3, 0.9)
-		end
-		return val
-	end,
-	getDuration = function(self, t) return 6 end,
+	cooldown = 18,
+	range = 2,
+	radius = 3
 	tactical = { BUFF = 2 },
-	on_pre_use_ai = function(self, t) -- don't use out of combat
-		local target = self.ai_target.actor
-		if target and core.fov.distance(self.x, self.y, target.x, target.y) <= 10 and self:hasLOS(target.x, target.y, "block_move") then return true end
-		return false
+	requires_target = true,
+	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.8, 3.2) end,
+	target = function(self, t)
+		return {type="ball", range=self:getTalentRange(t), selffire=false, radius=self:getTalentRadius(t), talent=t}
 	end,
 	action = function(self, t)
-		self:setEffect(self.EFF_REK_OCLT_MIGHT, t:_getDuration(self), {power=t.getDamageAmp(self, t)})
+		local tg = self:getTalentTarget(t)
+		local x, y, target = self:getTarget(tg)
+		if not x or not y then return nil end
+		local _ _, _, _, x, y = self:canProject(tg, x, y)
+		
+		local tgts = {}
+		self:project(tg, x, y, function(px, py)
+			local target = game.level.map(px, py, Map.ACTOR)
+			if target then
+				-- If we've already moved this target don't move it again
+				for _, v in pairs(tgts) do
+					if v == target then
+						return
+					end
+				end
+
+				-- pull
+				if target:canBe("knockback") then
+					target:pull(x, y, tg.radius)
+					tgts[#tgts+1] = target
+					game.logSeen(target, "%s is drawn into the sinkhole!", target:getName():capitalize())
+				end
+			end
+		end)
+
+		local shield, shield_combat = self:hasShield()							 
+		local weapon = self:hasMHWeapon() and self:hasMHWeapon().combat or self.combat
+		-- Make attacks last
+		self:project(
+			tg, x, y,
+			function(px, py)
+				local target = game.level.map(px, py, Map.ACTOR)
+				if target and self:reactionToward(target) < 0 then
+					if not shield then
+						self:attackTarget(target, nil, t.getDamage(self, t), true)
+					else
+						self:attackTargetWith(target, weapon, nil, t.getDamage(self, t))
+						self:attackTargetWith(target, shield_combat, nil, t.getDamage(self, t))
+					end
+				end
+			end
+		)
 		return true
 	end,
+
 	info = function(self, t)
-		return ([[Summon up reserves of strength to fight harder; for %d turns, your physical power is increased by %d.  This will increase with the damage of your mainhand weapon.]]):format(t.getDuration(self, t), t.getDamageAmp(self, t))
+		return ([[Strike the earth and collapse the ground around you, dealing %d%% weapon damage in radius %d and creating a huge sinkhole that pulls in all creatures.]]):format(t.getDamage(self, t)*100, self:getTalentRadius(t))
 	end,
 }

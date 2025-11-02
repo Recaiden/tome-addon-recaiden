@@ -20,6 +20,7 @@ newEffect{
 				all = -eff.power,
 				[DamageType.LIGHT] = eff.power
 		})
+		--todo visual effect
 	end,
 	deactivate = function(self, eff)
 	end,
@@ -35,6 +36,27 @@ newEffect{
 	parameters = { power=10 },
 	activate = function(self, eff)
 		self:effectTemporaryValue(eff, "combat_dam", eff.power)
+		--todo visual effect
+	end,
+	deactivate = function(self, eff)
+	end,
+}
+
+
+newEffect{
+	name = "REK_OCLT_TOOL_FRENZY", image = "talents/rek_oclt_tool_frenzy.png",
+	desc = "Close-Quarters Combat Mode",
+	long_desc = function(self, eff) return ("The target has additional strength, speed, and accuracy."):format() end,
+	type = "physical",
+	subtype = { strength=true },
+	status = "beneficial",
+	parameters = { acc=5, speed=0.1, power=10 },
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "combat_atk", eff.acc)
+		self:effectTemporaryValue(eff, "global_speed_add", eff.speed)
+		self:effectTemporaryValue(eff, "inc_stats", { [Stats.STAT_STR] = eff.power })
+
+		--todo visual effect
 	end,
 	deactivate = function(self, eff)
 	end,
