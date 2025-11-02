@@ -5,12 +5,7 @@ newTalent{
 	name = "Ancestral Tool Reserve", short_name = "REK_OCLT_TOOL_RESERVE",
 	type = {"technique/dwarven-legacy", 1}, require = str_req1, points = 5,
 	cooldown = 4,
-	range = 1,
-	requires_target = true,
 	no_unlearn_last = true,
-	target = function(self, t)
-		return {type="hit", range=self:getTalentRange(t), friendlyfire=false, talent=t}
-	end,
 	getShieldDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.5, 1.0) end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.2, 1.7) end,
 	getSlow = function(self, t) return 50 end,
@@ -35,19 +30,23 @@ newTalent{
 		game.zone:applyEgo(pick, ego, "object")
 		pick:resolve()
 	end,
+
+	requires_target = true,
+	tactical = { ATTACK = 1, DISABLE = { wound = 3 } },
+	range = 1,
+	target = function(self, t) return {type="hit", range=self:getTalentRange(t)} end,
+	on_pre_use = function(self, t, silent) if not self:hasShield() then if not silent then game.logPlayer(self, "You require a shield to use this talent.") end return false end return true end,
+	getStunDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2.5, 4.5)) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
 		local x, y, target = self:getTarget(tg)
-		if not x or not y then return nil end
-		self:project(tg, self.x, self.y, function(px, py)
-									 local target = game.level.map(px, py, Map.ACTOR)
-									 if not target then return end
-									 local tx, ty = util.findFreeGrid(self.x, self.y, 5, true, {[Map.ACTOR]=true})
-									 if tx and ty and target:canBe("teleport") then
-										 target:move(tx, ty, true)
-										 game.logSeen(target, "%s is called to battle!", target:getName():capitalize())
-									 end
-		end)
+		if not target or not self:canProject(tg, x, y) then return nil end
+
+		local hit = self:attackTarget(target, nil, t:_getDamage(self), true)
+		if hit then
+			target:setEffect(target.EFF_CRIPPLE, t:_getDur(self), {src=self, speed=t:_getSlow(self)*0.01, apply_power=self:combatPhysicalpower()})
+		end
+
 		return true
 	end,
 	info = function(self, t)
@@ -60,47 +59,61 @@ Activate this talent to strike a crippling blow with your pickaxe for %d%% damag
 newTalent{
 	name = "Earthquake Stance", short_name = "REK_OCLT_TOOL_FRENZY",
 	type = {"technique/dwarven-legacy", 2}, require = str_req2, points = 5,
-	mode = "sustained",
-	cooldown = 20,
-	tactical = { BUFF = 1 },
-	getPenalty = function(self, t) return 30 end,
-	getCritBoost = function(self, t)
-		local dex = self:combatStatScale("dex", 10/25, 100/25, 0.75)
-		return (self:combatTalentScale(t, dex, dex*5, 0.5, 4))
-	end,
-	activate = function(self, t)
-		local ret = {}
-		self:talentTemporaryValue(ret, "combat_dam", -1 * t:_getPenalty(self))
-		self:talentTemporaryValue(ret, "combat_physcrit", t:_getCritBoost(self))
-		return ret
-	end,
-	deactivate = function(self, t, r)
-		return true
-	end,
+	cooldown = 12,
+	
 	info = function(self, t)
 		return ([[Fight with wild strikes that land less heavily, but are more likely to strike a weak point.  While sustained you lose %d physical power but gain +%d%% physical critical rate.  The benefit will increase with your Dexterity.]]):format(t_:getPenalty(self), t:_getCritBoost(self))
 	end,
 }
 
 newTalent{
-	name = "Rockslide Targeting", short_name = "REK_OCLT_TOOL_SHARPEN",
+	name = "Cutting Edge Sharpening System", short_name = "REK_OCLT_TOOL_SHARPEN",
 	type = {"technique/dwarven-legacy", 3}, points = 5, require = str_req3,
-	mode = "passive",
-	getMult = function(self, t) return self:combatTalentLimit(t, 1.75, 0.5, 1.4) end,
+	getApr = function(self, t) return self:combatTalentScale(t, 10, 25) end,
 	getConThreshold = function(self, t) return math.max(15, 35 - 5*self:getTalentLevel(t)) end,
 	passives = function(self, t, p)
-		self:talentTemporaryValue(p, "combat_atk", t:getStat("con") * t:_getMult(self))
-		if t:getStat("con") > t:_getConThreshold(self) then
-			self:talentTemporaryValue(p, "blind_fight", 1)
-		end
+		self:talentTemporaryValue(p, "combat_apr", t:_getApr(self))
 	end,
-	callbackOnStatChange = function(self, t, stat, v)
-		if stat == self.STAT_CON then self:updateTalentPassives(t) end
+
+	range = 1,
+	target = function(self, t) return {type="hit", range=self:getTalentRange(t)} end,
+	on_pre_use = function(self, t, silent)
+		if not self:hasShield() then
+			if not silent then
+				game.logPlayer(self, "You require a shield to use this talent.")
+			end
+			return false
+		end
+		return true
+	end,
+	getDur = function(self, t) return math.floor(self:combatTalentScale(t, 2.5, 4.5)) end,
+	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.8, 2.6, self:getTalentLevel(self.T_SHIELD_EXPERTISE)) end,
+	action = function(self, t)
+		local shield, shield_combat = self:hasShield()
+		if not shield then
+			game.logPlayer(self, "You cannot use this without a shield!")
+			return nil
+		end
+		
+		local tg = self:getTalentTarget(t)
+		local x, y, target = self:getTarget(tg)
+		if not target or not self:canProject(tg, x, y) then return nil end
+		
+		local speed, hit = self:attackTargetWith(target, shield_combat, nil, t:_getDamage(self))
+		-- todo whirring noise
+		if hit then
+			if target:canBe("disarm") then
+				target:setEffect(target.EFF_DISARMED, t.getDur(self, t), {apply_power=self:combatAttackStr()})
+			else
+				game.logSeen(target, "%s resists the disarm!", target:getName():capitalize())
+			end
+		end
+
+		return true
 	end,
 	info = function(self, t)
-		return ([[Once you've chosen a target, nothing can deter you from striking it.
-You gain raw Accuracy equal to %d%% of your Constitution.
-With at least %d Constitution, you can fight while blinded or against invisible targets without penalty.]]):format(t.getMult(self, t)*100, t.getConThreshold(self, t))
+		return ([[Passively grants %d additional armor penetration.
+You may activate this talent to mangle an enemy's weapon with the sharpener, doing %d%% shield damage and disarming them for %d turns.]]):format(t:_getApr(self), t:_getDamage(self)*100, t:_getDur(self))
 	end,
 }
 
