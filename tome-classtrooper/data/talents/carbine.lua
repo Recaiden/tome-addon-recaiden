@@ -29,7 +29,7 @@ newTalent{
 			if digs then self.turn_procs.rek_oclt_dig = self:callTalent(self.T_REK_OCLT_CARBINE_DIG, "getDamage") end
 		end
 		
-		self:project(tg, x, y, DamageType.REK_CARBINE_LIGHT, {dam=self:spellCrit(t.getDamage(self, t))})
+		self:project(tg, x, y, DamageType.REK_CARBINE_LIGHT, {dam=self:occultCrit(t.getDamage(self, t))})
 		local _ _, x, y = self:canProject(tg, x, y)
 		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "shadow_beam", {tx=x-self.x, ty=y-self.y})
 		game:playSoundNear(self, "talents/flame")
@@ -49,12 +49,12 @@ newTalent{
 	innate = true,
 	no_energy = true,
 	cooldown = 0,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 10) end,
+	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 100) end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "ranged_project", {[DamageType.PHYSICAL] = t.getDamage(self, t)})
 	end,
 	info = function(self, t)
-		return ([[Adjust your carbine's settings for increased collateral damage.  While active, your carbine attaks dig out walls (up to 1 space deep), adding an explosion of %0.1f physical damage to their normal light damage if they successfully dig out a wall.]]):format(t.getDamage(self, t), t.getAccBonus(self, t))
+		return ([[Adjust your carbine's settings for increased collateral damage.  While active, your carbine attaks dig out walls (up to 1 space deep), adding an explosion of %0.1f physical damage to their normal light damage if they successfully dig out a wall.]]):format(t.getDamage(self, t))
 	end,
 }
 
@@ -68,7 +68,7 @@ newTalent{
 	direct_hit = true,
 	requires_target = true,
 	target = function(self, t) return {type="cone", cone_angle=t.getAngle(self, t), range=self:getTalentRange(t), force_max_range=true, talent=t} end,
-	getMult = function(self, t) return self:ombatTalentLimit(t, 3, 1.2, 1.9) end,
+	getMult = function(self, t) return self:combatTalentLimit(t, 3, 1.2, 1.9) end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
 	getAngle = function(self, t) return self:combatTalentLimit(t, 120, 15, 45) end,
 	action = function(self, t)
@@ -86,7 +86,7 @@ newTalent{
 		if self.turn_procs.has_dug and self.turn_procs.has_dug > 0 then
 			if digs then self.turn_procs.rek_oclt_dig = self:callTalent(self.T_REK_OCLT_CARBINE_DIG, "getDamage") end
 		end
-		local dam = t.getMult(self, t) * self:spellCrit(self:callTalent(self.T_REK_OCLT_CARBINE, "getDamage"))
+		local dam = t.getMult(self, t) * self:occultCrit(self:callTalent(self.T_REK_OCLT_CARBINE, "getDamage"))
 		self:project(tg, x, y, DamageType.REK_CARBINE_LIGHT, {dam=dam, blind=t.getDuration(self, t)})
 		local _ _, x, y = self:canProject(tg, x, y)
 		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "shadow_beam", {tx=x-self.x, ty=y-self.y})
@@ -104,7 +104,7 @@ newTalent{
 	cooldown = 12,
 	battery = function(self, t) return math.max(2, self:getBattery()) end,
 	target = function(self, t) return {type="widebeam", radius=1, range=self:getTalentRange(t), force_max_range=true, talent=t} end,
-	getMult = function(self, t) return self:ombatTalentLimit(t, 5, 1.5, 3.2) end,
+	getMult = function(self, t) return self:combatTalentLimit(t, 5, 1.5, 3.2) end,
 	getDamageAmp = function(self, t) return self:combatTalentLimit(t, 100, 15, 45) end,
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
 	action = function(self, t)
@@ -122,7 +122,7 @@ newTalent{
 		if self.turn_procs.has_dug and self.turn_procs.has_dug > 0 then
 			if digs then self.turn_procs.rek_oclt_dig = self:callTalent(self.T_REK_OCLT_CARBINE_DIG, "getDamage") end
 		end
-		local dam = t.getMult(self, t) * self:spellCrit(self:callTalent(self.T_REK_OCLT_CARBINE, "getDamage"))
+		local dam = t.getMult(self, t) * self:occultCrit(self:callTalent(self.T_REK_OCLT_CARBINE, "getDamage"))
 		self:project(tg, x, y, DamageType.REK_CARBINE_LIGHT, {dam=dam, vuln={dur=t.getDuration(self, t), power=t.getDamageAmp(self,t)}})
 		local _ _, x, y = self:canProject(tg, x, y)
 		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "shadow_beam", {tx=x-self.x, ty=y-self.y})

@@ -24,7 +24,6 @@ newTalent{
 	getBoost = function(self, t) return self:combatTalentScale(t, 20, 40) end,
 	getResist = function(self, t) return self:combatTalentScale(t, 10, 20) end,
 	getResistMax = function(self, t) return self:combatTalentLimit(t, 25, 3, 10) end,
-	getChance = function(self, t) return self:combatTalentLimit(t, 66, 20, 40) end,
 	range = function(self, t) return math.floor(self:combatTalentLimit(t, 11, 4, 9)) end,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 300) end, -- lightning randomness
 	getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 6)) end,
@@ -41,7 +40,7 @@ newTalent{
 
 		local burst = {type="cone", cone_angle=30, range=0, radius=self:getTalentRange(t), force_target=src, selffire=false}
 
-		local damage = self:mindCrit(t:_getDamage(self))
+		local damage = self:occultCrit(t:_getDamage(self))
 		self:project(burst, src.x, src.y, function(tx,ty)
 									 local target = game.level.map(tx, ty, Map.ACTOR)
 									 if not target or target == self then return end
@@ -61,7 +60,7 @@ newTalent{
 
 When you block damage from within range %d, release a narrow cone of lightning towards the attacker, dealing %0.1f damage and stunning (#SLATEMindpower vs Physical#LAST#)them for %d turns.
 
-Passively increases your lightning damge by +%d%%, your lightning resistance by +%d%%, and your maximum lightning resistance by +%d%%.]]):tformat(flavor, self:getTalentRange(t), t.getResist(self, t), t.getEvasion(self, t))
+Passively increases your lightning damge by +%d%%, your lightning resistance by +%d%%, and your maximum lightning resistance by +%d%%.]]):tformat(flavor, self:getTalentRange(t), damDesc(self, DamageType.LIGHTNING, t:_getDamage(self)), t:_getDuration(self), t:_getBoost(self), t.getResist(self, t), t.getResistMax(self, t))
 	end,
 }
 
@@ -69,38 +68,24 @@ newTalent{
 	name = "Realtime Health Monitoring", short_name = "REK_OCLT_VOIDSUIT_SAVES",
 	type = {"occultech/voidsuit", 3}, require = cun_req3, points = 5,
 	speed = "weapon",
-	mode = "sustained",
-	sustain_hands = 10,
-	tactical = { ATTACK = { weapon = 2}, DISABLE = 1 },
+	mode = "passive",
 	cooldown = 10,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t), talent=t} end,
-	getDamage = function(self, t) return self:combatTalentScale(t, 0.80, 1.5) end,
-	getDuration = function(self, t) return 2 end,
-	getCD = function(self, t) return 10 end,
-	callbackOnMeleeHit = function(self, t, target, dam)
-		if target:hasProc("heka_magpie") then return end
-		if target:isUnarmed() then return end
-		if target:canBe("disarm") and self:checkHit(self:combatPhysicalpower(), target:combatPhysicalResist(), 0, 95, 5) then
-			-- get weapon's combat table
-			if target:getInven(self.INVEN_MAINHAND) then
-				for i, o in ipairs(target:getInven(self.INVEN_MAINHAND)) do
-					local combat = target:getObjectCombat(o, "mainhand")
-					self:setEffect(self.EFF_REK_OCLT_MAGPIE_WEAPONS, t.getDuration(self, t), {weapon=combat, mult=t.getDamage(self, t), src=self})
-					break
-				end
-			end
-			target:setEffect(self.EFF_DISARMED, 3, {src=self})
-			target:setProc("heka_magpie", true, t.getCD(self, t))
-		end
+	getSaves = function(self, t) return self:combatTalentScale(t, 10, 40, 1.0) end,
+	passives = function(self, t, p)
+		self:talentTemporaryValue(p, "combat_physresist", t.getSaves(self, t))
+		self:talentTemporaryValue(p, "combat_mentalresist", t.getSaves(self, t))
+		self:talentTemporaryValue(p, "combat_spellresist", t.getSaves(self, t))
 	end,
-	activate = function(self, t)
-		return {}
-	end,
-	deactivate = function(self, t, p)
-		if self:hasEffect(self.EFF_REK_OCLT_MAGPIE_WEAPONS) then
-			self:removeEffect(self.EFF_REK_OCLT_MAGPIE_WEAPONS)
+	callbackOnTemporaryEffect = function(self, t, eff_id, eff, instance)
+		if self:isTalentCoolingDown(t) then return nil end
+		if instance.dur <= 0 then return nil end
+		if eff.status == "detrimental" and (eff.type == "physical" or eff.type == "mental") then
+			self:startTalentCooldown(t)
+			-- todo play visual and sound
+			return true
 		end
-		return true
+		return false
 	end,
 	info = function(self, t)
 		local flavor = self.descriptor.race == "Dwarf" and _t"Your suit's micro-medical machinery interfaces with your circulatory system, constantly adjusting blood chemistry for optimal performance." or _t"When you first got this thing stuck on your arm, you were worried.  When the needles came out, you started to panic.  But now you feel great, actually."
@@ -108,7 +93,7 @@ newTalent{
 
 Passively increases your physical and mental saves by %d.
 
-Once every %d turns, completely blocks a physical or mental effect that you failed to save against.]]):tformat(flavor, t.getSaves(self, t), t.getCooldown(self, t))
+Once every %d turns, completely blocks a physical or mental effect that you failed to save against.]]):tformat(flavor, t.getSaves(self, t), self:getTalentCooldown(t))
 	end,
 }
 

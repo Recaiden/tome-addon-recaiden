@@ -44,7 +44,7 @@ newBirthDescriptor{
 		 -- 3 class talents
 		 [ActorTalents.T_REK_OCLT_TOOL_RESERVE] = 1,
 		 [ActorTalents.T_WEAPON_COMBAT] = 1,
-		 -- 1 other generic
+		 [ActorTalents.T_ARMOUR_TRAINING] = 2,
    },
    
    copy = {

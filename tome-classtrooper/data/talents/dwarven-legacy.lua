@@ -9,7 +9,7 @@ newTalent{
 	getShieldDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.5, 1.0) end,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.2, 1.7) end,
 	getSlow = function(self, t) return 50 end,
-	getDur = function(self, t) return math.floor(self:combatTalentScale(2,5)) end,
+	getDur = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
 	modifyPick = function(self, t, pick)
 		if pick.ancestral_tool then return end
 		local ego = Entity.new{
@@ -35,7 +35,6 @@ newTalent{
 	tactical = { ATTACK = 1, DISABLE = { wound = 3 } },
 	range = 1,
 	target = function(self, t) return {type="hit", range=self:getTalentRange(t)} end,
-	on_pre_use = function(self, t, silent) if not self:hasShield() then if not silent then game.logPlayer(self, "You require a shield to use this talent.") end return false end return true end,
 	getStunDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2.5, 4.5)) end,
 	action = function(self, t)
 		local tg = self:getTalentTarget(t)
@@ -61,7 +60,7 @@ newTalent{
 	type = {"technique/dwarven-legacy", 2}, require = str_req2, points = 5,
 	cooldown = 18,
 	getDur = function(self, t) return 6 end,
-	getAcc = function(self, t) return return self:combatTalentScale(t, 10, 50, 1.0) end,
+	getAcc = function(self, t) return self:combatTalentScale(t, 10, 50, 1.0) end,
 	getSpeed = function(self, t) return 0.18 end,
 	getStr = function(self, t) return self:combatTalentScale(t, 10, 30, 1.0) end,
 	dofrenzy = function(self, t)
@@ -81,7 +80,7 @@ newTalent{
 	info = function(self, t)
 		return ([[Ready yourself for hand-to-hand combat, granting you +%d accuracy, +%d%% global speed, and +%d strength for %d turns.
 
-This talent activates automatically when your carbine battery becomes empty.]]):format(t_:getAcc(self), t:_getSpeed(self), t:_getStr(self), t:_getDur(self))
+This talent activates automatically when your carbine battery becomes empty.]]):format(t:_getAcc(self), t:_getSpeed(self), t:_getStr(self), t:_getDur(self))
 	end,
 }
 
@@ -141,7 +140,7 @@ newTalent{
 	type = {"technique/dwarven-legacy", 4}, points = 5, require = str_req4,
 	cooldown = 18,
 	range = 2,
-	radius = 3
+	radius = 3,
 	tactical = { BUFF = 2 },
 	requires_target = true,
 	getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 1.8, 3.2) end,
