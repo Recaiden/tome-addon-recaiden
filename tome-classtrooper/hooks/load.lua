@@ -1,10 +1,28 @@
 local class = require"engine.class"
 local ActorTemporaryEffects = require "engine.interface.ActorTemporaryEffects"
+local ActorResource = require "engine.interface.ActorResource"
 local Birther = require "engine.Birther"
 local DamageType = require "engine.DamageType"
 local Talents = require "engine.interface.ActorTalents"
 local Zone = require "engine.Zone"
 local Map = require "engine.Map"
+
+ActorResource:defineResource("Battery", "battery", "T_BATTERY_POOL", "battery_regen", "Your battery powers your laser carbine.  It recovers at 2 per turn after 3 turns without being used", 0, 6, {
+	color = "#ff33ef#",
+	wait_on_rest = true,
+	status_text = function(act)
+		local cooldown = act.oclt_battery_overheat
+		if act.oclt_battery_overheat ~= nil then
+			return ("%d/%d   (%d turns)"):tformat(act:getBattery(), act:getMaxBattery(), cooldown)
+		end
+		return ("%d/%d"):tformat(act:getBattery(), act:getMaxBattery())
+	end,
+	Minimalist = { --parameters for the Minimalist uiset
+		images = {front = "resources/front_battery.png", front_dark = "resources/front_battery_dark.png"},
+		highlight = function(player, vc, vn, vm, vr) return vc >=0.9*vm end,
+		shader_params = {name = "resources2", require_shader=4, delay_load=true, color1={0xef/255, 0x00/255, 0x6f/255}, color2={0xff/255, 0x33/255, 0x7f/255}, amp=0.8, speed=2000, distort={0.2,0.25}}
+	}
+})
 
 class:bindHook("ToME:load", function(self, data)
   Talents:loadDefinition('/data-classtrooper/talents/talents.lua')
@@ -12,56 +30,3 @@ class:bindHook("ToME:load", function(self, data)
   Birther:loadDefinition("/data-classtrooper/birth/classes/warrior.lua")
   DamageType:loadDefinition("/data-classtrooper/damage_types.lua")
 end)
-
--- class:bindHook("Entity:loadList", function(self, data)
--- 		  if data.file == "/data/general/objects/world-artifacts.lua" then
--- 		     self:loadList("/data-classtrooper/world-artifacts.lua", data.no_default, data.res, data.mod, data.loaded)
--- 		  end
--- 			if data.file == "/data/general/objects/egos/bow.lua" then
--- 		     self:loadList("/data-classtrooper/egos-bow.lua", data.no_default, data.res, data.mod, data.loaded)
--- 		  end
--- end)
-
--- class:bindHook(
--- 	"Combat:getDammod:subs",
--- 	function(self, hd) 
--- 		if hd.combat and hd.combat.talented == "bow"  and self:knowTalent(self.T_REK_GLR_MARKSMAN_ACCELERATE) then
--- 			hd.dammod.wil = (hd.dammod.wil or 0) + (hd.dammod.str or 0)
--- 			hd.dammod.str = nil
--- 	--if hd.combat.talented and hd.combat.talented == "unarmed" and self:knowTalent(self.T_K_FROZEN_FIST) then
--- 		end
--- 		return hd   
--- 	end)
-
--- class:bindHook("DamageProjector:base", function(self, hd)
--- 	local src = hd.src
--- 	local type = hd.type
--- 	local dam = hd.dam
--- 	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
-	
--- 	if type ~= DamageType.MIND and target and target.hasEffect then
--- 		local eff = target:hasEffect(target.EFF_REK_GLR_COSMIC_AWARENESS)
--- 		if eff then
--- 			local damMind = dam * eff.power
--- 			DamageType:get(DamageType.MIND).projector(src, target.x, target.y, DamageType.MIND, {src=src, dam=damMind}, hd.state)
--- 			--src:project(target, target.x, target.y, DamageType.MIND, {src=src, dam=damMind})
--- 			hd.dam = dam * (1-eff.power)
--- 		end
--- 	end
--- 	return hd
--- end)
-
--- class:bindHook("DamageProjector:base", function(self, hd)
--- 	local src = hd.src
--- 	local type = hd.type
--- 	local dam = hd.dam
--- 	local target = game.level.map(hd.x, hd.y, Map.ACTOR)
-
--- 	if not src or not target then return end
--- 	if src and src.knowTalent and src:knowTalent(src.T_REK_EVOLUTION_GLR_STORM) then
--- 		local range = math.floor(core.fov.distance(src.x, src.y, target.x, target.y))
--- 		local mult = math.max(0, 2.0 - range * 0.33)
--- 		hd.dam = dam * mult
--- 	end
--- 	return hd
--- end)

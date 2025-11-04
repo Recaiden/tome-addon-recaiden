@@ -110,6 +110,11 @@ newTalent{
 	hide = "always",
 	no_unlearn_last = true,
 	passives = function(self, t, p)
+		self:talentTemporaryValue(p, "battery_regen", 2)
+	end,
+	callbackOnTalentPost = function(self, t, ab)
+		if not ab.battery then return end
+		self.oclt_battery_overheat = 3
 	end,
 }
 

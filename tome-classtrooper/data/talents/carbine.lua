@@ -7,12 +7,17 @@ newTalent{
 	type = {"occultech/carbine", 1}, require = cun_req1, points = 5,
 	cooldown = 0,
 	battery = 1,
+	--autolearn_talent = "T_BATTERY_POOL",
 	tactical = { ATTACK = {LIGHT = 2} },
 	range = 10,
 	direct_hit = true,
 	requires_target = true,
-	target = function(self, t) return {type="beam", range=self:getTalentRange(t), force_max_range=true, talent=t} end,
-	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 150) end,
+	target = function(self, t) return {type="beam", range=self:getTalentRange(t), talent=t} end,
+	getDamage = function(self, t)
+		local damPower = self:combatTalentPhysicalDamage(t, 10, 150)
+		local accScale = 1 + (self:combatAttack({}) - 10) / 90
+		return damPower * accScale
+	end,
 	action = function(self, t)
 		-- Check for dig ability to allow targetting to pass into walls
 		local digs = self:isTalentActive(self.T_REK_OCLT_CARBINE_DIG) and 1 or 0
@@ -21,22 +26,20 @@ newTalent{
 		if digs then tg.pass_terrain = true end
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
+		tg.pass_terrain = nil
 
-		-- dig out walls
-		self.turn_procs.has_dug = nil
-		if digs then self:project(tg, x, y, DamageType.DIG, 1) end
-		if self.turn_procs.has_dug and self.turn_procs.has_dug > 0 then
-			if digs then self.turn_procs.rek_oclt_dig = self:callTalent(self.T_REK_OCLT_CARBINE_DIG, "getDamage") end
-		end
+		if digs then for i = 1, digs do self:project(tg, x, y, DamageType.EXPLOSIVE_DIG, self:callTalent(self.T_REK_OCLT_CARBINE_DIG, "getDamage")) end end
 		
 		self:project(tg, x, y, DamageType.REK_CARBINE_LIGHT, {dam=self:occultCrit(t.getDamage(self, t))})
 		local _ _, x, y = self:canProject(tg, x, y)
 		game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "shadow_beam", {tx=x-self.x, ty=y-self.y})
 		game:playSoundNear(self, "talents/flame")
+
 		return true
 	end,
 	info = function(self, t)
-		return ([[Project a focused beam of light from your carbine, dealing %0.1f light damage and applying ranged on-hit effects to all targets in a line.]]):tformat(damDesc(self, DamageType.LIGHT, t.getDamage(self, t)))
+		return ([[Project a focused beam of light from your carbine, dealing %0.1f light damage and applying ranged on-hit effects to all targets in a line.
+Damage will scale with your physical power and Accuracy.]]):tformat(damDesc(self, DamageType.LIGHT, t.getDamage(self, t)))
 	end,	
 }
 
@@ -50,8 +53,19 @@ newTalent{
 	no_energy = true,
 	cooldown = 0,
 	getDamage = function(self, t) return self:combatTalentSpellDamage(t, 10, 100) end,
+	doDigging = function(self, t, x, y)
+		local tg = {type="ball", range=10, radius=1, talent=t}
+		DamageType:get(DamageType.DIG).projector(self, x, y, DamageType.DIG, 1)
+		self:project(tg, x, y, DamageType.PHYSICAL, self:occultCrit(t.getDamage(self, t)))
+	end,
 	passives = function(self, t, p)
 		self:talentTemporaryValue(p, "ranged_project", {[DamageType.PHYSICAL] = t.getDamage(self, t)})
+	end,
+	activate = function(self, t, r)
+		return {}
+	end,
+	deactivate = function(self, t)
+		return true
 	end,
 	info = function(self, t)
 		return ([[Adjust your carbine's settings for increased collateral damage.  While active, your carbine attaks dig out walls (up to 1 space deep), adding an explosion of %0.1f physical damage to their normal light damage if they successfully dig out a wall.]]):format(t.getDamage(self, t))

@@ -51,7 +51,7 @@ newTalent{
 	info = function(self, t)
 		return ([[You can equip a pickaxe as a mainhand weapon.  When you make a pickaxe attack, you also attack with any offhand shield for %d%% damage.
 
-Activate this talent to strike a crippling blow with your pickaxe for %d%% damage, slowing them by %d%% for %d turns.]]):tformat(t:_getShieldDamage(self)*100, t:_getDamage(self), t:_getSlow(self), t:_getDur(self))
+Activate this talent to strike a crippling blow with your pickaxe for %d%% damage, slowing them by %d%% for %d turns.]]):tformat(t:_getShieldDamage(self)*100, t:_getDamage(self)*100, t:_getSlow(self), t:_getDur(self))
 	end,
 }
 

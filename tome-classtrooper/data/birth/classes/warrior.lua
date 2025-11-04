@@ -24,16 +24,17 @@ newBirthDescriptor{
 		 ["occultech/voidsuit"]={true, 0.3},
 		 ["technique/trooper"]={true, 0.3},
 		 ["technique/dwarven-legacy"]={true, 0.3},
+		  --["occultech/scraptech"]={false, 0.3},
 		 --old base talents
 		 ["wild-gift/dwarven-nature"]={true, 0.1},
 		 
 		 --advanced talents
-		 --["psionic/unleash-abomination"]={false, 0.3},
-		 --["psionic/unleash-nightmare"]={false, 0.3},
-		 --["technique/arrowstorm"]={false, 0.3},
+		 --["occultech/stoneshaping"]={false, 0.3},
+		 --["occultech/alien-nature"]={false, 0.3},
+		 --["occultech/salvaged-titan"]={false, 0.3},
 		 
 		 --new generics
-		 --["psionic/mindshaped-material"]={true, 0.3},
+		 --["occultech/satellite"]={true, 0.3},
 		 --old generics
 		 ["technique/combat-training"]={true, 0.3},
 		 ["technique/conditioning"]={true, 0.3},
@@ -41,8 +42,8 @@ newBirthDescriptor{
    },
    birth_example_particles = "darkness_shield", --todo
    talents = {
-		 -- 3 class talents
 		 [ActorTalents.T_REK_OCLT_TOOL_RESERVE] = 1,
+		 [ActorTalents.T_REK_OCLT_CARBINE] = 1,
 		 [ActorTalents.T_WEAPON_COMBAT] = 1,
 		 [ActorTalents.T_ARMOUR_TRAINING] = 2,
    },
