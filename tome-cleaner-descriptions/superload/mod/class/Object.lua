@@ -6,21 +6,21 @@ require "engine.interface.ObjectIdentify"
 local Stats = require("engine.interface.ActorStats")
 local Talents = require("engine.interface.ActorTalents")
 local DamageType = require("engine.DamageType")
-local ActorResource = require "engine.interface.ActorResource"
+local ActorResource = require("engine.interface.ActorResource")
 local Combat = require("mod.class.interface.Combat")
 
 local _M = loadPrevious(...)
 
 local mod_max_tpl_len = { Minimalist = { small = { fantasy = 73, web = 73, basic = 73 },
-                                         normal = { fantasy = 51, web = 51, basic = 59 },
+                                         normal = { fantasy = 48, web = 51, basic = 59 },
                                          big = { fantasy = 45, web = 45, basic = 49 } },
                           Classic =    { small = { fantasy = 45, web = 45, basic = 45 },
                                          normal = { fantasy = 33, web = 33, basic = 33 },
                                          big = { fantasy = 29, web = 29, basic = 29 } } }
 
 function mod_get_tlp_len( mode, font_size, font_type )
-	if not mod_max_tpl_len then return 50 end
-	if not mod_max_tpl_len[mode] then return 50 end
+	if not mod_max_tpl_len then return 48 end
+	if not mod_max_tpl_len[mode] then return 48 end
 	if not mod_max_tpl_len[mode][font_size] then return mod_max_tpl_len[mode]["normal"]["basic"] end
 	if not mod_max_tpl_len[mode][font_size][font_type] then return mod_max_tpl_len[mode][font_size]["basic"] end
 
@@ -104,7 +104,7 @@ function mod_align_stat( in_str, off_mod )
 	in_str = in_str or ""
 	local attr_offs = 18
 	if string.len( in_str ) < attr_offs then
-		return in_str .. string.rep(" ",attr_offs - string.len( in_str )+off_mod)
+		return in_str .. string.rep(" ", attr_offs - string.len( in_str ) + off_mod)
 	else
 		return in_str .. " "
 	end
@@ -360,11 +360,14 @@ function _M:getTextualDesc(compare_with, use_actor)
 		w = w or {}
 		w = w[field] or {}
 		
-		compare_table_fields(w, compare_with, field, "inc_stats", "%+d", "#ORANGE#" .. mod_align_stat( "Stats" ) .. "#LAST#", function(item)
-													 return (" #ORANGE#%s#LAST#"):format(Stats.stats_def[item].short_name:capitalize())
-		end)
+		compare_table_fields(
+			w, compare_with, field, "inc_stats", "%+d", "#ORANGE#" .. mod_align_stat( "Stats" ) .. "#LAST#",
+			function(item)
+				return (" #ORANGE#%s#LAST#"):format(Stats.stats_def[item].short_name:capitalize())
+			end, true
+		)
 		if not (self.alchemist_bomb or self.type == "gem") then
-			desc:add( mod_DPS_sep,true )    
+			desc:add(mod_DPS_sep, true)
 		end
 		compare_fields(w, compare_with, field, "combat_physcrit", "%+.1f%%", mod_align_stat( "Physical Crit" ))
 		if is_orcs then
@@ -429,10 +432,14 @@ function _M:getTextualDesc(compare_with, use_actor)
 													 return col[2],mod_eff_name( (" %s"):format(DamageType.dam_def[item].name) ),{"color","LAST"}
 		end)      
 		
-		compare_table_fields(w, compare_with, field, "inc_damage", "%+d%%", mod_align_stat( "Damage" ), function(item)
-													 local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
-													 return col[2], (" %s"):format(item == "all" and "all" or (DamageType.dam_def[item] and DamageType.dam_def[item].name or "??")), {"color","LAST"}
+		compare_table_fields(
+			w, compare_with, field,
+			"inc_damage", "%+d%%", mod_align_stat( "Damage" ),
+			function(item)
+				local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
+				return col[2], (" %s"):format(item == "all" and "all" or (DamageType.dam_def[item] and DamageType.dam_def[item].name or "??")), {"color","LAST"}
 		end)
+
 		compare_table_fields(w, compare_with, field, "resists_pen", "%+d%%", mod_align_stat( "Ignore resists" ), function(item)
 													 local col = (DamageType.dam_def[item] and DamageType.dam_def[item].text_color or "#WHITE#"):toTString()
 													 return col[2], (" %s"):format(item == "all" and "all" or (DamageType.dam_def[item] and DamageType.dam_def[item].name or "??")), {"color","LAST"}
@@ -1266,10 +1273,10 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
 				end
 			end
 			if any_diff then
-				local s = ( mod_align_stat( "Weapon Damage",-1 ) .. "%3d%% (%s)  Range: 1.0x-%.1fx (%s)"):format(base_power * 100, table.concat(power_diff, " / "), base_range, table.concat(range_diff, " / "))
+				local s = ( mod_align_stat( "Weapon Damage", -1 ) .. "%3d%% (%s)  Range: 1.0x-%.1fx (%s)"):format(base_power * 100, table.concat(power_diff, " / "), base_range, table.concat(range_diff, " / "))
 				desc:merge(s:toTString())
 			else
-				desc:add(( mod_align_stat( "Weapon Damage",-1 ) .. "%3d%%  Range: 1.0x-%.1fx"):format(base_power * 100, base_range))
+				desc:add(( mod_align_stat( "Weapon Damage", -1 ) .. "%3d%%  Range: 1.0x-%.1fx"):format(base_power * 100, base_range))
 			end
 		else
 			local power_diff = {}
@@ -1290,7 +1297,7 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
 			else
 				power_diff = ("(%s)"):format(table.concat(power_diff, " / "))
 			end
-			desc:add(( mod_align_stat( "Weapon Damage",-1) .. "%.1f - %.1f"):format((combat.dam or 0) + (add_table.dam or 0), ((combat.damrange or (1.1 - (add_table.damrange or 0))) + (add_table.damrange or 0)) * ((combat.dam or 0) + (add_table.dam or 0))))
+			desc:add(( mod_align_stat( "Weapon Damage", -3) .. "%.1f - %.1f"):format((combat.dam or 0) + (add_table.dam or 0), ((combat.damrange or (1.1 - (add_table.damrange or 0))) + (add_table.damrange or 0)) * ((combat.dam or 0) + (add_table.dam or 0))))
 			desc:merge(power_diff:toTString())
 			local col = (combat.damtype and DamageType:get(combat.damtype) and DamageType:get(combat.damtype).text_color or "#WHITE#"):toTString()
 			desc:add(" ",col[2],DamageType:get(combat.damtype or DamageType.PHYSICAL).name:capitalize(),{"color","LAST"})
@@ -1588,7 +1595,9 @@ function _M:compareTableFields(item1, items, infield, field, outformat, text, kf
 	local ret = tstring{}
 	local added = 0
 	local add = false
-	ret:add(text)
+	--ret:add(text)
+	local add = false
+	local thisLine = tstring{text}
 	local tab = {}
 	if item1[field] then
 		for k, v in pairs(item1[field]) do
@@ -1608,19 +1617,20 @@ function _M:compareTableFields(item1, items, infield, field, outformat, text, kf
 	local mod_sep = nil
 	local testStr = tstring{}
 	for k, v in pairs(tab) do
+		local currentLine = tstring{}
 		if not filter or filter(k, v) then
 			testStr:add((count1==0 and text or " "), outformat:format((v[1] or 0)), kfunct(k))
 			if mod_is_exceed_tlp( testStr ) then
 				mod_sep = mod_align_stat( "\n", 1 )
-				testStr = tstring{mod_sep,outformat:format((v[1] or 0)), kfunct(k)}
+				testStr = tstring{mod_sep, outformat:format((v[1] or 0)), kfunct(k)}
 			else
 				mod_sep = " "
 			end
 			local count = 0
 			if isinversed then
-				ret:add(("%s"):format((count1 > 0) and mod_sep or ""), (v[1] or 0) > 0 and {"color","RED"} or {"color","LIGHT_GREEN"}, outformat:format((v[1] or 0)), {"color","LAST"})
+				currentLine:add(("%s"):format((count1 > 0) and mod_sep or ""), (v[1] or 0) > 0 and {"color","RED"} or {"color","LIGHT_GREEN"}, outformat:format((v[1] or 0)), {"color","LAST"})
 			else
-				ret:add(("%s"):format((count1 > 0) and mod_sep or ""), (v[1] or 0) < 0 and {"color","RED"} or {"color","LIGHT_GREEN"}, outformat:format((v[1] or 0)), {"color","LAST"})
+				currentLine:add(("%s"):format((count1 > 0) and mod_sep or ""), (v[1] or 0) < 0 and {"color","RED"} or {"color","LIGHT_GREEN"}, outformat:format((v[1] or 0)), {"color","LAST"})
 			end
 			count1 = count1 + 1
 			if v[1] then
@@ -1629,29 +1639,41 @@ function _M:compareTableFields(item1, items, infield, field, outformat, text, kf
 			for kk, vv in pairs(v) do
 				if kk > 1 then
 					if count == 0 then
-						ret:add("(")
+						currentLine:add("(")
 					elseif count > 0 then
-						ret:add(mod_sep)
+						currentLine:add(mod_sep)
 					end
 					if vv ~= (v[1] or 0) then
 						if isinversed then
-							ret:add((v[1] or 0) > vv and {"color","RED"} or {"color","LIGHT_GREEN"}, outformat:format((v[1] or 0) - vv), {"color","LAST"})
+							currentLine:add((v[1] or 0) > vv and {"color","RED"} or {"color","LIGHT_GREEN"}, outformat:format((v[1] or 0) - vv), {"color","LAST"})
 						else
-							ret:add((v[1] or 0) < vv and {"color","RED"} or {"color","LIGHT_GREEN"}, outformat:format((v[1] or 0) - vv), {"color","LAST"})
+							currentLine:add((v[1] or 0) < vv and {"color","RED"} or {"color","LIGHT_GREEN"}, outformat:format((v[1] or 0) - vv), {"color","LAST"})
 						end
 					else
-						ret:add("-")
+						currentLine:add("-")
 					end
 					add = true
 					count = count + 1
 				end
 			end
 			if count > 0 then
-				ret:add(")")
+				currentLine:add(")")
 			end
-			ret:add(kfunct(k))
+			currentLine:add(kfunct(k))
+		end
+		
+		local str_currentLine = tostring(currentLine)
+		local str_thisLine = tostring(thisLine)
+		local testLine = thisLine
+		testLine:add(str_currentLine)
+		if mod_is_exceed_tlp( testLine ) then
+			-- newline
+			ret:add(str_thisLine)
+			thisLine = tstring{}
+			thisLine:add(mod_align_stat("\n", 1), str_currentLine:gsub("^"..mod_sep, ""):gsub(mod_sep, " "))
 		end
 	end
+	ret:add(tostring(thisLine))
 
 	if add then
 		ret:add(true)
