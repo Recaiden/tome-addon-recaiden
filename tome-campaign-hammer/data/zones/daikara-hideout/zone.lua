@@ -71,6 +71,21 @@ return {
 				actor = {class = "engine.generator.actor.Random" },
 			},
 		},
+		[3] = {
+			generator = { 
+				map = {
+					up = "ROCKY_STEEP_UP2",
+					down = "ROCKY_GROUND",
+					['.'] = "ROCKY_GROUND",
+					['T'] = "ROCKY_SNOWY_TREE",
+					['#'] = "MOUNTAIN_WALL",
+				}, 
+				actor = {
+					class = "engine.generator.actor.Random",
+					filters = {{type="dragon"}, {type="giant"}, {type="animal"}, {type="vermin"}},
+				},
+			},
+		},
 	},
 
 	on_turn = function(self)

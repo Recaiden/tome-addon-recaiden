@@ -39,7 +39,7 @@ desc = function(self, who)
 	elseif self:isCompleted("help-w") then
 		desc[#desc+1] = _t"#LIGHT_GREEN#Walrog has agreed to aid you in destroying the Allied Kingdoms.#WHITE#"
 	else
-		desc[#desc+1] = _t"#LIGHT_GREY#Seek out the ancient necromancer Walrog along the ocean shore.#WHITE#"
+		desc[#desc+1] = _t"#LIGHT_GREY#Seek out the ancient necromancer Walrog along the eastern shore.#WHITE#"
 	end
 	local wand_o, wand_item, wand_inven_id = game.player:findInAllInventoriesBy("define_as", "WAND_WALROG_QUEST")
 	if wand_o and wand_inven_id and wand_item then

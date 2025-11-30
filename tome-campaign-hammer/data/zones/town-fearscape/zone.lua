@@ -11,7 +11,6 @@ return {
 	all_remembered = true,
 	all_lited = true,
 	-- day_night = true,
-	no_worldport = true,
 	is_demon_plane = true,
 	ambient_music = "Straight Into Ambush.ogg",
 	effects = {"EFF_ZONE_AURA_FEARSCAPE"},

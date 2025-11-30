@@ -65,6 +65,9 @@ return {
 						down = "PORTAL_EYAL",
 						force_last_stair = true,
 					},
+					actor = {
+						filters = {{type="elemental"}},
+					},
 				},
 			},
 			[2] = {

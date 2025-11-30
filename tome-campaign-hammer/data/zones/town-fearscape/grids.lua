@@ -80,3 +80,59 @@ load("/data/zones/shertul-fortress/grids.lua", function(e)
 		e.image = "terrain/red_floating_rocks05_01.png"
 	end
 end)
+
+newEntity {
+  define_as = 'BASE_ROD_PEDESTAL',
+  name = 'anchor pedestal',
+  special = true, 
+  -- Child entities should replace this with a floor matching the target
+  -- zone.
+  image = 'terrain/marble_floor.png',
+  add_displays = {
+    class.new {
+      image = 'terrain/pedestal_orb_05.png',
+      display_h = 2,
+      display_y = -1,
+      z = 18,
+    }
+  },
+  display = "_",
+  color = colors.WHITE,
+  back_color = colors.LIGHT_RED,
+  always_remember = true,
+  special_minimap = colors.SALMON,
+  notice = true,
+  block_move = function(self, x, y, who, act, couldpass)
+    if who and who.player and act and self.recall_target then
+      local Dialog = require 'engine.ui.Dialog'
+      local Map = require 'engine.Map'
+      local title = _t'Strange Pedestal'
+      if who:findInAllInventoriesBy('define_as', 'ROD_OF_RECALL') then
+	local function cb(ok)
+	  if ok then
+	    local rod = who:findInAllInventoriesBy('define_as', 'ROD_OF_RECALL')
+	    if rod then
+	      rod.recall_target = self.recall_target
+	    end
+	  end
+	end
+	local txt = _t[[As you approach the pedestal, your Rod of Recall begins vibrating.  The pedestal has a long slot on the top that would fit the Rod, with a caption underneath that you understand as "Set Anchor".  It looks like you could use this pedestal to anchor your Rod of Recall to this place, so that it would return you here instead of to the wilderness.
+
+Do you wish to anchor your Rod of Recall?]]
+	Dialog:yesnoLongPopup(title, txt, 400, cb)
+      else
+	local txt = _t[[This pedestal has a long slot on the top that looks like it would fit a rod of some sort, with a caption underneath that you understand as "Set Anchor".  Looking at the pedestal, you feel as though you are missing something...]]
+	Dialog:simpleLongPopup(title, txt, 400)
+      end
+    end
+    return true
+  end,
+}
+
+newEntity {
+  base = 'BASE_ROD_PEDESTAL',
+  define_as = 'HAMMER_ROD_PEDESTAL',
+  image = 'terrain/red_floating_rocks05_01.png',
+  back_color = colors.LIGHT_RED,
+  recall_target = 'campaign-hammer+town-fearscape',
+}

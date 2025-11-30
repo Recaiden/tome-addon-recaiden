@@ -85,6 +85,9 @@ newEntity{
 		[Talents.T_DARKFIRE]=5,
 	},
 	slow_projectiles_outgoing = 50,
+
+	e.inc_damage = {all=70}
+	
 	resolvers.inscriptions(1, {"manasurge rune"}),
 	resolvers.sustains_at_birth(),
 

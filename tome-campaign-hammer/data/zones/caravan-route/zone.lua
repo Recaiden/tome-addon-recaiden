@@ -52,6 +52,9 @@ return {
 					['<'] = "COBBLESTONE_UP8",
 					['>'] = "COBBLESTONE_UP_WILDERNESS",
 				},
+				actor = {
+					filters = {{faction="allied-kingdoms"}},
+				},
 			},
 		},
 	},

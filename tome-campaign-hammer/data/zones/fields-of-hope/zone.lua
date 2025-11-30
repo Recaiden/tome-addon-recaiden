@@ -159,7 +159,7 @@ return {
 			end
 		end
 
-		-- If you haven't taken the time to beat buried kingdom, fight 5/6/7/8/9 extra randbosses.
+		-- If you haven't beaten buried kingdom, fight 5/6/7/8/9 extra randbosses.
 		if game and lev < 6 then
 			if not game.player:isQuestStatus("campaign-hammer+demon-ruins", engine.Quest.DONE) and not game.level.data.hammer_visit then
 				-- remove any demons that showed up
@@ -202,9 +202,10 @@ return {
 					end
 				end
 			end
-			-- Shasshy'kaish gives you an extra defense
+			-- Shasshy'kaish gives you an extra pool of life
 			if happyShassy then
-				game.player:setEffect(game.player.EFF_HAMMER_CULTIST_REVIVE, 99, {})
+				game.logPlayer(game.player, "You hear the chanting of Shasshy'kaish's cultists as her power finally settles around you.")
+				game:onTickEnd(function() game.player:setEffect(game.player.EFF_HAMMER_CULTIST_REVIVE, 99, {}) end)
 			end
 			-- Kryl'Feijan joins the fight like Aeryn
 			if happyKryl then

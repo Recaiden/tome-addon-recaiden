@@ -1,6 +1,6 @@
 return {
 	name = _t"Angolwen",
-	level_range = {20, 50},
+	level_range = {60, 100},
 	level_scheme = "player",
 	actor_adjust_level = function(zone, level, e) return zone.base_level + e:getRankLevelAdjust() + level.level-1 + rng.range(-1,2) end,
 	update_base_level_on_enter = true,
