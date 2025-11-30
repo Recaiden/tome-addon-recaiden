@@ -86,7 +86,7 @@ newEntity{
 	},
 	slow_projectiles_outgoing = 50,
 
-	e.inc_damage = {all=70}
+	inc_damage = {all=-30},
 	
 	resolvers.inscriptions(1, {"manasurge rune"}),
 	resolvers.sustains_at_birth(),
