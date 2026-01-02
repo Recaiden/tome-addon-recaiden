@@ -19,7 +19,7 @@ return {
 			['.'] = "FLOOR", ['+'] = "DOOR", ['#'] = "WALL",
 			['_'] = "FLOOR", ['O'] = "WALL", 
 			[';'] = "GRASS", ['T'] = "TREE",
-			['='] = "COBBLESTONE",
+			['='] = "COBBLESTONE", ['@'] = "COBBLESTONE_DECO_WAGON",
 			mapscript = "!main",
 		},
 		actor = {

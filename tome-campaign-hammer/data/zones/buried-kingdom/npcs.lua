@@ -137,6 +137,11 @@ newEntity{ base="BASE_NPC_HORROR", define_as = "BURIED_FORGOTTEN",
 			self:unlearnTalentFull(self.T_CURSE_OF_DEATH)
 			self.inc_damage.all = self.inc_damage.all + 30
 			self.rank = 5
+
+			self.replace_display = mod.class.Actor.new{image="npc/undead_ghost_possessed_king.png", display_h=2, display_y=-1}
+      self:removeAllMOs()
+			game.level.map:updateMap(self.x, self.y)
+			
 			self:doEmote(_t"But where is your sister? She-", 100)
 			self.emote_random = {chance=3, _t"They were here even then.", _t"I made them well.", _t"Please, stranger-"}
 		end

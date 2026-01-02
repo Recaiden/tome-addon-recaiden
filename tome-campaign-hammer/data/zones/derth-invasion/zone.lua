@@ -32,9 +32,9 @@ return {
 				road = "GRASS_ROAD_DIRT",
 				add_road = true,
 				do_ponds = {
-					nb = {0, 2},
-					size = {w=25, h=25},
-					pond = {{0.6, "DEEP_WATER"}, {0.8, "DEEP_WATER"}},
+					nb = {3, 5},
+					size = {w=15, h=15},
+					pond = {{0.4, "FIELDS"}, {0.6, "FIELDS"}, {0.8, "FIELDS"}},
 				},
 				
 				nb_rooms = {0,1},

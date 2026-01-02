@@ -49,6 +49,15 @@ for i = 1, rng.range(4, 7) do
 	end
 end
 
+-- place caravan decorations not directly near the spawn points
+for _, groups in ipairs(tm:findGroupsOf{';'}) do --groups of grass
+	for _, spot in ripairs(groups.list) do
+		if rng.percent(3) and tm:countNeighbours(spot, '=') >= 3 then -- adjacent to the road
+			tm:put(spot, '@')
+		end
+	end
+end
+
 tm:merge(1, 1, road, merge_order)
 
 tm:put(start, '<')

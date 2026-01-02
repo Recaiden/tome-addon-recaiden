@@ -16,6 +16,21 @@ newEntity{ base = "FLOOR", define_as = "COBBLESTONE",
 	name="cobblestone road",
 	display='.', image="terrain/stone_road1.png",
 	special_minimap = colors.DARK_GREY,
+	--nice_tiler = { method="replace", base={"COBBLESTONE_DECO_WAGON", 3, 1, 1} }, --spawns too close together
+}
+
+newEntity{
+	base = "COBBLESTONE", define_as = "COBBLESTONE_DECO_WAGON",
+	does_block_move = true,
+	can_pass = {pass_wall=1},
+	block_sight = true,
+	add_displays = {
+		class.new{
+			z=3, image="terrain/patrol_caravan_human_trade_caravan_128.png",
+			display_y = -0.5, display_x = -0.5, display_w=2, display_h=2
+		}
+	},
+	name = "caravan wagon",
 }
 
 newEntity{
