@@ -40,23 +40,37 @@ pre_use_combo = function(self, t, silent, i)
 		end
 		return false
 	end
-	
+
+	-- if they previously got warned, they can use a partial combo
+	-- if all talents are blocked, the combo is blocked
 	if self.turn_procs and self.turn_procs.combo_override then return true end
+	local anyusable = false
+	local invalidPartial = false
 	for order, tid in ipairs(combo) do
 		local t_sub = self:getTalentFromId(tid)
 		local valid = true
 		if t_sub.on_pre_use and t_sub.on_pre_use(self, t_sub, silent) ~= true then valid = false end
 		if self:isTalentCoolingDown(t_sub) then valid = false end
-		if not valid then
-			if not silent then
-				game.logPlayer(self, "Part of this combo cannot be used.  Use to combo again to activate it anyway.")
-				self.turn_procs = self.turn_procs or {}
-				self.turn_procs.combo_override = true
-			end
-			return false
+		if valid then
+			anyusable = true
+		else
+			invalidPartial = true
 		end
-		return true
 	end
+	if not anyusable then
+		if not silent then
+			game.logPlayer(self, "None of the talents in this combo can be used.")
+		end
+		return false
+	elseif invalidPartial then
+		if not silent then
+			game.logPlayer(self, "Part of this combo cannot be used.  Use to combo again to activate it anyway.")
+			self.turn_procs = self.turn_procs or {}
+			self.turn_procs.combo_override = true
+		end
+		return false
+	end
+	return true
 end
 
 comboNoEnergy = function(self, i)
@@ -64,7 +78,8 @@ comboNoEnergy = function(self, i)
 	local combo = self.rec_combo[i]
 	for order, tid in ipairs(combo) do
 		local t_sub = self:getTalentFromId(tid)
-		if not util.getval(t_sub.no_energy, self, t_sub) then return false end
+		--if not util.getval(t_sub.no_energy, self, t_sub) then return false end
+		if not util.getval(t_sub.no_energy, self, t_sub) then return "fake" end
 	end
 	return true
 end
@@ -82,8 +97,23 @@ end
 comboExecute = function(self, i)
 	if not self.rec_combo or not self.rec_combo[i] then return false end
 	local combo = self.rec_combo[i]
+
+	local target_override = nil
 	for order, tid in ipairs(combo) do
-		self:forceUseTalent(tid, {ignore_energy=true})
+		if self:getTalentRequiresTarget(tid) and not config.settings.auto_accept_target then
+			local tg = self:getTalentTarget(tid)
+			local x, y = self:getTarget(tg)
+			if not x or not y then
+				game.logPlayer(self, _t"A talent requires a target but could not get one")
+				return false
+			end
+			target_override = {x=x, y=y}
+		end
+	end
+	for order, tid in ipairs(combo) do
+		game.logPlayer(self, _t"Using talent : %s.", tid)	
+		--self:forceUseTalent(tid, {ignore_energy=true, force_target=target_override})
+		self:forceUseTalent(tid, self, nil, nil, target_override, false, true)
 	end
 	return true
 end
