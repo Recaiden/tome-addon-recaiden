@@ -320,6 +320,7 @@ function _M:loadSavedDifficulty()
 	self.c_rek_dif_level:setText(getConfig("start_level") or "1")
 	self.c_rek_dif_life_bonus:setText(getConfig("start_life") or "0")
 	self.c_rek_dif_gold:setText(getConfig("start_gold") or "0")
+	updateDifficulties(self)
 end
 
 function _M:init(title, actor, order, at_end, quickbirth, w, h)
@@ -349,14 +350,11 @@ function _M:init(title, actor, order, at_end, quickbirth, w, h)
    
    self.c_ok = Button.new{text="     Play!     ",
 			  fct=function()
-			     updateDifficulties(self)
-			     for i, d in ipairs(self.descriptors) do
-				print("[BIRTHER]", i, d, d.name)
-				-- for j, e in pairs(d) do
-				--    print(j, e)
-				-- end
-			     end
-					 self:saveDifficulty()
+			     -- updateDifficulties(self)
+			     -- for i, d in ipairs(self.descriptors) do
+					 -- 	 print("[BIRTHER]", i, d, d.name)
+			     -- end
+					 -- self:saveDifficulty()
 			     self:atEnd("created")
 			  end
    }
@@ -620,6 +618,48 @@ function _M:on_focus(id, ui)
    elseif self.focus_ui and self.focus_ui.ui == self.c_rek_dif_gold then
       self.c_desc:switchItem(self.c_rek_dif_gold, "The gold the player starts with.\nRaising it disqualifies you from achievements unless you also qualify for Madness (which gives 500)")
    end
+end
+
+local custom_birthstate_entries = {
+	["default_random_boss_chance"] = "randbosss",
+	["default_random_rare_chance"] = "randrare",
+	["fixedboss_class_level_rate_mult"] = "talent_boss",
+	["difficulty_level_mult"] = "zone_mul",
+	["difficulty_level_add"] = "zone_add",
+	["difficulty_life_mult"] = "health",
+	["difficulty_talent_mult"] = "talent",
+}
+local base_atEnd = _M.atEnd
+function _M:atEnd(v)
+	print("[CUSTOM DIFFICULTY BIRTHER]", v)
+	
+	if v == "created" then
+		updateDifficulties(self)
+		for i, d in ipairs(self.descriptors) do
+			print("[CUSTOM DIFFICULTY BIRTHER]", i, d, d.name)
+		end
+		return base_atEnd(self, v)
+	elseif v == "loaded" then
+		self:checkNew(function()
+				-- replicate original functionality
+				game:unregisterDialog(self)
+				game:setPlayerName(self.c_name.text)
+				
+				for type, kind in pairs(game.player.descriptor) do
+					local d = self:getBirthDescriptor(type, kind)
+					if d then self:applyGameState(d) end
+				end
+
+				-- load previously saved-to-config custom difficulty values
+				for field, configname in pairs(custom_birthstate_entries) do
+					game.state.birth[field] = getConfig(configname)
+				end
+				
+				self.at_end(true)
+		end)
+	else
+		return base_atEnd(self, v)
+	end
 end
 
 return _M
