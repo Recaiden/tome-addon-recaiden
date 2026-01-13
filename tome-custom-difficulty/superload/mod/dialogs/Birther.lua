@@ -79,40 +79,40 @@ function _M:passesStandardDifficulty(name)
 	if not self.c_rek_dif_zone_mul then return true end
 
 	if (tonumber(self.c_rek_dif_zone_mul.text) or 1) < tonumber(preset.zone_mul) then
-		print("[BIRTHER] [CNFG] zone mul too low for ", name)
+		print("[CNFG] zone mul too low for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_zone_add.text) or 1) < tonumber(preset.zone_add) then
-		print("[BIRTHER] [CNFG] zone add too low for ", name)
+		print("[CNFG] zone add too low for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_talent.text) or 1) < tonumber(preset.talent) then
-		print("[BIRTHER] [CNFG] talent fail for ", name)
+		print(" [CNFG] talent fail for ", name)
 		return false end
 	if self.c_rek_dif_randrare.value < preset.randrare then
-		print("[BIRTHER] [CNFG] randrare for ", name)
+		print("[CNFG] randrare for ", name)
 		return false end
 	if self.c_rek_dif_randboss.value < preset.randboss then
-		print("[BIRTHER] [CNFG] randboss for ", name)
+		print("[CNFG] randboss for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_health.text) or 1) < tonumber(preset.health) then
-		print("[BIRTHER] [CNFG] life mult for ", name)
+		print("[CNFG] life mult for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_stairwait.text) or 1) < tonumber(preset.stairwait) then
-		print("[BIRTHER] [CNFG] stairwait for ", name)
+		print("[CNFG] stairwait for ", name)
 		return false end
 	if preset.hunted and not self.c_rek_dif_hunted.checked then
-		print("[BIRTHER] [CNFG] hunted for ", name)
+		print("[CNFG] hunted for ", name)
 		return false end
 	if self.c_rek_dif_ezstatus.checked and not preset.ezstatus then
-		print("[BIRTHER] [CNFG] checked for ", name)
+		print("[CNFG] checked for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_life_bonus.text) or 0) > tonumber(preset.start_life) then
-		print("[BIRTHER] [CNFG] excess life for ", name)
+		print("[CNFG] excess life for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_gold.text) or 0) > tonumber(preset.start_gold) then
-		print("[BIRTHER] [CNFG] excess gold for ", name)
+		print("[CNFG] excess gold for ", name)
 		return false end
 	if (tonumber(self.c_rek_dif_level.text) or 0) > tonumber(preset.start_level) then
-		print("[BIRTHER] [CNFG] excess level for ", name)
+		print("[CNFG] excess level for ", name)
 		return false end
 	return true
 end
@@ -450,6 +450,8 @@ function _M:init(title, actor, order, at_end, quickbirth, w, h)
    self.c_diff_preset_insn = Button.new{text="Insane", fct=function() setToStandardDifficulty(self, "Insane") end}
    self.c_diff_preset_madn = Button.new{text="Madness", fct=function() setToStandardDifficulty(self, "Madness") end}
 
+	 self.c_diff_save_preset = Button.new{text="Save Difficulty", fct=function() self:saveDifficultySubdialog() end}
+	 self.c_diff_load_preset = Button.new{text="Load Difficulty", fct=function() self:loadDifficultySubdialog() end}
    
    self.c_desc = TextzoneList.new{width=math.floor(self.iw / 4 - 15), height=self.ih - self.c_female.h - self.c_permadeath.h - self.c_ok.h - self.c_campaign.h - 10, scrollbar=true, pingpong=20, no_color_bleed=true}
    
@@ -527,15 +529,18 @@ function _M:init(title, actor, order, at_end, quickbirth, w, h)
       {left=self.c_class, top=self.c_rek_dif_ezstatus, ui=self.c_rek_dif_level},
       {left=self.c_class, top=self.c_rek_dif_level, ui=self.c_rek_dif_life_bonus},
       {left=self.c_class, top=self.c_rek_dif_life_bonus, ui=self.c_rek_dif_gold},
-      --
+
+			-- new buttons
+      {left=self.c_class, top=self.c_rek_dif_gold, ui=self.c_diff_save_preset},
+      {left=self.c_diff_save_preset, top=self.c_rek_dif_gold, ui=self.c_diff_load_preset},
       
       {right=0, top=self.c_diff_preset_madn, ui=self.c_desc},
       
       -- Buttons
       {left=0, bottom=0, ui=self.c_ok, hidden=true},
       {left=self.c_ok, bottom=0, ui=self.c_random},
-      {left=self.c_random, bottom=0, ui=self.c_premade},
-      {left=self.c_premade, bottom=0, ui=self.c_tile},
+      -- {left=self.c_random, bottom=0, ui=self.c_premade}, -- Don't think anyone uses this, but it would error
+      {left=self.c_random, bottom=0, ui=self.c_tile},
       {left=self.c_tile, bottom=0, ui=self.c_options},
       {right=0, bottom=0, ui=self.c_cancel},
       
@@ -636,8 +641,9 @@ function _M:atEnd(v)
 	if v == "created" then
 		updateDifficulties(self)
 		for i, d in ipairs(self.descriptors) do
-			print("[CUSTOM DIFFICULTY BIRTHER]", i, d, d.name)
+			print("[BIRTHER]", i, d, d.name)
 		end
+		self:saveDifficulty()
 		return base_atEnd(self, v)
 	elseif v == "loaded" then
 		self:checkNew(function()
@@ -661,5 +667,184 @@ function _M:atEnd(v)
 		return base_atEnd(self, v)
 	end
 end
+
+-- difficulty presets
+function _M:saveDifficultyPreset(namePreset)
+	-- save the name of the preset
+	local presetExisting = config.settings.tome.rek_dif_presets or {}
+	local l = {
+		"tome.rek_dif_presets = tome.rek_dif_presets or {}",
+	}
+	presetExisting[namePreset] = true
+	for k, v in pairs(presetExisting) do
+		if v then l[#l+1] = "tome.rek_dif_presets["..string.format("%q", k).."]=true" end
+	end
+	config.settings.tome.rek_dif_presets = presetExisting
+	game:saveSettings("tome.rek_dif_presets", table.concat(l, "\n"))
+	
+	config.settings.tome["rek_dif_preset_"..namePreset] = {
+		zone_mul = self.c_rek_dif_zone_mul.text,
+		zone_add = self.c_rek_dif_zone_add.text,
+		talent = self.c_rek_dif_talent.text,
+		randrare = self.c_rek_dif_randrare.value,
+		randboss = self.c_rek_dif_randboss.value,
+		talent_boss = self.c_rek_dif_bossscale.text,
+		stairwait = self.c_rek_dif_stairwait.text,
+		health = self.c_rek_dif_health.text,
+		hunted = self.c_rek_dif_hunted.checked,
+		ezstatus = self.c_rek_dif_ezstatus.checked,
+		start_level = self.c_rek_dif_level.text,
+		start_life = self.c_rek_dif_life_bonus.text,
+		start_gold = self.c_rek_dif_gold.text,
+	}
+	local nameProperty = ([[tome.rek_dif_preset_%s]]):format(namePreset)
+	game:saveSettings(nameProperty, ([[%s = {}
+%s.zone_mul = "%s"
+%s.zone_add = "%s"
+%s.talent = "%s"
+%s.randrare = %0.2f
+%s.randboss = %0.2f
+%s.talent_boss = "%s"
+%s.stairwait = "%s"
+%s.health = "%s"
+%s.hunted = %s
+%s.ezstatus = %s
+%s.start_level = "%s"
+%s.start_life = "%s"
+%s.start_gold = "%s"
+]]):format(nameProperty,
+					 nameProperty, self.c_rek_dif_zone_mul.text,
+					 nameProperty, self.c_rek_dif_zone_add.text,
+					 nameProperty, self.c_rek_dif_talent.text,
+					 nameProperty, self.c_rek_dif_randrare.value,
+					 nameProperty, self.c_rek_dif_randboss.value,
+					 nameProperty, self.c_rek_dif_bossscale.text,
+					 nameProperty, self.c_rek_dif_stairwait.text,
+					 nameProperty, self.c_rek_dif_health.text,
+					 nameProperty, self.c_rek_dif_hunted.checked,
+					 nameProperty, self.c_rek_dif_ezstatus.checked,
+					 nameProperty, self.c_rek_dif_level.text,
+					 nameProperty, self.c_rek_dif_life_bonus.text,
+					 nameProperty, self.c_rek_dif_gold.text
+	))
+end
+
+function _M:saveDifficultySubdialog()
+	local d = require("engine.dialogs.GetText").new(
+		_t"Name this set of difficulty options", _t"Name", 2, 40, function(txt)
+			local namePreset = txt:removeColorCodes():gsub("#", " "):gsub("[^a-zA-Z0-9-]", "_")
+			self:saveDifficultyPreset(namePreset)
+		end, function() end)
+	game:registerDialog(d)
+end
+
+local function getConfigPreset(namePreset, str)
+	local subconfig = config.settings.tome["rek_dif_preset_"..namePreset]
+	if subconfig then return subconfig[str] end
+	return nil
+end
+
+function _M:loadSavedDifficultyPreset(namePreset)
+	print("[CUSTOM DIFFICULTY BIRTHER]", "loading preset", namePreset)
+	self.c_rek_dif_zone_mul:setText(getConfigPreset(namePreset, "zone_mul") or "1.0")
+	self.c_rek_dif_zone_add:setText(getConfigPreset(namePreset, "zone_add") or "0")
+	self.c_rek_dif_talent:setText(getConfigPreset(namePreset, "talent") or "0")
+	numberSliderSetValue(self.c_rek_dif_randrare, getConfigPreset(namePreset, "randrare") or 4)
+	numberSliderSetValue(self.c_rek_dif_randboss, getConfigPreset(namePreset, "randboss") or 0)
+	self.c_rek_dif_bossscale:setText(getConfigPreset(namePreset, "talent_boss") or "0")
+	self.c_rek_dif_stairwait:setText(getConfigPreset(namePreset, "stairwait") or "2")
+	self.c_rek_dif_health:setText(getConfigPreset(namePreset, "health") or "1.0")
+	self.c_rek_dif_hunted.checked = getConfigPreset(namePreset, "hunted") or false
+	self.c_rek_dif_ezstatus.checked = getConfigPreset(namePreset, "ezstatus") or false
+	self.c_rek_dif_level:setText(getConfigPreset(namePreset, "start_level") or "1")
+	self.c_rek_dif_life_bonus:setText(getConfigPreset(namePreset, "start_life") or "0")
+	self.c_rek_dif_gold:setText(getConfigPreset(namePreset, "start_gold") or "0")
+	updateDifficulties(self)
+end
+
+function _M:loadDifficultySubdialog()
+	local presets = config.settings.tome.rek_dif_presets or {}
+	print("[CUSTOM DIFFICULTY BIRTHER]", "reading presets")
+	
+	local d = Dialog.new(_t"Difficulty Presets", 600, 550)
+
+	local lss = {}
+	for name, visible in pairs(presets) do
+		local preset = config.settings.tome["rek_dif_preset_"..name]
+		if preset and visible then
+			print("[CUSTOM DIFFICULTY BIRTHER]", "listed preset", name, preset)
+			lss[#lss+1] = {
+				name=name,
+				description = ([[Level Bonus = x%s +%s
+Talent Bonus = %s / %s (fixedboss)
+%0.2f%% rare / %0.2f%% boss
+Stair Delay = %s turn(s)
+Enemy Life Mulitplier = %s
+Hunted = %s
+Status Resistance = %s
+Start at Level %s with +%s life and %s gold
+]]):format(preset.zone_mul, preset.zone_add,
+					 preset.talent, preset.talent_boss,
+					 preset.randrare, preset.randboss,
+					 preset.stairwait,
+					 preset.health,
+					 preset.hunted,
+					 preset.ezstatus,
+					 preset.start_level, preset.start_life, preset.start_gold
+)
+			}
+		end
+	end
+
+	local sel = nil
+	local sep = Separator.new{dir="horizontal", size=400}
+	local desc = TextzoneList.new{width=320, height=400}
+	local list list = List.new{width=250, list=lss, height=400,
+		fct=function(item)
+			local oldsel, oldscroll = list.sel, list.scroll
+			if sel == item then self:loadSavedDifficultyPreset(sel.name) game:unregisterDialog(d) end
+			if sel then sel.color = nil end
+			item.color = colors.simple(colors.LIGHT_GREEN)
+			sel = item
+			list:generate()
+			list.sel, list.scroll = oldsel, oldscroll
+		end,
+		select=function(item) desc:switchItem(item, item.description) end
+	}
+
+	local load = Button.new{
+		text=_t" Load ",
+		fct=function()
+			if sel then
+				self:loadSavedDifficultyPreset(sel.name)
+				game:unregisterDialog(d)
+			end
+		end
+	}
+	-- local del = Button.new{text=_t"Delete", fct=function() if sel then
+	-- 	self:yesnoPopup(sel.name, ("Really delete premade: %s"):tformat(sel.name), function(ret) if ret then
+	-- 		local vault = CharacterVaultSave.new(sel.short_name)
+	-- 		vault:delete()
+	-- 		vault:close()
+	-- 		lss = Module:listVaultSavesForCurrent()
+	-- 		list.list = lss
+	-- 		list:generate()
+	-- 		sel = nil
+	-- 	end end)
+	-- end end}
+
+	d:loadUI{
+		{left=0, top=0, ui=list},
+		{left=list, top=0, ui=sep},
+		{right=0, top=0, ui=desc},
+
+		{left=0, bottom=0, ui=load},
+		--{right=0, bottom=0, ui=del},
+	}
+	d:setupUI(true, true)
+	d.key:addBind("EXIT", function() game:unregisterDialog(d) end)
+	game:registerDialog(d)
+end
+
 
 return _M
