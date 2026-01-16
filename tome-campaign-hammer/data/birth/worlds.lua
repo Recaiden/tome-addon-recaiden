@@ -136,7 +136,8 @@ newBirthDescriptor{
 			-- give rares/randbosses extra loot
 			local lev = act.level
 			if act.rank == 3.2 and not act.no_inventory_access then
-				for i = 1, rng.table({0,1,2}) do
+				local count = rng.table({0,1,2})
+				for i = 1, count do
 					local bonus = 1.5 + lev / 25
 					local fil = {lev=lev, egos=1, greater_egos_bias = 0, power_points_factor = bonus, nb_themes_add = 1, nb_powers_add = 2, forbid_power_source=act.not_power_source,
 											 base_filter = {no_tome_drops=true, ego_filter={keep_egos=true, ego_chance=-1000}, 
@@ -157,11 +158,27 @@ newBirthDescriptor{
 						print("[entityFilterPost]: Failed to generate random object for", tostring(act.name))
 					end
 				end
-			elseif act.rank == 4 then
-				act[#act+1] = resolvers.drops{chance=100, nb=9, {tome_drops="boss"} }
-				act[#act+1] = resolvers.drop_randart{}
-				act[#act+1] = resolvers.drop_randart{}
-				act[#act+1] = resolvers.drop_randart{}
+			elseif act.rank >= 3.5 then
+				--act[#act+1] = resolvers.drops{chance=100, nb=9, {tome_drops="boss"} }
+				for i = 1, 3 do
+					local data = {lev=lev}
+					local matresolver = resolvers.matlevel(5,50,1,2) -- Min material level 2
+					local filter = {
+						ignore_material_restriction=true, no_tome_drops=true, ego_filter={keep_egos=true, ego_chance=-1000}, special=function(eq)
+							local matlevel = resolvers.calc.matlevel(matresolver,{level=lev})
+							return (not eq.unique and eq.randart_able) and eq.material_level == matlevel and true or false
+					end}
+					print("[hammer.bonus_randart]", act.uid, act.name, "generating base object using filter:", (string.fromTable(filter, 1)))
+					data.base = resolvers.resolveObject(act, filter, false, 5)
+					print("[hammer.bonus_randart]", act.uid, act.name)
+					local o = game.state:generateRandart(data)
+					if o then
+						o._resolver_type = "drop_randart"
+						o.no_drop = false
+						act:addObject(act.INVEN_INVEN, o)
+						game.zone:addEntity(game.level, o, "object")
+					end
+				end
 			end
 		end,
 	},
