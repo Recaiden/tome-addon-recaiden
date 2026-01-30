@@ -626,7 +626,7 @@ function _M:on_focus(id, ui)
 end
 
 local custom_birthstate_entries = {
-	["default_random_boss_chance"] = "randbosss",
+	["default_random_boss_chance"] = "randboss",
 	["default_random_rare_chance"] = "randrare",
 	["fixedboss_class_level_rate_mult"] = "talent_boss",
 	["difficulty_level_mult"] = "zone_mul",
@@ -658,7 +658,15 @@ function _M:atEnd(v)
 
 				-- load previously saved-to-config custom difficulty values
 				for field, configname in pairs(custom_birthstate_entries) do
-					game.state.birth[field] = getConfig(configname)
+					-- handle math
+					if configname == "randboss" or configname == "randrare" then
+						game.state.birth[field] = math.floor(100 / getConfig(configname))
+					elseif configname == "talent" then
+						game.state.birth[field] = 1+tonumber(getConfig(configname))/100
+						-- normal fields
+					else
+						game.state.birth[field] = getConfig(configname)
+					end
 				end
 				
 				self.at_end(true)
