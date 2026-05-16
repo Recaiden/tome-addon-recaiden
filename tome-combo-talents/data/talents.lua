@@ -111,7 +111,7 @@ comboExecute = function(self, i)
 		end
 	end
 	for order, tid in ipairs(combo) do
-		game.logPlayer(self, _t"Using talent : %s.", tid)	
+		--game.logPlayer(self, _t"Using talent : %s.", tid)	
 		--self:forceUseTalent(tid, {ignore_energy=true, force_target=target_override})
 		self:forceUseTalent(tid, self, nil, nil, target_override, false, true)
 	end
