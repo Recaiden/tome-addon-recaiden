@@ -61,3 +61,27 @@ newEffect{
 	deactivate = function(self, eff)
 	end,
 }
+
+newEffect{
+	name = "REK_OCLT_STONE_RAIN", image = "talents/rek_oclt_stoneshaping_rain.png",
+	desc = "Stone Rain",
+	long_desc = function(self, eff) return ("The target deals bonus damage equal to %d%% of their armor."):format(100*eff.power) end,
+	type = "physical",
+	subtype = { earth=true },
+	status = "beneficial",
+	parameters = { power=0.1 },
+	activate = function(self, eff)
+		--todo visual effect
+	end,
+	deactivate = function(self, eff)
+	end,
+	callbackOnDealDamage = function(self, t, val, target, dead, death_note)
+		if dead then return end
+		self.turn_procs = self.turn_procs or {}
+		if self.self.turn_procs.rek_stone_rain then return end
+		self.turn_procs.rek_stone_rain = true
+
+		local dam = self:occultCrit(eff.power * self:combatArmor())
+		DamageType:get(DamageType.PHYSICAL).projector(eff.src, self.x, self.y, DamageType.PHYSICAL, dam)
+	end,
+}
