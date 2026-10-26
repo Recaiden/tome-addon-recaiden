@@ -121,6 +121,9 @@ function _M:getDesc(name_param, compare_with, never_compare, use_actor)
 	if core.key.modState("alt") then
 		return base_getDesc(self, name_param, compare_with, never_compare, use_actor)
 	end
+	if core.key.modState("ctrl") and self.inscription_data and self.inscription_talent then
+		return base_getDesc(self, name_param, compare_with, never_compare, use_actor)
+	end
 	use_actor = use_actor or game.player
 	local desc = tstring{}
 	
@@ -168,6 +171,9 @@ end
 local base_getTextualDesc = _M.getTextualDesc
 function _M:getTextualDesc(compare_with, use_actor)
 	if core.key.modState("alt") then
+		return base_getTextualDesc(self, compare_with, use_actor)
+	end
+	if core.key.modState("ctrl") then
 		return base_getTextualDesc(self, compare_with, use_actor)
 	end
 	use_actor = use_actor or game.player
@@ -1198,6 +1204,7 @@ function _M:descCombat(use_actor, combat, compare_with, field, add_table, is_fak
 	if core.key.modState("alt") then
 		return base_descCombat(self, use_actor, combat, compare_with, field, add_table, is_fake_add)
 	end
+
 	local desc = tstring{}
 	add_table = add_table or {}
 	add_table.dammod = add_table.dammod or {}
@@ -1687,6 +1694,7 @@ function _M:getUseDesc(use_actor)
 	if core.key.modState("alt") then
 		return base_getUseDesc(self, use_actor)
 	end
+
 	use_actor = use_actor or game.player
 	local ret = nil
 	local reduce = 100 - util.bound(use_actor:attr("use_object_cooldown_reduce") or 0, 0, 100)

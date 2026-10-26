@@ -11,8 +11,8 @@ local Object = require("mod.class.Object")
 mod_align_stat = Object.mod_align_stat
 mod_hl_values = Object.mod_hl_values
 mod_USABLE_COLOR = "ffff66"
-local base = _M.getTalentFullDescription
 
+local base = _M.getTalentFullDescription
 function _M:getTalentFullDescription(t, addlevel, config, fake_mastery)
   if not config or not config.tooltip_mode then
     return base(self, t, addlevel, config, fake_mastery)
