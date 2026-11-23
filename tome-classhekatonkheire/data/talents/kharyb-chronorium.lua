@@ -82,6 +82,9 @@ newTalent{
 	getSplit = function(self, t) return self:combatTalentLimit(t, 0.8, 0.3, 0.6) end,
 	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, state)
 		if dam < t:_getThreshold(self) then return {dam=dam} end
+		if self:attr("invulnerable") or (self:attr("invulnerable_others") and src ~= self) then
+			return {dam=dam}
+		end
 		local split = math.min(dam - t:_getThreshold(self),  dam * t:_getSplit(self))
 		self:setEffect(self.EFF_REK_HEKA_RECURRING_VISIONS, 2, {src=self, power=split, thresh=t:_getThreshold(self), ratio=t:_getSplit(self)})
 		game:delayedLogDamage(src, self, 0, ("#WHITE#(%d to the future)#LAST#"):format(split), false)
@@ -123,7 +126,7 @@ newTalent{
 		self:project(
 			{type="ball", range=0, radius=10, talent=t}, self.x, self.y,
 			function(px, py)
-				local geff = game.level.map:hasEffectType(x, y, DamageType.REK_HEKA_PYLON)
+				local geff = game.level.map:hasEffectType(x, y, DamageType.REK_HEKA_PYLON_MARKER)
 				if not geff then return end
 				geff.duration = duration
 		end)
